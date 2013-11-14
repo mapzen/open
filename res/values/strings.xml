@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="application_name">Mapzen</string>
+    <string name="memo_section">Demos</string>
+    <string name="reykjavik">Reyjavik</string>
+    <string name="long_island">Long Island</string>
+</resources>
