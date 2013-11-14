@@ -1,9 +1,16 @@
 package com.mapzen.activity;
 
 import android.app.ActionBar;
+import android.app.SearchManager;
+import android.app.SearchableInfo;
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.SearchView;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.mapquest.android.maps.MapActivity;
 import com.mapzen.R;
@@ -74,7 +81,8 @@ public class BaseActivity extends MapActivity {
 
     @Override
     public void onBackPressed() {
-        if ( slidingMenu.isMenuShowing()) {
+        if ( slidingMenu.isMenuShowing()
+                ) {
             slidingMenu.toggle();
         }
         else {
@@ -102,6 +110,45 @@ public class BaseActivity extends MapActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options_menu, menu);
+
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.v("SEARCH", "foo");
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.v("SEARCH", "aeraeraer");
+                return false;
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public boolean onSearchRequested() {
+        Log.v("SEARCH", "requested");
+        return super.onSearchRequested();
+    }
+
+    @Override
+    public void startSearch(String initialQuery, boolean selectInitialQuery, Bundle appSearchData, boolean globalSearch) {
+        super.startSearch(initialQuery, selectInitialQuery, appSearchData, globalSearch);
+        Log.v("SEARCH", "started");
+    }
+
     private void setupMap() {
         mapView = (MapView) findViewById(R.id.map);
         mapView.setBuiltInZoomControls(true);
@@ -121,6 +168,4 @@ public class BaseActivity extends MapActivity {
         });
 
     }
-
-
 }
