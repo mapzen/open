@@ -18,7 +18,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application android:name=".MapzenApplication" android:theme="@android:style/Theme.Holo.Light">
-        <activity android:name=".activity.MapActivity">
+        <activity android:name=".activity.BaseActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
