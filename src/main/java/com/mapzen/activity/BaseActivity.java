@@ -80,8 +80,7 @@ public class BaseActivity extends MapActivity {
 
     @Override
     public void onBackPressed() {
-        if ( slidingMenu.isMenuShowing()
-                ) {
+        if ( slidingMenu.isMenuShowing() ) {
             slidingMenu.toggle();
         }
         else {
@@ -145,6 +144,9 @@ public class BaseActivity extends MapActivity {
     }
 
     private void setupMap() {
+        Intent intent = getIntent();
+        final int lat = intent.getIntExtra("lat", 1);
+        final int lon = intent.getIntExtra("lon", 1);
         mapView = (MapView) findViewById(R.id.map);
         mapView.setBuiltInZoomControls(true);
 
@@ -155,10 +157,15 @@ public class BaseActivity extends MapActivity {
             @Override
             public void run() {
                 GeoPoint currentLocation = myLocationOverlay.getMyLocation();
-                mapView.getController().animateTo(currentLocation);
                 mapView.getController().setZoom(14);
+                if(lat != 1) {
+                    GeoPoint searchLocation = new GeoPoint(lat, lon);
+                    mapView.getController().animateTo(searchLocation);
+                } else {
+                    mapView.getController().animateTo(currentLocation);
+                }
                 mapView.getOverlays().add(myLocationOverlay);
-                myLocationOverlay.setFollowing(true);
+                //myLocationOverlay.setFollowing(true);
             }
         });
 

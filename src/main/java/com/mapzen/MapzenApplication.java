@@ -14,6 +14,8 @@ public class MapzenApplication extends Application {
             Double.parseDouble("-21.933333") * 1E6
     };
 
+    public static String LOG_TAG = "Mapzen: ";
+
     private static Location location;
     public static Location getLocation(Context context) {
         if(location == null) {
