@@ -121,32 +121,7 @@ public class BaseActivity extends MapActivity {
                 (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                Log.v("SEARCH", "foo");
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                Log.v("SEARCH", "aeraeraer");
-                return false;
-            }
-        });
         return true;
-    }
-
-    @Override
-    public boolean onSearchRequested() {
-        Log.v("SEARCH", "requested");
-        return super.onSearchRequested();
-    }
-
-    @Override
-    public void startSearch(String initialQuery, boolean selectInitialQuery, Bundle appSearchData, boolean globalSearch) {
-        super.startSearch(initialQuery, selectInitialQuery, appSearchData, globalSearch);
-        Log.v("SEARCH", "started");
     }
 
     private void setupMap() {
