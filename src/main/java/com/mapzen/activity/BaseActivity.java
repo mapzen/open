@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -12,12 +13,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.SearchView;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-import com.mapquest.android.maps.MapActivity;
+import com.mapquest.android.maps.*;
 import com.mapzen.R;
 
-import com.mapquest.android.maps.GeoPoint;
-import com.mapquest.android.maps.MapView;
-import com.mapquest.android.maps.MyLocationOverlay;
+import java.nio.BufferUnderflowException;
 
 public class BaseActivity extends MapActivity {
     @Override
@@ -108,6 +107,27 @@ public class BaseActivity extends MapActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void startSearch(String initialQuery, boolean selectInitialQuery, Bundle appSearchData, boolean globalSearch) {
+        super.startSearch(initialQuery, selectInitialQuery, appSearchData, globalSearch);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void startActivity(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            BoundingBox boundingBox = mapView.getBoundingBox(null);
+            double[] box = {
+                boundingBox.ul.getLongitude(),
+                boundingBox.ul.getLatitude(),
+                boundingBox.lr.getLongitude(),
+                boundingBox.lr.getLongitude()
+            };
+            intent.putExtra("box", box);
+        }
+
+        super.startActivity(intent);
     }
 
     @Override
