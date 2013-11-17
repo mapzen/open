@@ -15,6 +15,7 @@ import android.widget.SearchView;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.mapquest.android.maps.*;
 import com.mapzen.R;
+import com.mapzen.entity.Place;
 
 import java.nio.BufferUnderflowException;
 
@@ -145,8 +146,7 @@ public class BaseActivity extends MapActivity {
 
     private void setupMap() {
         Intent intent = getIntent();
-        final int lat = intent.getIntExtra("lat", 1);
-        final int lon = intent.getIntExtra("lon", 1);
+        final Bundle bundle = intent.getExtras();
         mapView = (MapView) findViewById(R.id.map);
         mapView.setBuiltInZoomControls(true);
 
@@ -158,9 +158,9 @@ public class BaseActivity extends MapActivity {
             public void run() {
                 GeoPoint currentLocation = myLocationOverlay.getMyLocation();
                 mapView.getController().setZoom(14);
-                if(lat != 1) {
-                    GeoPoint searchLocation = new GeoPoint(lat, lon);
-                    mapView.getController().animateTo(searchLocation);
+                if(bundle != null) {
+                    Place place = (Place) bundle.getParcelable("place");
+                    mapView.getController().animateTo(place.getPoint());
                 } else {
                     mapView.getController().animateTo(currentLocation);
                 }

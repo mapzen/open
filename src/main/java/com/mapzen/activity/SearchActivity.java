@@ -16,6 +16,7 @@ import com.android.volley.toolbox.Volley;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.SearchViewAdapter;
+import com.mapzen.entity.Place;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,7 +28,7 @@ import static com.mapzen.MapzenApplication.LOG_TAG;
 
 public class SearchActivity extends Activity {
     private ListView results;
-    private final ArrayList<HashMap<String,String>> list = new ArrayList<HashMap<String, String>>();
+    private final ArrayList<Place> list = new ArrayList<Place>();
     SearchViewAdapter adapter;
     private String baseUrl = "http://open.mapquestapi.com/nominatim/v1/search.php?format=json&q=";
     @Override
@@ -41,15 +42,10 @@ public class SearchActivity extends Activity {
         results.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                TextView lat = (TextView)view.findViewById(R.id.lat);
-                TextView lon = (TextView)view.findViewById(R.id.lon);
-                int[] coordinates = {
-                        (int) (Float.parseFloat(lat.getText().toString()) * 1E6),
-                        (int) (Float.parseFloat(lon.getText().toString()) * 1E6)
-                };
                 Intent intent = new Intent(getBaseContext(), BaseActivity.class);
-                intent.putExtra("lat", coordinates[0]);
-                intent.putExtra("lon", coordinates[1]);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("place", (Place)view.getTag(R.string.tag_placeholder));
+                intent.putExtras(bundle);
                 startActivity(intent);
             }
         });
@@ -74,19 +70,13 @@ public class SearchActivity extends Activity {
                 public void onResponse(JSONArray jsonArray) {
                     Log.v(LOG_TAG, jsonArray.toString());
                     for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject obj = null;
-                        String displayName = "";
-                        HashMap<String, String> hashObj = new HashMap<String, String>();
+                        Place place = null;
                         try {
-                            obj = jsonArray.getJSONObject(i);
-                            displayName = obj.getString("display_name");
-                            hashObj.put("display_name", displayName);
-                            hashObj.put("lon", obj.getString("lon"));
-                            hashObj.put("lat", obj.getString("lat"));
-                        } catch(JSONException e) {
-
+                            place = Place.fromJson(jsonArray.getJSONObject(i));
+                        } catch (JSONException e) {
+                            Log.e(LOG_TAG, e.toString());
                         }
-                        list.add(hashObj);
+                        list.add(place);
                     }
                     adapter.notifyDataSetChanged();
                 }

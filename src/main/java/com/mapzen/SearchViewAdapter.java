@@ -2,20 +2,25 @@ package com.mapzen;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import com.mapzen.entity.Place;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.mapzen.MapzenApplication.LOG_TAG;
+
 public class SearchViewAdapter extends ArrayAdapter {
     private Activity activity;
-    private ArrayList<HashMap<String, String>> entries;
+    private ArrayList<Place> entries;
     private ViewHolder holder;
-    public SearchViewAdapter(Activity a, int textViewResourceId, ArrayList<HashMap<String, String>> ent) {
+    public SearchViewAdapter(Activity a, int textViewResourceId, ArrayList<Place> ent) {
         super(a, textViewResourceId, ent);
         activity = a;
         entries = ent;
@@ -23,8 +28,6 @@ public class SearchViewAdapter extends ArrayAdapter {
 
     public static class ViewHolder{
         public TextView item1;
-        public TextView lat;
-        public TextView lon;
     }
 
     @Override
@@ -36,18 +39,15 @@ public class SearchViewAdapter extends ArrayAdapter {
             v = vi.inflate(R.layout.search_item, null);
             holder = new ViewHolder();
             holder.item1 = (TextView) v.findViewById(R.id.big);
-            holder.lat = (TextView) v.findViewById(R.id.lat);
-            holder.lon = (TextView) v.findViewById(R.id.lon);
-            v.setTag(holder);
+            v.setTag(R.string.tag_viewholder, holder);
         } else {
-            holder=(ViewHolder)v.getTag();
+            holder=(ViewHolder)v.getTag(R.string.tag_viewholder);
         }
 
-        final HashMap<String, String> custom = entries.get(position);
+        final Place custom = entries.get(position);
         if (custom != null) {
-            holder.item1.setText(custom.get("display_name"));
-            holder.lat.setText(custom.get("lat"));
-            holder.lon.setText(custom.get("lon"));
+            holder.item1.setText(custom.getDisplayName());
+            v.setTag(R.string.tag_placeholder, custom);
         }
         return v;
     }
