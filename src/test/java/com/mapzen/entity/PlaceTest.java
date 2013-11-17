@@ -25,12 +25,12 @@ public class PlaceTest {
 
     @Test
     public void hasLatDouble() throws Exception {
-        assert(expectedLat == place.getLat());
+        assertThat(expectedLat, is(place.getLat()));
     }
 
     @Test
     public void hasLonDouble() throws Exception {
-        assert(expectedLon == place.getLon());
+        assertThat(expectedLon, is(place.getLon()));
     }
 
     @Test
