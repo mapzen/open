@@ -10,10 +10,6 @@
     <description>Start where you are</description>
     <repositories>
         <repository>
-            <id>SlidingMenu</id>
-            <url>http://raw.github.com/mapzen/SlidingMenu/tree/master/mvn-repo</url>
-        </repository>
-        <repository>
             <id>Mapzen mvn-repo</id>
             <url>http://raw.github.com/mapzen/mvn-repo/tree/master/mvn-repo</url>
         </repository>
