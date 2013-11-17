@@ -2,11 +2,9 @@ package com.mapzen.activity;
 
 import android.app.ActionBar;
 import android.app.SearchManager;
-import android.app.SearchableInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,8 +14,6 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.mapquest.android.maps.*;
 import com.mapzen.R;
 import com.mapzen.entity.Place;
-
-import java.nio.BufferUnderflowException;
 
 public class BaseActivity extends MapActivity {
     @Override

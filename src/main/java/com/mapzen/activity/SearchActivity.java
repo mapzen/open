@@ -7,22 +7,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import com.android.volley.*;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.SearchViewAdapter;
 import com.mapzen.entity.Place;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import static com.mapzen.MapzenApplication.LOG_TAG;
 

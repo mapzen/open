@@ -2,19 +2,14 @@ package com.mapzen;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import com.mapzen.entity.Place;
-import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import static com.mapzen.MapzenApplication.LOG_TAG;
 
 public class SearchViewAdapter extends ArrayAdapter {
     private Activity activity;
