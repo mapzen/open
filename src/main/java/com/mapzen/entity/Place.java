@@ -82,4 +82,11 @@ public class Place implements Parcelable {
         }
     };
 
+    @Override
+    public boolean equals(Object o) {
+        Place other = (Place)o;
+        return lat == other.getLat()
+                && lon == other.getLon()
+                && displayName.equals(other.getDisplayName());
+    }
 }

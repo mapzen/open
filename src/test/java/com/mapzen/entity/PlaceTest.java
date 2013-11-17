@@ -1,5 +1,6 @@
 package com.mapzen.entity;
 
+import android.os.Parcel;
 import com.mapquest.android.maps.GeoPoint;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -8,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
 @RunWith(RobolectricTestRunner.class)
@@ -44,5 +46,13 @@ public class PlaceTest {
     public void hasDisplayName() throws Exception {
         String expected = "Place Name to Display";
         assertThat(expected, is(place.getDisplayName()));
+    }
+
+    @Test
+    public void isParcelable() throws Exception {
+        Parcel parcel = Parcel.obtain();
+        place.writeToParcel(parcel, 0);
+        Place newPlace = Place.readFromParcel(parcel);
+        assertThat(place, equalTo(newPlace));
     }
 }
