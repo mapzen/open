@@ -2,9 +2,9 @@ package com.mapzen.entity;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import com.mapquest.android.maps.GeoPoint;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.osmdroid.util.GeoPoint;
 
 public class Place implements Parcelable {
     private double lat;
