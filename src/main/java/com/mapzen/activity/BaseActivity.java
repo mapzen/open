@@ -130,7 +130,6 @@ public class BaseActivity extends Activity {
         final Bundle bundle = intent.getExtras();
         mapView = (MapView) findViewById(R.id.map);
         mapView.setTileSource(TileSourceFactory.MAPNIK);
-        mapView.setBuiltInZoomControls(true);
         mapController = mapView.getController();
         mapController.setZoom(6);
         mapView.setMultiTouchControls(true);
