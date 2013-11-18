@@ -9,6 +9,7 @@ import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.*;
+import android.widget.Button;
 import android.widget.SearchView;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.mapzen.R;
@@ -22,17 +23,17 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedOverlay;
+import org.osmdroid.views.overlay.MyLocationOverlay;
 import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.ArrayList;
-
-import static com.mapzen.MapzenApplication.getLocationPoint;
 
 public class BaseActivity extends Activity {
     private MapView mapView;
     private MapController mapController;
     private SlidingMenu slidingMenu;
     private StarOverlay stars;
+    private MyLocationOverlay myLocationOverlay;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,17 @@ public class BaseActivity extends Activity {
         setupMap();
         setupSlidingMenu();
         setupActionBar();
+
+        Button locateMe = (Button)findViewById(R.id.locate_me);
+        locateMe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GeoPoint currentLocation = myLocationOverlay.getMyLocation();
+                if(currentLocation != null) {
+                    mapController.animateTo(currentLocation);
+                }
+            }
+        });
     }
 
     private void setupActionBar() {
@@ -128,10 +140,12 @@ public class BaseActivity extends Activity {
         mapController = mapView.getController();
         mapController.setZoom(6);
         mapView.setMultiTouchControls(true);
-
+        myLocationOverlay = new MyLocationOverlay(this, mapView);
+        myLocationOverlay.enableMyLocation();
+        myLocationOverlay.enableFollowLocation();
+        GeoPoint location = myLocationOverlay.getMyLocation();
+        mapView.getOverlays().add(myLocationOverlay);
         disableHardwareAcceleration();
-
-        GeoPoint location = getLocationPoint(this);
 
         if(bundle != null) {
             Place place = bundle.getParcelable("place");
