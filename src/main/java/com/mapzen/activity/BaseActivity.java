@@ -9,10 +9,7 @@ import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.view.*;
 import android.widget.SearchView;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.mapzen.R;
@@ -133,6 +130,7 @@ public class BaseActivity extends Activity {
         mapController = mapView.getController();
         mapController.setZoom(6);
         mapView.setMultiTouchControls(true);
+        mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         GeoPoint location = getLocationPoint(this);
 
