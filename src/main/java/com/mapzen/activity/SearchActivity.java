@@ -26,6 +26,7 @@ public class SearchActivity extends Activity {
     private final ArrayList<Place> list = new ArrayList<Place>();
     SearchViewAdapter adapter;
     private String baseUrl = "http://open.mapquestapi.com/nominatim/v1/search.php?format=json&q=";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

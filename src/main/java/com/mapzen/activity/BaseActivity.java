@@ -16,36 +16,6 @@ import com.mapzen.R;
 import com.mapzen.entity.Place;
 
 public class BaseActivity extends MapActivity {
-    @Override
-    protected boolean isLocationDisplayed() {
-        return super.isLocationDisplayed();    //To change body of overridden methods use File | Settings | File Templates.
-    }
-
-    @Override
-    protected boolean isRouteDisplayed() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();    //To change body of overridden methods use File | Settings | File Templates.
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();    //To change body of overridden methods use File | Settings | File Templates.
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();    //To change body of overridden methods use File | Settings | File Templates.
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();    //To change body of overridden methods use File | Settings | File Templates.
-    }
-
     private MapView mapView;
     private SlidingMenu slidingMenu ;
 
@@ -106,11 +76,6 @@ public class BaseActivity extends MapActivity {
     }
 
     @Override
-    public void startSearch(String initialQuery, boolean selectInitialQuery, Bundle appSearchData, boolean globalSearch) {
-        super.startSearch(initialQuery, selectInitialQuery, appSearchData, globalSearch);    //To change body of overridden methods use File | Settings | File Templates.
-    }
-
-    @Override
     public void startActivity(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             BoundingBox boundingBox = mapView.getBoundingBox(null);
@@ -165,5 +130,35 @@ public class BaseActivity extends MapActivity {
             }
         });
 
+    }
+
+    @Override
+    protected boolean isLocationDisplayed() {
+        return super.isLocationDisplayed();
+    }
+
+    @Override
+    protected boolean isRouteDisplayed() {
+        return false;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }
