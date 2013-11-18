@@ -29,9 +29,13 @@ public class MapzenApplication extends Application {
     }
 
     public static GeoPoint getLocationPoint(Context context) {
-        double lat = getLocation(context).getLatitude();
-        double lon = getLocation(context).getLongitude();
-        GeoPoint point = new GeoPoint((int)lat*1E6, (int)lon*1E6);
+        Location location = getLocation(context);
+        GeoPoint point = null;
+        if(location != null) {
+            double lat = getLocation(context).getLatitude();
+            double lon = getLocation(context).getLongitude();
+            point = new GeoPoint((int)lat*1E6, (int)lon*1E6);
+        }
         return point;
     }
 }
