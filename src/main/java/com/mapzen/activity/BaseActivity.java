@@ -129,7 +129,7 @@ public class BaseActivity extends Activity {
         Intent intent = getIntent();
         final Bundle bundle = intent.getExtras();
         mapView = (MapView) findViewById(R.id.map);
-        mapView.setTileSource(TileSourceFactory.MAPNIK);
+        mapView.setTileSource(TileSourceFactory.MAPQUESTOSM);
         mapController = mapView.getController();
         mapController.setZoom(6);
         mapView.setMultiTouchControls(true);
@@ -137,7 +137,7 @@ public class BaseActivity extends Activity {
         GeoPoint location = getLocationPoint(this);
 
         if(bundle != null) {
-            Place place = (Place) bundle.getParcelable("place");
+            Place place = bundle.getParcelable("place");
             addStar(place.getPoint());
             mapController.setCenter(place.getPoint());
         } else if(location != null) {
