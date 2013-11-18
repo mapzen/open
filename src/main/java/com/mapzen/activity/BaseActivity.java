@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.SearchView;
@@ -27,7 +26,6 @@ import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.ArrayList;
 
-import static com.mapzen.MapzenApplication.getLocation;
 import static com.mapzen.MapzenApplication.getLocationPoint;
 
 public class BaseActivity extends Activity {
@@ -130,7 +128,8 @@ public class BaseActivity extends Activity {
         mapController = mapView.getController();
         mapController.setZoom(6);
         mapView.setMultiTouchControls(true);
-        mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
+        disableHardwareAcceleration();
 
         GeoPoint location = getLocationPoint(this);
 
@@ -141,6 +140,10 @@ public class BaseActivity extends Activity {
         } else if(location != null) {
             mapController.setCenter(location);
         }
+    }
+
+    private void disableHardwareAcceleration() {
+        mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
 
     private void addStar(GeoPoint point) {
