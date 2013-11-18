@@ -126,7 +126,7 @@ public class BaseActivity extends Activity {
         Intent intent = getIntent();
         final Bundle bundle = intent.getExtras();
         mapView = (MapView) findViewById(R.id.map);
-        mapView.setTileSource(TileSourceFactory.MAPQUESTOSM);
+        mapView.setTileSource(TileSourceFactory.MAPNIK);
         mapController = mapView.getController();
         mapController.setZoom(6);
         mapView.setMultiTouchControls(true);
@@ -171,7 +171,7 @@ public class BaseActivity extends Activity {
         }
 
         @Override
-        public boolean onSnapToItem(int arg0, int arg1, Point arg2, IMapView arg3) {
+        public boolean onSnapToItem(int x, int y, Point snapPoint, IMapView mapView) {
             return false;
         }
 
