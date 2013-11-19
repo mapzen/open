@@ -141,7 +141,7 @@ public class BaseActivity extends Activity {
         Tiles tiles = new Tiles();
         mapView.setTileSource(tiles);
         mapController = mapView.getController();
-        mapController.setZoom(6);
+        mapController.setZoom(10);
         mapView.setMultiTouchControls(true);
         myLocationOverlay = new MyLocationOverlay(this, mapView, new ResourceProxy() {
             @Override
