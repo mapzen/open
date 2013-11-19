@@ -95,7 +95,7 @@ public class BaseActivity extends Activity {
     private void setupSlidingMenu() {
         slidingMenu = new SlidingMenu(this);
         slidingMenu.setMode(SlidingMenu.LEFT);
-        slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+        slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
         slidingMenu.setShadowWidthRes(R.dimen.slidingmenu_shadow_width);
         slidingMenu.setShadowDrawable(R.drawable.slidingmenu_shadow);
         slidingMenu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
