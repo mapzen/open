@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import com.android.volley.*;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -41,6 +42,18 @@ public class SearchActivity extends Activity {
                 Intent intent = new Intent(getBaseContext(), BaseActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("place", (Place)view.getTag(R.string.tag_placeholder));
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+        Button btn = (Button) findViewById(R.id.map_it);
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), BaseActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("places", list);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }

@@ -200,8 +200,16 @@ public class BaseActivity extends Activity {
 
         if(bundle != null) {
             Place place = bundle.getParcelable("place");
-            addStar(place.getPoint());
-            mapController.setCenter(place.getPoint());
+            if(place != null) {
+                addStar(place.getPoint());
+                mapController.setCenter(place.getPoint());
+            } else {
+                ArrayList<Place> places = bundle.getParcelableArrayList("places");
+                for(Place p: places) {
+                    addStar(p.getPoint());
+                }
+            }
+
         } else if(location != null) {
             mapController.setCenter(location);
         }
@@ -212,7 +220,7 @@ public class BaseActivity extends Activity {
     }
 
     private void addStar(GeoPoint point) {
-        Drawable marker=getResources().getDrawable(android.R.drawable.star_big_on);
+        Drawable marker=getResources().getDrawable(R.drawable.poi);
         int markerWidth = marker.getIntrinsicWidth();
         int markerHeight = marker.getIntrinsicHeight();
         marker.setBounds(0, markerHeight, markerWidth, 0);
