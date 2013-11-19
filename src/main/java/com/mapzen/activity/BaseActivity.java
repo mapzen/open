@@ -112,8 +112,8 @@ public class BaseActivity extends Activity {
             double[] box = {
                 ((double) boundingBox.getLonWestE6()) / 1E6,
                 ((double) boundingBox.getLatNorthE6()) / 1E6,
+                ((double) boundingBox.getLonEastE6()) / 1E6,
                 ((double) boundingBox.getLatSouthE6()) / 1E6,
-                ((double) boundingBox.getLonEastE6()) / 1E6
             };
             intent.putExtra("box", box);
         }
