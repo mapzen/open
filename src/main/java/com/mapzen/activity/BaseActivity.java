@@ -168,12 +168,11 @@ public class BaseActivity extends Activity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-
                 final MatrixCursor cursor = new MatrixCursor(COLUMNS);
                 RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-                String url = "http://api-pelias-test.mapzen.com/suggest/" + newText;
-                Log.v(LOG_TAG, url);
-                JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
+                String autocompleteUrl = "http://api-pelias-test.mapzen.com/suggest/" + newText;
+                Log.v(LOG_TAG, autocompleteUrl);
+                JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(autocompleteUrl, new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray jsonArray) {
                     Log.v(LOG_TAG, jsonArray.toString());
@@ -183,7 +182,6 @@ public class BaseActivity extends Activity {
                             obj = (JSONObject) jsonArray.get(i);
                             cursor.addRow(new String[] {String.valueOf(i), obj.getString("text")});
                         } catch (Exception e) {
-
                         }
                     }
                     geoNamesAdapter.swapCursor(cursor);
