@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.SearchView;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.mapzen.R;
+import com.mapzen.Tiles;
 import com.mapzen.entity.Place;
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
@@ -136,7 +137,8 @@ public class BaseActivity extends Activity {
         Intent intent = getIntent();
         final Bundle bundle = intent.getExtras();
         mapView = (MapView) findViewById(R.id.map);
-        mapView.setTileSource(TileSourceFactory.MAPNIK);
+        Tiles tiles = new Tiles();
+        mapView.setTileSource(tiles);
         mapController = mapView.getController();
         mapController.setZoom(6);
         mapView.setMultiTouchControls(true);
