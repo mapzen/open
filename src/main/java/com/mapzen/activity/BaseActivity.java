@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -18,7 +20,6 @@ import com.mapzen.entity.Place;
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IMapView;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
@@ -142,7 +143,32 @@ public class BaseActivity extends Activity {
         mapController = mapView.getController();
         mapController.setZoom(6);
         mapView.setMultiTouchControls(true);
-        myLocationOverlay = new MyLocationOverlay(this, mapView);
+        myLocationOverlay = new MyLocationOverlay(this, mapView, new ResourceProxy() {
+            @Override
+            public String getString(string pResId) {
+                return null;
+            }
+
+            @Override
+            public String getString(string pResId, Object... formatArgs) {
+                return null;
+            }
+
+            @Override
+            public Bitmap getBitmap(bitmap pResId) {
+                return BitmapFactory.decodeResource(getResources(), R.drawable.my_location);
+            }
+
+            @Override
+            public Drawable getDrawable(bitmap pResId) {
+                return null;
+            }
+
+            @Override
+            public float getDisplayMetricsDensity() {
+                return 0;
+            }
+        });
         myLocationOverlay.enableMyLocation();
         myLocationOverlay.enableFollowLocation();
         GeoPoint location = myLocationOverlay.getMyLocation();
