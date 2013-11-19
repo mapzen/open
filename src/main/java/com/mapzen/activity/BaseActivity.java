@@ -70,7 +70,10 @@ public class BaseActivity extends Activity {
         setupMap();
         setupSlidingMenu();
         setupActionBar();
+        setupLocateMeButton();
+    }
 
+    private void setupLocateMeButton() {
         Button locateMe = (Button)findViewById(R.id.locate_me);
         locateMe.setOnClickListener(new View.OnClickListener() {
             @Override
