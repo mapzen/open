@@ -5,19 +5,32 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.provider.BaseColumns;
+import android.util.Log;
 import android.view.*;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.SearchView;
+import android.widget.TextView;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.Tiles;
 import com.mapzen.entity.Place;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IMapView;
@@ -34,7 +47,7 @@ import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.ArrayList;
 
-import static com.mapzen.MapzenApplication.getZoomLevel;
+import static com.mapzen.MapzenApplication.LOG_TAG;
 import static com.mapzen.MapzenApplication.setZoomLevel;
 
 public class BaseActivity extends Activity {
@@ -43,6 +56,12 @@ public class BaseActivity extends Activity {
     private SlidingMenu slidingMenu;
     private StarOverlay stars;
     private MyLocationOverlay myLocationOverlay;
+    private GeoNamesAdapter geoNamesAdapter;
+
+    private static final String[] COLUMNS = {
+        BaseColumns._ID,
+        SearchManager.SUGGEST_COLUMN_TEXT_1,
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,7 +76,7 @@ public class BaseActivity extends Activity {
             @Override
             public void onClick(View v) {
                 GeoPoint currentLocation = myLocationOverlay.getMyLocation();
-                if(currentLocation != null) {
+                if (currentLocation != null) {
                     mapController.animateTo(currentLocation);
                 }
             }
@@ -138,6 +157,49 @@ public class BaseActivity extends Activity {
                 (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                final MatrixCursor cursor = new MatrixCursor(COLUMNS);
+                RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+                String url = "http://api-pelias-test.mapzen.com/suggest/" + newText;
+                Log.v(LOG_TAG, url);
+                JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray jsonArray) {
+                    Log.v(LOG_TAG, jsonArray.toString());
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject obj;
+                        try {
+                            obj = (JSONObject) jsonArray.get(i);
+                            cursor.addRow(new String[] {String.valueOf(i), obj.getString("text")});
+                        } catch (Exception e) {
+
+                        }
+                    }
+                    geoNamesAdapter.swapCursor(cursor);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                    }
+                });
+                queue.add(jsonArrayRequest);
+
+                return false;
+            }
+        });
+        if (geoNamesAdapter == null) {
+            MatrixCursor cursor = new MatrixCursor(COLUMNS);
+            geoNamesAdapter = new GeoNamesAdapter(getActionBar().getThemedContext(), cursor);
+        }
+        searchView.setSuggestionsAdapter(geoNamesAdapter);
         return true;
     }
 
@@ -259,6 +321,26 @@ public class BaseActivity extends Activity {
         @Override
         public int size() {
             return items.size();
+        }
+    }
+
+    private class GeoNamesAdapter extends CursorAdapter {
+        public GeoNamesAdapter(Context context, Cursor c) {
+            super(context, c, 0);
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View v = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+            return v;
+        }
+
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+            TextView tv = (TextView) view;
+            final int textIndex = cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1);
+            tv.setText(cursor.getString(textIndex));
         }
     }
 }
