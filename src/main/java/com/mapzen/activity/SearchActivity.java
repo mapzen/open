@@ -60,7 +60,7 @@ public class SearchActivity extends Activity {
             RequestQueue queue = Volley.newRequestQueue(this);
             double[] box = intent.getDoubleArrayExtra("box");
             String url = baseUrl + query + "&bounded=1&viewbox=" + Double.toString(box[0]) + "," + Double.toString(box[1]) + "," + Double.toString(box[2]) + "," + Double.toString(box[3]);
-
+            Log.v(LOG_TAG, url);
             JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
                 @Override
                 public void onResponse(JSONArray jsonArray) {
