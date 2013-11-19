@@ -14,12 +14,16 @@ import android.view.*;
 import android.widget.Button;
 import android.widget.SearchView;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.Tiles;
 import com.mapzen.entity.Place;
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IMapView;
+import org.osmdroid.events.MapListener;
+import org.osmdroid.events.ScrollEvent;
+import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
@@ -29,6 +33,9 @@ import org.osmdroid.views.overlay.MyLocationOverlay;
 import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.ArrayList;
+
+import static com.mapzen.MapzenApplication.getZoomLevel;
+import static com.mapzen.MapzenApplication.setZoomLevel;
 
 public class BaseActivity extends Activity {
     private MapView mapView;
@@ -134,6 +141,10 @@ public class BaseActivity extends Activity {
         return true;
     }
 
+    private int getZoomLevel() {
+        return MapzenApplication.getZoomLevel();
+    }
+
     private void setupMap() {
         Intent intent = getIntent();
         final Bundle bundle = intent.getExtras();
@@ -141,7 +152,19 @@ public class BaseActivity extends Activity {
         Tiles tiles = new Tiles();
         mapView.setTileSource(tiles);
         mapController = mapView.getController();
-        mapController.setZoom(10);
+        mapController.setZoom(getZoomLevel());
+        mapView.setMapListener(new MapListener() {
+            @Override
+            public boolean onScroll(ScrollEvent event) {
+                return false;
+            }
+
+            @Override
+            public boolean onZoom(ZoomEvent event) {
+                setZoomLevel(event.getZoomLevel());
+                return false;
+            }
+        });
         mapView.setMultiTouchControls(true);
         myLocationOverlay = new MyLocationOverlay(this, mapView, new ResourceProxy() {
             @Override

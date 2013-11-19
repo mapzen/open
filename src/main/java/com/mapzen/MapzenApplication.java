@@ -11,4 +11,16 @@ public class MapzenApplication extends Application {
     };
 
     public static String LOG_TAG = "Mapzen: ";
+
+    public static int getZoomLevel() {
+        return zoomLevel;
+    }
+
+    public static void setZoomLevel(int zoomLevel) {
+        MapzenApplication.zoomLevel = zoomLevel;
+    }
+
+    public static int zoomLevel = 15;
+
+
 }
