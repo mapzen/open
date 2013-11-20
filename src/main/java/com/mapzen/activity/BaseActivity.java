@@ -68,8 +68,7 @@ public class BaseActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map);
         setupMap();
-        setupSlidingMenu();
-        setupActionBar();
+        //setupSlidingMenu();
         setupLocateMeButton();
     }
 
@@ -84,12 +83,6 @@ public class BaseActivity extends Activity {
                 }
             }
         });
-    }
-
-    private void setupActionBar() {
-        ActionBar ab = getActionBar();
-        ab.setTitle(R.string.application_name);
-        ab.setDisplayHomeAsUpEnabled(true);
     }
 
     private void setupSlidingMenu() {

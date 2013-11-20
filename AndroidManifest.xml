@@ -16,7 +16,7 @@
 
     <application android:name=".MapzenApplication"
                  android:label="@string/application_name"
-                 android:theme="@android:style/Theme.Holo.Light">
+                 android:theme="@style/Theme.Mapzen">
         <activity android:name=".activity.BaseActivity"
                   android:label="@string/application_name">
             <intent-filter>
