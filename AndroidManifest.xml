@@ -4,7 +4,7 @@
           android:versionName="1.0.0-SNAPSHOT"
           package="com.mapzen">
 
-    <uses-sdk android:minSdkVersion="18"
+    <uses-sdk android:minSdkVersion="17"
               android:targetSdkVersion="18"/>
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
