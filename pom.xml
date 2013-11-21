@@ -103,5 +103,16 @@
             </plugin>
         </plugins>
     </build>
+	<properties>
+	  <internal.repo.path>file://${basedir}/releases/</internal.repo.path>
+	</properties>
+
+	<distributionManagement>
+	  <repository>
+	    <id>internal.repo</id>
+	    <name>Internal Repository</name>
+	    <url>${internal.repo.path}</url>
+	  </repository>
+	</distributionManagement>
 </project>
 
