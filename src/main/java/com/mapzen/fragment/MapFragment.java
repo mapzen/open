@@ -59,6 +59,38 @@ public class MapFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        disableLocation();
+    }
+
+    private void disableLocation() {
+        if(myLocationOverlay != null) {
+            myLocationOverlay.disableFollowLocation();
+            myLocationOverlay.disableMyLocation();
+        }
+    }
+
+    private void enableLocation() {
+        if (myLocationOverlay != null) {
+            myLocationOverlay.enableMyLocation();
+            myLocationOverlay.enableFollowLocation();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        disableLocation();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        enableLocation();
+    }
+
     private void setupLocateMeButton(View view) {
         Button locateMe = (Button)view.findViewById(R.id.locate_me);
         locateMe.setOnClickListener(new View.OnClickListener() {
@@ -118,12 +150,10 @@ public class MapFragment extends Fragment {
                 return 0;
             }
         });
-        myLocationOverlay.enableMyLocation();
-        myLocationOverlay.enableFollowLocation();
+        enableLocation();
         mapView.getOverlays().add(myLocationOverlay);
         disableHardwareAcceleration();
     }
-
 
     private void disableHardwareAcceleration() {
         mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
