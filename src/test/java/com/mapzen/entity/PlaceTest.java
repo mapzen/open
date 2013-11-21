@@ -52,6 +52,7 @@ public class PlaceTest {
     public void isParcelable() throws Exception {
         Parcel parcel = Parcel.obtain();
         place.writeToParcel(parcel, 0);
+        parcel.setDataPosition(0);
         Place newPlace = Place.readFromParcel(parcel);
         assertThat(place, equalTo(newPlace));
     }
