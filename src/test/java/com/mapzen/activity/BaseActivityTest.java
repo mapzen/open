@@ -1,22 +1,23 @@
 package com.mapzen.activity;
 
-import android.app.Activity;
-import android.widget.SearchView;
+import com.mapzen.shadows.ShadowCanvas;
+import com.mapzen.shadows.ShadowMapView;
+import com.mapzen.shadows.ShadowMyLocationOverlay;
+import com.mapzen.shadows.ShadowPicture;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowView;
 
 import static org.junit.Assert.assertTrue;
 
+@Config(shadows={ ShadowMapView.class, ShadowMyLocationOverlay.class, ShadowPicture.class, ShadowCanvas.class })
 @RunWith(RobolectricTestRunner.class)
 public class BaseActivityTest {
     @Test
     public void onCreate_initializesActivity() throws Exception {
-        //BaseActivity activity = Robolectric.buildActivity(BaseActivity.class).create().get();
-        //1assertTrue(activity != null);
+        BaseActivity activity = Robolectric.buildActivity(BaseActivity.class).create().get();
+        assertTrue(activity != null);
     }
-
 }
