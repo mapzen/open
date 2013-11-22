@@ -11,7 +11,7 @@
     <repositories>
         <repository>
             <id>Mapzen mvn-repo</id>
-            <url>http://raw.github.com/mapzen/mvn-repo/tree/master/mvn-repo</url>
+            <url>http://raw.github.com/mapzen/mvn-repo/tree/master</url>
         </repository>
     </repositories>
 
