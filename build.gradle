@@ -37,6 +37,7 @@ dependencies {
     compile group: 'org.slf4j', name: 'slf4j-android', version:'1.6.1-RC1'
     compile group: 'com.google', name: 'volley', version:'1.0.0-SNAPSHOT'
     compile 'com.android.support:support-v4:+'
+    compile fileTree(dir: 'libs', include: '*.jar')
     instrumentTestCompile group: 'junit', name: 'junit', version:'4.8.2'
     instrumentTestCompile group: 'org.robolectric', name: 'robolectric', version:'2.3-SNAPSHOT'
 }
