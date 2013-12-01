@@ -1,43 +1,8 @@
-group = 'com.mapzen'
-version = '1.0.0-SNAPSHOT'
-
-description = """Mapzen"""
-
 buildscript {
     repositories {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.6.+'
-        classpath 'com.squareup.gradle:gradle-android-test-plugin:0.9.+'
+        classpath 'com.android.tools.build:gradle:0.5.+'
     }
-}
-
-apply plugin: 'android'
-
-repositories {
-    mavenCentral()
-}
-
-android {
-    compileSdkVersion 19
-    buildToolsVersion "19.0.0"
-
-    defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 18
-    }
-}
-
-repositories {
-     maven { url "http://repo.maven.apache.org/maven2" }
-}
-dependencies {
-    compile group: 'org.osmdroid', name: 'osmdroid-android', version:'3.0.9'
-    compile group: 'org.slf4j', name: 'slf4j-android', version:'1.6.1-RC1'
-    compile 'com.android.support:support-v4:+'
-    compile fileTree(dir: 'libs', include: '*.jar')
-    instrumentTestCompile 'junit:junit:4.10'
-    instrumentTestCompile 'org.robolectric:robolectric:2.1.+'
-    instrumentTestCompile 'com.squareup:fest-android:1.0.+'
 }
