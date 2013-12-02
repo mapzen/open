@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="application_name">Mapzen</string>
     <string name="memo_section">Demos</string>
     <string name="reykjavik">Reyjavik</string>
@@ -8,4 +9,8 @@
     <string name="search_title">find stuff</string>
     <string name="tag_viewholder">1</string>
     <string name="tag_placeholder">2</string>
+    <string name="title_activity_vector_map">MainActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
 </resources>

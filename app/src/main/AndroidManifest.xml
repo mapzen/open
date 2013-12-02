@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          android:versionCode="2"
-          android:versionName="1.0.0-SNAPSHOT"
-          package="com.mapzen">
+    package="com.mapzen"
+    android:versionCode="2"
+    android:versionName="1.0.0-SNAPSHOT" >
 
-    <uses-sdk android:minSdkVersion="17"
-              android:targetSdkVersion="18"/>
+    <uses-sdk
+        android:minSdkVersion="17"
+        android:targetSdkVersion="18" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -14,15 +15,30 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <application android:name=".MapzenApplication"
-                 android:label="@string/application_name"
-                 android:theme="@style/Theme.Mapzen">
-        <activity android:name=".activity.BaseActivity"
-                  android:label="@string/application_name">
+    <application
+        android:name="com.mapzen.MapzenApplication"
+        android:label="@string/application_name"
+        android:theme="@style/Theme.Mapzen" >
+        <activity
+            android:name="com.mapzen.activity.BaseActivity"
+            android:label="@string/application_name" >
+            <!--
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            -->
+        </activity>
+        <activity
+            android:name="com.mapzen.activity.VectorMapActivity"
+            android:label="@string/title_activity_vector_map" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
+
 </manifest>
