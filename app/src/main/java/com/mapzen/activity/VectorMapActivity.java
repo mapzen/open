@@ -25,14 +25,15 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.mapzen.R;
+import com.mapzen.entity.Place;
+import com.mapzen.fragment.SearchResultsFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.oscim.android.MapActivity;
-import org.oscim.android.MapView;
+import org.oscim.core.BoundingBox;
 import org.oscim.core.MapPosition;
-import org.oscim.layers.tile.vector.VectorTileLayer;
 import org.oscim.map.Map;
 
 import static android.provider.BaseColumns._ID;
@@ -47,8 +48,6 @@ public class VectorMapActivity extends MapActivity implements SearchView.OnQuery
     private SlidingMenu slidingMenu;
     private GeoNamesAdapter geoNamesAdapter;
     private RequestQueue queue;
-    private MapView mMapView;
-    private VectorTileLayer mBaseLayer;
     private MenuItem menuItem;
 
     final String[] COLUMNS = {
@@ -122,10 +121,64 @@ public class VectorMapActivity extends MapActivity implements SearchView.OnQuery
 
     @Override
     public boolean onQueryTextSubmit(String query) {
+        String baseUrl = getString(R.string.nominatim_base_url);
+        BoundingBox boundingBox = mMap.getBoundingBox();
+        double[] box = {
+            boundingBox.getMinLongitude(),
+            boundingBox.getMinLatitude(),
+            boundingBox.getMaxLongitude(),
+            boundingBox.getMaxLatitude(),
+        };
+        String url = baseUrl + query + "&bounded=1&viewbox=" + Double.toString(box[0]) +
+                "," + Double.toString(box[1]) + "," + Double.toString(box[2]) + "," +
+                Double.toString(box[3]);
+        Log.v(LOG_TAG, url);
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url,
+                getSearchSuccessResponseListener(), getSearchErrorResponseListener());
+        queue.add(jsonArrayRequest);
+        clearSearchText();
         return true;
     }
 
-    private Response.Listener<JSONArray> autocompleteSuccessResponseListener() {
+    private Response.ErrorListener getSearchErrorResponseListener() {
+        return new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+            }
+        };
+    }
+
+    private Response.Listener<JSONArray> getSearchSuccessResponseListener() {
+        return new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray jsonArray) {
+                final SearchResultsFragment searchResultsFragment =
+                        (SearchResultsFragment) getFragmentManager().findFragmentById(
+                                R.id.search_results_fragment);
+                Log.v(LOG_TAG, jsonArray.toString());
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    Place place = null;
+                    try {
+                        place = Place.fromJson(jsonArray.getJSONObject(i));
+                    } catch (JSONException e) {
+                        Log.e(LOG_TAG, e.toString());
+                    }
+                    Log.v(LOG_TAG, place.getDisplayName());
+                    
+                    searchResultsFragment.add(place);
+                }
+            }
+        };
+    }
+
+    private void clearSearchText() {
+        final SearchView searchView = (SearchView) menuItem.getActionView();
+        assert searchView != null;
+        searchView.clearFocus();
+        searchView.setQuery("", false);
+    }
+
+    private Response.Listener<JSONArray> getAutocompleteSuccessResponseListener() {
         final MatrixCursor cursor = new MatrixCursor(COLUMNS);
         return new Response.Listener<JSONArray>() {
             @Override
@@ -150,7 +203,7 @@ public class VectorMapActivity extends MapActivity implements SearchView.OnQuery
         };
     }
 
-    private Response.ErrorListener autocompleteErrorResponseListener() {
+    private Response.ErrorListener getAutocompleteErrorResponseListener() {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
@@ -162,7 +215,7 @@ public class VectorMapActivity extends MapActivity implements SearchView.OnQuery
         String autocompleteUrl = getString(R.string.pelias_test_suggest_url) + Uri.encode(newText);
         Log.v(LOG_TAG, autocompleteUrl);
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(autocompleteUrl,
-                    autocompleteSuccessResponseListener(), autocompleteErrorResponseListener());
+                    getAutocompleteSuccessResponseListener(), getAutocompleteErrorResponseListener());
         queue.add(jsonArrayRequest);
         return true;
     }
@@ -197,10 +250,7 @@ public class VectorMapActivity extends MapActivity implements SearchView.OnQuery
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    final SearchView searchView = (SearchView) menuItem.getActionView();
-                    assert searchView != null;
-                    searchView.setQuery("", false);
-                    searchView.clearFocus();
+                    clearSearchText();
                     MapPosition mapPosition = (MapPosition) view.getTag();
                     mMap.setMapPosition(mapPosition);
                 }
