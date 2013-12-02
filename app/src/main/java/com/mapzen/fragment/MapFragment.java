@@ -37,10 +37,8 @@ import static android.provider.BaseColumns._ID;
 import static com.mapzen.MapzenApplication.LOG_TAG;
 import static com.mapzen.MapzenApplication.PELIAS_LAT;
 import static com.mapzen.MapzenApplication.PELIAS_LON;
-import static com.mapzen.MapzenApplication.PELIAS_PAYLOAD;
 import static com.mapzen.MapzenApplication.PELIAS_TEXT;
 import static com.mapzen.MapzenApplication.getLocationPosition;
-import static com.mapzen.MapzenApplication.getStoredZoomLevel;
 import static com.mapzen.MapzenApplication.storeMapPosition;
 
 public class MapFragment extends Fragment {
@@ -48,10 +46,6 @@ public class MapFragment extends Fragment {
     private VectorTileLayer mBaseLayer;
     private VectorMapActivity activity;
     private Map mMap;
-
-    final String[] COLUMNS = {
-        _ID, PELIAS_TEXT, PELIAS_LAT, PELIAS_LON
-    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

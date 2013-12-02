@@ -24,7 +24,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 
 import org.json.JSONArray;
@@ -33,13 +32,8 @@ import org.json.JSONObject;
 import org.oscim.android.MapActivity;
 import org.oscim.android.MapView;
 import org.oscim.core.MapPosition;
-import org.oscim.layers.tile.vector.BuildingLayer;
 import org.oscim.layers.tile.vector.VectorTileLayer;
-import org.oscim.layers.tile.vector.labeling.LabelLayer;
 import org.oscim.map.Map;
-import org.oscim.theme.InternalRenderTheme;
-import org.oscim.tiling.source.TileSource;
-import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 
 import static android.provider.BaseColumns._ID;
 import static com.mapzen.MapzenApplication.LOG_TAG;
@@ -47,9 +41,7 @@ import static com.mapzen.MapzenApplication.PELIAS_LAT;
 import static com.mapzen.MapzenApplication.PELIAS_LON;
 import static com.mapzen.MapzenApplication.PELIAS_PAYLOAD;
 import static com.mapzen.MapzenApplication.PELIAS_TEXT;
-import static com.mapzen.MapzenApplication.getLocationPosition;
 import static com.mapzen.MapzenApplication.getStoredZoomLevel;
-import static com.mapzen.MapzenApplication.storeMapPosition;
 
 public class VectorMapActivity extends MapActivity implements SearchView.OnQueryTextListener {
     private SlidingMenu slidingMenu;
