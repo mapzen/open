@@ -29,6 +29,7 @@ import org.osmdroid.views.MapView;
 import static com.mapzen.MapzenApplication.LOG_TAG;
 
 public class BaseActivity extends Activity {
+/*
     private SlidingMenu slidingMenu;
     private GeoNamesAdapter geoNamesAdapter;
     private RequestQueue queue;
@@ -208,4 +209,5 @@ public class BaseActivity extends Activity {
             tv.setText(cursor.getString(textIndex));
         }
     }
+    */
 }

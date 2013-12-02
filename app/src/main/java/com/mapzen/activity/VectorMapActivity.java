@@ -5,6 +5,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -35,6 +36,7 @@ import org.oscim.core.MapPosition;
 import org.oscim.layers.tile.vector.BuildingLayer;
 import org.oscim.layers.tile.vector.VectorTileLayer;
 import org.oscim.layers.tile.vector.labeling.LabelLayer;
+import org.oscim.map.Map;
 import org.oscim.theme.InternalRenderTheme;
 import org.oscim.tiling.source.TileSource;
 import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
@@ -45,7 +47,9 @@ import static com.mapzen.MapzenApplication.PELIAS_LAT;
 import static com.mapzen.MapzenApplication.PELIAS_LON;
 import static com.mapzen.MapzenApplication.PELIAS_PAYLOAD;
 import static com.mapzen.MapzenApplication.PELIAS_TEXT;
-import static com.mapzen.MapzenApplication.getZoomLevel;
+import static com.mapzen.MapzenApplication.getLocationPosition;
+import static com.mapzen.MapzenApplication.getStoredZoomLevel;
+import static com.mapzen.MapzenApplication.storeMapPosition;
 
 public class VectorMapActivity extends MapActivity implements SearchView.OnQueryTextListener {
     private SlidingMenu slidingMenu;
@@ -160,7 +164,7 @@ public class VectorMapActivity extends MapActivity implements SearchView.OnQuery
     }
 
     public boolean onQueryTextChange(String newText) {
-        String autocompleteUrl = getString(R.string.pelias_test_suggest_url) + newText;
+        String autocompleteUrl = getString(R.string.pelias_test_suggest_url) + Uri.encode(newText);
         Log.v(LOG_TAG, autocompleteUrl);
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(autocompleteUrl,
                     autocompleteSuccessResponseListener(), autocompleteErrorResponseListener());
@@ -193,7 +197,17 @@ public class VectorMapActivity extends MapActivity implements SearchView.OnQuery
         mMap.getLayers().add(new BuildingLayer(mMap, mBaseLayer.getTileLayer()));
         mMap.getLayers().add(new LabelLayer(mMap, mBaseLayer.getTileLayer()));
         mMap.setTheme(InternalRenderTheme.DEFAULT);
-        mMap.setMapPosition(MapzenApplication.getLocationPosition(this));
+        mMap.bind(new Map.UpdateListener() {
+            @Override
+            public void onMapUpdate(MapPosition mapPosition, boolean positionChanged, boolean clear) {
+                Log.v(LOG_TAG, "updating zoomlevel");
+                Log.v(LOG_TAG, String.valueOf(mapPosition.getZoomScale()));
+                Log.v(LOG_TAG, String.valueOf(mapPosition.zoomLevel));
+                storeMapPosition(mapPosition);
+            }
+        });
+        mMap.setMapPosition(getLocationPosition(this));
+
     }
 
     private class GeoNamesAdapter extends CursorAdapter {
@@ -210,6 +224,8 @@ public class VectorMapActivity extends MapActivity implements SearchView.OnQuery
                 @Override
                 public void onClick(View view) {
                     final SearchView searchView = (SearchView) menuItem.getActionView();
+                    assert searchView != null;
+                    searchView.setQuery("", false);
                     searchView.clearFocus();
                     MapPosition mapPosition = (MapPosition) view.getTag();
                     mMap.setMapPosition(mapPosition);
@@ -226,7 +242,7 @@ public class VectorMapActivity extends MapActivity implements SearchView.OnQuery
                     Double.parseDouble(cursor.getString(cursor.getColumnIndex(PELIAS_LAT)));
             double lon =
                     Double.parseDouble(cursor.getString(cursor.getColumnIndex(PELIAS_LON)));
-            MapPosition position = new MapPosition(lat, lon, Math.pow(2, getZoomLevel()));
+            MapPosition position = new MapPosition(lat, lon, Math.pow(2, getStoredZoomLevel()));
             tv.setTag(position);
             tv.setText(cursor.getString(textIndex));
         }

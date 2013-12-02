@@ -16,6 +16,8 @@ public class MapzenApplication extends Application {
     public static String PELIAS_PAYLOAD = "payload";
 
     private static Location location = null;
+    private static MapPosition mapPosition =
+            new MapPosition(64.133333, -21.933333, Math.pow(2, 15));
 
     // default to Reykjavik
     public static double[] DEFAULT_COORDINATES =  {
@@ -25,15 +27,13 @@ public class MapzenApplication extends Application {
 
     public static String LOG_TAG = "Mapzen: ";
 
-    public static int getZoomLevel() {
-        return zoomLevel;
+    public static void storeMapPosition(MapPosition pos) {
+        mapPosition = pos;
     }
 
-    public static void setZoomLevel(int zoomLevel) {
-        MapzenApplication.zoomLevel = zoomLevel;
+    public static double getStoredZoomLevel() {
+        return mapPosition.zoomLevel;
     }
-
-    public static int zoomLevel = 15;
 
     public static Location getLocation(Context context) {
         if(location == null) {
@@ -51,9 +51,9 @@ public class MapzenApplication extends Application {
         if(location != null) {
             double lat = getLocation(context).getLatitude();
             double lon = getLocation(context).getLongitude();
-            mapPosition = new MapPosition(lat, lon, Math.pow(2, zoomLevel));
+            mapPosition = new MapPosition(lat, lon, Math.pow(2, getStoredZoomLevel()));
         } else {
-            mapPosition = new MapPosition(40.67f, -73.94f, Math.pow(2, zoomLevel));
+            mapPosition = new MapPosition(40.67f, -73.94f, Math.pow(2, getStoredZoomLevel()));
         }
 
         return mapPosition;

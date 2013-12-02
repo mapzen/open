@@ -20,10 +20,8 @@ import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.MyLocationOverlay;
 
-import static com.mapzen.MapzenApplication.getZoomLevel;
-import static com.mapzen.MapzenApplication.setZoomLevel;
-
 public class MapFragment extends Fragment {
+    /*
     public static final String TILES_STREET_MAP = "randyme.gajlngfe";
     public static final String TILES_SATELITE_MAP = "randyme.gb92439b";
 
@@ -158,4 +156,5 @@ public class MapFragment extends Fragment {
     private void disableHardwareAcceleration() {
         mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
     }
+    */
 }
