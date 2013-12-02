@@ -14,5 +14,6 @@
     <string name="action_settings">Settings</string>
     <string name="tiles_source_url_key">url</string>
     <string name="tiles_source_url">http://opensciencemap.org/tiles/vtm</string>
+    <string name="pelias_test_suggest_url">http://api-pelias-test.mapzen.com/suggest/</string>
 
 </resources>
