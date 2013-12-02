@@ -45,9 +45,8 @@ public class VectorMapActivity extends MapActivity implements SearchView.OnQuery
     private SlidingMenu slidingMenu;
     private GeoNamesAdapter geoNamesAdapter;
     private RequestQueue queue;
-
-    MapView mMapView;
-    VectorTileLayer mBaseLayer;
+    private MapView mMapView;
+    private VectorTileLayer mBaseLayer;
 
     final String[] COLUMNS = {
             BaseColumns._ID,
