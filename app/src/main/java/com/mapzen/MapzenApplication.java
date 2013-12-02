@@ -10,6 +10,11 @@ import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 
 public class MapzenApplication extends Application {
+    public static String PELIAS_TEXT = "text";
+    public static String PELIAS_LAT = "lat";
+    public static String PELIAS_LON = "lon";
+    public static String PELIAS_PAYLOAD = "payload";
+
     private static Location location = null;
 
     // default to Reykjavik

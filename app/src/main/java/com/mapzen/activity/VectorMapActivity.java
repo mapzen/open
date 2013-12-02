@@ -6,7 +6,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -18,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.SearchView;
 import android.widget.TextView;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -33,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.oscim.android.MapActivity;
 import org.oscim.android.MapView;
+import org.oscim.core.MapPosition;
 import org.oscim.layers.tile.vector.BuildingLayer;
 import org.oscim.layers.tile.vector.VectorTileLayer;
 import org.oscim.layers.tile.vector.labeling.LabelLayer;
@@ -40,9 +39,13 @@ import org.oscim.theme.InternalRenderTheme;
 import org.oscim.tiling.source.TileSource;
 import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 
-import java.util.jar.JarException;
-
+import static android.provider.BaseColumns._ID;
 import static com.mapzen.MapzenApplication.LOG_TAG;
+import static com.mapzen.MapzenApplication.PELIAS_LAT;
+import static com.mapzen.MapzenApplication.PELIAS_LON;
+import static com.mapzen.MapzenApplication.PELIAS_PAYLOAD;
+import static com.mapzen.MapzenApplication.PELIAS_TEXT;
+import static com.mapzen.MapzenApplication.getZoomLevel;
 
 public class VectorMapActivity extends MapActivity implements SearchView.OnQueryTextListener {
     private SlidingMenu slidingMenu;
@@ -50,10 +53,10 @@ public class VectorMapActivity extends MapActivity implements SearchView.OnQuery
     private RequestQueue queue;
     private MapView mMapView;
     private VectorTileLayer mBaseLayer;
+    private MenuItem menuItem;
 
     final String[] COLUMNS = {
-            BaseColumns._ID,
-            SearchManager.SUGGEST_COLUMN_TEXT_1,
+        _ID, PELIAS_TEXT, PELIAS_LAT, PELIAS_LON
     };
 
     @Override
@@ -102,7 +105,7 @@ public class VectorMapActivity extends MapActivity implements SearchView.OnQuery
         inflater.inflate(R.menu.options_menu, menu);
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        MenuItem menuItem = menu.findItem(R.id.search);
+        menuItem = menu.findItem(R.id.search);
         final SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         setupAdapter(searchView);
@@ -132,9 +135,15 @@ public class VectorMapActivity extends MapActivity implements SearchView.OnQuery
                 for (int i = 0; i < jsonArray.length(); i++) {
                     try {
                         JSONObject obj = (JSONObject) jsonArray.get(i);
-                        cursor.addRow(new String[] {String.valueOf(i), obj.getString("text")});
+                        JSONObject payload = (JSONObject) obj.get(PELIAS_PAYLOAD);
+                        cursor.addRow(new String[] {
+                                String.valueOf(i),
+                                obj.getString(PELIAS_TEXT),
+                                payload.getString(PELIAS_LAT),
+                                payload.getString(PELIAS_LON)
+                        });
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        Log.e(LOG_TAG, e.toString());
                     }
                 }
                 geoNamesAdapter.swapCursor(cursor);
@@ -187,23 +196,39 @@ public class VectorMapActivity extends MapActivity implements SearchView.OnQuery
         mMap.setMapPosition(MapzenApplication.getLocationPosition(this));
     }
 
-private class GeoNamesAdapter extends CursorAdapter {
-    public GeoNamesAdapter(Context context, Cursor c) {
-        super(context, c, 0);
-    }
+    private class GeoNamesAdapter extends CursorAdapter {
+        public GeoNamesAdapter(Context context, Cursor c) {
+            super(context, c, 0);
+        }
 
-    @Override
-    public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View v = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
-        return v;
-    }
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            LayoutInflater inflater = LayoutInflater.from(context);
+            View v = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+            assert v != null;
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final SearchView searchView = (SearchView) menuItem.getActionView();
+                    searchView.clearFocus();
+                    MapPosition mapPosition = (MapPosition) view.getTag();
+                    mMap.setMapPosition(mapPosition);
+                }
+            });
+            return v;
+        }
 
-    @Override
-    public void bindView(View view, Context context, Cursor cursor) {
-        TextView tv = (TextView) view;
-        final int textIndex = cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1);
-        tv.setText(cursor.getString(textIndex));
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+            TextView tv = (TextView) view;
+            final int textIndex = cursor.getColumnIndex(PELIAS_TEXT);
+            double lat =
+                    Double.parseDouble(cursor.getString(cursor.getColumnIndex(PELIAS_LAT)));
+            double lon =
+                    Double.parseDouble(cursor.getString(cursor.getColumnIndex(PELIAS_LON)));
+            MapPosition position = new MapPosition(lat, lon, Math.pow(2, getZoomLevel()));
+            tv.setTag(position);
+            tv.setText(cursor.getString(textIndex));
+        }
     }
-}
 }
