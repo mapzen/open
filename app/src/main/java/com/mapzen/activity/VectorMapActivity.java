@@ -22,23 +22,17 @@ public class VectorMapActivity extends MapActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vector);
+        setupMap();
+    }
 
+    private void setupMap() {
         mMapView = (MapView) findViewById(R.id.map);
-
         TileSource tileSource = new OSciMap4TileSource();
-        tileSource.setOption("url", "http://opensciencemap.org/tiles/vtm");
-
+        tileSource.setOption(getString(R.string.tiles_source_url_key), getString(R.string.tiles_source_url));
         mBaseLayer = mMap.setBaseMap(tileSource);
         mMap.getLayers().add(new BuildingLayer(mMap, mBaseLayer.getTileLayer()));
         mMap.getLayers().add(new LabelLayer(mMap, mBaseLayer.getTileLayer()));
-
-        //mMap.getLayers().add(new GenericLayer(mMap, new GridRenderer()));
-
         mMap.setTheme(InternalRenderTheme.DEFAULT);
-        //mMap.setTheme(InternalRenderTheme.TRONRENDER);
-        //mMap.setTheme(InternalRenderTheme.OSMARENDER);
-
         mMap.setMapPosition(MapzenApplication.getLocationPosition(this));
     }
-
 }
