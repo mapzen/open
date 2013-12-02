@@ -63,14 +63,17 @@ public class VectorMapActivity extends MapActivity implements SearchView.OnQuery
         _ID, PELIAS_TEXT, PELIAS_LAT, PELIAS_LON
     };
 
+    public Map getMap() {
+        return mMap;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         queue = Volley.newRequestQueue(getApplicationContext());
-        setContentView(R.layout.vector);
+        setContentView(R.layout.base);
         setupActionbar();
         setupSlidingMenu();
-        setupMap();
     }
 
     @Override
@@ -187,27 +190,6 @@ public class VectorMapActivity extends MapActivity implements SearchView.OnQuery
     private void setupActionbar() {
         ActionBar ab = getActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
-    }
-
-    private void setupMap() {
-        mMapView = (MapView) findViewById(R.id.map);
-        TileSource tileSource = new OSciMap4TileSource();
-        tileSource.setOption(getString(R.string.tiles_source_url_key), getString(R.string.tiles_source_url));
-        mBaseLayer = mMap.setBaseMap(tileSource);
-        mMap.getLayers().add(new BuildingLayer(mMap, mBaseLayer.getTileLayer()));
-        mMap.getLayers().add(new LabelLayer(mMap, mBaseLayer.getTileLayer()));
-        mMap.setTheme(InternalRenderTheme.DEFAULT);
-        mMap.bind(new Map.UpdateListener() {
-            @Override
-            public void onMapUpdate(MapPosition mapPosition, boolean positionChanged, boolean clear) {
-                Log.v(LOG_TAG, "updating zoomlevel");
-                Log.v(LOG_TAG, String.valueOf(mapPosition.getZoomScale()));
-                Log.v(LOG_TAG, String.valueOf(mapPosition.zoomLevel));
-                storeMapPosition(mapPosition);
-            }
-        });
-        mMap.setMapPosition(getLocationPosition(this));
-
     }
 
     private class GeoNamesAdapter extends CursorAdapter {

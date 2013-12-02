@@ -1,160 +1,87 @@
 package com.mapzen.fragment;
 
 import android.app.Fragment;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.CursorAdapter;
+import android.widget.SearchView;
+import android.widget.TextView;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.mapzen.R;
-import com.mapzen.Tiles;
-import org.osmdroid.ResourceProxy;
-import org.osmdroid.events.MapListener;
-import org.osmdroid.events.ScrollEvent;
-import org.osmdroid.events.ZoomEvent;
-import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.MapController;
-import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.MyLocationOverlay;
+import com.mapzen.activity.VectorMapActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.oscim.android.MapView;
+import org.oscim.core.MapPosition;
+import org.oscim.layers.tile.vector.BuildingLayer;
+import org.oscim.layers.tile.vector.VectorTileLayer;
+import org.oscim.layers.tile.vector.labeling.LabelLayer;
+import org.oscim.map.Map;
+import org.oscim.theme.InternalRenderTheme;
+import org.oscim.tiling.source.TileSource;
+import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
+
+import static android.provider.BaseColumns._ID;
+import static com.mapzen.MapzenApplication.LOG_TAG;
+import static com.mapzen.MapzenApplication.PELIAS_LAT;
+import static com.mapzen.MapzenApplication.PELIAS_LON;
+import static com.mapzen.MapzenApplication.PELIAS_PAYLOAD;
+import static com.mapzen.MapzenApplication.PELIAS_TEXT;
+import static com.mapzen.MapzenApplication.getLocationPosition;
+import static com.mapzen.MapzenApplication.getStoredZoomLevel;
+import static com.mapzen.MapzenApplication.storeMapPosition;
 
 public class MapFragment extends Fragment {
-    /*
-    public static final String TILES_STREET_MAP = "randyme.gajlngfe";
-    public static final String TILES_SATELITE_MAP = "randyme.gb92439b";
+    private MapView mMapView;
+    private VectorTileLayer mBaseLayer;
+    private VectorMapActivity activity;
+    private Map mMap;
 
-    private MapView mapView;
-    private MapController mapController;
-    private MyLocationOverlay myLocationOverlay;
+    final String[] COLUMNS = {
+        _ID, PELIAS_TEXT, PELIAS_LAT, PELIAS_LON
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_map,
                 container, false);
-        setupMap((MapView) view.findViewById(R.id.map), TILES_STREET_MAP);
-        Button btn = (Button) view.findViewById(R.id.sat);
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mapView = (MapView) view.findViewById(R.id.map);
-                Integer tag = (Integer)mapView.getTag();
-                Tiles tiles = null;
-                if(tag == null || tag == 0) {
-                    tiles = Tiles.getTiles(TILES_SATELITE_MAP);
-                    mapView.setTag(1);
-                } else {
-                    tiles = Tiles.getTiles(TILES_STREET_MAP);
-                    mapView.setTag(0);
-                }
-
-                mapView.setTileSource(tiles);
-            }
-        });
-        setupLocateMeButton(view);
+        activity = (VectorMapActivity) getActivity();
+        setupMap(view);
         return view;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        disableLocation();
-    }
-
-    private void disableLocation() {
-        if(myLocationOverlay != null) {
-            myLocationOverlay.disableFollowLocation();
-            myLocationOverlay.disableMyLocation();
-        }
-    }
-
-    private void enableLocation() {
-        if (myLocationOverlay != null) {
-            myLocationOverlay.enableMyLocation();
-            myLocationOverlay.enableFollowLocation();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        disableLocation();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        enableLocation();
-    }
-
-    private void setupLocateMeButton(View view) {
-        Button locateMe = (Button)view.findViewById(R.id.locate_me);
-        locateMe.setOnClickListener(new View.OnClickListener() {
+    private void setupMap(View view) {
+        mMap = activity.getMap();
+        mMapView = (MapView) view.findViewById(R.id.map);
+        TileSource tileSource = new OSciMap4TileSource();
+        tileSource.setOption(getString(R.string.tiles_source_url_key), getString(R.string.tiles_source_url));
+        mBaseLayer = mMap.setBaseMap(tileSource);
+        mMap.getLayers().add(new BuildingLayer(mMap, mBaseLayer.getTileLayer()));
+        mMap.getLayers().add(new LabelLayer(mMap, mBaseLayer.getTileLayer()));
+        mMap.setTheme(InternalRenderTheme.DEFAULT);
+        mMap.bind(new Map.UpdateListener() {
             @Override
-            public void onClick(View v) {
-                GeoPoint currentLocation = myLocationOverlay.getMyLocation();
-                if (currentLocation != null) {
-                    mapController.animateTo(currentLocation);
-                }
+            public void onMapUpdate(MapPosition mapPosition, boolean positionChanged, boolean clear) {
+                Log.v(LOG_TAG, "updating zoomlevel");
+                Log.v(LOG_TAG, String.valueOf(mapPosition.getZoomScale()));
+                Log.v(LOG_TAG, String.valueOf(mapPosition.zoomLevel));
+                storeMapPosition(mapPosition);
             }
         });
+        mMap.setMapPosition(getLocationPosition(getActivity()));
+
     }
-
-    private void setupMap(MapView v, String tileSet) {
-        mapView = v;
-
-        Tiles tiles = Tiles.getTiles(tileSet);
-        mapView.setTileSource(tiles);
-        mapController = mapView.getController();
-        mapController.setZoom(getZoomLevel());
-        mapView.setMapListener(new MapListener() {
-            @Override
-            public boolean onScroll(ScrollEvent event) {
-                return false;
-            }
-
-            @Override
-            public boolean onZoom(ZoomEvent event) {
-                setZoomLevel(event.getZoomLevel());
-                return false;
-            }
-        });
-        mapView.setMultiTouchControls(true);
-        myLocationOverlay = new MyLocationOverlay(getActivity(), mapView, new ResourceProxy() {
-            @Override
-            public String getString(string pResId) {
-                return null;
-            }
-
-            @Override
-            public String getString(string pResId, Object... formatArgs) {
-                return null;
-            }
-
-            @Override
-            public Bitmap getBitmap(bitmap pResId) {
-                return BitmapFactory.decodeResource(getResources(), R.drawable.my_location);
-            }
-
-            @Override
-            public Drawable getDrawable(bitmap pResId) {
-                return null;
-            }
-
-            @Override
-            public float getDisplayMetricsDensity() {
-                return 0;
-            }
-        });
-        enableLocation();
-        mapView.getOverlays().add(myLocationOverlay);
-        disableHardwareAcceleration();
-    }
-
-    private void disableHardwareAcceleration() {
-        mapView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-    }
-    */
 }
