@@ -41,7 +41,7 @@ import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 
 import static com.mapzen.MapzenApplication.LOG_TAG;
 
-public class VectorMapActivity extends MapActivity {
+public class VectorMapActivity extends MapActivity implements SearchView.OnQueryTextListener {
     private SlidingMenu slidingMenu;
     private GeoNamesAdapter geoNamesAdapter;
     private RequestQueue queue;
@@ -104,7 +104,7 @@ public class VectorMapActivity extends MapActivity {
         final SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         setupAdapter(searchView);
-        setupAutocompleteSearch(searchView);
+        searchView.setOnQueryTextListener(this);
         return true;
     }
 
@@ -116,42 +116,38 @@ public class VectorMapActivity extends MapActivity {
         searchView.setSuggestionsAdapter(geoNamesAdapter);
     }
 
-    private void setupAutocompleteSearch(SearchView searchView) {
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        final MatrixCursor cursor = new MatrixCursor(COLUMNS);
+
+        String autocompleteUrl = getString(R.string.pelias_test_suggest_url) + newText;
+        Log.v(LOG_TAG, autocompleteUrl);
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(autocompleteUrl, new Response.Listener<JSONArray>() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                return true;
+            public void onResponse(JSONArray jsonArray) {
+                Log.v(LOG_TAG, jsonArray.toString());
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject obj;
+                    try {
+                        obj = (JSONObject) jsonArray.get(i);
+                        cursor.addRow(new String[] {String.valueOf(i), obj.getString("text")});
+                    } catch (Exception e) {
+                    }
+                }
+                geoNamesAdapter.swapCursor(cursor);
             }
-
+        }, new Response.ErrorListener() {
             @Override
-            public boolean onQueryTextChange(String newText) {
-                final MatrixCursor cursor = new MatrixCursor(COLUMNS);
-
-                String autocompleteUrl = getString(R.string.pelias_test_suggest_url) + newText;
-                Log.v(LOG_TAG, autocompleteUrl);
-                JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(autocompleteUrl, new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray jsonArray) {
-                        Log.v(LOG_TAG, jsonArray.toString());
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject obj;
-                            try {
-                                obj = (JSONObject) jsonArray.get(i);
-                                cursor.addRow(new String[] {String.valueOf(i), obj.getString("text")});
-                            } catch (Exception e) {
-                            }
-                        }
-                        geoNamesAdapter.swapCursor(cursor);
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                    }
-                });
-                queue.add(jsonArrayRequest);
-                return true;
+            public void onErrorResponse(VolleyError volleyError) {
             }
         });
+        queue.add(jsonArrayRequest);
+        return true;
     }
 
     private void setupSlidingMenu() {
