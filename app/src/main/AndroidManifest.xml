@@ -22,20 +22,12 @@
         <activity
             android:name="com.mapzen.activity.BaseActivity"
             android:label="@string/application_name" >
-            <!--
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            -->
         </activity>
         <activity
             android:name="com.mapzen.activity.VectorMapActivity"
-            android:label="@string/title_activity_vector_map" >
+            android:label="@string/application_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
