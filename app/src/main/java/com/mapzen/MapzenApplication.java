@@ -5,8 +5,6 @@ import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-
-import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 
 public class MapzenApplication extends Application {
@@ -18,12 +16,6 @@ public class MapzenApplication extends Application {
     private static Location location = null;
     private static MapPosition mapPosition =
             new MapPosition(64.133333, -21.933333, Math.pow(2, 15));
-
-    // default to Reykjavik
-    public static double[] DEFAULT_COORDINATES =  {
-            Double.parseDouble("64.133333") * 1E6,
-            Double.parseDouble("-21.933333") * 1E6
-    };
 
     public static String LOG_TAG = "Mapzen: ";
 
@@ -42,12 +34,13 @@ public class MapzenApplication extends Application {
             String provider = locationManager.getBestProvider(criteria, false);
             location = locationManager.getLastKnownLocation(provider);
         }
+
         return location;
     }
 
     public static MapPosition getLocationPosition(Context context) {
         Location location = getLocation(context);
-        MapPosition mapPosition = null;
+        MapPosition mapPosition;
         if(location != null) {
             double lat = getLocation(context).getLatitude();
             double lon = getLocation(context).getLongitude();
@@ -55,7 +48,6 @@ public class MapzenApplication extends Application {
         } else {
             mapPosition = new MapPosition(40.67f, -73.94f, Math.pow(2, getStoredZoomLevel()));
         }
-
         return mapPosition;
     }
 }

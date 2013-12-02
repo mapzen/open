@@ -20,11 +20,7 @@
         android:label="@string/application_name"
         android:theme="@style/Theme.Mapzen" >
         <activity
-            android:name="com.mapzen.activity.BaseActivity"
-            android:label="@string/application_name" >
-        </activity>
-        <activity
-            android:name="com.mapzen.activity.VectorMapActivity"
+            android:name=".activity.BaseActivity"
             android:label="@string/application_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

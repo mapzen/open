@@ -1,28 +1,15 @@
 package com.mapzen.fragment;
 
 import android.app.Fragment;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.MatrixCursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
-import android.widget.SearchView;
-import android.widget.TextView;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.mapzen.R;
-import com.mapzen.activity.VectorMapActivity;
+import com.mapzen.activity.BaseActivity;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.oscim.android.MapView;
 import org.oscim.core.MapPosition;
 import org.oscim.layers.tile.vector.BuildingLayer;
@@ -33,18 +20,14 @@ import org.oscim.theme.InternalRenderTheme;
 import org.oscim.tiling.source.TileSource;
 import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 
-import static android.provider.BaseColumns._ID;
 import static com.mapzen.MapzenApplication.LOG_TAG;
-import static com.mapzen.MapzenApplication.PELIAS_LAT;
-import static com.mapzen.MapzenApplication.PELIAS_LON;
-import static com.mapzen.MapzenApplication.PELIAS_TEXT;
 import static com.mapzen.MapzenApplication.getLocationPosition;
 import static com.mapzen.MapzenApplication.storeMapPosition;
 
 public class MapFragment extends Fragment {
     private MapView mMapView;
     private VectorTileLayer mBaseLayer;
-    private VectorMapActivity activity;
+    private BaseActivity activity;
     private Map mMap;
 
     @Override
@@ -52,7 +35,7 @@ public class MapFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_map,
                 container, false);
-        activity = (VectorMapActivity) getActivity();
+        activity = (BaseActivity) getActivity();
         setupMap(view);
         return view;
     }
