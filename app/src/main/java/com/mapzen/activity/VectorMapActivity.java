@@ -29,6 +29,7 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.oscim.android.MapActivity;
 import org.oscim.android.MapView;
@@ -38,6 +39,8 @@ import org.oscim.layers.tile.vector.labeling.LabelLayer;
 import org.oscim.theme.InternalRenderTheme;
 import org.oscim.tiling.source.TileSource;
 import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
+
+import java.util.jar.JarException;
 
 import static com.mapzen.MapzenApplication.LOG_TAG;
 
@@ -120,31 +123,38 @@ public class VectorMapActivity extends MapActivity implements SearchView.OnQuery
         return true;
     }
 
-    @Override
-    public boolean onQueryTextChange(String newText) {
+    private Response.Listener<JSONArray> autocompleteSuccessResponseListener() {
         final MatrixCursor cursor = new MatrixCursor(COLUMNS);
-
-        String autocompleteUrl = getString(R.string.pelias_test_suggest_url) + newText;
-        Log.v(LOG_TAG, autocompleteUrl);
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(autocompleteUrl, new Response.Listener<JSONArray>() {
+        return new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray jsonArray) {
                 Log.v(LOG_TAG, jsonArray.toString());
                 for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject obj;
                     try {
-                        obj = (JSONObject) jsonArray.get(i);
+                        JSONObject obj = (JSONObject) jsonArray.get(i);
                         cursor.addRow(new String[] {String.valueOf(i), obj.getString("text")});
-                    } catch (Exception e) {
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
                 geoNamesAdapter.swapCursor(cursor);
             }
-        }, new Response.ErrorListener() {
+        };
+    }
+
+    private Response.ErrorListener autocompleteErrorResponseListener() {
+        return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
             }
-        });
+        };
+    }
+
+    public boolean onQueryTextChange(String newText) {
+        String autocompleteUrl = getString(R.string.pelias_test_suggest_url) + newText;
+        Log.v(LOG_TAG, autocompleteUrl);
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(autocompleteUrl,
+                    autocompleteSuccessResponseListener(), autocompleteErrorResponseListener());
         queue.add(jsonArrayRequest);
         return true;
     }
