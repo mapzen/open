@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import com.android.volley.RequestQueue;
@@ -144,7 +145,6 @@ public class BaseActivity extends MapActivity implements SearchView.OnQueryTextL
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url,
                 getSearchSuccessResponseListener(), getSearchErrorResponseListener());
         queue.add(jsonArrayRequest);
-        clearSearchText();
         return true;
     }
 
@@ -176,10 +176,17 @@ public class BaseActivity extends MapActivity implements SearchView.OnQueryTextL
                     markers.add(place.getMarker());
                     searchResultsFragment.add(place);
                 }
+                searchResultsFragment.notifyNewData();
+                searchResultsFragment.showResultsWrapper();
                 InputStream in = getResources().openRawResource(R.drawable.pin);
                 AndroidBitmap bitmap = new AndroidBitmap(in);
-                ItemizedLayer<MarkerItem> itemItemizedLayer = new ItemizedIconLayer<MarkerItem>(mMap, markers, new MarkerSymbol(bitmap, 0.0f, 0.0f), null);
+                ItemizedLayer<MarkerItem> itemItemizedLayer = new ItemizedIconLayer<MarkerItem>(
+                        mMap, markers, new MarkerSymbol(bitmap, 0.0f, 0.0f), null);
                 mMap.getLayers().add(itemItemizedLayer);
+                mMap.render();
+                final SearchView searchView = (SearchView) menuItem.getActionView();
+                assert searchView != null;
+                searchView.clearFocus();
             }
         };
     }
@@ -187,8 +194,8 @@ public class BaseActivity extends MapActivity implements SearchView.OnQueryTextL
     private void clearSearchText() {
         final SearchView searchView = (SearchView) menuItem.getActionView();
         assert searchView != null;
-        searchView.clearFocus();
         searchView.setQuery("", false);
+        searchView.clearFocus();
     }
 
     private Response.Listener<JSONArray> getAutocompleteSuccessResponseListener() {
