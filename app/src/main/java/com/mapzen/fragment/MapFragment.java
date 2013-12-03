@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
@@ -46,6 +47,7 @@ public class MapFragment extends Fragment {
     private BaseActivity activity;
     private Map map;
     private Button myPosition;
+    private LinearLayout container;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,8 +75,9 @@ public class MapFragment extends Fragment {
                 storeMapPosition(mapPosition);
             }
         });
+        setupMyLocationBtn(view);
+        addMyPositionMarker();
         map.setMapPosition(getLocationPosition(getActivity()));
-
     }
 
     private void setupMyLocationBtn(View view) {
@@ -96,5 +99,6 @@ public class MapFragment extends Fragment {
         markers.add(markerItem);
         ItemizedLayer<MarkerItem> itemItemizedLayer = new ItemizedIconLayer<MarkerItem>(map, markers, new MarkerSymbol(bitmap, 0.0f, 0.0f), null);
         map.getLayers().add(itemItemizedLayer);
+        map.updateMap(true);
     }
 }
