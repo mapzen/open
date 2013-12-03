@@ -5,6 +5,8 @@ import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+
+import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 
 public class MapzenApplication extends Application {
@@ -36,6 +38,10 @@ public class MapzenApplication extends Application {
         }
 
         return location;
+    }
+
+    public static GeoPoint getLocationPoint(Context context) {
+        return getLocationPosition(context).getGeoPoint();
     }
 
     public static MapPosition getLocationPosition(Context context) {

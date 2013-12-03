@@ -1,34 +1,51 @@
 package com.mapzen.fragment;
 
 import android.app.Fragment;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 
 import org.oscim.android.MapView;
+import org.oscim.android.canvas.AndroidBitmap;
+import org.oscim.backend.canvas.Bitmap;
 import org.oscim.core.MapPosition;
+import org.oscim.core.Point;
+import org.oscim.layers.marker.ItemizedIconLayer;
+import org.oscim.layers.marker.ItemizedLayer;
+import org.oscim.layers.marker.MarkerItem;
+import org.oscim.layers.marker.MarkerLayer;
+import org.oscim.layers.marker.MarkerSymbol;
 import org.oscim.layers.tile.vector.BuildingLayer;
 import org.oscim.layers.tile.vector.VectorTileLayer;
 import org.oscim.layers.tile.vector.labeling.LabelLayer;
 import org.oscim.map.Map;
+import org.oscim.renderer.LayerRenderer;
 import org.oscim.theme.InternalRenderTheme;
 import org.oscim.tiling.source.TileSource;
 import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
+import org.osmdroid.ResourceProxy;
 
-import static com.mapzen.MapzenApplication.LOG_TAG;
+import java.io.InputStream;
+import java.util.ArrayList;
+
+import static com.mapzen.MapzenApplication.getLocation;
+import static com.mapzen.MapzenApplication.getLocationPoint;
 import static com.mapzen.MapzenApplication.getLocationPosition;
 import static com.mapzen.MapzenApplication.storeMapPosition;
 
 public class MapFragment extends Fragment {
-    private MapView mMapView;
-    private VectorTileLayer mBaseLayer;
+    private MapView mapView;
+    private VectorTileLayer baseLayer;
     private BaseActivity activity;
-    private Map mMap;
+    private Map map;
+    private Button myPosition;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,28 +54,47 @@ public class MapFragment extends Fragment {
                 container, false);
         activity = (BaseActivity) getActivity();
         setupMap(view);
+        setupMyLocationBtn(view);
         return view;
     }
 
     private void setupMap(View view) {
-        mMap = activity.getMap();
-        mMapView = (MapView) view.findViewById(R.id.map);
+        map = activity.getMap();
+        mapView = (MapView) view.findViewById(R.id.map);
         TileSource tileSource = new OSciMap4TileSource();
         tileSource.setOption(getString(R.string.tiles_source_url_key), getString(R.string.tiles_source_url));
-        mBaseLayer = mMap.setBaseMap(tileSource);
-        mMap.getLayers().add(new BuildingLayer(mMap, mBaseLayer.getTileLayer()));
-        mMap.getLayers().add(new LabelLayer(mMap, mBaseLayer.getTileLayer()));
-        mMap.setTheme(InternalRenderTheme.DEFAULT);
-        mMap.bind(new Map.UpdateListener() {
+        baseLayer = map.setBaseMap(tileSource);
+        map.getLayers().add(new BuildingLayer(map, baseLayer.getTileLayer()));
+        map.getLayers().add(new LabelLayer(map, baseLayer.getTileLayer()));
+        map.setTheme(InternalRenderTheme.DEFAULT);
+        map.bind(new Map.UpdateListener() {
             @Override
             public void onMapUpdate(MapPosition mapPosition, boolean positionChanged, boolean clear) {
-                Log.v(LOG_TAG, "updating zoomlevel");
-                Log.v(LOG_TAG, String.valueOf(mapPosition.getZoomScale()));
-                Log.v(LOG_TAG, String.valueOf(mapPosition.zoomLevel));
                 storeMapPosition(mapPosition);
             }
         });
-        mMap.setMapPosition(getLocationPosition(getActivity()));
+        map.setMapPosition(getLocationPosition(getActivity()));
 
+    }
+
+    private void setupMyLocationBtn(View view) {
+        myPosition = (Button) view.findViewById(R.id.btn_my_position);
+        myPosition.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addMyPositionMarker();
+                map.getAnimator().animateTo(1300, getLocationPoint(getActivity()), Math.pow(2, 15), false);
+            }
+        });
+    }
+
+    private void addMyPositionMarker() {
+        InputStream in = getResources().openRawResource(R.drawable.pin);
+        AndroidBitmap bitmap = new AndroidBitmap(in);
+        MarkerItem markerItem = new MarkerItem("ME", "Current Location", getLocationPoint(getActivity()));
+        ArrayList<MarkerItem> markers = new ArrayList<MarkerItem>();
+        markers.add(markerItem);
+        ItemizedLayer<MarkerItem> itemItemizedLayer = new ItemizedIconLayer<MarkerItem>(map, markers, new MarkerSymbol(bitmap, 0.0f, 0.0f), null);
+        map.getLayers().add(itemItemizedLayer);
     }
 }
