@@ -32,9 +32,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.oscim.android.MapActivity;
+import org.oscim.android.canvas.AndroidBitmap;
 import org.oscim.core.BoundingBox;
 import org.oscim.core.MapPosition;
+import org.oscim.layers.marker.ItemizedIconLayer;
+import org.oscim.layers.marker.ItemizedLayer;
+import org.oscim.layers.marker.MarkerItem;
+import org.oscim.layers.marker.MarkerSymbol;
 import org.oscim.map.Map;
+
+import java.io.InputStream;
+import java.util.ArrayList;
 
 import static android.provider.BaseColumns._ID;
 import static com.mapzen.MapzenApplication.LOG_TAG;
@@ -156,6 +164,7 @@ public class BaseActivity extends MapActivity implements SearchView.OnQueryTextL
                         (SearchResultsFragment) getFragmentManager().findFragmentById(
                                 R.id.search_results_fragment);
                 Log.v(LOG_TAG, jsonArray.toString());
+                ArrayList<MarkerItem> markers = new ArrayList<MarkerItem>();
                 for (int i = 0; i < jsonArray.length(); i++) {
                     Place place = null;
                     try {
@@ -164,9 +173,13 @@ public class BaseActivity extends MapActivity implements SearchView.OnQueryTextL
                         Log.e(LOG_TAG, e.toString());
                     }
                     Log.v(LOG_TAG, place.getDisplayName());
-                    
+                    markers.add(place.getMarker());
                     searchResultsFragment.add(place);
                 }
+                InputStream in = getResources().openRawResource(R.drawable.pin);
+                AndroidBitmap bitmap = new AndroidBitmap(in);
+                ItemizedLayer<MarkerItem> itemItemizedLayer = new ItemizedIconLayer<MarkerItem>(mMap, markers, new MarkerSymbol(bitmap, 0.0f, 0.0f), null);
+                mMap.getLayers().add(itemItemizedLayer);
             }
         };
     }

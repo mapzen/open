@@ -4,7 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.osmdroid.util.GeoPoint;
+import org.oscim.core.GeoPoint;
+import org.oscim.layers.marker.MarkerItem;
 
 public class Place implements Parcelable {
     private double lat;
@@ -46,10 +47,11 @@ public class Place implements Parcelable {
         this.displayName = displayName;
     }
 
-    public GeoPoint getPoint() {
-        return new GeoPoint((int) (lat * 1E6), (int) (lon * 1E6));
+    public MarkerItem getMarker() {
+        GeoPoint geoPoint = new GeoPoint(lat, lon);
+        MarkerItem markerItem = new MarkerItem(getDisplayName(), "Current Location", geoPoint);
+        return markerItem;
     }
-
 
     @Override
     public int describeContents() {
