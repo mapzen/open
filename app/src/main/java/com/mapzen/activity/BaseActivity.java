@@ -5,6 +5,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
