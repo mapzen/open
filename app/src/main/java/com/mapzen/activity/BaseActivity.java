@@ -8,7 +8,6 @@ import android.database.MatrixCursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,7 +23,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.mapzen.R;
 import com.mapzen.entity.Place;
 import com.mapzen.fragment.SearchResultsFragment;
@@ -54,7 +52,6 @@ import static com.mapzen.MapzenApplication.PELIAS_TEXT;
 import static com.mapzen.MapzenApplication.getStoredZoomLevel;
 
 public class BaseActivity extends MapActivity implements SearchView.OnQueryTextListener {
-    private SlidingMenu slidingMenu;
     private GeoNamesAdapter geoNamesAdapter;
     private RequestQueue queue;
     private MenuItem menuItem;
@@ -72,38 +69,6 @@ public class BaseActivity extends MapActivity implements SearchView.OnQueryTextL
         super.onCreate(savedInstanceState);
         queue = Volley.newRequestQueue(getApplicationContext());
         setContentView(R.layout.base);
-        setupActionbar();
-        setupSlidingMenu();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if ( slidingMenu.isMenuShowing() ) {
-            slidingMenu.toggle();
-        }
-        else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ( keyCode == KeyEvent.KEYCODE_MENU ) {
-            this.slidingMenu.toggle();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.slidingMenu.toggle();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     @Override
@@ -238,23 +203,6 @@ public class BaseActivity extends MapActivity implements SearchView.OnQueryTextL
                     getAutocompleteSuccessResponseListener(), getAutocompleteErrorResponseListener());
         queue.add(jsonArrayRequest);
         return true;
-    }
-
-    private void setupSlidingMenu() {
-        slidingMenu = new SlidingMenu(this);
-        slidingMenu.setMode(SlidingMenu.LEFT);
-        slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
-        slidingMenu.setShadowWidthRes(R.dimen.slidingmenu_shadow_width);
-        slidingMenu.setShadowDrawable(R.drawable.slidingmenu_shadow);
-        slidingMenu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
-        slidingMenu.setFadeDegree(0.35f);
-        slidingMenu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);
-        slidingMenu.setMenu(R.layout.slidingmenu);
-    }
-
-    private void setupActionbar() {
-        ActionBar ab = getActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
     }
 
     private class GeoNamesAdapter extends CursorAdapter {
