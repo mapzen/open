@@ -2,7 +2,6 @@ package com.mapzen;
 
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.tileprovider.MapTile;
-import org.osmdroid.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
 
 public class Tiles extends OnlineTileSourceBase {

@@ -1,7 +1,7 @@
 package com.mapzen.shadows;
 
 import android.graphics.Picture;
-import android.util.Log;
+
 import org.robolectric.annotation.Implements;
 
 @Implements(Picture.class)

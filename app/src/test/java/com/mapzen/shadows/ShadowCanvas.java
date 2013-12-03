@@ -1,7 +1,7 @@
 package com.mapzen.shadows;
 
 import android.graphics.Canvas;
-import android.util.Log;
+
 import org.robolectric.annotation.Implements;
 
 @Implements(Canvas.class)

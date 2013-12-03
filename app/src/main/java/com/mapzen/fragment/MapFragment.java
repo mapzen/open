@@ -1,7 +1,6 @@
 package com.mapzen.fragment;
 
 import android.app.Fragment;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,34 +8,27 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 
 import org.oscim.android.MapView;
 import org.oscim.android.canvas.AndroidBitmap;
-import org.oscim.backend.canvas.Bitmap;
 import org.oscim.core.MapPosition;
-import org.oscim.core.Point;
 import org.oscim.layers.marker.ItemizedIconLayer;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
-import org.oscim.layers.marker.MarkerLayer;
 import org.oscim.layers.marker.MarkerSymbol;
 import org.oscim.layers.tile.vector.BuildingLayer;
 import org.oscim.layers.tile.vector.VectorTileLayer;
 import org.oscim.layers.tile.vector.labeling.LabelLayer;
 import org.oscim.map.Map;
-import org.oscim.renderer.LayerRenderer;
 import org.oscim.theme.InternalRenderTheme;
 import org.oscim.tiling.source.TileSource;
 import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
-import org.osmdroid.ResourceProxy;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import static com.mapzen.MapzenApplication.getLocation;
 import static com.mapzen.MapzenApplication.getLocationPoint;
 import static com.mapzen.MapzenApplication.getLocationPosition;
 import static com.mapzen.MapzenApplication.storeMapPosition;

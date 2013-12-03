@@ -5,7 +5,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,9 +16,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
-import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;

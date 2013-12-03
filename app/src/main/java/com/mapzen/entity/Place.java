@@ -2,6 +2,7 @@ package com.mapzen.entity;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;

@@ -1,10 +1,9 @@
 package com.mapzen.shadows;
 
 import android.content.Context;
-import android.util.Log;
+
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.MyLocationOverlay;
 import org.robolectric.annotation.Implements;
 
 @Implements(org.osmdroid.views.overlay.MyLocationOverlay.class)

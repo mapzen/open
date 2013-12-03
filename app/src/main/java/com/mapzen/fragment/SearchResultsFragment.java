@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+
 import com.mapzen.R;
 import com.mapzen.SearchViewAdapter;
 import com.mapzen.entity.Place;
