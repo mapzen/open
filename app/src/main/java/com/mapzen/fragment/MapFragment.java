@@ -6,17 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 
-import org.oscim.android.MapView;
 import org.oscim.android.canvas.AndroidBitmap;
 import org.oscim.core.MapPosition;
 import org.oscim.layers.marker.ItemizedIconLayer;
-import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.marker.MarkerSymbol;
 import org.oscim.layers.tile.vector.BuildingLayer;

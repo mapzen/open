@@ -1,6 +1,5 @@
 package com.mapzen.activity;
 
-import android.app.ActionBar;
 import android.app.SearchManager;
 import android.content.Context;
 import android.database.Cursor;

@@ -11,8 +11,6 @@ import android.os.Bundle;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 
-import java.security.PublicKey;
-
 public class MapzenApplication extends Application implements LocationListener {
 
     public static String PELIAS_TEXT = "text";
