@@ -34,12 +34,12 @@ import static com.mapzen.MapzenApplication.getLocationPosition;
 import static com.mapzen.MapzenApplication.storeMapPosition;
 
 public class MapFragment extends Fragment {
-    private MapView mapView;
     private VectorTileLayer baseLayer;
     private BaseActivity activity;
     private Map map;
     private Button myPosition;
-    private LinearLayout container;
+    private ItemizedIconLayer<MarkerItem> meMarkerLayer;
+    private ArrayList<MarkerItem> meMarkers = new ArrayList<MarkerItem>(1);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,7 +54,6 @@ public class MapFragment extends Fragment {
 
     private void setupMap(View view) {
         map = activity.getMap();
-        mapView = (MapView) view.findViewById(R.id.map);
         TileSource tileSource = new OSciMap4TileSource();
         tileSource.setOption(getString(R.string.tiles_source_url_key), getString(R.string.tiles_source_url));
         baseLayer = map.setBaseMap(tileSource);
@@ -68,7 +67,8 @@ public class MapFragment extends Fragment {
             }
         });
         setupMyLocationBtn(view);
-        addMyPositionMarker();
+
+        setupMeMarkerLayer();
         map.setMapPosition(getLocationPosition(getActivity()));
     }
 
@@ -77,20 +77,24 @@ public class MapFragment extends Fragment {
         myPosition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addMyPositionMarker();
+                addMyLocation();
                 map.getAnimator().animateTo(1300, getLocationPoint(getActivity()), Math.pow(2, 15), false);
             }
         });
     }
 
-    private void addMyPositionMarker() {
+    private void addMyLocation() {
+        MarkerItem markerItem = new MarkerItem("ME", "Current Location", getLocationPoint(getActivity()));
+        meMarkerLayer.removeAllItems();
+        meMarkerLayer.addItem(markerItem);
+        map.updateMap(true);
+    }
+
+    private void setupMeMarkerLayer() {
         InputStream in = getResources().openRawResource(R.drawable.pin);
         AndroidBitmap bitmap = new AndroidBitmap(in);
-        MarkerItem markerItem = new MarkerItem("ME", "Current Location", getLocationPoint(getActivity()));
-        ArrayList<MarkerItem> markers = new ArrayList<MarkerItem>();
-        markers.add(markerItem);
-        ItemizedLayer<MarkerItem> itemItemizedLayer = new ItemizedIconLayer<MarkerItem>(map, markers, new MarkerSymbol(bitmap, 0.0f, 0.0f), null);
-        map.getLayers().add(itemItemizedLayer);
-        map.updateMap(true);
+        meMarkerLayer = new ItemizedIconLayer<MarkerItem>(map, meMarkers, new MarkerSymbol(bitmap, 0.0f, 0.0f), null);
+        map.getLayers().add(meMarkerLayer);
+        addMyLocation();
     }
 }
