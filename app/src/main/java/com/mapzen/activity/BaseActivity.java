@@ -23,6 +23,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.entity.Place;
 import com.mapzen.fragment.SearchResultsFragment;
@@ -49,12 +50,12 @@ import static com.mapzen.MapzenApplication.PELIAS_LAT;
 import static com.mapzen.MapzenApplication.PELIAS_LON;
 import static com.mapzen.MapzenApplication.PELIAS_PAYLOAD;
 import static com.mapzen.MapzenApplication.PELIAS_TEXT;
-import static com.mapzen.MapzenApplication.getStoredZoomLevel;
 
 public class BaseActivity extends MapActivity implements SearchView.OnQueryTextListener {
     private GeoNamesAdapter geoNamesAdapter;
     private RequestQueue queue;
     private MenuItem menuItem;
+    private MapzenApplication app;
 
     final String[] COLUMNS = {
         _ID, PELIAS_TEXT, PELIAS_LAT, PELIAS_LON
@@ -67,6 +68,7 @@ public class BaseActivity extends MapActivity implements SearchView.OnQueryTextL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        app = MapzenApplication.getApp(this);
         queue = Volley.newRequestQueue(getApplicationContext());
         setContentView(R.layout.base);
     }
@@ -234,7 +236,7 @@ public class BaseActivity extends MapActivity implements SearchView.OnQueryTextL
                     Double.parseDouble(cursor.getString(cursor.getColumnIndex(PELIAS_LAT)));
             double lon =
                     Double.parseDouble(cursor.getString(cursor.getColumnIndex(PELIAS_LON)));
-            MapPosition position = new MapPosition(lat, lon, Math.pow(2, getStoredZoomLevel()));
+            MapPosition position = new MapPosition(lat, lon, Math.pow(2, app.getStoredZoomLevel()));
             tv.setTag(position);
             tv.setText(cursor.getString(textIndex));
         }

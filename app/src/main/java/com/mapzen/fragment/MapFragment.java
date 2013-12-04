@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 
@@ -29,10 +30,6 @@ import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import static com.mapzen.MapzenApplication.getLocationPoint;
-import static com.mapzen.MapzenApplication.getLocationPosition;
-import static com.mapzen.MapzenApplication.storeMapPosition;
-
 public class MapFragment extends Fragment {
     private VectorTileLayer baseLayer;
     private BaseActivity activity;
@@ -40,6 +37,31 @@ public class MapFragment extends Fragment {
     private Button myPosition;
     private ItemizedIconLayer<MarkerItem> meMarkerLayer;
     private ArrayList<MarkerItem> meMarkers = new ArrayList<MarkerItem>(1);
+    private MapzenApplication app;
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        app.stopLocationUpdates();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        app.stopLocationUpdates();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        app.setupLocationUpdates();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        app.setupLocationUpdates();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,6 +69,7 @@ public class MapFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_map,
                 container, false);
         activity = (BaseActivity) getActivity();
+        app = MapzenApplication.getApp(getActivity());
         setupMap(view);
         setupMyLocationBtn(view);
         return view;
@@ -63,13 +86,13 @@ public class MapFragment extends Fragment {
         map.bind(new Map.UpdateListener() {
             @Override
             public void onMapUpdate(MapPosition mapPosition, boolean positionChanged, boolean clear) {
-                storeMapPosition(mapPosition);
+                app.storeMapPosition(mapPosition);
             }
         });
         setupMyLocationBtn(view);
 
         setupMeMarkerLayer();
-        map.setMapPosition(getLocationPosition(getActivity()));
+        map.setMapPosition(app.getLocationPosition());
     }
 
     private void setupMyLocationBtn(View view) {
@@ -78,13 +101,13 @@ public class MapFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 addMyLocation();
-                map.getAnimator().animateTo(1300, getLocationPoint(getActivity()), Math.pow(2, 15), false);
+                map.getAnimator().animateTo(1300, app.getLocationPoint(), Math.pow(2, 15), false);
             }
         });
     }
 
     private void addMyLocation() {
-        MarkerItem markerItem = new MarkerItem("ME", "Current Location", getLocationPoint(getActivity()));
+        MarkerItem markerItem = new MarkerItem("ME", "Current Location", app.getLocationPoint());
         meMarkerLayer.removeAllItems();
         meMarkerLayer.addItem(markerItem);
         map.updateMap(true);
