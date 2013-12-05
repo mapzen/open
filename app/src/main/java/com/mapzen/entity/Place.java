@@ -26,7 +26,7 @@ public class Place implements Parcelable {
         Place place = new Place();
         place.setLat(obj.getDouble("lat"));
         place.setLon(obj.getDouble("lon"));
-        place.setDisplayName(obj.getString("display_name"));
+        place.setDisplayName(obj.getString("name"));
         return place;
     }
 
