@@ -25,6 +25,7 @@ import com.android.volley.toolbox.Volley;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.entity.Place;
+import com.mapzen.fragment.MapFragment;
 import com.mapzen.fragment.SearchResultsFragment;
 
 import org.json.JSONArray;
@@ -130,7 +131,10 @@ public class BaseActivity extends MapActivity implements SearchView.OnQueryTextL
                         (SearchResultsFragment) getFragmentManager().findFragmentById(
                                 R.id.search_results_fragment);
                 Log.v(LOG_TAG, jsonArray.toString());
-                ArrayList<MarkerItem> markers = new ArrayList<MarkerItem>();
+                MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map_fragment);
+                assert mapFragment != null;
+                ItemizedIconLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
+                poiLayer.removeAllItems();
                 for (int i = 0; i < jsonArray.length(); i++) {
                     Place place = null;
                     try {
@@ -139,16 +143,15 @@ public class BaseActivity extends MapActivity implements SearchView.OnQueryTextL
                         Log.e(LOG_TAG, e.toString());
                     }
                     Log.v(LOG_TAG, place.getDisplayName());
-                    markers.add(place.getMarker());
+                    MarkerItem m = place.getMarker();
+                    m.setMarker(mapFragment.getDefaultMarkerSymbol());
+                    m.setMarkerHotspot(MarkerItem.HotspotPlace.CENTER);
+                    poiLayer.addItem(place.getMarker());
+
                     searchResultsFragment.add(place);
                 }
                 searchResultsFragment.notifyNewData();
                 searchResultsFragment.showResultsWrapper();
-                InputStream in = getResources().openRawResource(R.drawable.pin);
-                AndroidBitmap bitmap = new AndroidBitmap(in);
-                ItemizedLayer<MarkerItem> itemItemizedLayer = new ItemizedIconLayer<MarkerItem>(
-                        mMap, markers, new MarkerSymbol(bitmap, 0.0f, 0.0f), null);
-                mMap.getLayers().add(itemItemizedLayer);
                 mMap.render();
                 final SearchView searchView = (SearchView) menuItem.getActionView();
                 assert searchView != null;

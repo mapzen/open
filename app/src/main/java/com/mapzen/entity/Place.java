@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.marker.MarkerItem;
+import org.oscim.layers.marker.MarkerLayer;
 
 public class Place implements Parcelable {
     private double lat;
@@ -51,6 +52,7 @@ public class Place implements Parcelable {
     public MarkerItem getMarker() {
         GeoPoint geoPoint = new GeoPoint(lat, lon);
         MarkerItem markerItem = new MarkerItem(getDisplayName(), "Current Location", geoPoint);
+        markerItem.setMarkerHotspot(MarkerItem.HotspotPlace.TOP_CENTER);
         return markerItem;
     }
 
