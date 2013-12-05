@@ -1,5 +1,6 @@
 package com.mapzen.activity;
 
+import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.database.Cursor;
@@ -56,6 +57,9 @@ public class BaseActivity extends MapActivity implements SearchView.OnQueryTextL
     private RequestQueue queue;
     private MenuItem menuItem;
     private MapzenApplication app;
+    private FragmentManager fragmentManager;
+    private MapFragment mapFragment;
+    private SearchResultsFragment searchResultsFragment;
 
     final String[] COLUMNS = {
         _ID, PELIAS_TEXT, PELIAS_LAT, PELIAS_LON
@@ -70,7 +74,18 @@ public class BaseActivity extends MapActivity implements SearchView.OnQueryTextL
         super.onCreate(savedInstanceState);
         app = MapzenApplication.getApp(this);
         queue = Volley.newRequestQueue(getApplicationContext());
+        fragmentManager = getFragmentManager();
         setContentView(R.layout.base);
+    }
+
+    public MapFragment getMapFragment() {
+        mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
+        return mapFragment;
+    }
+
+    public SearchResultsFragment getSearchResultsFragment() {
+        searchResultsFragment = (SearchResultsFragment) fragmentManager.findFragmentById(R.id.search_results_fragment);
+        return searchResultsFragment;
     }
 
     @Override
@@ -127,10 +142,8 @@ public class BaseActivity extends MapActivity implements SearchView.OnQueryTextL
         return new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray jsonArray) {
-                final SearchResultsFragment searchResultsFragment =
-                        (SearchResultsFragment) getFragmentManager().findFragmentById(
-                                R.id.search_results_fragment);
                 Log.v(LOG_TAG, jsonArray.toString());
+                searchResultsFragment = getSearchResultsFragment();
                 MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map_fragment);
                 assert mapFragment != null;
                 ItemizedIconLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();

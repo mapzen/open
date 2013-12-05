@@ -43,7 +43,7 @@ public class SearchViewAdapter extends ArrayAdapter {
         final Place custom = entries.get(position);
         if (custom != null) {
             holder.item1.setText(custom.getDisplayName());
-            v.setTag(R.string.tag_placeholder, custom);
+            holder.item1.setTag(custom);
         }
         return v;
     }

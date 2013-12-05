@@ -17,6 +17,7 @@ import com.mapzen.activity.BaseActivity;
 import org.oscim.android.MapView;
 import org.oscim.android.canvas.AndroidBitmap;
 import org.oscim.backend.canvas.Bitmap;
+import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 import org.oscim.event.MotionEvent;
 import org.oscim.layers.marker.ItemizedIconLayer;
@@ -79,6 +80,12 @@ public class MapFragment extends Fragment {
         setupMap(view);
         setupMyLocationBtn(view);
         return view;
+    }
+
+    public void centerOn(GeoPoint geoPoint) {
+        MapPosition mapPosition = new MapPosition(geoPoint.getLatitude(),
+                geoPoint.getLongitude(), Math.pow(2, app.getStoredZoomLevel()));
+        map.setMapPosition(mapPosition);
     }
 
     private void setupMap(View view) {

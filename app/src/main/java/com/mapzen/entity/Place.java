@@ -17,6 +17,11 @@ public class Place implements Parcelable {
     public Place() {
     }
 
+    @Override
+    public String toString() {
+        return "'" + displayName + "'[" + lat + lon + "]";
+    }
+
     public static Place fromJson(JSONObject obj) throws JSONException {
         Place place = new Place();
         place.setLat(obj.getDouble("lat"));
