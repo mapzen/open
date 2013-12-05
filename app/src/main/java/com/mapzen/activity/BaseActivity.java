@@ -145,6 +145,7 @@ public class BaseActivity extends MapActivity implements SearchView.OnQueryTextL
             public void onResponse(JSONArray jsonArray) {
                 Log.v(LOG_TAG, jsonArray.toString());
                 searchResultsFragment = getSearchResultsFragment();
+                searchResultsFragment.clearAll();
                 MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map_fragment);
                 assert mapFragment != null;
                 ItemizedIconLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();

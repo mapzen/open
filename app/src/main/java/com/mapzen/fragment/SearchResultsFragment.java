@@ -62,6 +62,10 @@ public class SearchResultsFragment extends Fragment {
         wrapper.setVisibility(View.GONE);
     }
 
+    public void clearAll() {
+        list.clear();
+    }
+
     public void add(Place place) {
         list.add(place);
     }
