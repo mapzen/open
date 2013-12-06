@@ -156,7 +156,7 @@ public class MapFragment extends Fragment {
     }
 
     private Bitmap getPinDefault() {
-        InputStream in = getResources().openRawResource(R.drawable.pin);
+        InputStream in = getResources().openRawResource(R.drawable.ic_pin);
         AndroidBitmap bitmap = new AndroidBitmap(in);
         return bitmap;
     }
