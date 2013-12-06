@@ -72,12 +72,16 @@ public class BaseActivity extends MapActivity
     }
 
     public MapFragment getMapFragment() {
-        mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
+        if (mapFragment == null) {
+            mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
+        }
         return mapFragment;
     }
 
     public SearchResultsFragment getSearchResultsFragment() {
-        searchResultsFragment = (SearchResultsFragment) fragmentManager.findFragmentById(R.id.search_results_fragment);
+        if (searchResultsFragment == null) {
+            searchResultsFragment = (SearchResultsFragment) fragmentManager.findFragmentById(R.id.search_results_fragment);
+        }
         return searchResultsFragment;
     }
 
