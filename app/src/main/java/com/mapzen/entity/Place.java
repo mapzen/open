@@ -44,12 +44,6 @@ public class Place implements Parcelable {
     public static JsonArrayRequest search(Map map, String query, Response.Listener successListener,
                               Response.ErrorListener errorListener) {
         BoundingBox boundingBox = map.getBoundingBox();
-        double[] box = {
-                boundingBox.getMinLongitude(),
-                boundingBox.getMinLatitude(),
-                boundingBox.getMaxLongitude(),
-                boundingBox.getMaxLatitude(),
-        };
         String url = String.format("%s?query=%s&viewbox=%4f,%4f,%4f,%4f",
                 PELIAS_SEARCH_URL, Uri.encode(query),
                 boundingBox.getMinLongitude(), boundingBox.getMaxLatitude(),
