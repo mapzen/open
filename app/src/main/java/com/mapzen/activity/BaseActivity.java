@@ -11,8 +11,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CursorAdapter;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -22,6 +24,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.mapzen.AutoCompleteCursor;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.entity.Place;
@@ -53,6 +56,7 @@ public class BaseActivity extends MapActivity
     private FragmentManager fragmentManager;
     private MapFragment mapFragment;
     private SearchResultsFragment searchResultsFragment;
+    private String currentSearchTerm;
 
     private final String[] columns = {
         _ID, PELIAS_TEXT, PELIAS_LAT, PELIAS_LON
@@ -102,8 +106,9 @@ public class BaseActivity extends MapActivity
 
     private void setupAdapter(SearchView searchView) {
         if (geoNamesAdapter == null) {
-            MatrixCursor cursor = new MatrixCursor(columns);
+            AutoCompleteCursor cursor = new AutoCompleteCursor(columns);
             geoNamesAdapter = new GeoNamesAdapter(getActionBar().getThemedContext(), cursor);
+            geoNamesAdapter.setSearchView(searchView);
         }
         searchView.setSuggestionsAdapter(geoNamesAdapter);
     }
@@ -169,7 +174,7 @@ public class BaseActivity extends MapActivity
     }
 
     private Response.Listener<JSONArray> getAutocompleteSuccessResponseListener() {
-        final MatrixCursor cursor = new MatrixCursor(columns);
+        final AutoCompleteCursor cursor = new AutoCompleteCursor(columns);
         return new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray jsonArray) {
@@ -178,12 +183,9 @@ public class BaseActivity extends MapActivity
                     try {
                         JSONObject obj = (JSONObject) jsonArray.get(i);
                         JSONObject payload = (JSONObject) obj.get(PELIAS_PAYLOAD);
-                        cursor.addRow(new String[] {
-                                String.valueOf(i),
-                                obj.getString(PELIAS_TEXT),
-                                payload.getString(PELIAS_LAT),
-                                payload.getString(PELIAS_LON)
-                        });
+                        cursor.getRowBuilder().setId(i).setText(obj.getString(PELIAS_TEXT)).
+                                setLat(payload.getString(PELIAS_LAT)).
+                                setLon(payload.getString(PELIAS_LON)).buildRow();
                     } catch (JSONException e) {
                         Log.e(LOG_TAG, e.toString());
                     }
@@ -202,15 +204,24 @@ public class BaseActivity extends MapActivity
     }
 
     public boolean onQueryTextChange(String newText) {
-        JsonArrayRequest jsonArrayRequest = Place.suggest(newText,
+        if (currentSearchTerm != null || !newText.equals(currentSearchTerm)) {
+            JsonArrayRequest jsonArrayRequest = Place.suggest(newText,
                     getAutocompleteSuccessResponseListener(), getAutocompleteErrorResponseListener());
-        queue.add(jsonArrayRequest);
+            queue.add(jsonArrayRequest);
+            currentSearchTerm = newText;
+        }
         return true;
     }
 
     private class GeoNamesAdapter extends CursorAdapter {
+        private SearchView searchView;
+
         public GeoNamesAdapter(Context context, Cursor c) {
             super(context, c, 0);
+        }
+
+        protected void setSearchView(SearchView view) {
+            searchView = view;
         }
 
         @Override
@@ -226,7 +237,20 @@ public class BaseActivity extends MapActivity
                     mMap.setMapPosition(mapPosition);
                 }
             });
+            parent.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    dismissKeyboard();
+                    return false;
+                }
+            });
             return v;
+        }
+
+        private void dismissKeyboard() {
+            InputMethodManager imm = (InputMethodManager)getSystemService(
+                    Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
         }
 
         @Override
@@ -250,7 +274,9 @@ public class BaseActivity extends MapActivity
 
     @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
-        searchResultsFragment.hideResultsWrapper();
+        if (searchResultsFragment != null) {
+            searchResultsFragment.hideResultsWrapper();
+        }
         return true;
     }
 }
