@@ -204,9 +204,7 @@ public class BaseActivity extends MapActivity implements SearchView.OnQueryTextL
     }
 
     public boolean onQueryTextChange(String newText) {
-        String autocompleteUrl = getString(R.string.pelias_test_suggest_url) + "?query=" + Uri.encode(newText);
-        Log.v(LOG_TAG, autocompleteUrl);
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(autocompleteUrl,
+        JsonArrayRequest jsonArrayRequest = Place.suggest(newText,
                     getAutocompleteSuccessResponseListener(), getAutocompleteErrorResponseListener());
         queue.add(jsonArrayRequest);
         return true;

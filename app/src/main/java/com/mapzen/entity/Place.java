@@ -32,8 +32,17 @@ public class Place implements Parcelable {
     public Place() {
     }
 
+    public static JsonArrayRequest suggest(String query, Response.Listener successListener,
+                                           Response.ErrorListener errorListener) {
+        String url = String.format("%s?query=%s", PELIAS_SUGGEST_URL, Uri.encode(query));
+        Log.v(LOG_TAG, url);
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url,
+                successListener, errorListener);
+        return jsonArrayRequest;
+    }
+
     public static JsonArrayRequest search(Map map, String query, Response.Listener successListener,
-                              Response.ErrorListener errorListener ) {
+                              Response.ErrorListener errorListener) {
         BoundingBox boundingBox = map.getBoundingBox();
         double[] box = {
                 boundingBox.getMinLongitude(),
