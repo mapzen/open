@@ -23,6 +23,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.mapzen.AutoCompleteCursor;
 import com.mapzen.MapzenApplication;
@@ -115,10 +116,10 @@ public class BaseActivity extends MapActivity
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        JsonArrayRequest jsonArrayRequest =
+        JsonObjectRequest jsonObjectRequest =
                 Place.search(mMap, query, getSearchSuccessResponseListener(),
                         getSearchErrorResponseListener());
-        queue.add(jsonArrayRequest);
+        queue.add(jsonObjectRequest);
         return true;
     }
 
@@ -130,11 +131,17 @@ public class BaseActivity extends MapActivity
         };
     }
 
-    private Response.Listener<JSONArray> getSearchSuccessResponseListener() {
-        return new Response.Listener<JSONArray>() {
+    private Response.Listener<JSONObject> getSearchSuccessResponseListener() {
+        return new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONArray jsonArray) {
-                Log.v(LOG_TAG, jsonArray.toString());
+            public void onResponse(JSONObject jsonObject) {
+                Log.v(LOG_TAG, jsonObject.toString());
+                JSONArray jsonArray = new JSONArray();
+                try {
+                    jsonArray = jsonObject.getJSONArray("features");
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, e.toString());
+                }
                 searchResultsFragment = getSearchResultsFragment();
                 searchResultsFragment.clearAll();
                 mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map_fragment);
@@ -173,19 +180,24 @@ public class BaseActivity extends MapActivity
         searchView.clearFocus();
     }
 
-    private Response.Listener<JSONArray> getAutocompleteSuccessResponseListener() {
+    private Response.Listener<JSONObject> getAutocompleteSuccessResponseListener() {
         final AutoCompleteCursor cursor = new AutoCompleteCursor(columns);
-        return new Response.Listener<JSONArray>() {
+        return new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONArray jsonArray) {
-                Log.v(LOG_TAG, jsonArray.toString());
+            public void onResponse(JSONObject jsonObject) {
+                Log.v(LOG_TAG, jsonObject.toString());
+                JSONArray jsonArray = new JSONArray();
+                try {
+                    jsonArray = jsonObject.getJSONArray("features");
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, e.toString());
+                }
                 for (int i = 0; i < jsonArray.length(); i++) {
                     try {
-                        JSONObject obj = (JSONObject) jsonArray.get(i);
-                        JSONObject payload = (JSONObject) obj.get(PELIAS_PAYLOAD);
-                        cursor.getRowBuilder().setId(i).setText(obj.getString(PELIAS_TEXT)).
-                                setLat(payload.getString(PELIAS_LAT)).
-                                setLon(payload.getString(PELIAS_LON)).buildRow();
+                        Place place = Place.fromJson(jsonArray.getJSONObject(i));
+                        cursor.getRowBuilder().setId(i).setText(place.getDisplayName()).
+                                setLat(place.getLat()).
+                                setLon(place.getLon()).buildRow();
                     } catch (JSONException e) {
                         Log.e(LOG_TAG, e.toString());
                     }
@@ -205,9 +217,9 @@ public class BaseActivity extends MapActivity
 
     public boolean onQueryTextChange(String newText) {
         if (currentSearchTerm != null || !newText.equals(currentSearchTerm)) {
-            JsonArrayRequest jsonArrayRequest = Place.suggest(newText,
+            JsonObjectRequest jsonObjectRequest = Place.suggest(newText,
                     getAutocompleteSuccessResponseListener(), getAutocompleteErrorResponseListener());
-            queue.add(jsonArrayRequest);
+            queue.add(jsonObjectRequest);
             currentSearchTerm = newText;
         }
         return true;

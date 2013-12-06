@@ -14,8 +14,8 @@ public class AutoCompleteCursor extends MatrixCursor {
     public class RowBuilder {
         private int identifier;
         private String text;
-        private String lat;
-        private String lon;
+        private double lat;
+        private double lon;
         private AutoCompleteCursor cursor;
 
         public RowBuilder(AutoCompleteCursor cursor) {
@@ -32,18 +32,22 @@ public class AutoCompleteCursor extends MatrixCursor {
             return this;
         }
 
-        public RowBuilder setLat(String lat) {
+        public RowBuilder setLat(double lat) {
             this.lat = lat;
             return this;
         }
 
-        public RowBuilder setLon(String lon) {
+        public RowBuilder setLon(double lon) {
             this.lon = lon;
             return this;
         }
 
         public void buildRow() {
-            cursor.addRow(new String[] { String.valueOf(identifier), text, lat, lon });
+            cursor.addRow(
+                    new String[] {
+                            String.valueOf(identifier),
+                            text, String.valueOf(lat),
+                            String.valueOf(lon) });
         }
     }
 }

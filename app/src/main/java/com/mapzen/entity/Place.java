@@ -7,7 +7,9 @@ import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.oscim.core.BoundingBox;
@@ -30,16 +32,16 @@ public class Place implements Parcelable {
     public Place() {
     }
 
-    public static JsonArrayRequest suggest(String query, Response.Listener successListener,
+    public static JsonObjectRequest suggest(String query, Response.Listener successListener,
                                            Response.ErrorListener errorListener) {
         String url = String.format("%s?query=%s", PELIAS_SUGGEST_URL, Uri.encode(query));
         Log.v(LOG_TAG, url);
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url,
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null,
                 successListener, errorListener);
-        return jsonArrayRequest;
+        return jsonObjectRequest;
     }
 
-    public static JsonArrayRequest search(Map map, String query, Response.Listener successListener,
+    public static JsonObjectRequest search(Map map, String query, Response.Listener successListener,
                               Response.ErrorListener errorListener) {
         BoundingBox boundingBox = map.getBoundingBox();
         String url = String.format("%s?query=%s&viewbox=%4f,%4f,%4f,%4f",
@@ -47,9 +49,9 @@ public class Place implements Parcelable {
                 boundingBox.getMinLongitude(), boundingBox.getMaxLatitude(),
                 boundingBox.getMaxLongitude(), boundingBox.getMinLatitude());
         Log.v(LOG_TAG, url);
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url,
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null,
                 successListener, errorListener);
-        return jsonArrayRequest;
+        return jsonObjectRequest;
     }
 
     @Override
@@ -59,9 +61,12 @@ public class Place implements Parcelable {
 
     public static Place fromJson(JSONObject obj) throws JSONException {
         Place place = new Place();
-        place.setLat(obj.getDouble("lat"));
-        place.setLon(obj.getDouble("lon"));
-        place.setDisplayName(obj.getString("name"));
+        JSONObject properties = obj.getJSONObject("properties");
+        JSONObject geometry = obj.getJSONObject("geometry");
+        JSONArray coordinates = geometry.getJSONArray("coordinates");
+        place.setLat(coordinates.getDouble(1));
+        place.setLon(coordinates.getDouble(0));
+        place.setDisplayName(properties.getString("name"));
         return place;
     }
 
