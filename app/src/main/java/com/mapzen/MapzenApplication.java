@@ -12,21 +12,24 @@ import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 
 public class MapzenApplication extends Application implements LocationListener {
-
-    public static String PELIAS_TEXT = "text";
-    public static String PELIAS_LAT = "lat";
-    public static String PELIAS_LON = "lon";
-    public static String PELIAS_PAYLOAD = "payload";
-
+    public static final int LOCATION_UPDATE_FREQUENCY = 1000;
+    public static final float LOCATION_UPDATE_MIN_DISTANCE = 10.0f;
     private static MapzenApplication app;
     private static Location location = null;
+    public static final String PELIAS_TEXT = "text";
+    public static final String PELIAS_LAT = "lat";
+    public static final String PELIAS_LON = "lon";
+    public static final String PELIAS_PAYLOAD = "payload";
+    public static final double DEFAULT_LATITUDE = 64.133333;
+    public static final double DEFAULT_LONGITUDE = -21.933333;
+    public static final int DEFAULT_ZOOMLEVEL = 15;
     private static MapPosition mapPosition =
-            new MapPosition(64.133333, -21.933333, Math.pow(2, 15));
+            new MapPosition(DEFAULT_LATITUDE, DEFAULT_LONGITUDE, Math.pow(2, DEFAULT_ZOOMLEVEL));
 
     private LocationManager locationManager;
     private Context context;
 
-    public static String LOG_TAG = "Mapzen: ";
+    public static final String LOG_TAG = "Mapzen: ";
 
     public MapzenApplication() {
         super();
@@ -38,7 +41,7 @@ public class MapzenApplication extends Application implements LocationListener {
     }
 
     public static MapzenApplication getApp(Context context) {
-        if(app == null) {
+        if (app == null) {
             app = new MapzenApplication(context);
         }
         return app;
@@ -53,7 +56,7 @@ public class MapzenApplication extends Application implements LocationListener {
     }
 
     public Location getLocation() {
-        if(location == null) {
+        if (location == null) {
             location = locationManager.getLastKnownLocation(getBestProvider());
         }
         return location;
@@ -65,11 +68,12 @@ public class MapzenApplication extends Application implements LocationListener {
     }
 
     public void setupLocationUpdates() {
-        locationManager.requestLocationUpdates(getBestProvider(), 1000, 10.0f, this);
+        locationManager.requestLocationUpdates(getBestProvider(),
+                LOCATION_UPDATE_FREQUENCY, LOCATION_UPDATE_MIN_DISTANCE, this);
     }
 
     public void stopLocationUpdates() {
-        if(locationManager != null) {
+        if (locationManager != null) {
             locationManager.removeUpdates(this);
         }
     }
@@ -96,14 +100,13 @@ public class MapzenApplication extends Application implements LocationListener {
     }
 
     public MapPosition getLocationPosition() {
-        Location location = getLocation();
-        MapPosition mapPosition;
-        if(location != null) {
+        if (location != null) {
             double lat = getLocation().getLatitude();
             double lon = getLocation().getLongitude();
             mapPosition = new MapPosition(lat, lon, Math.pow(2, getStoredZoomLevel()));
         } else {
-            mapPosition = new MapPosition(40.67f, -73.94f, Math.pow(2, getStoredZoomLevel()));
+            mapPosition =
+                    new MapPosition(DEFAULT_LATITUDE, DEFAULT_LONGITUDE, Math.pow(2, getStoredZoomLevel()));
         }
         return mapPosition;
     }

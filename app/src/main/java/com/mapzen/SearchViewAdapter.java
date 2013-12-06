@@ -22,8 +22,8 @@ public class SearchViewAdapter extends ArrayAdapter {
         entries = ent;
     }
 
-    public static class ViewHolder{
-        public TextView item1;
+    public static class ViewHolder {
+        private TextView item1;
     }
 
     @Override
@@ -31,13 +31,13 @@ public class SearchViewAdapter extends ArrayAdapter {
         View v = convertView;
         if (v == null) {
             LayoutInflater vi =
-                    (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = vi.inflate(R.layout.search_item, null);
             holder = new ViewHolder();
             holder.item1 = (TextView) v.findViewById(R.id.big);
             v.setTag(R.string.tag_viewholder, holder);
         } else {
-            holder=(ViewHolder)v.getTag(R.string.tag_viewholder);
+            holder = (ViewHolder) v.getTag(R.string.tag_viewholder);
         }
 
         final Place custom = entries.get(position);

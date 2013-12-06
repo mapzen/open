@@ -5,7 +5,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,17 +32,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.oscim.android.MapActivity;
-import org.oscim.android.canvas.AndroidBitmap;
-import org.oscim.core.BoundingBox;
 import org.oscim.core.MapPosition;
 import org.oscim.layers.marker.ItemizedIconLayer;
-import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
-import org.oscim.layers.marker.MarkerSymbol;
 import org.oscim.map.Map;
-
-import java.io.InputStream;
-import java.util.ArrayList;
 
 import static android.provider.BaseColumns._ID;
 import static com.mapzen.MapzenApplication.LOG_TAG;
@@ -62,7 +54,7 @@ public class BaseActivity extends MapActivity
     private MapFragment mapFragment;
     private SearchResultsFragment searchResultsFragment;
 
-    final String[] COLUMNS = {
+    private final String[] columns = {
         _ID, PELIAS_TEXT, PELIAS_LAT, PELIAS_LON
     };
 
@@ -106,7 +98,7 @@ public class BaseActivity extends MapActivity
 
     private void setupAdapter(SearchView searchView) {
         if (geoNamesAdapter == null) {
-            MatrixCursor cursor = new MatrixCursor(COLUMNS);
+            MatrixCursor cursor = new MatrixCursor(columns);
             geoNamesAdapter = new GeoNamesAdapter(getActionBar().getThemedContext(), cursor);
         }
         searchView.setSuggestionsAdapter(geoNamesAdapter);
@@ -136,7 +128,7 @@ public class BaseActivity extends MapActivity
                 Log.v(LOG_TAG, jsonArray.toString());
                 searchResultsFragment = getSearchResultsFragment();
                 searchResultsFragment.clearAll();
-                MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map_fragment);
+                mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map_fragment);
                 assert mapFragment != null;
                 ItemizedIconLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
                 poiLayer.removeAllItems();
@@ -173,7 +165,7 @@ public class BaseActivity extends MapActivity
     }
 
     private Response.Listener<JSONArray> getAutocompleteSuccessResponseListener() {
-        final MatrixCursor cursor = new MatrixCursor(COLUMNS);
+        final MatrixCursor cursor = new MatrixCursor(columns);
         return new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray jsonArray) {
@@ -248,12 +240,12 @@ public class BaseActivity extends MapActivity
     }
 
     @Override
-    public boolean onMenuItemActionExpand(MenuItem menuItem) {
+    public boolean onMenuItemActionExpand(MenuItem item) {
         return true;
     }
 
     @Override
-    public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+    public boolean onMenuItemActionCollapse(MenuItem item) {
         searchResultsFragment.hideResultsWrapper();
         return true;
     }

@@ -13,11 +13,13 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:0.6.+'
         classpath 'com.squareup.gradle:gradle-android-test-plugin:0.9.1-SNAPSHOT'
+        classpath 'com.github.nrudenko:gradle-android-cq-plugin:0.1+'
     }
 }
 
 apply plugin: 'android'
 apply plugin: 'android-test'
+apply plugin: 'android-cq'
 
 repositories {
     mavenCentral()

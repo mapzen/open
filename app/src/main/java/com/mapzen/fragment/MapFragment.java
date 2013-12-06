@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.mapzen.MapzenApplication;
 import com.mapzen.PoiLayer;
@@ -19,10 +18,8 @@ import org.oscim.android.canvas.AndroidBitmap;
 import org.oscim.backend.canvas.Bitmap;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
-import org.oscim.event.MotionEvent;
 import org.oscim.layers.marker.ItemizedIconLayer;
 import org.oscim.layers.marker.MarkerItem;
-import org.oscim.layers.marker.MarkerLayer;
 import org.oscim.layers.marker.MarkerSymbol;
 import org.oscim.layers.tile.vector.BuildingLayer;
 import org.oscim.layers.tile.vector.VectorTileLayer;
@@ -31,12 +28,13 @@ import org.oscim.map.Map;
 import org.oscim.theme.InternalRenderTheme;
 import org.oscim.tiling.source.TileSource;
 import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
-import org.osmdroid.views.overlay.OverlayItem;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 
 public class MapFragment extends Fragment {
+    public static final int ANIMATION_DURATION = 1300;
+    public static final int DEFAULT_ZOOMLEVEL = 15;
     private VectorTileLayer baseLayer;
     private BaseActivity activity;
     private Map map;
@@ -103,7 +101,9 @@ public class MapFragment extends Fragment {
             }
         });
 
-        poiMarkersLayer = new PoiLayer<MarkerItem>(map, new ArrayList<MarkerItem>(), getDefaultMarkerSymbol(), new ItemizedIconLayer.OnItemGestureListener<MarkerItem>() {
+        poiMarkersLayer = new PoiLayer<MarkerItem>(
+                map, new ArrayList<MarkerItem>(), getDefaultMarkerSymbol(),
+                new ItemizedIconLayer.OnItemGestureListener<MarkerItem>() {
             @Override
             public boolean onItemSingleTapUp(int index, MarkerItem item) {
                 Log.v("foo", "testing");
@@ -142,7 +142,8 @@ public class MapFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 addMyLocation();
-                map.getAnimator().animateTo(1300, app.getLocationPoint(), Math.pow(2, 15), false);
+                map.getAnimator().animateTo(ANIMATION_DURATION,
+                        app.getLocationPoint(), Math.pow(2, DEFAULT_ZOOMLEVEL), false);
             }
         });
     }

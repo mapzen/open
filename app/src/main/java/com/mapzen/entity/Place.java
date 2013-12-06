@@ -7,14 +7,12 @@ import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.mapzen.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.oscim.core.BoundingBox;
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.marker.MarkerItem;
-import org.oscim.layers.marker.MarkerLayer;
 import org.oscim.map.Map;
 
 import static com.mapzen.MapzenApplication.LOG_TAG;
@@ -23,11 +21,11 @@ public class Place implements Parcelable {
     private double lat;
     private double lon;
     private String displayName;
-    final private static String PELIAS_URL = "http://api-pelias-test.mapzen.com/";
-    final private static String PELIAS_SUGGEST = "suggest";
-    final private static String PELIAS_SEARCH = "search";
-    final private static String PELIAS_SEARCH_URL = PELIAS_URL + PELIAS_SEARCH;
-    final private static String PELIAS_SUGGEST_URL = PELIAS_URL + PELIAS_SUGGEST;
+    private static final String PELIAS_URL = "http://api-pelias-test.mapzen.com/";
+    private static final String PELIAS_SUGGEST = "suggest";
+    private static final String PELIAS_SEARCH = "search";
+    private static final String PELIAS_SEARCH_URL = PELIAS_URL + PELIAS_SEARCH;
+    private static final String PELIAS_SUGGEST_URL = PELIAS_URL + PELIAS_SUGGEST;
 
     public Place() {
     }
@@ -131,9 +129,13 @@ public class Place implements Parcelable {
 
     @Override
     public boolean equals(Object o) {
-        Place other = (Place)o;
+        Place other = (Place) o;
         return lat == other.getLat()
                 && lon == other.getLon()
                 && displayName.equals(other.getDisplayName());
+    }
+
+    public int hashCode() {
+        return 0;
     }
 }

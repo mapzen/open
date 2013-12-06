@@ -10,7 +10,8 @@ import java.util.List;
 public class PoiLayer<Item extends MarkerItem> extends ItemizedIconLayer<Item>
         implements ItemizedIconLayer.OnItemGestureListener<Item> {
 
-    public PoiLayer(Map map, List<Item> list, MarkerSymbol defaultMarker, OnItemGestureListener<Item> onItemGestureListener) {
+    public PoiLayer(Map map, List<Item> list, MarkerSymbol defaultMarker,
+                    OnItemGestureListener<Item> onItemGestureListener) {
         super(map, list, defaultMarker, null);
     }
 
