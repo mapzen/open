@@ -1,20 +1,54 @@
 package com.mapzen.entity;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
+import com.android.volley.Response;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.mapzen.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.oscim.core.BoundingBox;
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.marker.MarkerLayer;
+import org.oscim.map.Map;
+
+import static com.mapzen.MapzenApplication.LOG_TAG;
 
 public class Place implements Parcelable {
     private double lat;
     private double lon;
     private String displayName;
+    final private static String PELIAS_URL = "http://api-pelias-test.mapzen.com/";
+    final private static String PELIAS_SUGGEST = "suggest";
+    final private static String PELIAS_SEARCH = "search";
+    final private static String PELIAS_SEARCH_URL = PELIAS_URL + PELIAS_SEARCH;
+    final private static String PELIAS_SUGGEST_URL = PELIAS_URL + PELIAS_SUGGEST;
 
     public Place() {
+    }
+
+    public static JsonArrayRequest search(Map map, String query, Response.Listener successListener,
+                              Response.ErrorListener errorListener ) {
+        BoundingBox boundingBox = map.getBoundingBox();
+        double[] box = {
+                boundingBox.getMinLongitude(),
+                boundingBox.getMinLatitude(),
+                boundingBox.getMaxLongitude(),
+                boundingBox.getMaxLatitude(),
+        };
+        String url = String.format("%s?query=%s&viewbox=%4f,%4f,%4f,%4f",
+                PELIAS_SEARCH_URL, Uri.encode(query),
+                boundingBox.getMinLongitude(), boundingBox.getMaxLatitude(),
+                boundingBox.getMaxLongitude(), boundingBox.getMinLatitude());
+        Log.v(LOG_TAG, url);
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url,
+                successListener, errorListener);
+        return jsonArrayRequest;
     }
 
     @Override

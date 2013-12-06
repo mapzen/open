@@ -112,21 +112,9 @@ public class BaseActivity extends MapActivity implements SearchView.OnQueryTextL
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        String baseUrl = getString(R.string.pelias_test_search_url);
-        BoundingBox boundingBox = mMap.getBoundingBox();
-        double[] box = {
-            boundingBox.getMinLongitude(),
-            boundingBox.getMinLatitude(),
-            boundingBox.getMaxLongitude(),
-            boundingBox.getMaxLatitude(),
-        };
-        //http://api-pelias-test.mapzen.com/search?query=food&viewbox=-74.08,40.77,-73.9,40.67&center=-74.08,40.77
-        String url = baseUrl + "?query=" + query + "&viewbox=" + Double.toString(box[0]) +
-                "," + Double.toString(box[3]) + "," + Double.toString(box[2]) + "," +
-                Double.toString(box[1]);
-        Log.v(LOG_TAG, url);
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url,
-                getSearchSuccessResponseListener(), getSearchErrorResponseListener());
+        JsonArrayRequest jsonArrayRequest =
+                Place.search(mMap, query, getSearchSuccessResponseListener(),
+                        getSearchErrorResponseListener());
         queue.add(jsonArrayRequest);
         return true;
     }
