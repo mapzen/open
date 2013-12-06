@@ -77,7 +77,40 @@ public class MapFragment extends Fragment {
         app = MapzenApplication.getApp(getActivity());
         setupMap(view);
         setupMyLocationBtn(view);
+        setupZoomBtns(view);
         return view;
+    }
+
+    private void setupZoomBtns(View view) {
+        Button zoomInBtn = (Button) view.findViewById(R.id.btn_zoom_in);
+        zoomInBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                zoomIn();
+            }
+        });
+        Button zoomOutBtn = (Button) view.findViewById(R.id.btn_zoom_out);
+        zoomOutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                zoomOut();
+            }
+        });
+    }
+
+    private void zoom(int direction) {
+        MapPosition pos = map.getMapPostion();
+        pos.setZoomLevel(pos.zoomLevel + direction);
+        map.setMapPosition(pos);
+        map.updateMap(true);
+    }
+
+    private void zoomOut() {
+        zoom(-1);
+    }
+
+    private void zoomIn() {
+        zoom(1);
     }
 
     public void centerOn(GeoPoint geoPoint) {
