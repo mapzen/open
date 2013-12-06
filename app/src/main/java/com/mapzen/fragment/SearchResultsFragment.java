@@ -60,6 +60,8 @@ public class SearchResultsFragment extends Fragment {
 
     public void hideResultsWrapper() {
         wrapper.setVisibility(View.GONE);
+        mapFragment.getPoiLayer().removeAllItems();
+        mapFragment.updateMap();
     }
 
     public void clearAll() {

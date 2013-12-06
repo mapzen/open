@@ -52,7 +52,8 @@ import static com.mapzen.MapzenApplication.PELIAS_LON;
 import static com.mapzen.MapzenApplication.PELIAS_PAYLOAD;
 import static com.mapzen.MapzenApplication.PELIAS_TEXT;
 
-public class BaseActivity extends MapActivity implements SearchView.OnQueryTextListener {
+public class BaseActivity extends MapActivity
+        implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
     private GeoNamesAdapter geoNamesAdapter;
     private RequestQueue queue;
     private MenuItem menuItem;
@@ -95,6 +96,7 @@ public class BaseActivity extends MapActivity implements SearchView.OnQueryTextL
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         menuItem = menu.findItem(R.id.search);
+        menuItem.setOnActionExpandListener(this);
         final SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         setupAdapter(searchView);
@@ -243,5 +245,16 @@ public class BaseActivity extends MapActivity implements SearchView.OnQueryTextL
             tv.setTag(position);
             tv.setText(cursor.getString(textIndex));
         }
+    }
+
+    @Override
+    public boolean onMenuItemActionExpand(MenuItem menuItem) {
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionCollapse(MenuItem menuItem) {
+        searchResultsFragment.hideResultsWrapper();
+        return true;
     }
 }

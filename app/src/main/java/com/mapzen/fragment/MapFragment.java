@@ -169,4 +169,8 @@ public class MapFragment extends Fragment {
         map.getLayers().add(meMarkerLayer);
         addMyLocation();
     }
+
+    public void updateMap() {
+        map.updateMap(true);
+    }
 }
