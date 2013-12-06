@@ -22,7 +22,7 @@ public class PlaceTest {
     @Before
     public void setUp() throws Exception {
         JSONObject json = new JSONObject("{\"lat\":\"51.4993491\",\"lon\":\"-0.12739091\", " +
-                "\"display_name\":\"Place Name to Display\"}");
+                "\"name\":\"Place Name to Display\"}");
         place = Place.fromJson(json);
     }
 
@@ -34,13 +34,6 @@ public class PlaceTest {
     @Test
     public void hasLonDouble() throws Exception {
         assertThat(expectedLon, is(place.getLon()));
-    }
-
-    @Test
-    public void hasGeoPoint() throws Exception {
-        GeoPoint expected = new GeoPoint(
-                (int) (expectedLat * 1E6), (int) (expectedLon * 1E6));
-        assertThat(expected, is(place.getPoint()));
     }
 
     @Test
