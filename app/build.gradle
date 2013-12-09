@@ -39,7 +39,6 @@ repositories {
      maven { url "http://repo.maven.apache.org/maven2" }
 }
 dependencies {
-    compile group: 'org.osmdroid', name: 'osmdroid-android', version:'3.0.9'
     compile 'com.android.support:support-v4:+'
     compile fileTree(dir: 'libs', include: '*.jar')
     compile project(':vtm-android')
