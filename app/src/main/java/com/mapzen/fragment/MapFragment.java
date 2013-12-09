@@ -1,7 +1,7 @@
 package com.mapzen.fragment;
 
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -150,8 +150,6 @@ public class MapFragment extends Fragment {
             }
         });
         map.getLayers().add(poiMarkersLayer);
-
-
         map.setTheme(InternalRenderTheme.DEFAULT);
         map.bind(new Map.UpdateListener() {
             @Override
@@ -160,7 +158,6 @@ public class MapFragment extends Fragment {
             }
         });
         setupMyLocationBtn(view);
-
         setupMeMarkerLayer();
         map.setMapPosition(app.getLocationPosition());
     }

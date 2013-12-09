@@ -1,11 +1,10 @@
 package com.mapzen.activity;
 
-import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.MatrixCursor;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,7 +21,6 @@ import android.widget.TextView;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.mapzen.AutoCompleteCursor;
@@ -45,7 +43,6 @@ import static android.provider.BaseColumns._ID;
 import static com.mapzen.MapzenApplication.LOG_TAG;
 import static com.mapzen.MapzenApplication.PELIAS_LAT;
 import static com.mapzen.MapzenApplication.PELIAS_LON;
-import static com.mapzen.MapzenApplication.PELIAS_PAYLOAD;
 import static com.mapzen.MapzenApplication.PELIAS_TEXT;
 
 public class BaseActivity extends MapActivity
@@ -72,7 +69,7 @@ public class BaseActivity extends MapActivity
         super.onCreate(savedInstanceState);
         app = MapzenApplication.getApp(this);
         queue = Volley.newRequestQueue(getApplicationContext());
-        fragmentManager = getFragmentManager();
+        fragmentManager = getSupportFragmentManager();
         setContentView(R.layout.base);
     }
 
@@ -144,7 +141,7 @@ public class BaseActivity extends MapActivity
                 }
                 searchResultsFragment = getSearchResultsFragment();
                 searchResultsFragment.clearAll();
-                mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map_fragment);
+                mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
                 assert mapFragment != null;
                 ItemizedIconLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
                 poiLayer.removeAllItems();

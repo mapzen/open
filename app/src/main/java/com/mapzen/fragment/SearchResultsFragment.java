@@ -1,23 +1,24 @@
 package com.mapzen.fragment;
 
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.Toast;
 
+import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.SearchViewAdapter;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Place;
 
-import org.oscim.core.GeoPoint;
-
 import java.util.ArrayList;
+
+import static com.mapzen.MapzenApplication.LOG_TAG;
 
 public class SearchResultsFragment extends Fragment {
     private SearchViewAdapter adapter;
@@ -31,23 +32,29 @@ public class SearchResultsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search_results,
                 container, false);
-        adapter = new SearchViewAdapter(getActivity(),
-               R.id.results, list);
         assert view != null;
-        ListView listView = (ListView) view.findViewById(R.id.results);
-        listView.setAdapter(adapter);
         act = (BaseActivity) getActivity();
         assert act != null;
-        mapFragment = act.getMapFragment();
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ViewPager pager = (ViewPager) view.findViewById(R.id.results);
+        pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                TextView tv = (TextView) view.findViewById(R.id.big);
-                Place place = (Place) tv.getTag();
-                mapFragment.centerOn(new GeoPoint(place.getLat(), place.getLon()));
+            public void onPageScrolled(int i, float v, int i2) {
+                Log.v(LOG_TAG, "onPageScrolled");
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                Log.v(LOG_TAG, "onPageSelected");
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+                Log.v(LOG_TAG, "onPageScrollStateChanged");
             }
         });
-
+        adapter = new SearchViewAdapter(act, act.getSupportFragmentManager());
+        pager.setAdapter(adapter);
+        mapFragment = act.getMapFragment();
         wrapper = (LinearLayout) view.findViewById(R.id.results_wrapper);
         return view;
     }
@@ -63,11 +70,11 @@ public class SearchResultsFragment extends Fragment {
     }
 
     public void clearAll() {
-        list.clear();
+        adapter.clearFragments();
     }
 
     public void add(Place place) {
-        list.add(place);
+        adapter.addFragment(new SearchResultItemFragment(place));
     }
 
     public void notifyNewData() {

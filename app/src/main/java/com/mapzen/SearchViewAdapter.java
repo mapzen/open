@@ -1,50 +1,38 @@
 package com.mapzen;
 
-import android.app.Activity;
 import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
-
-import com.mapzen.entity.Place;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class SearchViewAdapter extends ArrayAdapter {
-    private Activity activity;
-    private ArrayList<Place> entries;
-    private ViewHolder holder;
-    public SearchViewAdapter(Activity a, int textViewResourceId, ArrayList<Place> ent) {
-        super(a, textViewResourceId, ent);
-        activity = a;
-        entries = ent;
+public class SearchViewAdapter extends FragmentPagerAdapter {
+    private Context context;
+    private List<Fragment> fragments = new ArrayList<Fragment>();
+    public SearchViewAdapter(Context act, FragmentManager fm) {
+        super(fm);
+        this.context = act;
     }
 
-    public static class ViewHolder {
-        private TextView item1;
+    public void addFragment(Fragment fragment) {
+        fragments.add(fragment);
+        notifyDataSetChanged();
+    }
+
+    public void clearFragments() {
+        fragments.clear();
+        notifyDataSetChanged();
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View v = convertView;
-        if (v == null) {
-            LayoutInflater vi =
-                    (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.search_item, null);
-            holder = new ViewHolder();
-            holder.item1 = (TextView) v.findViewById(R.id.big);
-            v.setTag(R.string.tag_viewholder, holder);
-        } else {
-            holder = (ViewHolder) v.getTag(R.string.tag_viewholder);
-        }
+    public int getCount() {
+        return fragments.size();
+    }
 
-        final Place custom = entries.get(position);
-        if (custom != null) {
-            holder.item1.setText(custom.getDisplayName());
-            holder.item1.setTag(custom);
-        }
-        return v;
+    @Override
+    public Fragment getItem(int position) {
+        return fragments.get(position);
     }
 }
