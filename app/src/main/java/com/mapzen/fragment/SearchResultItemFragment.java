@@ -24,4 +24,8 @@ public class SearchResultItemFragment extends Fragment {
         tv.setText(place.getDisplayName());
         return view;
     }
+
+    public Place getPlace() {
+        return place;
+    }
 }

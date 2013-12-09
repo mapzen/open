@@ -16,7 +16,13 @@ import com.mapzen.SearchViewAdapter;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Place;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.oscim.layers.marker.ItemizedIconLayer;
+import org.oscim.layers.marker.MarkerItem;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.mapzen.MapzenApplication.LOG_TAG;
 
@@ -25,6 +31,8 @@ public class SearchResultsFragment extends Fragment {
     private LinearLayout wrapper;
     private BaseActivity act;
     private MapFragment mapFragment;
+    private List<SearchResultItemFragment> currentCollection =
+            new ArrayList<SearchResultItemFragment>();
     private final ArrayList<Place> list = new ArrayList<Place>();
 
     @Override
@@ -39,17 +47,15 @@ public class SearchResultsFragment extends Fragment {
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i2) {
-                Log.v(LOG_TAG, "onPageScrolled");
             }
 
             @Override
             public void onPageSelected(int i) {
-                Log.v(LOG_TAG, "onPageSelected");
+                centerOnPlace(i);
             }
 
             @Override
             public void onPageScrollStateChanged(int i) {
-                Log.v(LOG_TAG, "onPageScrollStateChanged");
             }
         });
         adapter = new SearchViewAdapter(act, act.getSupportFragmentManager());
@@ -57,6 +63,13 @@ public class SearchResultsFragment extends Fragment {
         mapFragment = act.getMapFragment();
         wrapper = (LinearLayout) view.findViewById(R.id.results_wrapper);
         return view;
+    }
+
+    private void centerOnPlace(int i) {
+        SearchResultItemFragment srf = currentCollection.get(i);
+        Place place = srf.getPlace();
+        Log.v(LOG_TAG, "place: " + place.toString());
+        mapFragment.centerOn(place.getMarker().getPoint());
     }
 
     public void showResultsWrapper() {
@@ -70,14 +83,42 @@ public class SearchResultsFragment extends Fragment {
     }
 
     public void clearAll() {
+        ItemizedIconLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
+        poiLayer.removeAllItems();
         adapter.clearFragments();
+        currentCollection.clear();
     }
 
     public void add(Place place) {
-        adapter.addFragment(new SearchResultItemFragment(place));
+        SearchResultItemFragment searchResultItemFragment = new SearchResultItemFragment(place);
+        currentCollection.add(searchResultItemFragment);
+        adapter.addFragment(searchResultItemFragment);
     }
 
     public void notifyNewData() {
         adapter.notifyDataSetChanged();
+    }
+
+    public void setSearchResults(JSONArray jsonArray) {
+        ItemizedIconLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
+        clearAll();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            Place place = null;
+            try {
+                place = Place.fromJson(jsonArray.getJSONObject(i));
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, e.toString());
+            }
+            Log.v(LOG_TAG, place.getDisplayName());
+            MarkerItem m = place.getMarker();
+            m.setMarker(mapFragment.getDefaultMarkerSymbol());
+            m.setMarkerHotspot(MarkerItem.HotspotPlace.CENTER);
+            poiLayer.addItem(place.getMarker());
+
+            add(place);
+        }
+        notifyNewData();
+        showResultsWrapper();
+        mapFragment.updateMap();
     }
 }

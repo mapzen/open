@@ -143,28 +143,7 @@ public class BaseActivity extends MapActivity
                 }
                 searchResultsFragment = getSearchResultsFragment();
                 searchResultsFragment.clearAll();
-                mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
-                assert mapFragment != null;
-                ItemizedIconLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
-                poiLayer.removeAllItems();
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    Place place = null;
-                    try {
-                        place = Place.fromJson(jsonArray.getJSONObject(i));
-                    } catch (JSONException e) {
-                        Log.e(LOG_TAG, e.toString());
-                    }
-                    Log.v(LOG_TAG, place.getDisplayName());
-                    MarkerItem m = place.getMarker();
-                    m.setMarker(mapFragment.getDefaultMarkerSymbol());
-                    m.setMarkerHotspot(MarkerItem.HotspotPlace.CENTER);
-                    poiLayer.addItem(place.getMarker());
-
-                    searchResultsFragment.add(place);
-                }
-                searchResultsFragment.notifyNewData();
-                searchResultsFragment.showResultsWrapper();
-                mMap.render();
+                searchResultsFragment.setSearchResults(jsonArray);
                 final SearchView searchView = (SearchView) menuItem.getActionView();
                 assert searchView != null;
                 searchView.clearFocus();
