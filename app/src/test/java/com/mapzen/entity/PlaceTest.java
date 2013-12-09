@@ -25,7 +25,7 @@ public class PlaceTest {
         JSONObject json = new JSONObject("{\"" +
                 "type\":\"Feature\"," +
                 "\"geometry\":{\"type\":\"Point\",\"coordinates\":[-0.12739091,51.4993491]}," +
-                "\"properties\":{\"name\":\"Place Name to Display\"," +
+                "\"properties\":{\"title\":\"Place Name to Display\"," +
                 "\"type\":\"geoname\",\"marker-color\":\"#F00\"}}");
         place = Place.fromJson(json);
     }

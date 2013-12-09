@@ -65,7 +65,7 @@ public class Place implements Parcelable {
         JSONArray coordinates = geometry.getJSONArray("coordinates");
         place.setLat(coordinates.getDouble(1));
         place.setLon(coordinates.getDouble(0));
-        place.setDisplayName(properties.getString("name"));
+        place.setDisplayName(properties.getString("title"));
         return place;
     }
 
