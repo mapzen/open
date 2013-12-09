@@ -4,4 +4,5 @@ include ':vtm-android'
 include ':app'
 include 'vtm-android-example'
 include 'vtm-ext-libs'
+include 'Android-ViewPagerIndicator'
 
