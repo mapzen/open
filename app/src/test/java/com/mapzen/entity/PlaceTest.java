@@ -6,8 +6,9 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.osmdroid.util.GeoPoint;
 import org.robolectric.RobolectricTestRunner;
+
+import java.lang.System;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -21,8 +22,11 @@ public class PlaceTest {
 
     @Before
     public void setUp() throws Exception {
-        JSONObject json = new JSONObject("{\"lat\":\"51.4993491\",\"lon\":\"-0.12739091\", " +
-                "\"name\":\"Place Name to Display\"}");
+        JSONObject json = new JSONObject("{\"" +
+                "type\":\"Feature\"," +
+                "\"geometry\":{\"type\":\"Point\",\"coordinates\":[-0.12739091,51.4993491]}," +
+                "\"properties\":{\"name\":\"Place Name to Display\"," +
+                "\"type\":\"geoname\",\"marker-color\":\"#F00\"}}");
         place = Place.fromJson(json);
     }
 
