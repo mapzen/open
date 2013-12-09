@@ -23,6 +23,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.bugsense.trace.BugSenseHandler;
 import com.mapzen.AutoCompleteCursor;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
@@ -70,6 +71,7 @@ public class BaseActivity extends MapActivity
         app = MapzenApplication.getApp(this);
         queue = Volley.newRequestQueue(getApplicationContext());
         fragmentManager = getSupportFragmentManager();
+        BugSenseHandler.initAndStartSession(BaseActivity.this, "881794a2");
         setContentView(R.layout.base);
     }
 
