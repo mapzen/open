@@ -33,11 +33,6 @@ android {
         minSdkVersion 16
         targetSdkVersion 18
     }
-    sourceSets {
-        main {
-            assets.srcDirs = ['assets', '../vtm/assets']
-        }
-    }
 }
 
 repositories {
