@@ -15,18 +15,4 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:text="ME" />
-    <Button
-        android:id="@+id/btn_zoom_out"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_above="@id/btn_my_position"
-        android:layout_alignParentRight="true"
-        android:text="-" />
-    <Button
-        android:id="@+id/btn_zoom_in"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_above="@id/btn_zoom_out"
-        android:layout_alignParentRight="true"
-        android:text="+" />
 </RelativeLayout>
