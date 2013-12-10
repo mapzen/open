@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CursorAdapter;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -30,6 +32,7 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.entity.Place;
 import com.mapzen.fragment.MapFragment;
+import com.mapzen.fragment.SearchResultItemFragment;
 import com.mapzen.fragment.SearchResultsFragment;
 
 import org.json.JSONArray;
@@ -279,6 +282,13 @@ public class BaseActivity extends MapActivity
             assert place != null;
             searchResultsFragment.hideResultsWrapper();
             clearSearchText();
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            SearchResultItemFragment itemFragment = new SearchResultItemFragment(place);
+            fragmentTransaction.replace(R.id.place_result, itemFragment);
+            fragmentTransaction.commit();
+
             mapFragment.centerOnExclusive(place);
         }
     }
