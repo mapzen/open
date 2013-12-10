@@ -5,7 +5,7 @@
 
     <LinearLayout android:layout_width="fill_parent"
                   android:layout_height="wrap_content" android:orientation="vertical">
-        <TextView android:textSize="20dip" android:id="@+id/big"
+        <TextView android:textSize="50dip" android:id="@+id/big"
                   android:layout_width="fill_parent" android:layout_height="wrap_content">
         </TextView>
     </LinearLayout>

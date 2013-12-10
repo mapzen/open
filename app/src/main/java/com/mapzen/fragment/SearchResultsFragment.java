@@ -7,13 +7,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.TextView;
 
-import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.SearchViewAdapter;
 import com.mapzen.activity.BaseActivity;
+import com.mapzen.activity.FullSearchResultsActivity;
 import com.mapzen.entity.Place;
 
 import org.json.JSONArray;
@@ -33,7 +34,7 @@ public class SearchResultsFragment extends Fragment {
     private MapFragment mapFragment;
     private List<SearchResultItemFragment> currentCollection =
             new ArrayList<SearchResultItemFragment>();
-    private final ArrayList<Place> list = new ArrayList<Place>();
+    private TextView indicator;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,6 +44,18 @@ public class SearchResultsFragment extends Fragment {
         assert view != null;
         act = (BaseActivity) getActivity();
         assert act != null;
+        indicator = (TextView) view.findViewById(R.id.indicator);
+        Button viewAll = (Button) view.findViewById(R.id.view_all);
+        viewAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ArrayList<Place> places = new ArrayList<Place>(currentCollection.size());
+                for(SearchResultItemFragment fragment : currentCollection) {
+                    places.add(fragment.getPlace());
+                }
+                startActivity(FullSearchResultsActivity.getIntent(act, places));
+            }
+        });
         ViewPager pager = (ViewPager) view.findViewById(R.id.results);
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -69,6 +82,8 @@ public class SearchResultsFragment extends Fragment {
         SearchResultItemFragment srf = currentCollection.get(i);
         Place place = srf.getPlace();
         Log.v(LOG_TAG, "place: " + place.toString());
+        String indicatorText = String.format("%2d of %2d", i + 1, currentCollection.size());
+        indicator.setText(indicatorText);
         mapFragment.centerOn(place.getMarker().getPoint());
     }
 
@@ -114,10 +129,11 @@ public class SearchResultsFragment extends Fragment {
             m.setMarker(mapFragment.getDefaultMarkerSymbol());
             m.setMarkerHotspot(MarkerItem.HotspotPlace.CENTER);
             poiLayer.addItem(place.getMarker());
-
             add(place);
         }
         notifyNewData();
+        String initialIndicatorText = String.format("%2d of %2d", 1, jsonArray.length());
+        indicator.setText(initialIndicatorText);
         showResultsWrapper();
         mapFragment.updateMap();
     }
