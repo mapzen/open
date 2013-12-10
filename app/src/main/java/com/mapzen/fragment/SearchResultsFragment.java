@@ -1,16 +1,20 @@
 package com.mapzen.fragment;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mapzen.MapzenApplication;
@@ -92,10 +96,21 @@ public class SearchResultsFragment extends Fragment {
     }
 
     public void showResultsWrapper() {
+        RelativeLayout.LayoutParams layoutParams = getLayoutParams();
+        Resources res = act.getResources();
+        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100,
+                res.getDisplayMetrics());
+        layoutParams.setMargins(0, 0, 0, px);
         wrapper.setVisibility(View.VISIBLE);
     }
 
+    private RelativeLayout.LayoutParams getLayoutParams() {
+        return (RelativeLayout.LayoutParams) mapFragment.getView().getLayoutParams();
+    }
+
     public void hideResultsWrapper() {
+        RelativeLayout.LayoutParams p = getLayoutParams();
+        p.setMargins(0, 0, 0, 0);
         wrapper.setVisibility(View.GONE);
         mapFragment.getPoiLayer().removeAllItems();
         mapFragment.updateMap();

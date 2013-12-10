@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:baselineAligned="true">
+              android:layout_height="match_parent">
     <fragment
         android:id="@+id/map_fragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         class="com.mapzen.fragment.MapFragment" />
     <fragment
         android:id="@+id/search_results_fragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_alignParentBottom="true"
         class="com.mapzen.fragment.SearchResultsFragment" />
     <LinearLayout
