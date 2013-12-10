@@ -29,7 +29,7 @@ public class FullSearchResultsActivity extends Activity {
         final ListView listview = (ListView) findViewById(R.id.full_list);
         Intent intent = getIntent();
         final ArrayList<Place> list = intent.getParcelableArrayListExtra("places");
-        final StableArrayAdapter adapter = new StableArrayAdapter(this,
+        final PlaceArrayAdapter adapter = new PlaceArrayAdapter(this,
                 android.R.layout.simple_list_item_1, list);
         listview.setAdapter(adapter);
     }
@@ -51,10 +51,10 @@ public class FullSearchResultsActivity extends Activity {
         return intent;
     }
 
-    private class StableArrayAdapter extends ArrayAdapter<Place> {
+    private class PlaceArrayAdapter extends ArrayAdapter<Place> {
         List<Place> places = new ArrayList<Place>();
-        public StableArrayAdapter(Context context, int textViewResourceId,
-                                  List<Place> objects) {
+        public PlaceArrayAdapter(Context context, int textViewResourceId,
+                                 List<Place> objects) {
             super(context, textViewResourceId, objects);
             places = objects;
         }
