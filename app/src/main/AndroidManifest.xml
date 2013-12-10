@@ -30,7 +30,7 @@
         <activity
             android:name=".activity.FullSearchResultsActivity"
             android:launchMode="singleTop"
-            android:label="@string/application_name" >
+            android:label="@string/results_activity_title" >
         </activity>
     </application>
 

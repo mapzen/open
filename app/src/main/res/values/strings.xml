@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="application_name">Mapzen</string>
-    <string name="memo_section">Demos</string>
-    <string name="reykjavik">Reyjavik</string>
-    <string name="long_island">Long Island</string>
-    <string name="mapquest_api_key">Fmjtd%7Cluubn9u2nd%2C2a%3Do5-907wd6</string>
+    <string name="results_activity_title">Results</string>
     <string name="search_title">find stuff</string>
     <string name="tag_viewholder">1</string>
     <string name="tag_placeholder">2</string>
