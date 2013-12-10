@@ -13,7 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.entity.Place;
 
@@ -76,7 +75,7 @@ public class FullSearchResultsActivity extends Activity {
                         (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 v = vi.inflate(R.layout.search_item, null);
                 holder = new ViewHolder();
-                holder.item1 = (TextView) v.findViewById(R.id.big);
+                holder.item1 = (TextView) v.findViewById(R.id.place_title);
                 v.setTag(holder);
                 v.setOnClickListener(new View.OnClickListener() {
                     @Override

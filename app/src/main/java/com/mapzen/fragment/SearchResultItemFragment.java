@@ -20,7 +20,7 @@ public class SearchResultItemFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search_item, container, false);
-        TextView tv = (TextView) view.findViewById(R.id.big);
+        TextView tv = (TextView) view.findViewById(R.id.place_title);
         tv.setText(place.getDisplayName());
         return view;
     }

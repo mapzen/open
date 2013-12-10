@@ -21,7 +21,8 @@
         android:theme="@style/Theme.Mapzen" >
         <activity
             android:name=".activity.BaseActivity"
-            android:label="@string/application_name" >
+            android:label="@string/application_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -30,7 +31,8 @@
         <activity
             android:name=".activity.FullSearchResultsActivity"
             android:launchMode="singleTop"
-            android:label="@string/results_activity_title" >
+            android:label="@string/results_activity_title"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 
