@@ -14,5 +14,5 @@
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:text="ME" />
+        android:background="@drawable/ic_locate" />
 </RelativeLayout>
