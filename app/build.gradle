@@ -43,7 +43,6 @@ dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
     compile project(':vtm-android')
     compile project(':vtm')
-    compile project(':Android-ViewPagerIndicator')
     testCompile 'junit:junit:4.10'
     testCompile 'org.robolectric:robolectric:2.1.+'
     testCompile 'com.squareup:fest-android:1.0.+'
