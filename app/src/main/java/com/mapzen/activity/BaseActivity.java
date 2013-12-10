@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CursorAdapter;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -41,6 +42,7 @@ import org.json.JSONObject;
 import org.oscim.android.MapActivity;
 import org.oscim.core.MapPosition;
 import org.oscim.map.Map;
+import org.oscim.theme.renderinstruction.Line;
 
 import static android.provider.BaseColumns._ID;
 import static com.mapzen.MapzenApplication.LOG_TAG;
@@ -58,6 +60,7 @@ public class BaseActivity extends MapActivity
     private MapFragment mapFragment;
     private SearchResultsFragment searchResultsFragment;
     private String currentSearchTerm;
+    private SearchResultItemFragment itemFragment;
 
     private final String[] columns = {
         _ID, PELIAS_TEXT, PELIAS_LAT, PELIAS_LON
@@ -269,6 +272,12 @@ public class BaseActivity extends MapActivity
         if (searchResultsFragment != null) {
             searchResultsFragment.hideResultsWrapper();
         }
+        if (itemFragment != null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.remove(itemFragment);
+            fragmentTransaction.commit();
+        }
         return true;
     }
 
@@ -286,7 +295,7 @@ public class BaseActivity extends MapActivity
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            SearchResultItemFragment itemFragment = new SearchResultItemFragment(place);
+            itemFragment = new SearchResultItemFragment(place);
             fragmentTransaction.replace(R.id.place_result, itemFragment);
             fragmentTransaction.commit();
 
