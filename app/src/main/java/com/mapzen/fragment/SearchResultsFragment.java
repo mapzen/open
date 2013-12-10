@@ -1,8 +1,5 @@
 package com.mapzen.fragment;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.SearchViewAdapter;
 import com.mapzen.activity.BaseActivity;
@@ -43,6 +39,7 @@ public class SearchResultsFragment extends Fragment {
     private List<SearchResultItemFragment> currentCollection =
             new ArrayList<SearchResultItemFragment>();
     private TextView indicator;
+    final private String PAGINATE_TEMPLATE = "%2d of %2d RESULTS";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,7 +49,7 @@ public class SearchResultsFragment extends Fragment {
         assert view != null;
         act = (BaseActivity) getActivity();
         assert act != null;
-        indicator = (TextView) view.findViewById(R.id.indicator);
+        indicator = (TextView) view.findViewById(R.id.pagination);
         Button viewAll = (Button) view.findViewById(R.id.view_all);
         viewAll.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,7 +87,7 @@ public class SearchResultsFragment extends Fragment {
         SearchResultItemFragment srf = currentCollection.get(i);
         Place place = srf.getPlace();
         Log.v(LOG_TAG, "place: " + place.toString());
-        String indicatorText = String.format("%2d of %2d", i + 1, currentCollection.size());
+        String indicatorText = String.format(PAGINATE_TEMPLATE, i + 1, currentCollection.size());
         indicator.setText(indicatorText);
         mapFragment.centerOn(place.getMarker().getPoint());
     }
@@ -151,7 +148,7 @@ public class SearchResultsFragment extends Fragment {
             add(place);
         }
         notifyNewData();
-        String initialIndicatorText = String.format("%2d of %2d", 1, jsonArray.length());
+        String initialIndicatorText = String.format(PAGINATE_TEMPLATE, 1, jsonArray.length());
         indicator.setText(initialIndicatorText);
         showResultsWrapper();
         mapFragment.updateMap();
