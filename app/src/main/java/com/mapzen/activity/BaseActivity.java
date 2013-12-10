@@ -282,6 +282,7 @@ public class BaseActivity extends MapActivity
             assert place != null;
             searchResultsFragment.hideResultsWrapper();
             clearSearchText();
+            mapFragment.pullUp();
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

@@ -1,11 +1,9 @@
 package com.mapzen.fragment;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,22 +91,13 @@ public class SearchResultsFragment extends Fragment {
     }
 
     public void showResultsWrapper() {
-        RelativeLayout.LayoutParams layoutParams = getLayoutParams();
-        Resources res = act.getResources();
-        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100,
-                res.getDisplayMetrics());
-        layoutParams.setMargins(0, 0, 0, px);
+        mapFragment.pullUp();
         wrapper.setVisibility(View.VISIBLE);
     }
 
-    private RelativeLayout.LayoutParams getLayoutParams() {
-        return (RelativeLayout.LayoutParams) mapFragment.getView().getLayoutParams();
-    }
-
     public void hideResultsWrapper() {
-        RelativeLayout.LayoutParams p = getLayoutParams();
-        p.setMargins(0, 0, 0, 0);
         wrapper.setVisibility(View.GONE);
+        mapFragment.pullDown();
         mapFragment.getPoiLayer().removeAllItems();
         mapFragment.updateMap();
     }

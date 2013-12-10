@@ -1,12 +1,15 @@
 package com.mapzen.fragment;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 
 import com.mapzen.MapzenApplication;
 import com.mapzen.PoiLayer;
@@ -134,6 +137,23 @@ public class MapFragment extends Fragment {
         setupMyLocationBtn(view);
         setupMeMarkerLayer();
         map.setMapPosition(app.getLocationPosition());
+    }
+
+    private RelativeLayout.LayoutParams getLayoutParams() {
+        return (RelativeLayout.LayoutParams) getView().getLayoutParams();
+    }
+
+    public void pullUp() {
+        RelativeLayout.LayoutParams layoutParams = getLayoutParams();
+        Resources res = activity.getResources();
+        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100,
+                res.getDisplayMetrics());
+        layoutParams.setMargins(0, 0, 0, px);
+    }
+
+    public void pullDown() {
+        RelativeLayout.LayoutParams p = getLayoutParams();
+        p.setMargins(0, 0, 0, 0);
     }
 
     public ItemizedIconLayer getPoiLayer() {
