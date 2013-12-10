@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.mapzen.R;
+import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Place;
 
 public class SearchResultItemFragment extends Fragment {
@@ -22,6 +23,12 @@ public class SearchResultItemFragment extends Fragment {
         View view = inflater.inflate(R.layout.search_item, container, false);
         TextView tv = (TextView) view.findViewById(R.id.place_title);
         tv.setText(place.getDisplayName());
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((BaseActivity)getActivity()).showPlace(place);
+            }
+        });
         return view;
     }
 

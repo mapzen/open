@@ -281,6 +281,20 @@ public class BaseActivity extends MapActivity
         return true;
     }
 
+    public void showPlace(Place place) {
+        searchResultsFragment.hideResultsWrapper();
+        clearSearchText();
+        mapFragment.pullUp();
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        itemFragment = new SearchResultItemFragment(place);
+        fragmentTransaction.replace(R.id.place_result, itemFragment);
+        fragmentTransaction.commit();
+
+        mapFragment.centerOnExclusive(place);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -289,19 +303,7 @@ public class BaseActivity extends MapActivity
             assert bundle != null;
             Place place = bundle.getParcelable("place");
             assert place != null;
-            searchResultsFragment.hideResultsWrapper();
-            clearSearchText();
-            mapFragment.pullUp();
-
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            itemFragment = new SearchResultItemFragment(place);
-            fragmentTransaction.replace(R.id.place_result, itemFragment);
-            fragmentTransaction.commit();
-
-            mapFragment.centerOnExclusive(place);
+            showPlace(place);
         }
     }
-
-
 }
