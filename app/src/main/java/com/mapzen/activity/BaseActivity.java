@@ -1,6 +1,5 @@
 package com.mapzen.activity;
 
-import android.app.ActionBar;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -18,8 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CursorAdapter;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -43,7 +40,6 @@ import org.json.JSONObject;
 import org.oscim.android.MapActivity;
 import org.oscim.core.MapPosition;
 import org.oscim.map.Map;
-import org.oscim.theme.renderinstruction.Line;
 
 import static android.provider.BaseColumns._ID;
 import static com.mapzen.MapzenApplication.LOG_TAG;
