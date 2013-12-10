@@ -2,6 +2,7 @@ package com.mapzen.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -26,6 +27,7 @@ import com.android.volley.toolbox.Volley;
 import com.bugsense.trace.BugSenseHandler;
 import com.mapzen.AutoCompleteCursor;
 import com.mapzen.MapzenApplication;
+import com.mapzen.PoiLayer;
 import com.mapzen.R;
 import com.mapzen.entity.Place;
 import com.mapzen.fragment.MapFragment;
@@ -35,6 +37,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.oscim.android.MapActivity;
+import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 import org.oscim.layers.marker.ItemizedIconLayer;
 import org.oscim.layers.marker.MarkerItem;
@@ -269,4 +272,21 @@ public class BaseActivity extends MapActivity
         }
         return true;
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == MapzenApplication.PICK_PLACE_REQUEST) {
+            Bundle bundle = data.getExtras();
+            Place place = bundle.getParcelable("place");
+            searchResultsFragment.hideResultsWrapper();
+            clearSearchText();
+            PoiLayer<MarkerItem> poiLayer = (PoiLayer<MarkerItem>) mapFragment.getPoiLayer();
+            poiLayer.removeAllItems();
+            poiLayer.addItem(place.getMarker());
+            mapFragment.centerOn(place.getGeoPoint());
+        }
+    }
+
+
 }

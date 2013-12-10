@@ -100,6 +100,10 @@ public class Place implements Parcelable {
         return markerItem;
     }
 
+    public GeoPoint getGeoPoint() {
+        return new GeoPoint(lat, lon);
+    }
+
     @Override
     public int describeContents() {
         return 0;

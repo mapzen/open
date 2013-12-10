@@ -13,11 +13,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.entity.Place;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.mapzen.MapzenApplication.PICK_PLACE_REQUEST;
 
 public class FullSearchResultsActivity extends Activity {
     @Override
@@ -66,6 +69,7 @@ public class FullSearchResultsActivity extends Activity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View v = convertView;
+            final Place place = places.get(position);
             ViewHolder holder;
             if (v == null) {
                 LayoutInflater vi =
@@ -74,13 +78,24 @@ public class FullSearchResultsActivity extends Activity {
                 holder = new ViewHolder();
                 holder.item1 = (TextView) v.findViewById(R.id.big);
                 v.setTag(holder);
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent data = new Intent();
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("place", place);
+                        data.putExtras(bundle);
+                        setResult(PICK_PLACE_REQUEST, data);
+                        finish();
+                    }
+                });
             }
-            else
+            else {
                 holder=(ViewHolder)v.getTag();
+            }
 
-            final Place custom = places.get(position);
-            if (custom != null) {
-                holder.item1.setText(custom.getDisplayName());
+            if (place != null) {
+                holder.item1.setText(place.getDisplayName());
             }
             return v;
         }

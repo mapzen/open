@@ -1,5 +1,7 @@
 package com.mapzen.fragment;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -11,6 +13,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.SearchViewAdapter;
 import com.mapzen.activity.BaseActivity;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mapzen.MapzenApplication.LOG_TAG;
+import static com.mapzen.MapzenApplication.PICK_PLACE_REQUEST;
 
 public class SearchResultsFragment extends Fragment {
     private SearchViewAdapter adapter;
@@ -53,7 +57,7 @@ public class SearchResultsFragment extends Fragment {
                 for(SearchResultItemFragment fragment : currentCollection) {
                     places.add(fragment.getPlace());
                 }
-                startActivity(FullSearchResultsActivity.getIntent(act, places));
+                startActivityForResult(FullSearchResultsActivity.getIntent(getActivity(), places), PICK_PLACE_REQUEST);
             }
         });
         ViewPager pager = (ViewPager) view.findViewById(R.id.results);
