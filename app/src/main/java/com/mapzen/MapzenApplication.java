@@ -38,6 +38,7 @@ public class MapzenApplication extends Application implements LocationListener {
     private MapzenApplication(Context context) {
         this.context = context;
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        location = locationManager.getLastKnownLocation(getBestProvider());
     }
 
     public static MapzenApplication getApp(Context context) {
@@ -56,9 +57,6 @@ public class MapzenApplication extends Application implements LocationListener {
     }
 
     public Location getLocation() {
-        if (location == null) {
-            location = locationManager.getLastKnownLocation(getBestProvider());
-        }
         return location;
     }
 
