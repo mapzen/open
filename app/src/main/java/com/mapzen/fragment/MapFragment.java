@@ -12,6 +12,7 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.PoiLayer;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
+import com.mapzen.entity.Place;
 
 import org.oscim.android.MapView;
 import org.oscim.android.canvas.AndroidBitmap;
@@ -117,6 +118,12 @@ public class MapFragment extends Fragment {
         MapPosition mapPosition = new MapPosition(geoPoint.getLatitude(),
                 geoPoint.getLongitude(), Math.pow(2, app.getStoredZoomLevel()));
         map.setMapPosition(mapPosition);
+    }
+
+    public void centerOnExclusive(Place place) {
+        poiMarkersLayer.removeAllItems();
+        poiMarkersLayer.addItem(place.getMarker());
+        centerOn(place.getGeoPoint());
     }
 
     private void setupMap(View view) {
