@@ -158,6 +158,10 @@ public class BaseActivity extends MapActivity
         searchView.clearFocus();
     }
 
+    public SearchView getSearchView() {
+        return (SearchView) menuItem.getActionView();
+    }
+
     private Response.Listener<JSONObject> getAutocompleteSuccessResponseListener() {
         final AutoCompleteCursor cursor = new AutoCompleteCursor(columns);
         return new Response.Listener<JSONObject>() {

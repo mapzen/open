@@ -54,6 +54,7 @@ public class SearchResultsFragment extends Fragment {
             public void onClick(View view) {
                 ArrayList<Place> places = new ArrayList<Place>(currentCollection.size());
                 for(SearchResultItemFragment fragment : currentCollection) {
+                    act.getSearchView().clearFocus();
                     places.add(fragment.getPlace());
                 }
                 startActivityForResult(FullSearchResultsActivity.getIntent(getActivity(), places), PICK_PLACE_REQUEST);
