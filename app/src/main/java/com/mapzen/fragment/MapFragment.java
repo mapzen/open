@@ -15,7 +15,7 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.PoiLayer;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
-import com.mapzen.entity.Place;
+import com.mapzen.entity.Feature;
 
 import org.oscim.android.MapView;
 import org.oscim.android.canvas.AndroidBitmap;
@@ -91,10 +91,10 @@ public class MapFragment extends Fragment {
         map.setMapPosition(mapPosition);
     }
 
-    public void centerOnExclusive(Place place) {
+    public void centerOnExclusive(Feature feature) {
         poiMarkersLayer.removeAllItems();
-        poiMarkersLayer.addItem(place.getMarker());
-        centerOn(place.getGeoPoint());
+        poiMarkersLayer.addItem(feature.getMarker());
+        centerOn(feature.getGeoPoint());
     }
 
     private void setupMap(View view) {

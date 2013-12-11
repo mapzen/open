@@ -275,7 +275,7 @@
       <m closed="yes" v="aerodrome">
         <area fill="#e8ecde" />
       </m>
-      <!-- A place where planes are parked -->
+      <!-- A feature where planes are parked -->
       <m v="apron">
         <area fill="#f0f0f0" />
       </m>
@@ -648,7 +648,7 @@
       stroke="#ffffff"
       width="2.0" /> </m>
     -->
-    <!-- place -->
+    <!-- feature -->
     <m k="place_label">
       <m v="suburb" zoom-max="14">
         <caption fill="#606060" font-size="17" font-style="italic" k="name"

@@ -1054,7 +1054,7 @@
       </m>
 
 
-      <m k="place" v="locality" zoom-min="17">
+      <m k="feature" v="locality" zoom-min="17">
       <caption k="name" style="bold" size="10" fill="#000000"
       stroke="#ffffff" width="2.0" />
       </m> -->
@@ -1239,7 +1239,7 @@
     </m>
 
 
-    <m k="place" firt="true">
+    <m k="feature" firt="true">
       <m v="hamlet" zoom-min="13">
         <caption k="name" style="bold" size="13" fill="#000000" stroke="#ffffff" stroke-width="2.0" />
       </m>

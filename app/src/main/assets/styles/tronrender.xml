@@ -997,8 +997,8 @@
       />
       </m> -->
 
-    <!-- place -->
-    <m k="place" v="locality" zoom-min="17">
+    <!-- feature -->
+    <m k="feature" v="locality" zoom-min="17">
       <caption k="name" style="bold" size="10" fill="#000000" stroke="#ffffff" stroke-width="2.0" />
     </m>
     <m k="debug" v="area">
@@ -1040,8 +1040,8 @@
     k="addr:housenumber" style="bold" size="10" fill="#606060" stroke="#ffffff"
     width="2.0" /> </m>
 
-    place
-    <m k="place">
+    feature
+    <m k="feature">
     <m v="suburb|town|village">
     <caption k="name" size="20" fill="#eeeeee" stroke="#000020"
     stroke-width="4.0" priority="2" />
@@ -1260,7 +1260,7 @@
     </m>
 
 
-    <m k="place" firt="true">
+    <m k="feature" firt="true">
       <m v="hamlet" zoom-min="13">
         <caption k="name" style="bold" size="13" fill="#000000" stroke="#ffffff" stroke-width="2.0" />
       </m>

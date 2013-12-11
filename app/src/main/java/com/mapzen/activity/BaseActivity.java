@@ -29,7 +29,7 @@ import com.crashlytics.android.Crashlytics;
 import com.mapzen.AutoCompleteCursor;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
-import com.mapzen.entity.Place;
+import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.fragment.SearchResultItemFragment;
 import com.mapzen.fragment.SearchResultsFragment;
@@ -116,7 +116,7 @@ public class BaseActivity extends MapActivity
     @Override
     public boolean onQueryTextSubmit(String query) {
         JsonObjectRequest jsonObjectRequest =
-                Place.search(mMap, query, getSearchSuccessResponseListener(),
+                Feature.search(mMap, query, getSearchSuccessResponseListener(),
                         getSearchErrorResponseListener());
         queue.add(jsonObjectRequest);
         return true;
@@ -176,10 +176,10 @@ public class BaseActivity extends MapActivity
                 }
                 for (int i = 0; i < jsonArray.length(); i++) {
                     try {
-                        Place place = Place.fromJson(jsonArray.getJSONObject(i));
-                        cursor.getRowBuilder().setId(i).setText(place.getDisplayName()).
-                                setLat(place.getLat()).
-                                setLon(place.getLon()).buildRow();
+                        Feature feature = Feature.fromJson(jsonArray.getJSONObject(i));
+                        cursor.getRowBuilder().setId(i).setText(feature.getDisplayName()).
+                                setLat(feature.getLat()).
+                                setLon(feature.getLon()).buildRow();
                     } catch (JSONException e) {
                         Log.e(LOG_TAG, e.toString());
                     }
@@ -199,7 +199,7 @@ public class BaseActivity extends MapActivity
 
     public boolean onQueryTextChange(String newText) {
         if (currentSearchTerm != null || !newText.equals(currentSearchTerm)) {
-            JsonObjectRequest jsonObjectRequest = Place.suggest(newText,
+            JsonObjectRequest jsonObjectRequest = Feature.suggest(newText,
                     getAutocompleteSuccessResponseListener(), getAutocompleteErrorResponseListener());
             queue.add(jsonObjectRequest);
             currentSearchTerm = newText;
@@ -227,8 +227,8 @@ public class BaseActivity extends MapActivity
                 @Override
                 public void onClick(View view) {
                     clearSearchText();
-                    Place place = (Place) view.getTag();
-                    showPlace(place);
+                    Feature feature = (Feature) view.getTag();
+                    showPlace(feature);
                 }
             });
             parent.setOnTouchListener(new View.OnTouchListener() {
@@ -255,11 +255,11 @@ public class BaseActivity extends MapActivity
                     Double.parseDouble(cursor.getString(cursor.getColumnIndex(PELIAS_LAT)));
             double lon =
                     Double.parseDouble(cursor.getString(cursor.getColumnIndex(PELIAS_LON)));
-            Place place = new Place();
-            place.setDisplayName(cursor.getString(textIndex));
-            place.setLon(lon);
-            place.setLat(lat);
-            tv.setTag(place);
+            Feature feature = new Feature();
+            feature.setDisplayName(cursor.getString(textIndex));
+            feature.setLon(lon);
+            feature.setLat(lat);
+            tv.setTag(feature);
             tv.setText(cursor.getString(textIndex));
         }
     }
@@ -281,16 +281,16 @@ public class BaseActivity extends MapActivity
         return true;
     }
 
-    public void showPlace(Place place) {
+    public void showPlace(Feature feature) {
         searchResultsFragment.hideResultsWrapper();
         clearSearchText();
         mapFragment.pullUp();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        itemFragment = new SearchResultItemFragment(place);
+        itemFragment = new SearchResultItemFragment(feature);
         fragmentTransaction.replace(R.id.place_result, itemFragment);
         fragmentTransaction.commit();
 
-        mapFragment.centerOnExclusive(place);
+        mapFragment.centerOnExclusive(feature);
     }
 
     @Override
@@ -299,9 +299,9 @@ public class BaseActivity extends MapActivity
         if (resultCode == MapzenApplication.PICK_PLACE_REQUEST) {
             Bundle bundle = data.getExtras();
             assert bundle != null;
-            Place place = bundle.getParcelable("place");
-            assert place != null;
-            showPlace(place);
+            Feature feature = bundle.getParcelable("feature");
+            assert feature != null;
+            showPlace(feature);
         }
     }
 }

@@ -15,7 +15,7 @@ import com.mapzen.R;
 import com.mapzen.SearchViewAdapter;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.activity.FullSearchResultsActivity;
-import com.mapzen.entity.Place;
+import com.mapzen.entity.Feature;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,12 +51,12 @@ public class SearchResultsFragment extends Fragment {
         viewAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ArrayList<Place> places = new ArrayList<Place>(currentCollection.size());
+                ArrayList<Feature> features = new ArrayList<Feature>(currentCollection.size());
                 for (SearchResultItemFragment fragment : currentCollection) {
                     act.getSearchView().clearFocus();
-                    places.add(fragment.getPlace());
+                    features.add(fragment.getFeature());
                 }
-                startActivityForResult(FullSearchResultsActivity.getIntent(getActivity(), places), PICK_PLACE_REQUEST);
+                startActivityForResult(FullSearchResultsActivity.getIntent(getActivity(), features), PICK_PLACE_REQUEST);
             }
         });
         ViewPager pager = (ViewPager) view.findViewById(R.id.results);
@@ -86,11 +86,11 @@ public class SearchResultsFragment extends Fragment {
 
     private void centerOnPlace(int i) {
         SearchResultItemFragment srf = currentCollection.get(i);
-        Place place = srf.getPlace();
-        Log.v(LOG_TAG, "place: " + place.toString());
+        Feature feature = srf.getFeature();
+        Log.v(LOG_TAG, "feature: " + feature.toString());
         String indicatorText = String.format(PAGINATE_TEMPLATE, i + 1, currentCollection.size());
         indicator.setText(indicatorText);
-        mapFragment.centerOn(place.getMarker().getPoint());
+        mapFragment.centerOn(feature.getMarker().getPoint());
     }
 
     public void showResultsWrapper() {
@@ -112,8 +112,8 @@ public class SearchResultsFragment extends Fragment {
         currentCollection.clear();
     }
 
-    public void add(Place place) {
-        SearchResultItemFragment searchResultItemFragment = new SearchResultItemFragment(place);
+    public void add(Feature feature) {
+        SearchResultItemFragment searchResultItemFragment = new SearchResultItemFragment(feature);
         currentCollection.add(searchResultItemFragment);
         adapter.addFragment(searchResultItemFragment);
     }
@@ -126,18 +126,18 @@ public class SearchResultsFragment extends Fragment {
         ItemizedIconLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
         clearAll();
         for (int i = 0; i < jsonArray.length(); i++) {
-            Place place = null;
+            Feature feature = null;
             try {
-                place = Place.fromJson(jsonArray.getJSONObject(i));
+                feature = Feature.fromJson(jsonArray.getJSONObject(i));
             } catch (JSONException e) {
                 Log.e(LOG_TAG, e.toString());
             }
-            Log.v(LOG_TAG, place.getDisplayName());
-            MarkerItem m = place.getMarker();
+            Log.v(LOG_TAG, feature.getDisplayName());
+            MarkerItem m = feature.getMarker();
             m.setMarker(mapFragment.getDefaultMarkerSymbol());
             m.setMarkerHotspot(MarkerItem.HotspotPlace.CENTER);
-            poiLayer.addItem(place.getMarker());
-            add(place);
+            poiLayer.addItem(feature.getMarker());
+            add(feature);
         }
         notifyNewData();
         String initialIndicatorText = String.format(PAGINATE_TEMPLATE, 1, jsonArray.length());

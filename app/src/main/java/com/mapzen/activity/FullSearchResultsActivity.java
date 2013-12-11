@@ -14,7 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.mapzen.R;
-import com.mapzen.entity.Place;
+import com.mapzen.entity.Feature;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ public class FullSearchResultsActivity extends Activity {
         setContentView(R.layout.full_results_list);
         final ListView listview = (ListView) findViewById(R.id.full_list);
         Intent intent = getIntent();
-        final ArrayList<Place> list = intent.getParcelableArrayListExtra("places");
+        final ArrayList<Feature> list = intent.getParcelableArrayListExtra("features");
         final PlaceArrayAdapter adapter = new PlaceArrayAdapter(this,
                 android.R.layout.simple_list_item_1, list);
         listview.setAdapter(adapter);
@@ -45,18 +45,18 @@ public class FullSearchResultsActivity extends Activity {
         return true;
     }
 
-    public static Intent getIntent(Context context, ArrayList<Place> places) {
+    public static Intent getIntent(Context context, ArrayList<Feature> features) {
         Intent intent = new Intent(context, FullSearchResultsActivity.class);
-        intent.putParcelableArrayListExtra("places", places);
+        intent.putParcelableArrayListExtra("features", features);
         return intent;
     }
 
-    private class PlaceArrayAdapter extends ArrayAdapter<Place> {
-        private List<Place> places = new ArrayList<Place>();
+    private class PlaceArrayAdapter extends ArrayAdapter<Feature> {
+        private List<Feature> features = new ArrayList<Feature>();
         public PlaceArrayAdapter(Context context, int textViewResourceId,
-                                 List<Place> objects) {
+                                 List<Feature> objects) {
             super(context, textViewResourceId, objects);
-            places = objects;
+            features = objects;
         }
 
         public class ViewHolder {
@@ -66,7 +66,7 @@ public class FullSearchResultsActivity extends Activity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View v = convertView;
-            final Place place = places.get(position);
+            final Feature feature = features.get(position);
             ViewHolder holder;
             if (v == null) {
                 LayoutInflater vi =
@@ -80,7 +80,7 @@ public class FullSearchResultsActivity extends Activity {
                     public void onClick(View view) {
                         Intent data = new Intent();
                         Bundle bundle = new Bundle();
-                        bundle.putParcelable("place", place);
+                        bundle.putParcelable("feature", feature);
                         data.putExtras(bundle);
                         setResult(PICK_PLACE_REQUEST, data);
                         finish();
@@ -90,8 +90,8 @@ public class FullSearchResultsActivity extends Activity {
                 holder = (ViewHolder) v.getTag();
             }
 
-            if (place != null) {
-                holder.item.setText(place.getDisplayName());
+            if (feature != null) {
+                holder.item.setText(feature.getDisplayName());
             }
             return v;
         }
