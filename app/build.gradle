@@ -10,7 +10,6 @@ buildscript {
             url 'https://oss.sonatype.org/content/repositories/snapshots/'
         }
         maven { url 'http://download.crashlytics.com/maven' }
-
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.6.+'
@@ -29,7 +28,9 @@ apply plugin: 'android-cq'
 repositories {
     mavenCentral()
     maven { url 'http://download.crashlytics.com/maven' }
-
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
 }
 
 android {
@@ -51,7 +52,7 @@ dependencies {
     compile project(':vtm-android')
     compile project(':vtm')
     testCompile 'junit:junit:4.10'
-    testCompile 'org.robolectric:robolectric:2.1.+'
+    testCompile 'org.robolectric:robolectric:2.3-SNAPSHOT'
     testCompile 'com.squareup:fest-android:1.0.+'
     compile 'com.crashlytics.android:crashlytics:1.+'
 
