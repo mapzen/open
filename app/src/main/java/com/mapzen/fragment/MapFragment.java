@@ -39,6 +39,7 @@ import java.util.ArrayList;
 public class MapFragment extends Fragment {
     public static final int ANIMATION_DURATION = 1300;
     public static final int DEFAULT_ZOOMLEVEL = 18;
+    public static final int BOTTOM_MARGIN = 100;
     private VectorTileLayer baseLayer;
     private BaseActivity activity;
     private Map map;
@@ -146,7 +147,7 @@ public class MapFragment extends Fragment {
     public void pullUp() {
         RelativeLayout.LayoutParams layoutParams = getLayoutParams();
         Resources res = activity.getResources();
-        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100,
+        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, BOTTOM_MARGIN,
                 res.getDisplayMetrics());
         layoutParams.setMargins(0, 0, 0, px);
     }

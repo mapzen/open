@@ -39,10 +39,8 @@ public class FullSearchResultsActivity extends Activity {
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         int itemId = item.getItemId();
-        switch (itemId) {
-            case android.R.id.home:
-                finish();
-                break;
+        if (itemId  == android.R.id.home) {
+            finish();
         }
         return true;
     }
@@ -54,15 +52,15 @@ public class FullSearchResultsActivity extends Activity {
     }
 
     private class PlaceArrayAdapter extends ArrayAdapter<Place> {
-        List<Place> places = new ArrayList<Place>();
+        private List<Place> places = new ArrayList<Place>();
         public PlaceArrayAdapter(Context context, int textViewResourceId,
                                  List<Place> objects) {
             super(context, textViewResourceId, objects);
             places = objects;
         }
 
-        public class ViewHolder{
-            public TextView item1;
+        public class ViewHolder {
+            public TextView item;
         }
 
         @Override
@@ -75,7 +73,7 @@ public class FullSearchResultsActivity extends Activity {
                         (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 v = vi.inflate(R.layout.search_item, null);
                 holder = new ViewHolder();
-                holder.item1 = (TextView) v.findViewById(R.id.place_title);
+                holder.item = (TextView) v.findViewById(R.id.place_title);
                 v.setTag(holder);
                 v.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -88,13 +86,12 @@ public class FullSearchResultsActivity extends Activity {
                         finish();
                     }
                 });
-            }
-            else {
-                holder=(ViewHolder)v.getTag();
+            } else {
+                holder = (ViewHolder) v.getTag();
             }
 
             if (place != null) {
-                holder.item1.setText(place.getDisplayName());
+                holder.item.setText(place.getDisplayName());
             }
             return v;
         }

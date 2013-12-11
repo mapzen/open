@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mapzen.R;
@@ -37,7 +36,7 @@ public class SearchResultsFragment extends Fragment {
     private List<SearchResultItemFragment> currentCollection =
             new ArrayList<SearchResultItemFragment>();
     private TextView indicator;
-    final private String PAGINATE_TEMPLATE = "%2d of %2d RESULTS";
+    private static final String PAGINATE_TEMPLATE = "%2d of %2d RESULTS";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,7 +52,7 @@ public class SearchResultsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 ArrayList<Place> places = new ArrayList<Place>(currentCollection.size());
-                for(SearchResultItemFragment fragment : currentCollection) {
+                for (SearchResultItemFragment fragment : currentCollection) {
                     act.getSearchView().clearFocus();
                     places.add(fragment.getPlace());
                 }

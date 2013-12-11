@@ -14,7 +14,7 @@ import com.mapzen.entity.Place;
 public class SearchResultItemFragment extends Fragment {
     private Place place;
 
-    public SearchResultItemFragment (Place place) {
+    public SearchResultItemFragment(Place place) {
         this.place = place;
     }
 
@@ -26,7 +26,7 @@ public class SearchResultItemFragment extends Fragment {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((BaseActivity)getActivity()).showPlace(place);
+                ((BaseActivity) getActivity()).showPlace(place);
             }
         });
         return view;

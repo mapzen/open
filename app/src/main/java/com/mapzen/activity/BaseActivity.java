@@ -38,7 +38,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.oscim.android.MapActivity;
-import org.oscim.core.MapPosition;
 import org.oscim.map.Map;
 
 import static android.provider.BaseColumns._ID;
@@ -242,7 +241,7 @@ public class BaseActivity extends MapActivity
         }
 
         private void dismissKeyboard() {
-            InputMethodManager imm = (InputMethodManager)getSystemService(
+            InputMethodManager imm = (InputMethodManager) getSystemService(
                     Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
         }
@@ -273,7 +272,6 @@ public class BaseActivity extends MapActivity
     public boolean onMenuItemActionCollapse(MenuItem item) {
         searchResultsFragment.hideResultsWrapper();
         if (itemFragment != null) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(itemFragment);
             fragmentTransaction.commit();
@@ -286,8 +284,6 @@ public class BaseActivity extends MapActivity
         searchResultsFragment.hideResultsWrapper();
         clearSearchText();
         mapFragment.pullUp();
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         itemFragment = new SearchResultItemFragment(place);
         fragmentTransaction.replace(R.id.place_result, itemFragment);
