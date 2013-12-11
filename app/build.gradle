@@ -41,11 +41,23 @@ android {
         minSdkVersion 16
         targetSdkVersion 18
     }
+    // tell Android studio that the instrumentTest source set is located in the unit test source set
+    sourceSets {
+        instrumentTest.setRoot('src/test')
+    }
 }
 
 repositories {
      maven { url "http://repo.maven.apache.org/maven2" }
 }
+
+sourceSets {
+    testLocal {
+        java.srcDir file('src/test/java')
+        resources.srcDir file('src/test/resources')
+    }
+}
+
 dependencies {
     compile 'com.android.support:support-v4:+'
     compile fileTree(dir: 'libs', include: '*.jar')
@@ -54,6 +66,12 @@ dependencies {
     testCompile 'junit:junit:4.10'
     testCompile 'org.robolectric:robolectric:2.3-SNAPSHOT'
     testCompile 'com.squareup:fest-android:1.0.+'
+    testLocalCompile 'junit:junit:4.10'
+    testLocalCompile 'org.robolectric:robolectric:2.3-SNAPSHOT'
+    testLocalCompile 'com.squareup:fest-android:1.0.+'
+    instrumentTestCompile 'junit:junit:4.10'
+    instrumentTestCompile 'org.robolectric:robolectric:2.3-SNAPSHOT'
+    instrumentTestCompile 'com.squareup:fest-android:1.0.+'
     compile 'com.crashlytics.android:crashlytics:1.+'
 
 }

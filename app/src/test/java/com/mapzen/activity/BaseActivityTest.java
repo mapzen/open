@@ -1,7 +1,5 @@
 package com.mapzen.activity;
 
-import com.mapzen.activity.BaseActivity;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +20,6 @@ public class BaseActivityTest {
     @Test
     public void testOnCreate() throws Exception {
         //Activity activity = Robolectric.buildActivity(BaseActivity.class).create().get();
-        // TODO sort out alien assets from VTM
         assert(true);
     }
 
