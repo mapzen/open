@@ -75,19 +75,17 @@ public class BaseActivity extends MapActivity
         fragmentManager = getSupportFragmentManager();
         BugSenseHandler.initAndStartSession(BaseActivity.this, "881794a2");
         setContentView(R.layout.base);
+        mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
+        searchResultsFragment = (SearchResultsFragment) fragmentManager.findFragmentById(R.id.search_results_fragment);
+        // TODO remove fugly HACK
+        searchResultsFragment.setMapFragment(mapFragment);
     }
 
     public MapFragment getMapFragment() {
-        if (mapFragment == null) {
-            mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
-        }
         return mapFragment;
     }
 
     public SearchResultsFragment getSearchResultsFragment() {
-        if (searchResultsFragment == null) {
-            searchResultsFragment = (SearchResultsFragment) fragmentManager.findFragmentById(R.id.search_results_fragment);
-        }
         return searchResultsFragment;
     }
 
@@ -225,8 +223,8 @@ public class BaseActivity extends MapActivity
                 @Override
                 public void onClick(View view) {
                     clearSearchText();
-                    MapPosition mapPosition = (MapPosition) view.getTag();
-                    mMap.setMapPosition(mapPosition);
+                    Place place = (Place) view.getTag();
+                    showPlace(place);
                 }
             });
             parent.setOnTouchListener(new View.OnTouchListener() {
@@ -253,8 +251,11 @@ public class BaseActivity extends MapActivity
                     Double.parseDouble(cursor.getString(cursor.getColumnIndex(PELIAS_LAT)));
             double lon =
                     Double.parseDouble(cursor.getString(cursor.getColumnIndex(PELIAS_LON)));
-            MapPosition position = new MapPosition(lat, lon, Math.pow(2, app.getStoredZoomLevel()));
-            tv.setTag(position);
+            Place place = new Place();
+            place.setDisplayName(cursor.getString(textIndex));
+            place.setLon(lon);
+            place.setLat(lat);
+            tv.setTag(place);
             tv.setText(cursor.getString(textIndex));
         }
     }
@@ -266,14 +267,13 @@ public class BaseActivity extends MapActivity
 
     @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
-        if (searchResultsFragment != null) {
-            searchResultsFragment.hideResultsWrapper();
-        }
+        searchResultsFragment.hideResultsWrapper();
         if (itemFragment != null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(itemFragment);
             fragmentTransaction.commit();
+            mapFragment.pullDown();
         }
         return true;
     }

@@ -76,9 +76,12 @@ public class SearchResultsFragment extends Fragment {
         });
         adapter = new SearchViewAdapter(act, act.getSupportFragmentManager());
         pager.setAdapter(adapter);
-        mapFragment = act.getMapFragment();
         wrapper = (LinearLayout) view.findViewById(R.id.results_wrapper);
         return view;
+    }
+
+    public void setMapFragment(MapFragment map) {
+        mapFragment = map;
     }
 
     private void centerOnPlace(int i) {
