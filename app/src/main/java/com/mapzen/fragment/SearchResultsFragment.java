@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mapzen.R;
 import com.mapzen.SearchViewAdapter;
@@ -110,6 +111,7 @@ public class SearchResultsFragment extends Fragment {
         poiLayer.removeAllItems();
         adapter.clearFragments();
         currentCollection.clear();
+        hideResultsWrapper();
     }
 
     public void add(Feature feature) {
@@ -125,24 +127,28 @@ public class SearchResultsFragment extends Fragment {
     public void setSearchResults(JSONArray jsonArray) {
         ItemizedIconLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
         clearAll();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            Feature feature = null;
-            try {
-                feature = Feature.fromJson(jsonArray.getJSONObject(i));
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, e.toString());
+        if (jsonArray.length() > 0) {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                Feature feature = null;
+                try {
+                    feature = Feature.fromJson(jsonArray.getJSONObject(i));
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, e.toString());
+                }
+                Log.v(LOG_TAG, feature.getDisplayName());
+                MarkerItem m = feature.getMarker();
+                m.setMarker(mapFragment.getDefaultMarkerSymbol());
+                m.setMarkerHotspot(MarkerItem.HotspotPlace.CENTER);
+                poiLayer.addItem(feature.getMarker());
+                add(feature);
             }
-            Log.v(LOG_TAG, feature.getDisplayName());
-            MarkerItem m = feature.getMarker();
-            m.setMarker(mapFragment.getDefaultMarkerSymbol());
-            m.setMarkerHotspot(MarkerItem.HotspotPlace.CENTER);
-            poiLayer.addItem(feature.getMarker());
-            add(feature);
+            notifyNewData();
+            String initialIndicatorText = String.format(PAGINATE_TEMPLATE, 1, jsonArray.length());
+            indicator.setText(initialIndicatorText);
+            showResultsWrapper();
+            mapFragment.updateMap();
+        } else {
+            Toast.makeText(act, "No results where found for: " + act.getSearchView().getQuery(), 2500).show();
         }
-        notifyNewData();
-        String initialIndicatorText = String.format(PAGINATE_TEMPLATE, 1, jsonArray.length());
-        indicator.setText(initialIndicatorText);
-        showResultsWrapper();
-        mapFragment.updateMap();
     }
 }

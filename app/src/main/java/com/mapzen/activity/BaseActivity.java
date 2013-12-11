@@ -143,6 +143,7 @@ public class BaseActivity extends MapActivity
                 }
                 searchResultsFragment = getSearchResultsFragment();
                 searchResultsFragment.clearAll();
+                hideItemFragment();
                 searchResultsFragment.setSearchResults(jsonArray);
                 final SearchView searchView = (SearchView) menuItem.getActionView();
                 assert searchView != null;
@@ -272,13 +273,17 @@ public class BaseActivity extends MapActivity
     @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
         searchResultsFragment.hideResultsWrapper();
+        hideItemFragment();
+        return true;
+    }
+
+    private void hideItemFragment() {
         if (itemFragment != null) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.remove(itemFragment);
             fragmentTransaction.commit();
             mapFragment.pullDown();
         }
-        return true;
     }
 
     public void showPlace(Feature feature) {
