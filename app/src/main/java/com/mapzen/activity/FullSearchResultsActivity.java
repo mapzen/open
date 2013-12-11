@@ -59,21 +59,18 @@ public class FullSearchResultsActivity extends Activity {
             features = objects;
         }
 
-        public class ViewHolder {
-            public TextView item;
-        }
-
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View v = convertView;
             final Feature feature = features.get(position);
-            ViewHolder holder;
+            Feature.ViewHolder holder;
             if (v == null) {
                 LayoutInflater vi =
                         (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 v = vi.inflate(R.layout.search_item, null);
-                holder = new ViewHolder();
-                holder.item = (TextView) v.findViewById(R.id.place_title);
+                holder = new Feature.ViewHolder();
+                holder.title = (TextView) v.findViewById(R.id.place_title);
+                holder.address = (TextView) v.findViewById(R.id.place_address);
                 v.setTag(holder);
                 v.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -87,12 +84,9 @@ public class FullSearchResultsActivity extends Activity {
                     }
                 });
             } else {
-                holder = (ViewHolder) v.getTag();
+                holder = (Feature.ViewHolder) v.getTag();
             }
-
-            if (feature != null) {
-                holder.item.setText(feature.getDisplayName());
-            }
+            holder.setFromFeature(feature);
             return v;
         }
     }

@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -203,5 +204,17 @@ public class Feature implements Parcelable {
 
     public int hashCode() {
         return 0;
+    }
+
+    static public class ViewHolder {
+        public TextView title;
+        public TextView address;
+
+        public void setFromFeature(Feature feature) {
+            if (feature != null) {
+                title.setText(feature.getDisplayName());
+                address.setText(String.format("%s, %s", feature.getAdmin1Name(), feature.getAdmin1Abbr()));
+            }
+        }
     }
 }
