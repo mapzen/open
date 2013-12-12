@@ -9,7 +9,7 @@
     <!-- ActionBar styles -->
     <style name="MyActionBar"
            parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">#64999999</item>
+        <item name="android:background">#77000000</item>
         <item name="android:layout_marginTop">2dp</item>
         <item name="android:layout_marginLeft">2dp</item>
         <item name="android:layout_marginRight">2dp</item>
