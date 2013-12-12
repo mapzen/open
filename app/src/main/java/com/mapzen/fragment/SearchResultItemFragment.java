@@ -35,7 +35,7 @@ public class SearchResultItemFragment extends Fragment {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ((BaseActivity) getActivity()).showPlace(feature);
+                    ((BaseActivity) getActivity()).showPlace(feature, true);
                 }
             });
         } else {

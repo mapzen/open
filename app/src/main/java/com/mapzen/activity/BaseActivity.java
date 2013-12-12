@@ -227,9 +227,11 @@ public class BaseActivity extends MapActivity
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    TextView tv = (TextView) view;
+                    Feature feature = (Feature) tv.getTag();
                     clearSearchText();
-                    Feature feature = (Feature) view.getTag();
-                    showPlace(feature);
+                    searchView.setQuery(tv.getText(), false);
+                    showPlace(feature, false);
                 }
             });
             parent.setOnTouchListener(new View.OnTouchListener() {
@@ -286,9 +288,11 @@ public class BaseActivity extends MapActivity
         }
     }
 
-    public void showPlace(Feature feature) {
+    public void showPlace(Feature feature, boolean clearSearch) {
         searchResultsFragment.hideResultsWrapper();
-        clearSearchText();
+        if (clearSearch) {
+            clearSearchText();
+        }
         mapFragment.pullUp();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         itemFragment = new SearchResultItemFragment(feature);
@@ -306,7 +310,7 @@ public class BaseActivity extends MapActivity
             assert bundle != null;
             Feature feature = bundle.getParcelable("feature");
             assert feature != null;
-            showPlace(feature);
+            showPlace(feature, true);
         }
     }
 }
