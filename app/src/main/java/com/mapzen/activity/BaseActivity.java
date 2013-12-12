@@ -305,7 +305,9 @@ public class BaseActivity extends MapActivity
             assert bundle != null;
             Feature feature = bundle.getParcelable("feature");
             assert feature != null;
-            showPlace(feature, true);
+            final SearchView searchView = (SearchView) menuItem.getActionView();
+            searchView.clearFocus();
+            showPlace(feature, false);
         }
     }
 }
