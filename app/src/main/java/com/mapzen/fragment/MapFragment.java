@@ -40,7 +40,7 @@ import java.util.ArrayList;
 public class MapFragment extends Fragment {
     public static final int ANIMATION_DURATION = 1300;
     public static final int DEFAULT_ZOOMLEVEL = 18;
-    public static final int BOTTOM_MARGIN = 100;
+    public static final int BOTTOM_MARGIN = 120;
     private VectorTileLayer baseLayer;
     private BaseActivity activity;
     private Map map;

@@ -10,13 +10,13 @@
     <fragment
         android:id="@+id/search_results_fragment"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="120dp"
         android:layout_alignParentBottom="true"
         class="com.mapzen.fragment.SearchResultsFragment" />
     <LinearLayout
         android:id="@+id/place_result"
         android:layout_alignParentBottom="true"
-        android:layout_height="100dp"
+        android:layout_height="120dp"
         android:layout_width="match_parent">
     </LinearLayout>
 </RelativeLayout>
