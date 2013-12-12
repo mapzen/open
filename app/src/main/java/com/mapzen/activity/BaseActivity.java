@@ -59,7 +59,7 @@ public class BaseActivity extends MapActivity
     private SearchResultItemFragment itemFragment;
 
     private final String[] columns = {
-        _ID, PELIAS_TEXT, PELIAS_LAT, PELIAS_LON
+        _ID, PELIAS_TEXT
     };
 
     public Map getMap() {
@@ -177,10 +177,7 @@ public class BaseActivity extends MapActivity
                 }
                 for (int i = 0; i < jsonArray.length(); i++) {
                     try {
-                        Feature feature = Feature.fromJson(jsonArray.getJSONObject(i));
-                        cursor.getRowBuilder().setId(i).setText(feature.getDisplayName()).
-                                setLat(feature.getLat()).
-                                setLon(feature.getLon()).buildRow();
+                        cursor.addRow(new Object[]{ i, jsonArray.getJSONObject(i)});
                     } catch (JSONException e) {
                         Log.e(LOG_TAG, e.toString());
                     }
@@ -254,16 +251,14 @@ public class BaseActivity extends MapActivity
         public void bindView(View view, Context context, Cursor cursor) {
             TextView tv = (TextView) view;
             final int textIndex = cursor.getColumnIndex(PELIAS_TEXT);
-            double lat =
-                    Double.parseDouble(cursor.getString(cursor.getColumnIndex(PELIAS_LAT)));
-            double lon =
-                    Double.parseDouble(cursor.getString(cursor.getColumnIndex(PELIAS_LON)));
-            Feature feature = new Feature();
-            feature.setDisplayName(cursor.getString(textIndex));
-            feature.setLon(lon);
-            feature.setLat(lat);
+            Feature feature = null;
+            try {
+                feature = Feature.fromJson(new JSONObject(cursor.getString(textIndex)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             tv.setTag(feature);
-            tv.setText(cursor.getString(textIndex));
+            tv.setText(feature.getDisplayName());
         }
     }
 
