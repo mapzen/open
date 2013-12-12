@@ -128,7 +128,7 @@ public class MapFragment extends Fragment {
             }
         });
         map.getLayers().add(poiMarkersLayer);
-        map.setTheme(InternalRenderTheme.DEFAULT);
+        map.setTheme(InternalRenderTheme.OSMARENDER);
         map.bind(new Map.UpdateListener() {
             @Override
             public void onMapUpdate(MapPosition mapPosition, boolean positionChanged, boolean clear) {
@@ -175,9 +175,17 @@ public class MapFragment extends Fragment {
 
     private void addMyLocation() {
         MarkerItem markerItem = new MarkerItem("ME", "Current Location", app.getLocationPoint());
+        MarkerSymbol symbol = new MarkerSymbol(getMyLocationSymbol(), MarkerItem.HotspotPlace.BOTTOM_CENTER);
+        markerItem.setMarker(symbol);
         meMarkerLayer.removeAllItems();
         meMarkerLayer.addItem(markerItem);
         map.updateMap(true);
+    }
+
+    private Bitmap getMyLocationSymbol() {
+        InputStream in = getResources().openRawResource(R.drawable.ic_locate_me);
+        AndroidBitmap bitmap = new AndroidBitmap(in);
+        return bitmap;
     }
 
     private Bitmap getPinDefault() {
