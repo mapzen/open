@@ -1,12 +1,14 @@
 package com.mapzen.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -52,7 +54,7 @@ public class SearchResultsFragment extends Fragment {
         viewAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ArrayList<Feature> features = new ArrayList<Feature>(currentCollection.size());
+                final ArrayList<Feature> features = new ArrayList<Feature>(currentCollection.size());
                 for (SearchResultItemFragment fragment : currentCollection) {
                     act.getSearchView().clearFocus();
                     features.add(fragment.getFeature());

@@ -39,6 +39,12 @@ public class FullSearchResultsActivity extends Activity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+    @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         int itemId = item.getItemId();
         if (itemId  == android.R.id.home) {

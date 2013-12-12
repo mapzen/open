@@ -72,7 +72,6 @@ public class BaseActivity extends MapActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Crashlytics.start(this);
-
         app = MapzenApplication.getApp(this);
         queue = Volley.newRequestQueue(getApplicationContext());
         fragmentManager = getSupportFragmentManager();
@@ -104,6 +103,12 @@ public class BaseActivity extends MapActivity
         setupAdapter(searchView);
         searchView.setOnQueryTextListener(this);
         return true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     private void setupAdapter(SearchView searchView) {
