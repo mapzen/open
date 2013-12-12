@@ -42,9 +42,11 @@ import org.oscim.map.Map;
 
 import static android.provider.BaseColumns._ID;
 import static com.mapzen.MapzenApplication.LOG_TAG;
+import static com.mapzen.MapzenApplication.NO_PLACE_PICKED_REQUEST;
 import static com.mapzen.MapzenApplication.PELIAS_LAT;
 import static com.mapzen.MapzenApplication.PELIAS_LON;
 import static com.mapzen.MapzenApplication.PELIAS_TEXT;
+import static com.mapzen.MapzenApplication.PICK_PLACE_REQUEST;
 
 public class BaseActivity extends MapActivity
         implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
@@ -300,13 +302,13 @@ public class BaseActivity extends MapActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == MapzenApplication.PICK_PLACE_REQUEST) {
+        final SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.clearFocus();
+        if (resultCode == PICK_PLACE_REQUEST) {
             Bundle bundle = data.getExtras();
             assert bundle != null;
             Feature feature = bundle.getParcelable("feature");
             assert feature != null;
-            final SearchView searchView = (SearchView) menuItem.getActionView();
-            searchView.clearFocus();
             showPlace(feature, false);
         }
     }

@@ -13,6 +13,7 @@ import org.oscim.core.MapPosition;
 
 public class MapzenApplication extends Application implements LocationListener {
     public static final int PICK_PLACE_REQUEST = 100;
+    public static final int NO_PLACE_PICKED_REQUEST = 110;
     public static final int LOCATION_UPDATE_FREQUENCY = 1000;
     public static final float LOCATION_UPDATE_MIN_DISTANCE = 10.0f;
     private static MapzenApplication app;

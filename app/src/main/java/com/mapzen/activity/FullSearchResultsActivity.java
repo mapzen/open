@@ -13,12 +13,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mapzen.MapzenApplication.NO_PLACE_PICKED_REQUEST;
 import static com.mapzen.MapzenApplication.PICK_PLACE_REQUEST;
 
 public class FullSearchResultsActivity extends Activity {
@@ -40,6 +42,7 @@ public class FullSearchResultsActivity extends Activity {
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         int itemId = item.getItemId();
         if (itemId  == android.R.id.home) {
+            setResult(NO_PLACE_PICKED_REQUEST);
             finish();
         }
         return true;
