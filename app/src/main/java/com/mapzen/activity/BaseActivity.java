@@ -58,7 +58,6 @@ public class BaseActivity extends MapActivity
     private MapFragment mapFragment;
     private SearchResultsFragment searchResultsFragment;
     private String currentSearchTerm;
-    private SearchResultItemFragment itemFragment;
 
     private final String[] columns = {
         _ID, PELIAS_TEXT
@@ -80,10 +79,6 @@ public class BaseActivity extends MapActivity
         searchResultsFragment = (SearchResultsFragment) fragmentManager.findFragmentById(R.id.search_results_fragment);
         // TODO remove fugly HACK
         searchResultsFragment.setMapFragment(mapFragment);
-    }
-
-    public MapFragment getMapFragment() {
-        return mapFragment;
     }
 
     public SearchResultsFragment getSearchResultsFragment() {
@@ -150,7 +145,6 @@ public class BaseActivity extends MapActivity
                 }
                 searchResultsFragment = getSearchResultsFragment();
                 searchResultsFragment.clearAll();
-                hideItemFragment();
                 searchResultsFragment.setSearchResults(jsonArray);
                 final SearchView searchView = (SearchView) menuItem.getActionView();
                 assert searchView != null;
@@ -277,30 +271,14 @@ public class BaseActivity extends MapActivity
     @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
         searchResultsFragment.hideResultsWrapper();
-        hideItemFragment();
         return true;
     }
 
-    private void hideItemFragment() {
-        if (itemFragment != null) {
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.remove(itemFragment);
-            fragmentTransaction.commit();
-            mapFragment.pullDown();
-        }
-    }
-
     public void showPlace(Feature feature, boolean clearSearch) {
-        searchResultsFragment.hideResultsWrapper();
+        searchResultsFragment.flipTo(feature);
         if (clearSearch) {
             clearSearchText();
         }
-        mapFragment.pullUp();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        itemFragment = new SearchResultItemFragment(feature);
-        fragmentTransaction.replace(R.id.place_result, itemFragment);
-        fragmentTransaction.commit();
-
         mapFragment.centerOnExclusive(feature);
     }
 

@@ -39,6 +39,8 @@ public class SearchResultsFragment extends Fragment {
     private List<SearchResultItemFragment> currentCollection =
             new ArrayList<SearchResultItemFragment>();
     private TextView indicator;
+    private ViewPager pager;
+    private ArrayList<Feature> features;
     private static final String PAGINATE_TEMPLATE = "%2d of %2d RESULTS";
 
     @Override
@@ -54,7 +56,7 @@ public class SearchResultsFragment extends Fragment {
         viewAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final ArrayList<Feature> features = new ArrayList<Feature>(currentCollection.size());
+                features = new ArrayList<Feature>(currentCollection.size());
                 for (SearchResultItemFragment fragment : currentCollection) {
                     act.getSearchView().clearFocus();
                     features.add(fragment.getFeature());
@@ -62,7 +64,7 @@ public class SearchResultsFragment extends Fragment {
                 startActivityForResult(FullSearchResultsActivity.getIntent(getActivity(), features), PICK_PLACE_REQUEST);
             }
         });
-        ViewPager pager = (ViewPager) view.findViewById(R.id.results);
+        pager = (ViewPager) view.findViewById(R.id.results);
         pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i2) {
@@ -106,6 +108,11 @@ public class SearchResultsFragment extends Fragment {
         mapFragment.pullDown();
         mapFragment.clearMarkers();
         mapFragment.updateMap();
+    }
+
+    public void flipTo(Feature feature) {
+        int pos = features.indexOf(feature);
+        pager.setCurrentItem(pos);
     }
 
     public void clearAll() {
