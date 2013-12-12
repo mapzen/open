@@ -91,7 +91,7 @@ public class SearchResultsFragment extends Fragment {
         Log.v(LOG_TAG, "feature: " + feature.toString());
         String indicatorText = String.format(PAGINATE_TEMPLATE, i + 1, currentCollection.size());
         indicator.setText(indicatorText);
-        mapFragment.centerOn(feature.getMarker().getPoint());
+        mapFragment.centerOn(feature);
     }
 
     public void showResultsWrapper() {
@@ -102,7 +102,7 @@ public class SearchResultsFragment extends Fragment {
     public void hideResultsWrapper() {
         wrapper.setVisibility(View.GONE);
         mapFragment.pullDown();
-        mapFragment.getPoiLayer().removeAllItems();
+        mapFragment.clearMarkers();
         mapFragment.updateMap();
     }
 

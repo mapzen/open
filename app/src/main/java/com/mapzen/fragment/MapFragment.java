@@ -1,5 +1,6 @@
 package com.mapzen.fragment;
 
+import android.content.ClipData;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -46,6 +47,7 @@ public class MapFragment extends Fragment {
     private Button myPosition;
     private ItemizedIconLayer<MarkerItem> meMarkerLayer;
     private PoiLayer<MarkerItem> poiMarkersLayer;
+    private ItemizedIconLayer<MarkerItem> highlightLayer;
     private ArrayList<MarkerItem> meMarkers = new ArrayList<MarkerItem>(1);
     private MapzenApplication app;
 
@@ -85,16 +87,20 @@ public class MapFragment extends Fragment {
         return view;
     }
 
-    public void centerOn(GeoPoint geoPoint) {
+    public void centerOn(Feature feature) {
+        highlightLayer.removeAllItems();
+        highlightLayer.addItem(feature.getMarker());
+        GeoPoint geoPoint = feature.getGeoPoint();
         MapPosition mapPosition = new MapPosition(geoPoint.getLatitude(),
                 geoPoint.getLongitude(), Math.pow(2, app.getStoredZoomLevel()));
         map.setMapPosition(mapPosition);
+        map.updateMap(true);
     }
 
     public void centerOnExclusive(Feature feature) {
         poiMarkersLayer.removeAllItems();
         poiMarkersLayer.addItem(feature.getMarker());
-        centerOn(feature.getGeoPoint());
+        centerOn(feature);
     }
 
     private void setupMap(View view) {
@@ -128,6 +134,11 @@ public class MapFragment extends Fragment {
             }
         });
         map.getLayers().add(poiMarkersLayer);
+
+        highlightLayer = new ItemizedIconLayer<MarkerItem>(
+                map, new ArrayList<MarkerItem>(), getHighlightMarkerSymbol(), null);
+        map.getLayers().add(highlightLayer);
+
         map.setTheme(InternalRenderTheme.OSMARENDER);
         map.bind(new Map.UpdateListener() {
             @Override
@@ -157,6 +168,11 @@ public class MapFragment extends Fragment {
         p.setMargins(0, 0, 0, 0);
     }
 
+    public void clearMarkers() {
+        poiMarkersLayer.removeAllItems();
+        highlightLayer.removeAllItems();
+    }
+
     public ItemizedIconLayer getPoiLayer() {
         return poiMarkersLayer;
     }
@@ -179,7 +195,7 @@ public class MapFragment extends Fragment {
         markerItem.setMarker(symbol);
         meMarkerLayer.removeAllItems();
         meMarkerLayer.addItem(markerItem);
-        map.updateMap(true);
+        updateMap();
     }
 
     private Bitmap getMyLocationSymbol() {
@@ -192,6 +208,16 @@ public class MapFragment extends Fragment {
         InputStream in = getResources().openRawResource(R.drawable.ic_pin);
         AndroidBitmap bitmap = new AndroidBitmap(in);
         return bitmap;
+    }
+
+    private Bitmap getHighlightPin() {
+        InputStream in = getResources().openRawResource(R.drawable.ic_pin_active);
+        AndroidBitmap bitmap = new AndroidBitmap(in);
+        return bitmap;
+    }
+
+    public MarkerSymbol getHighlightMarkerSymbol() {
+        return new MarkerSymbol(getHighlightPin(), MarkerItem.HotspotPlace.BOTTOM_CENTER);
     }
 
     public MarkerSymbol getDefaultMarkerSymbol() {
