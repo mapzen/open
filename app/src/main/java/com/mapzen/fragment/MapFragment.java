@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import com.crashlytics.android.internal.m;
 import com.mapzen.MapzenApplication;
 import com.mapzen.PoiLayer;
 import com.mapzen.R;
@@ -91,10 +92,7 @@ public class MapFragment extends Fragment {
         highlightLayer.removeAllItems();
         highlightLayer.addItem(feature.getMarker());
         GeoPoint geoPoint = feature.getGeoPoint();
-        MapPosition mapPosition = new MapPosition(geoPoint.getLatitude(),
-                geoPoint.getLongitude(), Math.pow(2, DEFAULT_ZOOMLEVEL));
-        map.setMapPosition(mapPosition);
-        map.updateMap(true);
+        map.getAnimator().animateTo(800, geoPoint, Math.pow(2, DEFAULT_ZOOMLEVEL), false);
     }
 
     private void setupMap(View view) {
