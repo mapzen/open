@@ -13,19 +13,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
 
-import org.json.JSONArray;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import dalvik.system.BaseDexClassLoader;
-
-import static com.mapzen.MapzenApplication.NO_PLACE_PICKED_REQUEST;
-import static com.mapzen.MapzenApplication.PICK_PLACE_REQUEST;
 
 public class FullSearchResultsActivity extends Activity {
     private ArrayList<Feature> list;

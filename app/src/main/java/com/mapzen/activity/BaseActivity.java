@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,7 +30,6 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
-import com.mapzen.fragment.SearchResultItemFragment;
 import com.mapzen.fragment.SearchResultsFragment;
 
 import org.json.JSONArray;
@@ -44,11 +42,7 @@ import java.util.ArrayList;
 
 import static android.provider.BaseColumns._ID;
 import static com.mapzen.MapzenApplication.LOG_TAG;
-import static com.mapzen.MapzenApplication.NO_PLACE_PICKED_REQUEST;
-import static com.mapzen.MapzenApplication.PELIAS_LAT;
-import static com.mapzen.MapzenApplication.PELIAS_LON;
 import static com.mapzen.MapzenApplication.PELIAS_TEXT;
-import static com.mapzen.MapzenApplication.PICK_PLACE_REQUEST;
 
 public class BaseActivity extends MapActivity
         implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {

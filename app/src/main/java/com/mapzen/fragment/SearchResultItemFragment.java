@@ -1,7 +1,5 @@
 package com.mapzen.fragment;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,8 +10,6 @@ import android.widget.TextView;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
-
-import static com.mapzen.MapzenApplication.PICK_PLACE_REQUEST;
 
 public class SearchResultItemFragment extends Fragment {
     private Feature feature;

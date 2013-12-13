@@ -5,11 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
-import org.robolectric.Robolectric;
-import android.app.Activity;
-
-import java.lang.Exception;
-
 @RunWith(RobolectricTestRunner.class)
 public class BaseActivityTest {
     @Before

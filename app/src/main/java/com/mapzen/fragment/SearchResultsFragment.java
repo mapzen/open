@@ -1,14 +1,12 @@
 package com.mapzen.fragment;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mapzen.MapzenApplication.LOG_TAG;
-import static com.mapzen.MapzenApplication.PICK_PLACE_REQUEST;
 
 public class SearchResultsFragment extends Fragment {
     private SearchViewAdapter adapter;

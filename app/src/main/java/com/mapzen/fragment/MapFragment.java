@@ -1,6 +1,5 @@
 package com.mapzen.fragment;
 
-import android.content.ClipData;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
-import com.crashlytics.android.internal.m;
 import com.mapzen.MapzenApplication;
 import com.mapzen.PoiLayer;
 import com.mapzen.R;
