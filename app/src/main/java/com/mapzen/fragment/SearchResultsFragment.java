@@ -40,6 +40,12 @@ public class SearchResultsFragment extends Fragment {
             new ArrayList<SearchResultItemFragment>();
     private TextView indicator;
     private ViewPager pager;
+
+    public void setSearchTerm(String searchTerm) {
+        this.searchTerm = searchTerm;
+    }
+
+    private String searchTerm;
     private ArrayList<Feature> features = new ArrayList<Feature>();
     private static final String PAGINATE_TEMPLATE = "%2d of %2d RESULTS";
 
@@ -57,7 +63,7 @@ public class SearchResultsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 act.getSearchView().clearFocus();
-                startActivityForResult(FullSearchResultsActivity.getIntent(getActivity(), features), PICK_PLACE_REQUEST);
+                startActivity(FullSearchResultsActivity.getIntent(getActivity(), searchTerm, features));
             }
         });
         pager = (ViewPager) view.findViewById(R.id.results);
@@ -122,6 +128,8 @@ public class SearchResultsFragment extends Fragment {
     }
 
     public void add(Feature feature) {
+        Log.v(LOG_TAG, feature.getDisplayName());
+        addMarker(feature);
         SearchResultItemFragment searchResultItemFragment = new SearchResultItemFragment(feature);
         currentCollection.add(searchResultItemFragment);
         features.add(feature);
@@ -132,8 +140,16 @@ public class SearchResultsFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
+    public void setSearchResults(ArrayList<Feature> items) {
+        clearAll();
+        // TODO we shouldn't have to loop here since the we have all the features already
+        for (int i = 0; i < items.size(); i++) {
+            add(items.get(i));
+        }
+        displayResults(features.size(), 0);
+    }
+
     public void setSearchResults(JSONArray jsonArray) {
-        ItemizedIconLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
         clearAll();
         if (jsonArray.length() > 0) {
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -143,21 +159,28 @@ public class SearchResultsFragment extends Fragment {
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, e.toString());
                 }
-                Log.v(LOG_TAG, feature.getDisplayName());
-                MarkerItem m = feature.getMarker();
-                m.setMarker(mapFragment.getDefaultMarkerSymbol());
-                m.setMarkerHotspot(MarkerItem.HotspotPlace.CENTER);
-                poiLayer.addItem(feature.getMarker());
                 add(feature);
             }
-            notifyNewData();
-            String initialIndicatorText = String.format(PAGINATE_TEMPLATE, 1, jsonArray.length());
-            indicator.setText(initialIndicatorText);
-            showResultsWrapper();
-            centerOnPlace(pager.getCurrentItem());
-            mapFragment.updateMap();
+            displayResults(jsonArray.length(), pager.getCurrentItem());
         } else {
             Toast.makeText(act, "No results where found for: " + act.getSearchView().getQuery(), 2500).show();
         }
+    }
+
+    private void displayResults(int length, int currentPos) {
+        notifyNewData();
+        String initialIndicatorText = String.format(PAGINATE_TEMPLATE, 1, length);
+        indicator.setText(initialIndicatorText);
+        showResultsWrapper();
+        centerOnPlace(currentPos);
+        mapFragment.updateMap();
+    }
+
+    private void addMarker(Feature feature) {
+        ItemizedIconLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
+        MarkerItem m = feature.getMarker();
+        m.setMarker(mapFragment.getDefaultMarkerSymbol());
+        m.setMarkerHotspot(MarkerItem.HotspotPlace.CENTER);
+        poiLayer.addItem(feature.getMarker());
     }
 }

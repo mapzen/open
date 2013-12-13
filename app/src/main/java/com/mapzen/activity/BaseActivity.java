@@ -40,6 +40,8 @@ import org.json.JSONObject;
 import org.oscim.android.MapActivity;
 import org.oscim.map.Map;
 
+import java.util.ArrayList;
+
 import static android.provider.BaseColumns._ID;
 import static com.mapzen.MapzenApplication.LOG_TAG;
 import static com.mapzen.MapzenApplication.NO_PLACE_PICKED_REQUEST;
@@ -57,7 +59,7 @@ public class BaseActivity extends MapActivity
     private FragmentManager fragmentManager;
     private MapFragment mapFragment;
     private SearchResultsFragment searchResultsFragment;
-    private String currentSearchTerm;
+    private String currentSearchTerm, savedSearchTerm;
 
     private final String[] columns = {
         _ID, PELIAS_TEXT
@@ -81,6 +83,24 @@ public class BaseActivity extends MapActivity
         searchResultsFragment.setMapFragment(mapFragment);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Intent intent = getIntent();
+        if (intent != null) {
+            Bundle bundle = intent.getExtras();
+            if (bundle != null) {
+                ArrayList<Feature> features = bundle.getParcelableArrayList("features");
+                searchResultsFragment.setSearchResults(features);
+                Feature feature = bundle.getParcelable("feature");
+                savedSearchTerm = bundle.getString("savedSearchTerm");
+                if (feature != null) {
+                    showPlace(feature, false);
+                }
+            }
+        }
+    }
+
     public SearchResultsFragment getSearchResultsFragment() {
         return searchResultsFragment;
     }
@@ -97,6 +117,11 @@ public class BaseActivity extends MapActivity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         setupAdapter(searchView);
         searchView.setOnQueryTextListener(this);
+        if (savedSearchTerm != null) {
+            menuItem.expandActionView();
+            searchView.setQuery(savedSearchTerm, false);
+            searchView.clearFocus();
+        }
         return true;
     }
 
@@ -144,7 +169,7 @@ public class BaseActivity extends MapActivity
                     Log.e(LOG_TAG, e.toString());
                 }
                 searchResultsFragment = getSearchResultsFragment();
-                searchResultsFragment.clearAll();
+                searchResultsFragment.setSearchTerm(currentSearchTerm);
                 searchResultsFragment.setSearchResults(jsonArray);
                 final SearchView searchView = (SearchView) menuItem.getActionView();
                 assert searchView != null;
@@ -281,19 +306,5 @@ public class BaseActivity extends MapActivity
             clearSearchText();
         }
         mapFragment.centerOn(feature);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        final SearchView searchView = (SearchView) menuItem.getActionView();
-        searchView.clearFocus();
-        if (resultCode == PICK_PLACE_REQUEST) {
-            Bundle bundle = data.getExtras();
-            assert bundle != null;
-            Feature feature = bundle.getParcelable("feature");
-            assert feature != null;
-            showPlace(feature, false);
-        }
     }
 }

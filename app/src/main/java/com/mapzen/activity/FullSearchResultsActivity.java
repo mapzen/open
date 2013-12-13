@@ -17,13 +17,20 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import dalvik.system.BaseDexClassLoader;
 
 import static com.mapzen.MapzenApplication.NO_PLACE_PICKED_REQUEST;
 import static com.mapzen.MapzenApplication.PICK_PLACE_REQUEST;
 
 public class FullSearchResultsActivity extends Activity {
+    private ArrayList<Feature> list;
+    private String currentSearchTerm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +39,9 @@ public class FullSearchResultsActivity extends Activity {
         setContentView(R.layout.full_results_list);
         final ListView listview = (ListView) findViewById(R.id.full_list);
         Intent intent = getIntent();
-        final ArrayList<Feature> list = intent.getParcelableArrayListExtra("features");
+        list = intent.getParcelableArrayListExtra("features");
+        currentSearchTerm = intent.getStringExtra("savedSearchTerm");
+
         final PlaceArrayAdapter adapter = new PlaceArrayAdapter(this,
                 android.R.layout.simple_list_item_1, list);
         listview.setAdapter(adapter);
@@ -48,15 +57,20 @@ public class FullSearchResultsActivity extends Activity {
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         int itemId = item.getItemId();
         if (itemId  == android.R.id.home) {
-            setResult(NO_PLACE_PICKED_REQUEST);
-            finish();
+            Intent intent = new Intent(this, BaseActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList("features", list);
+            bundle.putString("savedSearchTerm", currentSearchTerm);
+            intent.putExtras(bundle);
+            startActivity(intent);
         }
         return true;
     }
 
-    public static Intent getIntent(Context context, ArrayList<Feature> features) {
+    public static Intent getIntent(Context context, String searchTerm, ArrayList<Feature> features) {
         Intent intent = new Intent(context, FullSearchResultsActivity.class);
         intent.putParcelableArrayListExtra("features", features);
+        intent.putExtra("savedSearchTerm", searchTerm);
         return intent;
     }
 
@@ -84,12 +98,12 @@ public class FullSearchResultsActivity extends Activity {
                 v.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent data = new Intent();
+                        Intent intent = new Intent(getContext(), BaseActivity.class);
                         Bundle bundle = new Bundle();
                         bundle.putParcelable("feature", feature);
-                        data.putExtras(bundle);
-                        setResult(PICK_PLACE_REQUEST, data);
-                        finish();
+                        bundle.putParcelableArrayList("features", list);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
                     }
                 });
             } else {
