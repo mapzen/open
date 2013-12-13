@@ -40,7 +40,7 @@ public class SearchResultsFragment extends Fragment {
             new ArrayList<SearchResultItemFragment>();
     private TextView indicator;
     private ViewPager pager;
-    private ArrayList<Feature> features;
+    private ArrayList<Feature> features = new ArrayList<Feature>();
     private static final String PAGINATE_TEMPLATE = "%2d of %2d RESULTS";
 
     @Override
@@ -56,11 +56,7 @@ public class SearchResultsFragment extends Fragment {
         viewAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                features = new ArrayList<Feature>(currentCollection.size());
-                for (SearchResultItemFragment fragment : currentCollection) {
-                    act.getSearchView().clearFocus();
-                    features.add(fragment.getFeature());
-                }
+                act.getSearchView().clearFocus();
                 startActivityForResult(FullSearchResultsActivity.getIntent(getActivity(), features), PICK_PLACE_REQUEST);
             }
         });
@@ -118,14 +114,17 @@ public class SearchResultsFragment extends Fragment {
     public void clearAll() {
         ItemizedIconLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
         poiLayer.removeAllItems();
+        pager.setCurrentItem(0);
         adapter.clearFragments();
         currentCollection.clear();
+        features.clear();
         hideResultsWrapper();
     }
 
     public void add(Feature feature) {
         SearchResultItemFragment searchResultItemFragment = new SearchResultItemFragment(feature);
         currentCollection.add(searchResultItemFragment);
+        features.add(feature);
         adapter.addFragment(searchResultItemFragment);
     }
 
@@ -155,6 +154,7 @@ public class SearchResultsFragment extends Fragment {
             String initialIndicatorText = String.format(PAGINATE_TEMPLATE, 1, jsonArray.length());
             indicator.setText(initialIndicatorText);
             showResultsWrapper();
+            centerOnPlace(pager.getCurrentItem());
             mapFragment.updateMap();
         } else {
             Toast.makeText(act, "No results where found for: " + act.getSearchView().getQuery(), 2500).show();

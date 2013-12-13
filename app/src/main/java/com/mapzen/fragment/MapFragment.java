@@ -92,15 +92,9 @@ public class MapFragment extends Fragment {
         highlightLayer.addItem(feature.getMarker());
         GeoPoint geoPoint = feature.getGeoPoint();
         MapPosition mapPosition = new MapPosition(geoPoint.getLatitude(),
-                geoPoint.getLongitude(), Math.pow(2, app.getStoredZoomLevel()));
+                geoPoint.getLongitude(), Math.pow(2, DEFAULT_ZOOMLEVEL));
         map.setMapPosition(mapPosition);
         map.updateMap(true);
-    }
-
-    public void centerOnExclusive(Feature feature) {
-        poiMarkersLayer.removeAllItems();
-        poiMarkersLayer.addItem(feature.getMarker());
-        centerOn(feature);
     }
 
     private void setupMap(View view) {

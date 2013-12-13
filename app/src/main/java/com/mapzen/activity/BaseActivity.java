@@ -229,7 +229,8 @@ public class BaseActivity extends MapActivity
                     Feature feature = (Feature) tv.getTag();
                     clearSearchText();
                     searchView.setQuery(tv.getText(), false);
-                    showPlace(feature, false);
+                    searchResultsFragment.hideResultsWrapper();
+                    mapFragment.centerOn(feature);
                 }
             });
             parent.setOnTouchListener(new View.OnTouchListener() {
@@ -279,7 +280,7 @@ public class BaseActivity extends MapActivity
         if (clearSearch) {
             clearSearchText();
         }
-        mapFragment.centerOnExclusive(feature);
+        mapFragment.centerOn(feature);
     }
 
     @Override
