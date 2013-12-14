@@ -22,6 +22,8 @@ public class MapzenApplication extends Application implements LocationListener {
     public static final int DEFAULT_ZOOMLEVEL = 15;
     private static MapPosition mapPosition =
             new MapPosition(DEFAULT_LATITUDE, DEFAULT_LONGITUDE, Math.pow(2, DEFAULT_ZOOMLEVEL));
+    private String currentSearchTerm = "";
+    private int currentPagerPosition = 0;
 
     private LocationManager locationManager;
     private Context context;
@@ -104,5 +106,21 @@ public class MapzenApplication extends Application implements LocationListener {
                     new MapPosition(DEFAULT_LATITUDE, DEFAULT_LONGITUDE, Math.pow(2, getStoredZoomLevel()));
         }
         return mapPosition;
+    }
+
+    public String getCurrentSearchTerm() {
+        return currentSearchTerm;
+    }
+
+    public void setCurrentSearchTerm(String currentSearchTerm) {
+        this.currentSearchTerm = currentSearchTerm;
+    }
+
+    public int getCurrentPagerPosition() {
+        return currentPagerPosition;
+    }
+
+    public void setCurrentPagerPosition(int currentPagerPosition) {
+        this.currentPagerPosition = currentPagerPosition;
     }
 }

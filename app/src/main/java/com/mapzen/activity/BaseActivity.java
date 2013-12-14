@@ -53,7 +53,6 @@ public class BaseActivity extends MapActivity
     private FragmentManager fragmentManager;
     private MapFragment mapFragment;
     private SearchResultsFragment searchResultsFragment;
-    private String currentSearchTerm, savedSearchTerm;
 
     private final String[] columns = {
         _ID, PELIAS_TEXT
@@ -85,10 +84,9 @@ public class BaseActivity extends MapActivity
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
                 ArrayList<Feature> features = bundle.getParcelableArrayList("features");
-                int pos = bundle.getInt("pagePos");
+                int pos = app.getCurrentPagerPosition();
                 searchResultsFragment.setSearchResults(features, pos);
                 Feature feature = bundle.getParcelable("feature");
-                savedSearchTerm = bundle.getString("savedSearchTerm");
                 if (feature != null) {
                     showPlace(feature, false);
                 }
@@ -112,9 +110,10 @@ public class BaseActivity extends MapActivity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         setupAdapter(searchView);
         searchView.setOnQueryTextListener(this);
-        if (savedSearchTerm != null) {
+        if (!app.getCurrentSearchTerm().isEmpty()) {
             menuItem.expandActionView();
-            searchView.setQuery(savedSearchTerm, false);
+            Log.v(LOG_TAG, "search: " + app.getCurrentSearchTerm());
+            searchView.setQuery(app.getCurrentSearchTerm(), false);
             searchView.clearFocus();
         }
         return true;
@@ -140,6 +139,9 @@ public class BaseActivity extends MapActivity
         JsonObjectRequest jsonObjectRequest =
                 Feature.search(mMap, query, getSearchSuccessResponseListener(),
                         getSearchErrorResponseListener());
+
+        Log.v(LOG_TAG, "search: " + app.getCurrentSearchTerm());
+        app.setCurrentSearchTerm(query);
         queue.add(jsonObjectRequest);
         return true;
     }
@@ -164,7 +166,6 @@ public class BaseActivity extends MapActivity
                     Log.e(LOG_TAG, e.toString());
                 }
                 searchResultsFragment = getSearchResultsFragment();
-                searchResultsFragment.setSearchTerm(currentSearchTerm);
                 searchResultsFragment.setSearchResults(jsonArray);
                 final SearchView searchView = (SearchView) menuItem.getActionView();
                 assert searchView != null;
@@ -174,6 +175,7 @@ public class BaseActivity extends MapActivity
     }
 
     private void clearSearchText() {
+        app.setCurrentSearchTerm("");
         final SearchView searchView = (SearchView) menuItem.getActionView();
         assert searchView != null;
         searchView.setQuery("", false);
@@ -217,11 +219,11 @@ public class BaseActivity extends MapActivity
     }
 
     public boolean onQueryTextChange(String newText) {
-        if (currentSearchTerm != null || !newText.equals(currentSearchTerm)) {
+        Log.v(LOG_TAG, "search: " + app.getCurrentSearchTerm());
+        if (!newText.isEmpty()) {
             JsonObjectRequest jsonObjectRequest = Feature.suggest(newText,
                     getAutocompleteSuccessResponseListener(), getAutocompleteErrorResponseListener());
             queue.add(jsonObjectRequest);
-            currentSearchTerm = newText;
         }
         return true;
     }

@@ -58,18 +58,15 @@ public class FullSearchResultsActivity extends Activity {
             Intent intent = new Intent(this, BaseActivity.class);
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList("features", list);
-            bundle.putString("savedSearchTerm", currentSearchTerm);
-            bundle.putInt("pagePos", currentPos);
             intent.putExtras(bundle);
             startActivity(intent);
         }
         return true;
     }
 
-    public static Intent getIntent(Context context, String searchTerm, ArrayList<Feature> features) {
+    public static Intent getIntent(Context context, ArrayList<Feature> features) {
         Intent intent = new Intent(context, FullSearchResultsActivity.class);
         intent.putParcelableArrayListExtra("features", features);
-        intent.putExtra("savedSearchTerm", searchTerm);
         return intent;
     }
 

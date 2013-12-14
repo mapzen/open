@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.SearchViewAdapter;
 import com.mapzen.activity.BaseActivity;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mapzen.MapzenApplication.LOG_TAG;
+import static com.mapzen.MapzenApplication.getApp;
 
 public class SearchResultsFragment extends Fragment {
     private SearchViewAdapter adapter;
@@ -38,12 +40,7 @@ public class SearchResultsFragment extends Fragment {
             new ArrayList<SearchResultItemFragment>();
     private TextView indicator;
     private ViewPager pager;
-
-    public void setSearchTerm(String searchTerm) {
-        this.searchTerm = searchTerm;
-    }
-
-    private String searchTerm;
+    private MapzenApplication app;
     private ArrayList<Feature> features = new ArrayList<Feature>();
     private static final String PAGINATE_TEMPLATE = "%2d of %2d RESULTS";
 
@@ -55,14 +52,14 @@ public class SearchResultsFragment extends Fragment {
         assert view != null;
         act = (BaseActivity) getActivity();
         assert act != null;
+        app = getApp(act);
         indicator = (TextView) view.findViewById(R.id.pagination);
         Button viewAll = (Button) view.findViewById(R.id.view_all);
         viewAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 act.getSearchView().clearFocus();
-                Intent intent = FullSearchResultsActivity.getIntent(getActivity(), searchTerm, features);
-                intent.putExtra("pagePos", pager.getCurrentItem());
+                Intent intent = FullSearchResultsActivity.getIntent(getActivity(), features);
                 startActivity(intent);
             }
         });
@@ -93,6 +90,7 @@ public class SearchResultsFragment extends Fragment {
 
     private void centerOnPlace(int i) {
         SearchResultItemFragment srf = currentCollection.get(i);
+        app.setCurrentPagerPosition(i);
         Feature feature = srf.getFeature();
         Log.v(LOG_TAG, "feature: " + feature.toString());
         String indicatorText = String.format(PAGINATE_TEMPLATE, i + 1, currentCollection.size());
