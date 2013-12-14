@@ -85,7 +85,8 @@ public class BaseActivity extends MapActivity
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
                 ArrayList<Feature> features = bundle.getParcelableArrayList("features");
-                searchResultsFragment.setSearchResults(features);
+                int pos = bundle.getInt("pagePos");
+                searchResultsFragment.setSearchResults(features, pos);
                 Feature feature = bundle.getParcelable("feature");
                 savedSearchTerm = bundle.getString("savedSearchTerm");
                 if (feature != null) {

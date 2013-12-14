@@ -22,6 +22,7 @@ import java.util.List;
 public class FullSearchResultsActivity extends Activity {
     private ArrayList<Feature> list;
     private String currentSearchTerm;
+    private int currentPos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,11 +30,16 @@ public class FullSearchResultsActivity extends Activity {
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.full_results_list);
-        final ListView listview = (ListView) findViewById(R.id.full_list);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         Intent intent = getIntent();
         list = intent.getParcelableArrayListExtra("features");
         currentSearchTerm = intent.getStringExtra("savedSearchTerm");
-
+        currentPos = intent.getIntExtra("pagePos", 0);
+        final ListView listview = (ListView) findViewById(R.id.full_list);
         final PlaceArrayAdapter adapter = new PlaceArrayAdapter(this,
                 android.R.layout.simple_list_item_1, list);
         listview.setAdapter(adapter);
@@ -53,6 +59,7 @@ public class FullSearchResultsActivity extends Activity {
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList("features", list);
             bundle.putString("savedSearchTerm", currentSearchTerm);
+            bundle.putInt("pagePos", currentPos);
             intent.putExtras(bundle);
             startActivity(intent);
         }

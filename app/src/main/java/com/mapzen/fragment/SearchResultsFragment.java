@@ -1,5 +1,6 @@
 package com.mapzen.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -60,7 +61,9 @@ public class SearchResultsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 act.getSearchView().clearFocus();
-                startActivity(FullSearchResultsActivity.getIntent(getActivity(), searchTerm, features));
+                Intent intent = FullSearchResultsActivity.getIntent(getActivity(), searchTerm, features);
+                intent.putExtra("pagePos", pager.getCurrentItem());
+                startActivity(intent);
             }
         });
         pager = (ViewPager) view.findViewById(R.id.results);
@@ -137,13 +140,13 @@ public class SearchResultsFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    public void setSearchResults(ArrayList<Feature> items) {
+    public void setSearchResults(ArrayList<Feature> items, int pos) {
         clearAll();
         // TODO we shouldn't have to loop here since the we have all the features already
         for (int i = 0; i < items.size(); i++) {
             add(items.get(i));
         }
-        displayResults(features.size(), 0);
+        displayResults(features.size(), pos);
     }
 
     public void setSearchResults(JSONArray jsonArray) {
