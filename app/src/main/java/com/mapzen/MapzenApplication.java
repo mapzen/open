@@ -12,16 +12,11 @@ import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 
 public class MapzenApplication extends Application implements LocationListener {
-    public static final int PICK_PLACE_REQUEST = 100;
-    public static final int NO_PLACE_PICKED_REQUEST = 110;
     public static final int LOCATION_UPDATE_FREQUENCY = 1000;
     public static final float LOCATION_UPDATE_MIN_DISTANCE = 10.0f;
     private static MapzenApplication app;
     private static Location location = null;
     public static final String PELIAS_TEXT = "text";
-    public static final String PELIAS_LAT = "lat";
-    public static final String PELIAS_LON = "lon";
-    public static final String PELIAS_PAYLOAD = "payload";
     public static final double DEFAULT_LATITUDE = 64.133333;
     public static final double DEFAULT_LONGITUDE = -21.933333;
     public static final int DEFAULT_ZOOMLEVEL = 15;
