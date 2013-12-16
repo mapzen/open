@@ -19,6 +19,7 @@ import android.widget.CursorAdapter;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -136,42 +137,8 @@ public class BaseActivity extends MapActivity
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        JsonObjectRequest jsonObjectRequest =
-                Feature.search(mMap, query, getSearchSuccessResponseListener(),
-                        getSearchErrorResponseListener());
-
-        Log.v(LOG_TAG, "search: " + app.getCurrentSearchTerm());
-        app.setCurrentSearchTerm(query);
-        queue.add(jsonObjectRequest);
-        return true;
-    }
-
-    private Response.ErrorListener getSearchErrorResponseListener() {
-        return new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-            }
-        };
-    }
-
-    private Response.Listener<JSONObject> getSearchSuccessResponseListener() {
-        return new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject jsonObject) {
-                Log.v(LOG_TAG, jsonObject.toString());
-                JSONArray jsonArray = new JSONArray();
-                try {
-                    jsonArray = jsonObject.getJSONArray("features");
-                } catch (JSONException e) {
-                    Log.e(LOG_TAG, e.toString());
-                }
-                searchResultsFragment = getSearchResultsFragment();
-                searchResultsFragment.setSearchResults(jsonArray);
-                final SearchView searchView = (SearchView) menuItem.getActionView();
-                assert searchView != null;
-                searchView.clearFocus();
-            }
-        };
+        final SearchView searchView = (SearchView) menuItem.getActionView();
+        return searchResultsFragment.executeSearchOnMap(getMap(), searchView, query);
     }
 
     private void clearSearchText() {
@@ -303,5 +270,9 @@ public class BaseActivity extends MapActivity
             clearSearchText();
         }
         mapFragment.centerOn(feature);
+    }
+
+    public void enqueueApiRequest(Request<?> request) {
+        queue.add(request);
     }
 }

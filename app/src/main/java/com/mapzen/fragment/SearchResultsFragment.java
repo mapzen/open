@@ -10,20 +10,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.SearchViewAdapter;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.activity.FullSearchResultsActivity;
 import com.mapzen.entity.Feature;
+import com.mapzen.util.VolleyHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.oscim.layers.marker.ItemizedIconLayer;
 import org.oscim.layers.marker.MarkerItem;
+import org.oscim.map.Map;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -163,6 +170,42 @@ public class SearchResultsFragment extends Fragment {
         } else {
             Toast.makeText(act, "No results where found for: " + act.getSearchView().getQuery(), 2500).show();
         }
+    }
+
+    public boolean executeSearchOnMap(Map map, final SearchView view, String query) {
+        app.setCurrentSearchTerm(query);
+        JsonObjectRequest jsonObjectRequest =
+                Feature.search(map, query,
+                        getSearchListener(view), getErrorListener());
+        act.enqueueApiRequest(jsonObjectRequest);
+        return true;
+    }
+
+    private Response.ErrorListener getErrorListener() {
+        return new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    String errorMsg = VolleyHelper.Error.getMessage(volleyError, act);
+                    Log.e(LOG_TAG, "Request error " + errorMsg);
+                }
+            };
+    }
+
+    private Response.Listener<JSONObject> getSearchListener(final SearchView view) {
+        return new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject jsonObject) {
+                    Log.v(LOG_TAG, "Search Results: " + jsonObject.toString());
+                    JSONArray jsonArray = new JSONArray();
+                    try {
+                        jsonArray = jsonObject.getJSONArray("features");
+                    } catch (JSONException e) {
+                        Log.e(LOG_TAG, e.toString());
+                    }
+                    setSearchResults(jsonArray);
+                    view.clearFocus();
+                }
+            };
     }
 
     private void displayResults(int length, int currentPos) {
