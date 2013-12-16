@@ -52,10 +52,6 @@ public class BaseActivity extends MapActivity
         _ID, PELIAS_TEXT
     };
 
-    public Map getMap() {
-        return mMap;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,6 +111,42 @@ public class BaseActivity extends MapActivity
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        final SearchView searchView = (SearchView) menuItem.getActionView();
+        return searchResultsFragment.executeSearchOnMap(getMap(), searchView, query);
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        Log.v(LOG_TAG, "search: " + app.getCurrentSearchTerm());
+        if (!newText.isEmpty()) {
+            JsonObjectRequest jsonObjectRequest = Feature.suggest(newText,
+                    getAutoCompleteSuccessResponseListener(), getAutoCompleteErrorResponseListener());
+            queue.add(jsonObjectRequest);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionExpand(MenuItem item) {
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemActionCollapse(MenuItem item) {
+        searchResultsFragment.hideResultsWrapper();
+        return true;
+    }
+
+    public Map getMap() {
+        return mMap;
+    }
+
+    public SearchView getSearchView() {
+        return (SearchView) menuItem.getActionView();
+    }
+
     private void setupAdapter(SearchView searchView) {
         if (autoCompleteAdapter == null) {
             AutoCompleteCursor cursor = new AutoCompleteCursor(columns);
@@ -126,12 +158,6 @@ public class BaseActivity extends MapActivity
         searchView.setSuggestionsAdapter(autoCompleteAdapter);
     }
 
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        final SearchView searchView = (SearchView) menuItem.getActionView();
-        return searchResultsFragment.executeSearchOnMap(getMap(), searchView, query);
-    }
-
     private void clearSearchText() {
         app.setCurrentSearchTerm("");
         final SearchView searchView = (SearchView) menuItem.getActionView();
@@ -140,11 +166,7 @@ public class BaseActivity extends MapActivity
         searchView.clearFocus();
     }
 
-    public SearchView getSearchView() {
-        return (SearchView) menuItem.getActionView();
-    }
-
-    private Response.Listener<JSONObject> getAutocompleteSuccessResponseListener() {
+    private Response.Listener<JSONObject> getAutoCompleteSuccessResponseListener() {
         final AutoCompleteCursor cursor = new AutoCompleteCursor(columns);
         return new Response.Listener<JSONObject>() {
             @Override
@@ -168,33 +190,12 @@ public class BaseActivity extends MapActivity
         };
     }
 
-    private Response.ErrorListener getAutocompleteErrorResponseListener() {
+    private Response.ErrorListener getAutoCompleteErrorResponseListener() {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
             }
         };
-    }
-
-    public boolean onQueryTextChange(String newText) {
-        Log.v(LOG_TAG, "search: " + app.getCurrentSearchTerm());
-        if (!newText.isEmpty()) {
-            JsonObjectRequest jsonObjectRequest = Feature.suggest(newText,
-                    getAutocompleteSuccessResponseListener(), getAutocompleteErrorResponseListener());
-            queue.add(jsonObjectRequest);
-        }
-        return true;
-    }
-
-    @Override
-    public boolean onMenuItemActionExpand(MenuItem item) {
-        return true;
-    }
-
-    @Override
-    public boolean onMenuItemActionCollapse(MenuItem item) {
-        searchResultsFragment.hideResultsWrapper();
-        return true;
     }
 
     public void showPlace(Feature feature, boolean clearSearch) {
