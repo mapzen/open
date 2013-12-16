@@ -19,7 +19,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
-import com.mapzen.SearchViewAdapter;
+import com.mapzen.adapters.SearchViewAdapter;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.activity.FullSearchResultsActivity;
 import com.mapzen.entity.Feature;
