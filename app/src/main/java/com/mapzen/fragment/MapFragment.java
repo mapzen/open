@@ -145,6 +145,10 @@ public class MapFragment extends Fragment {
         return (RelativeLayout.LayoutParams) getView().getLayoutParams();
     }
 
+    public Map getMap() {
+        return map;
+    }
+
     public void pullUp() {
         RelativeLayout.LayoutParams layoutParams = getLayoutParams();
         Resources res = activity.getResources();

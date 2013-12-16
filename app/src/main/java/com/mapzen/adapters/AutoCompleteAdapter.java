@@ -2,6 +2,7 @@ package com.mapzen.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,37 +12,44 @@ import android.widget.CursorAdapter;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.mapzen.AutoCompleteCursor;
+import com.mapzen.MapzenApplication;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.fragment.SearchResultsFragment;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.mapzen.MapzenApplication.LOG_TAG;
 import static com.mapzen.MapzenApplication.PELIAS_TEXT;
 import static com.mapzen.MapzenApplication.getApp;
 
-public class AutoCompleteAdapter extends CursorAdapter {
+public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQueryTextListener {
     private SearchView searchView;
-    private MapFragment map;
-    private SearchResultsFragment searchResults;
+    private MapFragment mapFragment;
+    private SearchResultsFragment searchResultsFragment;
     private Context context;
 
-    public AutoCompleteAdapter(Context context, Cursor c) {
-        super(context, c, 0);
+    public AutoCompleteAdapter(Context context) {
+        super(context, new AutoCompleteCursor(getApp(context).getColumns()), 0);
         this.context = context;
     }
 
     public void setSearchView(SearchView view) {
-        searchView = view;
+        this.searchView = view;
     }
 
-    public void setMap(MapFragment mapFragment) {
-        map = mapFragment;
+    public void setMapFragment(MapFragment mapFragment) {
+        this.mapFragment = mapFragment;
     }
 
-    public void setSearchResults(SearchResultsFragment searchResultsFragment) {
-        searchResults = searchResultsFragment;
+    public void setSearchResultsFragment(SearchResultsFragment searchResultsFragment) {
+        this.searchResultsFragment = searchResultsFragment;
     }
 
     @Override
@@ -58,8 +66,8 @@ public class AutoCompleteAdapter extends CursorAdapter {
                 searchView.setQuery("", false);
                 searchView.clearFocus();
                 searchView.setQuery(tv.getText(), false);
-                searchResults.hideResultsWrapper();
-                map.centerOn(feature);
+                searchResultsFragment.hideResultsWrapper();
+                mapFragment.centerOn(feature);
             }
         });
         parent.setOnTouchListener(new View.OnTouchListener() {
@@ -90,6 +98,54 @@ public class AutoCompleteAdapter extends CursorAdapter {
         }
         tv.setTag(feature);
         tv.setText(feature.getDisplayName());
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return searchResultsFragment.executeSearchOnMap(searchView, query);
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        Log.v(LOG_TAG, "search: " + MapzenApplication.getApp(context).getCurrentSearchTerm());
+        if (!newText.isEmpty()) {
+            JsonObjectRequest jsonObjectRequest = Feature.suggest(newText,
+                    getAutoCompleteSuccessResponseListener(), getAutoCompleteErrorResponseListener());
+            getApp(context).getQueue().add(jsonObjectRequest);
+        }
+        return true;
+    }
+
+    private Response.Listener<JSONObject> getAutoCompleteSuccessResponseListener() {
+        final AutoCompleteCursor cursor = new AutoCompleteCursor(getApp(context).getColumns());
+        return new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject jsonObject) {
+                Log.v(LOG_TAG, jsonObject.toString());
+                JSONArray jsonArray = new JSONArray();
+                try {
+                    jsonArray = jsonObject.getJSONArray("features");
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, e.toString());
+                }
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    try {
+                        cursor.addRow(new Object[]{ i, jsonArray.getJSONObject(i)});
+                    } catch (JSONException e) {
+                        Log.e(LOG_TAG, e.toString());
+                    }
+                }
+                swapCursor(cursor);
+            }
+        };
+    }
+
+    private Response.ErrorListener getAutoCompleteErrorResponseListener() {
+        return new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+            }
+        };
     }
 }
 

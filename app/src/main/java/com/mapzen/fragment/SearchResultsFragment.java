@@ -172,12 +172,12 @@ public class SearchResultsFragment extends Fragment {
         }
     }
 
-    public boolean executeSearchOnMap(Map map, final SearchView view, String query) {
+    public boolean executeSearchOnMap(final SearchView view, String query) {
         app.setCurrentSearchTerm(query);
         JsonObjectRequest jsonObjectRequest =
-                Feature.search(map, query,
+                Feature.search(mapFragment.getMap(), query,
                         getSearchListener(view), getErrorListener());
-        act.enqueueApiRequest(jsonObjectRequest);
+        app.enqueueApiRequest(jsonObjectRequest);
         return true;
     }
 

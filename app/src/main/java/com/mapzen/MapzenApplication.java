@@ -8,6 +8,13 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
+
+import static android.provider.BaseColumns._ID;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 
@@ -24,9 +31,17 @@ public class MapzenApplication extends Application implements LocationListener {
             new MapPosition(DEFAULT_LATITUDE, DEFAULT_LONGITUDE, Math.pow(2, DEFAULT_ZOOMLEVEL));
     private String currentSearchTerm = "";
     private int currentPagerPosition = 0;
+    private RequestQueue queue;
 
     private LocationManager locationManager;
-    private Context context;
+
+    private final String[] columns = {
+        _ID, PELIAS_TEXT
+    };
+
+    public String[] getColumns() {
+        return columns;
+    }
 
     public static final String LOG_TAG = "Mapzen: ";
 
@@ -39,6 +54,7 @@ public class MapzenApplication extends Application implements LocationListener {
         if (app == null) {
             app = new MapzenApplication();
         }
+        app.queue = Volley.newRequestQueue(context);
         app.locationManager = (LocationManager)
                 context.getSystemService(Context.LOCATION_SERVICE);
         app.location = app.locationManager.getLastKnownLocation(app.getBestProvider());
@@ -47,6 +63,10 @@ public class MapzenApplication extends Application implements LocationListener {
 
     public void storeMapPosition(MapPosition pos) {
         mapPosition = pos;
+    }
+
+    public RequestQueue getQueue() {
+        return queue;
     }
 
     public double getStoredZoomLevel() {
@@ -120,5 +140,9 @@ public class MapzenApplication extends Application implements LocationListener {
 
     public void setCurrentPagerPosition(int currentPagerPosition) {
         this.currentPagerPosition = currentPagerPosition;
+    }
+
+    public void enqueueApiRequest(Request<?> request) {
+        queue.add(request);
     }
 }
