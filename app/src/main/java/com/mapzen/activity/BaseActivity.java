@@ -3,21 +3,13 @@ package com.mapzen.activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.CursorAdapter;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -29,6 +21,7 @@ import com.crashlytics.android.Crashlytics;
 import com.mapzen.AutoCompleteCursor;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
+import com.mapzen.adapters.AutoCompleteAdapter;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.fragment.SearchResultsFragment;
@@ -47,7 +40,7 @@ import static com.mapzen.MapzenApplication.PELIAS_TEXT;
 
 public class BaseActivity extends MapActivity
         implements SearchView.OnQueryTextListener, MenuItem.OnActionExpandListener {
-    private GeoNamesAdapter geoNamesAdapter;
+    private AutoCompleteAdapter autoCompleteAdapter;
     private RequestQueue queue;
     private MenuItem menuItem;
     private MapzenApplication app;
@@ -95,10 +88,6 @@ public class BaseActivity extends MapActivity
         }
     }
 
-    public SearchResultsFragment getSearchResultsFragment() {
-        return searchResultsFragment;
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -127,12 +116,14 @@ public class BaseActivity extends MapActivity
     }
 
     private void setupAdapter(SearchView searchView) {
-        if (geoNamesAdapter == null) {
+        if (autoCompleteAdapter == null) {
             AutoCompleteCursor cursor = new AutoCompleteCursor(columns);
-            geoNamesAdapter = new GeoNamesAdapter(getActionBar().getThemedContext(), cursor);
-            geoNamesAdapter.setSearchView(searchView);
+            autoCompleteAdapter = new AutoCompleteAdapter(getActionBar().getThemedContext(), cursor);
+            autoCompleteAdapter.setSearchView(searchView);
+            autoCompleteAdapter.setMap(mapFragment);
+            autoCompleteAdapter.setSearchResults(searchResultsFragment);
         }
-        searchView.setSuggestionsAdapter(geoNamesAdapter);
+        searchView.setSuggestionsAdapter(autoCompleteAdapter);
     }
 
     @Override
@@ -172,7 +163,7 @@ public class BaseActivity extends MapActivity
                         Log.e(LOG_TAG, e.toString());
                     }
                 }
-                geoNamesAdapter.swapCursor(cursor);
+                autoCompleteAdapter.swapCursor(cursor);
             }
         };
     }
@@ -193,64 +184,6 @@ public class BaseActivity extends MapActivity
             queue.add(jsonObjectRequest);
         }
         return true;
-    }
-
-    private class GeoNamesAdapter extends CursorAdapter {
-        private SearchView searchView;
-
-        public GeoNamesAdapter(Context context, Cursor c) {
-            super(context, c, 0);
-        }
-
-        protected void setSearchView(SearchView view) {
-            searchView = view;
-        }
-
-        @Override
-        public View newView(Context context, Cursor cursor, ViewGroup parent) {
-            LayoutInflater inflater = LayoutInflater.from(context);
-            View v = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
-            assert v != null;
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    TextView tv = (TextView) view;
-                    Feature feature = (Feature) tv.getTag();
-                    clearSearchText();
-                    searchView.setQuery(tv.getText(), false);
-                    searchResultsFragment.hideResultsWrapper();
-                    mapFragment.centerOn(feature);
-                }
-            });
-            parent.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-                    dismissKeyboard();
-                    return false;
-                }
-            });
-            return v;
-        }
-
-        private void dismissKeyboard() {
-            InputMethodManager imm = (InputMethodManager) getSystemService(
-                    Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
-        }
-
-        @Override
-        public void bindView(View view, Context context, Cursor cursor) {
-            TextView tv = (TextView) view;
-            final int textIndex = cursor.getColumnIndex(PELIAS_TEXT);
-            Feature feature = null;
-            try {
-                feature = Feature.fromJson(new JSONObject(cursor.getString(textIndex)));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            tv.setTag(feature);
-            tv.setText(feature.getDisplayName());
-        }
     }
 
     @Override
