@@ -12,4 +12,7 @@
     <string name="tiles_source_url">http://opensciencemap.org/tiles/vtm</string>
     <string name="pelias_test_suggest_url">http://api-pelias-test.mapzen.com/suggest</string>
     <string name="pelias_test_search_url">http://api-pelias-test.mapzen.com/search</string>
+    <string name="generic_server_down">Server is down</string>
+    <string name="no_internet">Device doesn\'t have connection</string>
+    <string name="generic_error">something is up</string>
 </resources>
