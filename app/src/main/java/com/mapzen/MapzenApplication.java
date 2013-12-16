@@ -32,18 +32,16 @@ public class MapzenApplication extends Application implements LocationListener {
 
     public MapzenApplication() {
         super();
-    }
-
-    private MapzenApplication(Context context) {
-        this.context = context;
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        location = locationManager.getLastKnownLocation(getBestProvider());
+        app = this;
     }
 
     public static MapzenApplication getApp(Context context) {
         if (app == null) {
-            app = new MapzenApplication(context);
+            app = new MapzenApplication();
         }
+        app.locationManager = (LocationManager)
+                context.getSystemService(Context.LOCATION_SERVICE);
+        app.location = app.locationManager.getLastKnownLocation(app.getBestProvider());
         return app;
     }
 
