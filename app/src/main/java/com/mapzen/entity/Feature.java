@@ -26,6 +26,15 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
     private static final String PELIAS_SEARCH = "search";
     private static final String PELIAS_SEARCH_URL = PELIAS_URL + PELIAS_SEARCH;
     private static final String PELIAS_SUGGEST_URL = PELIAS_URL + PELIAS_SUGGEST;
+    public static final String TITLE = "title";
+    public static final String PROPERTIES = "properties";
+    public static final String GEOMETRY = "geometry";
+    public static final String COORDINATES = "coordinates";
+    public static final String DESCRIPTION = "description";
+    public static final String COUNTRY_CODE = "country_code";
+    public static final String COUNTRY_NAME = "country_name";
+    public static final String ADMIN1_ABBR = "admin1_abbr";
+    public static final String ADMIN1_NAME = "admin1_name";
 
     public Feature() {
     }
@@ -54,18 +63,18 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
 
     @Override
     public String toString() {
-        return "'" + getProperty("title")  + "'[" + getLat() + getLon() + "]";
+        return "'" + getProperty(TITLE)  + "'[" + getLat() + getLon() + "]";
     }
 
     public static Feature fromJson(JSONObject obj) throws JSONException {
         Feature feature = new Feature();
-        JSONObject properties = obj.getJSONObject("properties");
-        JSONObject geometry = obj.getJSONObject("geometry");
-        JSONArray coordinates = geometry.getJSONArray("coordinates");
+        JSONObject properties = obj.getJSONObject(PROPERTIES);
+        JSONObject geometry = obj.getJSONObject(GEOMETRY);
+        JSONArray coordinates = geometry.getJSONArray(COORDINATES);
         feature.setLat(coordinates.getDouble(1));
         feature.setLon(coordinates.getDouble(0));
-        String[] attributes = new String[] { "title", "description",
-                "country_code", "country_name", "admin1_abbr", "admin1_name" };
+        String[] attributes = new String[] { TITLE, DESCRIPTION,
+                COUNTRY_CODE, COUNTRY_NAME, ADMIN1_ABBR, ADMIN1_NAME};
         for (String attribute : attributes) {
             feature.setProperty(attribute, properties.getString(attribute));
         }
@@ -74,7 +83,7 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
 
     public MarkerItem getMarker() {
         GeoPoint geoPoint = new GeoPoint(getLat(), getLon());
-        MarkerItem markerItem = new MarkerItem(getProperty("title"), "Current Location", geoPoint);
+        MarkerItem markerItem = new MarkerItem(getProperty(TITLE), "Current Location", geoPoint);
         markerItem.setMarkerHotspot(MarkerItem.HotspotPlace.TOP_CENTER);
         return markerItem;
     }
@@ -92,24 +101,24 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
     public void writeToParcel(Parcel out, int flags) {
         out.writeDouble(getLat());
         out.writeDouble(getLon());
-        out.writeString(getProperty("title"));
-        out.writeString(getProperty("description"));
-        out.writeString(getProperty("country_code"));
-        out.writeString(getProperty("country_name"));
-        out.writeString(getProperty("admin1_abbr"));
-        out.writeString(getProperty("admin1_name"));
+        out.writeString(getProperty(TITLE));
+        out.writeString(getProperty(DESCRIPTION));
+        out.writeString(getProperty(COUNTRY_CODE));
+        out.writeString(getProperty(COUNTRY_NAME));
+        out.writeString(getProperty(ADMIN1_ABBR));
+        out.writeString(getProperty(ADMIN1_NAME));
     }
 
     public static Feature readFromParcel(Parcel in) {
         Feature feature = new Feature();
         feature.setLat(in.readDouble());
         feature.setLon(in.readDouble());
-        feature.setProperty("title", in.readString());
-        feature.setProperty("description", in.readString());
-        feature.setProperty("country_code", in.readString());
-        feature.setProperty("country_name", in.readString());
-        feature.setProperty("admin1_abbr", in.readString());
-        feature.setProperty("admin1_name",in.readString());
+        feature.setProperty(TITLE, in.readString());
+        feature.setProperty(DESCRIPTION, in.readString());
+        feature.setProperty(COUNTRY_CODE, in.readString());
+        feature.setProperty(COUNTRY_NAME, in.readString());
+        feature.setProperty(ADMIN1_ABBR, in.readString());
+        feature.setProperty(ADMIN1_NAME, in.readString());
         return feature;
     }
 
@@ -129,7 +138,7 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
         Feature other = (Feature) o;
         return getLat() == other.getLat()
                 && getLon() == other.getLon()
-                && getProperty("title").equals(other.getProperty("title"));
+                && getProperty(TITLE).equals(other.getProperty(TITLE));
     }
 
     public int hashCode() {
@@ -142,8 +151,8 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
 
         public void setFromFeature(Feature feature) {
             if (feature != null) {
-                title.setText(feature.getProperty("title"));
-                address.setText(String.format("%s, %s", feature.getProperty("admin1_name"), feature.getProperty("admin1_abbr")));
+                title.setText(feature.getProperty(TITLE));
+                address.setText(String.format("%s, %s", feature.getProperty(ADMIN1_NAME), feature.getProperty(ADMIN1_ABBR)));
             }
         }
     }
