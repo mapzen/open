@@ -133,7 +133,7 @@ public class SearchResultsFragment extends Fragment {
     }
 
     public void add(Feature feature) {
-        Log.v(LOG_TAG, feature.getDisplayName());
+        Log.v(LOG_TAG, feature.toString());
         addMarker(feature);
         SearchResultItemFragment searchResultItemFragment = new SearchResultItemFragment(feature);
         currentCollection.add(searchResultItemFragment);

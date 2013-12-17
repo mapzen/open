@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.mapzen.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,15 +20,7 @@ import org.oscim.map.Map;
 
 import static com.mapzen.MapzenApplication.LOG_TAG;
 
-public class Feature implements Parcelable {
-    private double lat;
-    private double lon;
-    private String displayName;
-    private String description;
-    private String countryCode;
-    private String countryName;
-    private String admin1Abbr;
-    private String admin1Name;
+public class Feature extends com.mapzen.geo.Feature implements Parcelable {
     private static final String PELIAS_URL = "http://api-pelias-test.mapzen.com/";
     private static final String PELIAS_SUGGEST = "suggest";
     private static final String PELIAS_SEARCH = "search";
@@ -61,7 +54,7 @@ public class Feature implements Parcelable {
 
     @Override
     public String toString() {
-        return "'" + displayName + "'[" + lat + lon + "]";
+        return "'" + getProperty("title")  + "'[" + getLat() + getLon() + "]";
     }
 
     public static Feature fromJson(JSONObject obj) throws JSONException {
@@ -71,86 +64,23 @@ public class Feature implements Parcelable {
         JSONArray coordinates = geometry.getJSONArray("coordinates");
         feature.setLat(coordinates.getDouble(1));
         feature.setLon(coordinates.getDouble(0));
-        feature.setDisplayName(properties.getString("title"));
-        feature.setDescription(properties.getString("description"));
-        feature.setCountryCode(properties.getString("country_code"));
-        feature.setCountryName(properties.getString("country_name"));
-        feature.setAdmin1Abbr(properties.getString("admin1_abbr"));
-        feature.setAdmin1Name(properties.getString("admin1_name"));
+        String[] attributes = new String[] { "title", "description",
+                "country_code", "country_name", "admin1_abbr", "admin1_name" };
+        for (String attribute : attributes) {
+            feature.setProperty(attribute, properties.getString(attribute));
+        }
         return feature;
     }
 
-    public double getLat() {
-        return lat;
-    }
-
-    public void setLat(double lat) {
-        this.lat = lat;
-    }
-
-    public double getLon() {
-        return lon;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setLon(double lon) {
-        this.lon = lon;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public void setDescription(String description) { this.description = description; }
-
-    public String getAdmin1Name() {
-        return admin1Name;
-    }
-
-    public void setAdmin1Name(String admin1Name) {
-        this.admin1Name = admin1Name;
-    }
-
-    public String getCountryCode() {
-        return countryCode;
-    }
-
-    public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
-    }
-
-    public String getCountryName() {
-        return countryName;
-    }
-
-    public void setCountryName(String countryName) {
-        this.countryName = countryName;
-    }
-
-    public String getAdmin1Abbr() {
-        return admin1Abbr;
-    }
-
-    public void setAdmin1Abbr(String admin1Abbr) {
-        this.admin1Abbr = admin1Abbr;
-    }
-
     public MarkerItem getMarker() {
-        GeoPoint geoPoint = new GeoPoint(lat, lon);
-        MarkerItem markerItem = new MarkerItem(getDisplayName(), "Current Location", geoPoint);
+        GeoPoint geoPoint = new GeoPoint(getLat(), getLon());
+        MarkerItem markerItem = new MarkerItem(getProperty("title"), "Current Location", geoPoint);
         markerItem.setMarkerHotspot(MarkerItem.HotspotPlace.TOP_CENTER);
         return markerItem;
     }
 
     public GeoPoint getGeoPoint() {
-        return new GeoPoint(lat, lon);
+        return new GeoPoint(getLat(), getLon());
     }
 
     @Override
@@ -160,26 +90,26 @@ public class Feature implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeDouble(lat);
-        out.writeDouble(lon);
-        out.writeString(displayName);
-        out.writeString(description);
-        out.writeString(countryCode);
-        out.writeString(countryName);
-        out.writeString(admin1Abbr);
-        out.writeString(admin1Name);
+        out.writeDouble(getLat());
+        out.writeDouble(getLon());
+        out.writeString(getProperty("title"));
+        out.writeString(getProperty("description"));
+        out.writeString(getProperty("country_code"));
+        out.writeString(getProperty("country_name"));
+        out.writeString(getProperty("admin1_abbr"));
+        out.writeString(getProperty("admin1_name"));
     }
 
     public static Feature readFromParcel(Parcel in) {
         Feature feature = new Feature();
         feature.setLat(in.readDouble());
         feature.setLon(in.readDouble());
-        feature.setDisplayName(in.readString());
-        feature.setDescription(in.readString());
-        feature.setCountryCode(in.readString());
-        feature.setCountryName(in.readString());
-        feature.setAdmin1Abbr(in.readString());
-        feature.setAdmin1Name(in.readString());
+        feature.setProperty("title", in.readString());
+        feature.setProperty("description", in.readString());
+        feature.setProperty("country_code", in.readString());
+        feature.setProperty("country_name", in.readString());
+        feature.setProperty("admin1_abbr", in.readString());
+        feature.setProperty("admin1_name",in.readString());
         return feature;
     }
 
@@ -197,9 +127,9 @@ public class Feature implements Parcelable {
     @Override
     public boolean equals(Object o) {
         Feature other = (Feature) o;
-        return lat == other.getLat()
-                && lon == other.getLon()
-                && displayName.equals(other.getDisplayName());
+        return getLat() == other.getLat()
+                && getLon() == other.getLon()
+                && getProperty("title").equals(other.getProperty("title"));
     }
 
     public int hashCode() {
@@ -212,8 +142,8 @@ public class Feature implements Parcelable {
 
         public void setFromFeature(Feature feature) {
             if (feature != null) {
-                title.setText(feature.getDisplayName());
-                address.setText(String.format("%s, %s", feature.getAdmin1Name(), feature.getAdmin1Abbr()));
+                title.setText(feature.getProperty("title"));
+                address.setText(String.format("%s, %s", feature.getProperty("admin1_name"), feature.getProperty("admin1_abbr")));
             }
         }
     }

@@ -97,7 +97,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
             e.printStackTrace();
         }
         tv.setTag(feature);
-        tv.setText(feature.getDisplayName());
+        tv.setText(feature.getProperty("title"));
     }
 
     @Override
