@@ -48,39 +48,6 @@ public class FeatureTest {
     }
 
     @Test
-    public void hasDescription() throws Exception {
-        String expectedDescription = "testDescription";
-        assertThat(feature.getDescription(), is(expectedDescription));
-    }
-
-    @Test
-    public void hasCountryCode() throws Exception {
-        String expectedCountryCode = "testUS";
-        assertThat(feature.getCountryCode(), is(expectedCountryCode));
-    }
-    @Test
-    public void hasCountryName() throws Exception {
-        String expectedCountryName = "testUnited States";
-        assertThat(feature.getCountryName(), is(expectedCountryName));
-    }
-    @Test
-    public void hasAdmin1Abbr() throws Exception {
-        String expectedAdmin1Abbr = "testNY";
-        assertThat(feature.getAdmin1Abbr(), is(expectedAdmin1Abbr));
-    }
-    @Test
-    public void hasAdmin1Name() throws Exception {
-        String expectedAdmin1Name = "testNew York";
-        assertThat(feature.getAdmin1Name(), is(expectedAdmin1Name));
-    }
-
-    @Test
-    public void hasDisplayName() throws Exception {
-        String expected = "Feature Name to Display";
-        assertThat(expected, is(feature.getDisplayName()));
-    }
-
-    @Test
     public void isParcelable() throws Exception {
         Parcel parcel = Parcel.obtain();
         feature.writeToParcel(parcel, 0);

@@ -28,8 +28,7 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
     private static final String PELIAS_SUGGEST_URL = PELIAS_URL + PELIAS_SUGGEST;
     public static final String TITLE = "title";
     public static final String PROPERTIES = "properties";
-    public static final String GEOMETRY = "geometry";
-    public static final String COORDINATES = "coordinates";
+    public static final String FEATURES = "features";
     public static final String DESCRIPTION = "description";
     public static final String COUNTRY_CODE = "country_code";
     public static final String COUNTRY_NAME = "country_name";
@@ -64,21 +63,6 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
     @Override
     public String toString() {
         return "'" + getProperty(TITLE)  + "'[" + getLat() + getLon() + "]";
-    }
-
-    public static Feature fromJson(JSONObject obj) throws JSONException {
-        Feature feature = new Feature();
-        JSONObject properties = obj.getJSONObject(PROPERTIES);
-        JSONObject geometry = obj.getJSONObject(GEOMETRY);
-        JSONArray coordinates = geometry.getJSONArray(COORDINATES);
-        feature.setLat(coordinates.getDouble(1));
-        feature.setLon(coordinates.getDouble(0));
-        String[] attributes = new String[] { TITLE, DESCRIPTION,
-                COUNTRY_CODE, COUNTRY_NAME, ADMIN1_ABBR, ADMIN1_NAME};
-        for (String attribute : attributes) {
-            feature.setProperty(attribute, properties.getString(attribute));
-        }
-        return feature;
     }
 
     public MarkerItem getMarker() {

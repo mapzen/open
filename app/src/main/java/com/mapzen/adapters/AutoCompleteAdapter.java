@@ -28,6 +28,7 @@ import org.json.JSONObject;
 import static com.mapzen.MapzenApplication.LOG_TAG;
 import static com.mapzen.MapzenApplication.PELIAS_TEXT;
 import static com.mapzen.MapzenApplication.getApp;
+import static com.mapzen.entity.Feature.FEATURES;
 import static com.mapzen.entity.Feature.PROPERTIES;
 import static com.mapzen.entity.Feature.TITLE;
 
@@ -92,9 +93,9 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     public void bindView(View view, Context context, Cursor cursor) {
         TextView tv = (TextView) view;
         final int textIndex = cursor.getColumnIndex(PELIAS_TEXT);
-        Feature feature = null;
+        Feature feature = new Feature();
         try {
-            feature = Feature.fromJson(new JSONObject(cursor.getString(textIndex)));
+            feature.buildFromJSON(new JSONObject(cursor.getString(textIndex)));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -126,7 +127,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                 Log.v(LOG_TAG, jsonObject.toString());
                 JSONArray jsonArray = new JSONArray();
                 try {
-                    jsonArray = jsonObject.getJSONArray(PROPERTIES);
+                    jsonArray = jsonObject.getJSONArray(FEATURES);
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, e.toString());
                 }

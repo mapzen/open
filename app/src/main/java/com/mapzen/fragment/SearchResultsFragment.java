@@ -158,9 +158,9 @@ public class SearchResultsFragment extends Fragment {
         clearAll();
         if (jsonArray.length() > 0) {
             for (int i = 0; i < jsonArray.length(); i++) {
-                Feature feature = null;
+                Feature feature = new Feature();
                 try {
-                    feature = Feature.fromJson(jsonArray.getJSONObject(i));
+                    feature.buildFromJSON(jsonArray.getJSONObject(i));
                 } catch (JSONException e) {
                     Log.e(LOG_TAG, e.toString());
                 }
