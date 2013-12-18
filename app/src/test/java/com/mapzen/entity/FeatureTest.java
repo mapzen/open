@@ -14,7 +14,7 @@ import static org.junit.Assert.assertThat;
 
 @RunWith(RobolectricTestRunner.class)
 public class FeatureTest {
-    private Feature feature;
+    private Feature feature = new Feature();
     private double expectedLat = Double.parseDouble("51.4993491");
     private double expectedLon = Double.parseDouble("-0.12739091");
 
@@ -34,7 +34,7 @@ public class FeatureTest {
                     "\"admin1_name\":\"testNew York\"," +
                     "\"type\":\"geoname\"," +
                     "\"marker-color\":\"#F00\"}}");
-        feature = Feature.fromJson(json);
+        feature.buildFromJSON(json);
     }
 
     @Test
