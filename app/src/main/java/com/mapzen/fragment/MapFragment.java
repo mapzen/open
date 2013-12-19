@@ -16,12 +16,16 @@ import com.mapzen.PoiLayer;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
+import com.mapzen.util.RouteLayer;
 
 import org.oscim.android.MapView;
 import org.oscim.android.canvas.AndroidBitmap;
 import org.oscim.backend.canvas.Bitmap;
+import org.oscim.backend.canvas.Color;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
+import org.oscim.core.Point;
+import org.oscim.layers.PathLayer;
 import org.oscim.layers.marker.ItemizedIconLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.marker.MarkerSymbol;
@@ -47,6 +51,7 @@ public class MapFragment extends Fragment {
     private ItemizedIconLayer<MarkerItem> meMarkerLayer;
     private PoiLayer<MarkerItem> poiMarkersLayer;
     private ItemizedIconLayer<MarkerItem> highlightLayer;
+    private RouteLayer routeLayer;
     private ArrayList<MarkerItem> meMarkers = new ArrayList<MarkerItem>(1);
     private MapzenApplication app;
 
@@ -123,6 +128,7 @@ public class MapFragment extends Fragment {
                 return true;
             }
         });
+
         map.getLayers().add(poiMarkersLayer);
 
         highlightLayer = new ItemizedIconLayer<MarkerItem>(
@@ -138,6 +144,8 @@ public class MapFragment extends Fragment {
         });
         setupMyLocationBtn(view);
         setupMeMarkerLayer();
+        routeLayer = new RouteLayer(map, Color.MAGENTA, 5);
+        map.getLayers().add(routeLayer);
         map.setMapPosition(app.getLocationPosition());
     }
 
@@ -169,6 +177,10 @@ public class MapFragment extends Fragment {
 
     public ItemizedIconLayer getPoiLayer() {
         return poiMarkersLayer;
+    }
+
+    public RouteLayer getRouteLayer() {
+        return routeLayer;
     }
 
     private void setupMyLocationBtn(View view) {
@@ -222,6 +234,10 @@ public class MapFragment extends Fragment {
         meMarkerLayer = new ItemizedIconLayer<MarkerItem>(map, meMarkers, getDefaultMarkerSymbol(), null);
         map.getLayers().add(meMarkerLayer);
         addMyLocation();
+    }
+
+    public GeoPoint getMyLocation() {
+        return meMarkers.get(0).getPoint();
     }
 
     public void updateMap() {

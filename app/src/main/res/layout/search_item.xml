@@ -3,7 +3,7 @@
           android:orientation="horizontal"
           android:layout_width="fill_parent"
           android:layout_height="fill_parent">
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
@@ -20,8 +20,15 @@
             android:paddingBottom="3dp"
             android:paddingLeft="3dp"
             android:textColor="@android:color/black"
+            android:layout_below="@id/place_title"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
         </TextView>
-    </LinearLayout>
+        <Button
+            android:id="@+id/btn_route_go"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@id/place_address"
+            android:text="lets go" />
+    </RelativeLayout>
 </LinearLayout>

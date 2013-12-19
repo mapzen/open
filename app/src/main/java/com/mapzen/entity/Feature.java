@@ -132,6 +132,7 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
     static public class ViewHolder {
         public TextView title;
         public TextView address;
+        public TextView button;
 
         public void setFromFeature(Feature feature) {
             if (feature != null) {

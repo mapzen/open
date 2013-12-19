@@ -136,6 +136,8 @@ public class SearchResultsFragment extends Fragment {
         Log.v(LOG_TAG, feature.toString());
         addMarker(feature);
         SearchResultItemFragment searchResultItemFragment = new SearchResultItemFragment(feature);
+        searchResultItemFragment.setMapFragment(mapFragment);
+        searchResultItemFragment.setApp(app);
         currentCollection.add(searchResultItemFragment);
         features.add(feature);
         adapter.addFragment(searchResultItemFragment);
