@@ -62,7 +62,7 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
 
     @Override
     public String toString() {
-        return "'" + getProperty(TITLE)  + "'[" + getLat() + getLon() + "]";
+        return "'" + getProperty(TITLE)  + "'[" + getLat() + ", " + getLon() + "]";
     }
 
     public MarkerItem getMarker() {
