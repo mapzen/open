@@ -16,6 +16,7 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
+import com.mapzen.entity.RouteInstruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.util.RouteLayer;
 
@@ -46,27 +47,6 @@ public class SearchResultItemFragment extends Fragment {
         this.mapFragment = mapFragment;
     }
 
-    private String getRouteRequestUrl() {
-        GeoPoint currentPoint = mapFragment.getMyLocation();
-        int zoomlevel = (int)Math.floor(app.getStoredZoomLevel());
-        mapFragment.getRouteLayer().clear();
-        String url = String.format("http://router.project-osrm.org/viaroute?z=%d" +
-                "&output=json" +
-                "&loc=%.6f,%.6f" +
-                "&loc=%.6f,%.6f" +
-                "&instructions=true", zoomlevel, currentPoint.getLatitude(),
-                currentPoint.getLongitude(), feature.getLat(), feature.getLon());
-        return url;
-    }
-
-    private Response.ErrorListener getErrorListener() {
-        return new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-            }
-        };
-    }
-
     private Response.Listener<JSONObject> getSuccessListener() {
         return new Response.Listener<JSONObject>() {
             @Override
@@ -95,9 +75,13 @@ public class SearchResultItemFragment extends Fragment {
             holder.button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteRequestUrl(), null,
-                            getSuccessListener(), getErrorListener());
-                    app.enqueueApiRequest(jsonObjectRequest);
+                    ArrayList<GeoPoint> points = new ArrayList<GeoPoint>(2);
+                    points.add(app.getLocationPoint());
+                    points.add(feature.getGeoPoint());
+                    RouteInstruction routeInstruction = new RouteInstruction(
+                            points, app.getStoredZoomLevel());
+                    routeInstruction.setLayer(mapFragment.getRouteLayer());
+                    routeInstruction.draw(app);
                 }
             });
 

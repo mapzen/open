@@ -128,7 +128,6 @@ public class MapFragment extends Fragment {
                 return true;
             }
         });
-
         map.getLayers().add(poiMarkersLayer);
 
         highlightLayer = new ItemizedIconLayer<MarkerItem>(
