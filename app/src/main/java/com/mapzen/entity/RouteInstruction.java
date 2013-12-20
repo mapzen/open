@@ -6,26 +6,23 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.MapzenApplication;
-import com.mapzen.fragment.MapFragment;
 import com.mapzen.osrm.Route;
 import com.mapzen.util.RouteLayer;
 
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
-import org.oscim.map.Map;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class RouteInstruction extends Route {
     private String url;
     private RouteLayer layer;
 
-    private String urlTemplate = "http://router.project-osrm.org/viaroute?z=%d" +
-                "&output=json" +
-                "&loc=%.6f,%.6f" +
-                "&loc=%.6f,%.6f" +
-                "&instructions=true";
+    private String urlTemplate = "http://router.project-osrm.org/viaroute?z=%d"
+            + "&output=json"
+            + "&loc=%.6f,%.6f"
+            + "&loc=%.6f,%.6f"
+            + "&instructions=true";
 
     public RouteInstruction(ArrayList<GeoPoint> points, double zoomLevel) {
         // currently only support two points

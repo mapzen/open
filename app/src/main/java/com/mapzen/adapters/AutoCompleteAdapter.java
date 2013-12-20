@@ -29,7 +29,6 @@ import static com.mapzen.MapzenApplication.LOG_TAG;
 import static com.mapzen.MapzenApplication.PELIAS_TEXT;
 import static com.mapzen.MapzenApplication.getApp;
 import static com.mapzen.entity.Feature.FEATURES;
-import static com.mapzen.entity.Feature.PROPERTIES;
 import static com.mapzen.entity.Feature.TITLE;
 
 public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQueryTextListener {
@@ -56,8 +55,8 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     }
 
     @Override
-    public View newView(final Context context, Cursor cursor, ViewGroup parent) {
-        LayoutInflater inflater = LayoutInflater.from(context);
+    public View newView(final Context c, Cursor cursor, ViewGroup parent) {
+        LayoutInflater inflater = LayoutInflater.from(c);
         View v = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
         assert v != null;
         v.setOnClickListener(new View.OnClickListener() {
@@ -65,7 +64,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
             public void onClick(View view) {
                 TextView tv = (TextView) view;
                 Feature feature = (Feature) tv.getTag();
-                getApp(context).setCurrentSearchTerm("");
+                getApp(c).setCurrentSearchTerm("");
                 searchView.setQuery("", false);
                 searchView.clearFocus();
                 searchView.setQuery(tv.getText(), false);
@@ -90,7 +89,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     }
 
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
+    public void bindView(View view, Context c, Cursor cursor) {
         TextView tv = (TextView) view;
         final int textIndex = cursor.getColumnIndex(PELIAS_TEXT);
         Feature feature = new Feature();
@@ -133,7 +132,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                 }
                 for (int i = 0; i < jsonArray.length(); i++) {
                     try {
-                        cursor.addRow(new Object[]{ i, jsonArray.getJSONObject(i)});
+                        cursor.addRow(new Object[] { i, jsonArray.getJSONObject(i)});
                     } catch (JSONException e) {
                         Log.e(LOG_TAG, e.toString());
                     }

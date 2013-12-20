@@ -10,8 +10,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
@@ -21,14 +19,11 @@ import com.mapzen.osrm.Route;
 import com.mapzen.util.RouteLayer;
 
 import org.json.JSONObject;
-import org.oscim.backend.canvas.Color;
 import org.oscim.core.GeoPoint;
-import org.oscim.map.Map;
 
 import java.util.ArrayList;
 
 import static com.mapzen.MapzenApplication.LOG_TAG;
-import static com.mapzen.MapzenApplication.getApp;
 
 public class SearchResultItemFragment extends Fragment {
     private Feature feature;

@@ -20,20 +20,20 @@ public class FeatureTest {
 
     @Before
     public void setUp() throws Exception {
-        JSONObject json = new JSONObject("{\"" +
-                "type\":\"Feature\"," +
-                "\"geometry\":" +
-                    "{\"type\":\"Point\"," +
-                              "\"coordinates\": [-0.12739091,51.4993491]}," +
-                "\"properties\":" +
-                    "{\"title\":\"Feature Name to Display\"," +
-                    "\"description\":\"testDescription\"," +
-                    "\"country_code\":\"testUS\"," +
-                    "\"country_name\":\"testUnited States\"," +
-                    "\"admin1_abbr\":\"testNY\"," +
-                    "\"admin1_name\":\"testNew York\"," +
-                    "\"type\":\"geoname\"," +
-                    "\"marker-color\":\"#F00\"}}");
+        JSONObject json = new JSONObject("{\""
+                + "type\":\"Feature\","
+                + "\"geometry\":"
+                +     "{\"type\":\"Point\","
+                +               "\"coordinates\": [-0.12739091,51.4993491]},"
+                + "\"properties\":"
+                +     "{\"title\":\"Feature Name to Display\","
+                +     "\"description\":\"testDescription\","
+                +     "\"country_code\":\"testUS\","
+                +     "\"country_name\":\"testUnited States\","
+                +     "\"admin1_abbr\":\"testNY\","
+                +     "\"admin1_name\":\"testNew York\","
+                +     "\"type\":\"geoname\","
+                +     "\"marker-color\":\"#F00\"}}");
         feature.buildFromJSON(json);
     }
 

@@ -24,8 +24,6 @@ import org.oscim.backend.canvas.Bitmap;
 import org.oscim.backend.canvas.Color;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
-import org.oscim.core.Point;
-import org.oscim.layers.PathLayer;
 import org.oscim.layers.marker.ItemizedIconLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.marker.MarkerSymbol;

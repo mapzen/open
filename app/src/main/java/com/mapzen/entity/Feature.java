@@ -8,11 +8,7 @@ import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.mapzen.R;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.oscim.core.BoundingBox;
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.marker.MarkerItem;
@@ -129,7 +125,7 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
         return 0;
     }
 
-    static public class ViewHolder {
+    public static class ViewHolder {
         public TextView title;
         public TextView address;
         public TextView button;
@@ -137,7 +133,8 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
         public void setFromFeature(Feature feature) {
             if (feature != null) {
                 title.setText(feature.getProperty(TITLE));
-                address.setText(String.format("%s, %s", feature.getProperty(ADMIN1_NAME), feature.getProperty(ADMIN1_ABBR)));
+                address.setText(String.format("%s, %s",
+                        feature.getProperty(ADMIN1_NAME), feature.getProperty(ADMIN1_ABBR)));
             }
         }
     }

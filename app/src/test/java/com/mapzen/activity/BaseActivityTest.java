@@ -15,7 +15,7 @@ public class BaseActivityTest {
     @Test
     public void testOnCreate() throws Exception {
         //Activity activity = Robolectric.buildActivity(BaseActivity.class).create().get();
-        assert(true);
+        assert (true);
     }
 
 }

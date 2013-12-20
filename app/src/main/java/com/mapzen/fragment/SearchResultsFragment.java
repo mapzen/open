@@ -19,9 +19,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
-import com.mapzen.adapters.SearchViewAdapter;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.activity.FullSearchResultsActivity;
+import com.mapzen.adapters.SearchViewAdapter;
 import com.mapzen.entity.Feature;
 import com.mapzen.util.VolleyHelper;
 
@@ -30,7 +30,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.oscim.layers.marker.ItemizedIconLayer;
 import org.oscim.layers.marker.MarkerItem;
-import org.oscim.map.Map;
 
 import java.util.ArrayList;
 import java.util.List;

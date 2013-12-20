@@ -8,15 +8,14 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
-
-import static android.provider.BaseColumns._ID;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
+
+import static android.provider.BaseColumns._ID;
 
 public class MapzenApplication extends Application implements LocationListener {
     public static final int LOCATION_UPDATE_FREQUENCY = 1000;
