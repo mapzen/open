@@ -7,6 +7,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -14,6 +15,9 @@ import com.android.volley.toolbox.Volley;
 
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
+import org.oscim.map.Map;
+
+import java.util.List;
 
 import static android.provider.BaseColumns._ID;
 
@@ -21,7 +25,7 @@ public class MapzenApplication extends Application implements LocationListener {
     public static final int LOCATION_UPDATE_FREQUENCY = 1000;
     public static final float LOCATION_UPDATE_MIN_DISTANCE = 10.0f;
     private static MapzenApplication app;
-    private static Location location = null;
+    private Location location = null;
     public static final String PELIAS_TEXT = "text";
     public static final double DEFAULT_LATITUDE = 64.133333;
     public static final double DEFAULT_LONGITUDE = -21.933333;
@@ -56,8 +60,27 @@ public class MapzenApplication extends Application implements LocationListener {
         app.queue = Volley.newRequestQueue(context);
         app.locationManager = (LocationManager)
                 context.getSystemService(Context.LOCATION_SERVICE);
-        app.location = app.locationManager.getLastKnownLocation(app.getBestProvider());
+        app.setLocation(app.findBestLocation());
         return app;
+    }
+
+    public Location findBestLocation() {
+        List<String> providers = locationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            Location loc = locationManager.getLastKnownLocation(provider);
+            if (loc == null) {
+                continue;
+            }
+            if (bestLocation == null
+                    || loc.getAccuracy() < bestLocation.getAccuracy()) {
+                bestLocation = loc;
+            }
+        }
+        if (bestLocation == null) {
+            return null;
+        }
+        return bestLocation;
     }
 
     public void storeMapPosition(MapPosition pos) {
@@ -76,12 +99,23 @@ public class MapzenApplication extends Application implements LocationListener {
         return location;
     }
 
+    public void setLocation(Location location) {
+        Log.v(LOG_TAG, "Location: setting location");
+        if(location == null) {
+            Log.v(LOG_TAG, "Location: location is null");
+        }
+        this.location = location;
+    }
+
     private String getBestProvider() {
         Criteria criteria = new Criteria();
-        return locationManager.getBestProvider(criteria, true);
+        String provider = locationManager.getBestProvider(criteria, true);
+        Log.v(LOG_TAG, "Location: Best provider: " + provider);
+        return provider;
     }
 
     public void setupLocationUpdates() {
+        Log.v(LOG_TAG, "Location: Requesting updates");
         locationManager.requestLocationUpdates(getBestProvider(),
                 LOCATION_UPDATE_FREQUENCY, LOCATION_UPDATE_MIN_DISTANCE, this);
     }
@@ -94,7 +128,8 @@ public class MapzenApplication extends Application implements LocationListener {
 
     @Override
     public void onLocationChanged(Location loc) {
-        location = loc;
+        Log.v(LOG_TAG, "Location: setting location: ");
+        setLocation(loc);
     }
 
     @Override
@@ -115,10 +150,12 @@ public class MapzenApplication extends Application implements LocationListener {
 
     public MapPosition getLocationPosition() {
         if (location != null) {
+            Log.v(LOG_TAG, "Location: get location position");
             double lat = getLocation().getLatitude();
             double lon = getLocation().getLongitude();
             mapPosition = new MapPosition(lat, lon, Math.pow(2, getStoredZoomLevel()));
         } else {
+            Log.v(LOG_TAG, "Location: get location position");
             mapPosition =
                     new MapPosition(DEFAULT_LATITUDE, DEFAULT_LONGITUDE, Math.pow(2, getStoredZoomLevel()));
         }
