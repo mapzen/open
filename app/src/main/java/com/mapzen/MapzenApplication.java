@@ -179,6 +179,14 @@ public class MapzenApplication extends Application implements LocationListener {
     }
 
     public void enqueueApiRequest(Request<?> request) {
+        Log.d(LOG_TAG, "Adding request: " + request.getUrl());
+        queue.cancelAll(new RequestQueue.RequestFilter() {
+            @Override
+            public boolean apply(Request<?> request) {
+                Log.d(LOG_TAG, "cancelling request running: " + request.getUrl());
+                return true;
+            }
+        });
         queue.add(request);
     }
 }
