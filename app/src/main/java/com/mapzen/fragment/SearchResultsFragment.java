@@ -187,7 +187,7 @@ public class SearchResultsFragment extends Fragment {
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
                     String errorMsg = VolleyHelper.Error.getMessage(volleyError, act);
-                    Log.e(LOG_TAG, "Request error " + errorMsg);
+                    Log.e(LOG_TAG, "request: error " + errorMsg);
                 }
             };
     }

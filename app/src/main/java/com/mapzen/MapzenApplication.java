@@ -9,8 +9,10 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.Volley;
 
 import org.oscim.core.GeoPoint;
@@ -85,10 +87,6 @@ public class MapzenApplication extends Application implements LocationListener {
 
     public void storeMapPosition(MapPosition pos) {
         mapPosition = pos;
-    }
-
-    public RequestQueue getQueue() {
-        return queue;
     }
 
     public double getStoredZoomLevel() {
@@ -179,11 +177,13 @@ public class MapzenApplication extends Application implements LocationListener {
     }
 
     public void enqueueApiRequest(Request<?> request) {
-        Log.d(LOG_TAG, "Adding request: " + request.getUrl());
+        Log.d(LOG_TAG, "request: adding " + request.getUrl());
+        request.setRetryPolicy(new DefaultRetryPolicy(500,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.cancelAll(new RequestQueue.RequestFilter() {
             @Override
             public boolean apply(Request<?> request) {
-                Log.d(LOG_TAG, "cancelling request running: " + request.getUrl());
+                Log.d(LOG_TAG, "request: cancelling " + request.getUrl());
                 return true;
             }
         });

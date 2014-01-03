@@ -15,7 +15,7 @@ public class VolleyHelper {
     static public class Error {
         public static String getMessage(Object error, Context context) {
             if (error instanceof TimeoutError) {
-                return context.getResources().getString(R.string.generic_server_down);
+                return context.getResources().getString(R.string.request_timed_out);
             } else if (isServerProblem(error)) {
                 return handleServerError(error, context);
             } else if (isNetworkProblem(error)) {

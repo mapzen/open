@@ -20,6 +20,7 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.fragment.SearchResultsFragment;
+import com.mapzen.util.VolleyHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -109,11 +110,11 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        Log.v(LOG_TAG, "search: " + MapzenApplication.getApp(context).getCurrentSearchTerm());
+        Log.v(LOG_TAG, "search: " + getApp(context).getCurrentSearchTerm());
         if (!newText.isEmpty()) {
             JsonObjectRequest jsonObjectRequest = Feature.suggest(newText,
                     getAutoCompleteSuccessResponseListener(), getAutoCompleteErrorResponseListener());
-            getApp(context).getQueue().add(jsonObjectRequest);
+            getApp(context).enqueueApiRequest(jsonObjectRequest);
         }
         return true;
     }
@@ -123,7 +124,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         return new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject jsonObject) {
-                Log.v(LOG_TAG, jsonObject.toString());
+                Log.v(LOG_TAG, "request: success" + jsonObject.toString());
                 JSONArray jsonArray = new JSONArray();
                 try {
                     jsonArray = jsonObject.getJSONArray(FEATURES);
@@ -146,6 +147,8 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
+                String errorMsg = VolleyHelper.Error.getMessage(volleyError, context);
+                Log.e(LOG_TAG, "request: error: " + errorMsg);
             }
         };
     }
