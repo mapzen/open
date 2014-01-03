@@ -48,7 +48,6 @@ public class FullSearchResultsActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     @Override
