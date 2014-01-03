@@ -1,6 +1,7 @@
 package com.mapzen.fragment;
 
 import android.app.ActionBar;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -65,6 +66,9 @@ public class SearchResultItemFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search_item, container, false);
         Feature.ViewHolder holder;
+        final ProgressDialog progress = new ProgressDialog(getActivity());
+        progress.setTitle("Loading");
+        progress.setMessage("Wait while loading...");
         if (view != null) {
             holder = new Feature.ViewHolder();
             holder.title = (TextView) view.findViewById(R.id.place_title);
@@ -86,6 +90,7 @@ public class SearchResultItemFragment extends Fragment {
                     RouteInstruction routeInstruction = new RouteInstruction(
                             points, app.getStoredZoomLevel());
 
+                    progress.show();
                     routeInstruction.fetchRoute(app, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject jsonObject) {
@@ -93,6 +98,7 @@ public class SearchResultItemFragment extends Fragment {
                             ArrayList<Instruction> instructions = route.getRouteInstructions();
                             Instruction instruction = instructions.get(0);
 
+                            progress.dismiss();
                             getFragmentManager().beginTransaction()
                                     .add(R.id.container, new RouteWidgetFragment(instructions, mapFragment))
                                     .commit();
