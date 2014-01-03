@@ -136,4 +136,8 @@ public class BaseActivity extends MapActivity
         }
         mapFragment.centerOn(feature);
     }
+
+    public SearchResultsFragment getSearchResultsFragment() {
+        return searchResultsFragment;
+    }
 }
