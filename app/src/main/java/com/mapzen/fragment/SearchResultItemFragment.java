@@ -94,7 +94,7 @@ public class SearchResultItemFragment extends Fragment {
                             Instruction instruction = instructions.get(0);
 
                             getFragmentManager().beginTransaction()
-                                    .add(R.id.container, new PlaceholderFragment(instructions, mapFragment))
+                                    .add(R.id.container, new RouteWidgetFragment(instructions, mapFragment))
                                     .commit();
 
                         }
@@ -121,51 +121,6 @@ public class SearchResultItemFragment extends Fragment {
 
         holder.setFromFeature(feature);
         return view;
-    }
-
-    public static class PlaceholderFragment extends Fragment {
-        private ArrayList<Instruction> instructions;
-        private MapFragment mapFragment;
-        private TextView title, street;
-        private int routeIndex;
-        private Button nextBtn;
-
-        public PlaceholderFragment(ArrayList<Instruction> instructions, MapFragment mapFragment) {
-            this.instructions = instructions;
-            this.mapFragment = mapFragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            routeIndex = 0;
-            View rootView = inflater.inflate(R.layout.route_widget, container, false);
-            FrameLayout frame = (FrameLayout)container;
-            frame.setVisibility(View.VISIBLE);
-            title = (TextView) rootView.findViewById(R.id.instruction_title);
-            street = (TextView) rootView.findViewById(R.id.instruction_street);
-            nextBtn = (Button) rootView.findViewById(R.id.next_btn);
-            nextBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    routeIndex++;
-                    setRoute(routeIndex);
-                }
-            });
-            setRoute(routeIndex);
-            return rootView;
-        }
-
-        private void setRoute(int index) {
-            title.setText(instructions.get(index).getHumanTurnInstruction());
-            street.setText(instructions.get(index).getName());
-
-            double[] firstPoint = instructions.get(index).getPoint();
-            Map map = mapFragment.getMap();
-            map.setMapPosition(firstPoint[0], firstPoint[1], Math.pow(2, 19));
-            map.getViewport().setTilt(150.0f);
-            map.getViewport().setRotation(instructions.get(index).getBearing());
-        }
     }
 
     public Feature getFeature() {
