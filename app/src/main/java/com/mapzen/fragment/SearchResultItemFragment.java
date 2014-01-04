@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -48,27 +49,9 @@ public class SearchResultItemFragment extends Fragment {
         this.mapFragment = mapFragment;
     }
 
-    private Response.Listener<JSONObject> getSuccessListener() {
-        return new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject jsonObject) {
-                RouteLayer routeLayer = mapFragment.getRouteLayer();
-                Route route = new Route(jsonObject);
-                for(double[] pair : route.getGeometry()) {
-                    Log.v(LOG_TAG, String.format("point %.6f : %.6f", pair[0], pair[1]));
-                    routeLayer.addPoint(new GeoPoint(pair[0], pair[1]));
-                }
-                routeLayer.updateMap();
-            }
-        };
-    }
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search_item, container, false);
         Feature.ViewHolder holder;
-        final ProgressDialog progress = new ProgressDialog(getActivity());
-        progress.setTitle("Loading");
-        progress.setMessage("Wait while loading...");
         if (view != null) {
             holder = new Feature.ViewHolder();
             holder.title = (TextView) view.findViewById(R.id.place_title);
@@ -87,31 +70,34 @@ public class SearchResultItemFragment extends Fragment {
                     ArrayList<GeoPoint> points = new ArrayList<GeoPoint>(2);
                     points.add(app.getLocationPoint());
                     points.add(feature.getGeoPoint());
-                    RouteInstruction routeInstruction = new RouteInstruction(
+                    final RouteInstruction routeInstruction = new RouteInstruction(
                             points, app.getStoredZoomLevel());
 
-                    progress.show();
+                    final ProgressDialog progressDialog = new ProgressDialog(act);
+                    progressDialog.setTitle("Loading");
+                    progressDialog.setMessage("Wait while loading...");
+                    progressDialog.show();
                     routeInstruction.fetchRoute(app, new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject jsonObject) {
-                            Route route = new Route(jsonObject);
-                            ArrayList<Instruction> instructions = route.getRouteInstructions();
-                            Instruction instruction = instructions.get(0);
+                                @Override
+                                public void onResponse(JSONObject jsonObject) {
+                                    Route route = new Route(jsonObject);
+                                    routeInstruction.draw(route);
+                                    ArrayList<Instruction> instructions = route.getRouteInstructions();
+                                    progressDialog.dismiss();
+                                    getFragmentManager().beginTransaction()
+                                            .add(R.id.container, new RouteWidgetFragment(instructions, mapFragment))
+                                            .commit();
 
-                            progress.dismiss();
-                            getFragmentManager().beginTransaction()
-                                    .add(R.id.container, new RouteWidgetFragment(instructions, mapFragment))
-                                    .commit();
-
-                        }
-                    },new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError volleyError) {
-                        }
-                    });
+                                }
+                            }, new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError volleyError) {
+                                    progressDialog.dismiss();
+                                }
+                            }
+                    );
 
                     routeInstruction.setLayer(mapFragment.getRouteLayer());
-                    routeInstruction.draw(app);
                 }
             });
 
