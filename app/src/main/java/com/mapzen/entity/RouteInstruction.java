@@ -18,7 +18,6 @@ import java.util.concurrent.Callable;
 
 public class RouteInstruction {
     private String url;
-    private Route route;
     private RouteLayer layer;
 
     public void fetchRoute(Context context, Response.Listener<JSONObject> successListener, Response.ErrorListener errorListener) {
@@ -37,7 +36,6 @@ public class RouteInstruction {
         // currently only support two points
         GeoPoint to = points.get(0);
         GeoPoint from = points.get(1);
-        this.route = null;
         this.url = String.format(urlTemplate, (int) Math.floor(zoomLevel), to.getLatitude(),
                 to.getLongitude(), from.getLatitude(), from.getLongitude());
     }
@@ -46,32 +44,11 @@ public class RouteInstruction {
         this.layer = layer;
     }
 
-    public void draw(Context context) {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null,
-                getSuccessListener(), getErrorListener());
-        MapzenApplication.getApp(context).enqueueApiRequest(jsonObjectRequest);
-    }
-
-
-    private Response.ErrorListener getErrorListener() {
-        return new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-            }
-        };
-    }
-
-    private Response.Listener<JSONObject> getSuccessListener() {
-        return new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject jsonObject) {
-                layer.clear();
-                route = new Route(jsonObject);
-                for(double[] pair : route.getGeometry()) {
-                    layer.addPoint(new GeoPoint(pair[0], pair[1]));
-                }
-                layer.updateMap();
-            }
-        };
+    public void draw(Route route) {
+        layer.clear();
+        for(double[] pair : route.getGeometry()) {
+            layer.addPoint(new GeoPoint(pair[0], pair[1]));
+        }
+        layer.updateMap();
     }
 }
