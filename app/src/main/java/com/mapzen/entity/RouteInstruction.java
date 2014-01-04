@@ -27,7 +27,7 @@ public class RouteInstruction {
         MapzenApplication.getApp(context).enqueueApiRequest(jsonObjectRequest);
     }
 
-    private String urlTemplate = "http://router.project-osrm.org/viaroute?z=%d"
+    private String urlTemplate = "http://api-osrm-test.mapzen.com/viaroute?z=%d"
             + "&output=json"
             + "&loc=%.6f,%.6f"
             + "&loc=%.6f,%.6f"
