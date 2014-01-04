@@ -23,7 +23,6 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
     private static final String PELIAS_SEARCH_URL = PELIAS_URL + PELIAS_SEARCH;
     private static final String PELIAS_SUGGEST_URL = PELIAS_URL + PELIAS_SUGGEST;
     public static final String TITLE = "title";
-    public static final String PROPERTIES = "properties";
     public static final String FEATURES = "features";
     public static final String DESCRIPTION = "description";
     public static final String COUNTRY_CODE = "country_code";
