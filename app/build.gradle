@@ -38,7 +38,7 @@ android {
     buildToolsVersion "19.0.0"
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 18
     }
     // tell Android studio that the instrumentTest source set is located in the unit test source set
