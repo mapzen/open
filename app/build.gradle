@@ -12,7 +12,7 @@ buildscript {
         maven { url 'http://download.crashlytics.com/maven' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.6.+'
+        classpath 'com.android.tools.build:gradle:0.7.+'
         classpath 'com.squareup.gradle:gradle-android-test-plugin:0.9.1-SNAPSHOT'
         classpath 'com.github.nrudenko:gradle-android-cq-plugin:0.1+'
         classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.+'
@@ -63,6 +63,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
     compile project(':vtm-android')
     compile project(':vtm')
+    compile 'com.crashlytics.android:crashlytics:1.+'
     testCompile 'junit:junit:4.10'
     testCompile 'org.robolectric:robolectric:2.3-SNAPSHOT'
     testCompile 'com.squareup:fest-android:1.0.+'
@@ -72,6 +73,5 @@ dependencies {
     instrumentTestCompile 'junit:junit:4.10'
     instrumentTestCompile 'org.robolectric:robolectric:2.3-SNAPSHOT'
     instrumentTestCompile 'com.squareup:fest-android:1.0.+'
-    compile 'com.crashlytics.android:crashlytics:1.+'
 
 }
