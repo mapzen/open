@@ -134,7 +134,8 @@ public class SearchResultsFragment extends Fragment {
     public void add(Feature feature) {
         Log.v(LOG_TAG, feature.toString());
         addMarker(feature);
-        SearchResultItemFragment searchResultItemFragment = new SearchResultItemFragment(feature);
+        SearchResultItemFragment searchResultItemFragment = new SearchResultItemFragment();
+        searchResultItemFragment.setFeature(feature);
         searchResultItemFragment.setMapFragment(mapFragment);
         searchResultItemFragment.setApp(app);
         currentCollection.add(searchResultItemFragment);
@@ -169,7 +170,8 @@ public class SearchResultsFragment extends Fragment {
             }
             displayResults(jsonArray.length(), pager.getCurrentItem());
         } else {
-            Toast.makeText(act, "No results where found for: " + act.getSearchView().getQuery(), 2500).show();
+            Toast.makeText(act, "No results where found for: " + act.getSearchView().getQuery(),
+                    Toast.LENGTH_LONG).show();
         }
     }
 

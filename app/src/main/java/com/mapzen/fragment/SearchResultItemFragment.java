@@ -37,7 +37,7 @@ public class SearchResultItemFragment extends Fragment {
     private MapFragment mapFragment;
     private MapzenApplication app;
 
-    public SearchResultItemFragment(Feature feature) {
+    public void setFeature(Feature feature) {
         this.feature = feature;
     }
 
@@ -84,8 +84,11 @@ public class SearchResultItemFragment extends Fragment {
                                     routeInstruction.draw(route);
                                     ArrayList<Instruction> instructions = route.getRouteInstructions();
                                     progressDialog.dismiss();
+                                    RouteWidgetFragment routeWidgetFragment = new RouteWidgetFragment();
+                                    routeWidgetFragment.setInstructions(instructions);
+                                    routeWidgetFragment.setMapFragment(mapFragment);
                                     getFragmentManager().beginTransaction()
-                                            .add(R.id.container, new RouteWidgetFragment(instructions, mapFragment))
+                                            .add(R.id.container, routeWidgetFragment)
                                             .commit();
 
                                 }

@@ -17,6 +17,7 @@
 
     <application
         android:name="com.mapzen.MapzenApplication"
+        android:allowBackup="true"
         android:label="@string/application_name"
         android:icon="@drawable/ic_icon_03"
         android:theme="@style/Theme.Mapzen" >

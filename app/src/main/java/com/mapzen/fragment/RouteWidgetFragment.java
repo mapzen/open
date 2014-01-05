@@ -23,8 +23,11 @@ public class RouteWidgetFragment extends Fragment {
     private int routeIndex;
     private Button nextBtn;
 
-    public RouteWidgetFragment(ArrayList<Instruction> instructions, MapFragment mapFragment) {
+    public void setInstructions(ArrayList<Instruction> instructions) {
         this.instructions = instructions;
+    }
+
+    public void setMapFragment(MapFragment mapFragment) {
         this.mapFragment = mapFragment;
     }
 
