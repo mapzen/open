@@ -42,6 +42,8 @@ public class MapFragment extends Fragment {
     public static final int ANIMATION_DURATION = 1300;
     public static final int DEFAULT_ZOOMLEVEL = 17;
     public static final int BOTTOM_MARGIN = 120;
+    public static final int LINE_WIDTH = 5;
+    public static final int DURATION = 800;
     private VectorTileLayer baseLayer;
     private BaseActivity activity;
     private Map map;
@@ -93,7 +95,7 @@ public class MapFragment extends Fragment {
         highlightLayer.removeAllItems();
         highlightLayer.addItem(feature.getMarker());
         GeoPoint geoPoint = feature.getGeoPoint();
-        map.getAnimator().animateTo(800, geoPoint, Math.pow(2, DEFAULT_ZOOMLEVEL), false);
+        map.getAnimator().animateTo(DURATION, geoPoint, Math.pow(2, DEFAULT_ZOOMLEVEL), false);
     }
 
     private void setupMap(View view) {
@@ -141,7 +143,7 @@ public class MapFragment extends Fragment {
         });
         setupMyLocationBtn(view);
         setupMeMarkerLayer();
-        routeLayer = new RouteLayer(map, Color.MAGENTA, 5);
+        routeLayer = new RouteLayer(map, Color.MAGENTA, LINE_WIDTH);
         map.getLayers().add(routeLayer);
         map.setMapPosition(app.getLocationPosition());
     }

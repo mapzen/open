@@ -13,8 +13,15 @@ import com.mapzen.R;
 
 import java.util.Locale;
 
-public class VolleyHelper {
-    static public class Error {
+public final class VolleyHelper {
+
+    public static final int NOT_FOUND = 404;
+    public static final int INVALID_DATA = 422;
+    public static final int UNAUTHORIZED = 401;
+
+    private VolleyHelper() { }
+
+    public static class Error {
         public static String getMessage(Object error, Context context) {
             if (error instanceof TimeoutError) {
                 return context.getResources().getString(R.string.request_timed_out);
@@ -39,12 +46,14 @@ public class VolleyHelper {
             NetworkResponse response = error.networkResponse;
             if (response != null) {
                 switch (response.statusCode) {
-                    case 404:
-                    case 422:
-                    case 401:
-                        return String.format(Locale.ENGLISH, "%d: %s", response.statusCode, error.getMessage());
+                    case NOT_FOUND:
+                    case INVALID_DATA:
+                    case UNAUTHORIZED:
+                        return String.format(Locale.ENGLISH,
+                                "%d: %s", response.statusCode, error.getMessage());
                     default:
-                        return String.format(Locale.ENGLISH, "%d: %s", response.statusCode, context.getResources().getString(R.string.generic_server_down));
+                        return String.format(Locale.ENGLISH, "%d: %s", response.statusCode,
+                                context.getResources().getString(R.string.generic_server_down));
                 }
             }
             return context.getResources().getString(R.string.generic_error);

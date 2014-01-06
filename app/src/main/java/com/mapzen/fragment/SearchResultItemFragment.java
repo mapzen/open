@@ -47,12 +47,10 @@ public class SearchResultItemFragment extends Fragment {
         Feature.ViewHolder holder;
         if (view != null) {
             holder = new Feature.ViewHolder();
-            holder.title = (TextView) view.findViewById(R.id.place_title);
-            holder.address = (TextView) view.findViewById(R.id.place_address);
-            holder.button = (Button) view.findViewById(R.id.btn_route_go);
-            view.setTag(holder);
-
-            holder.button.setOnClickListener(new View.OnClickListener() {
+            holder.setTitle((TextView) view.findViewById(R.id.place_title));
+            holder.setAddress((TextView) view.findViewById(R.id.place_address));
+            Button button = (Button) view.findViewById(R.id.btn_route_go);
+            button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     BaseActivity act = (BaseActivity) getActivity();
@@ -96,6 +94,9 @@ public class SearchResultItemFragment extends Fragment {
                     routeInstruction.setLayer(mapFragment.getRouteLayer());
                 }
             });
+            holder.setButton(button);
+            view.setTag(holder);
+
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override

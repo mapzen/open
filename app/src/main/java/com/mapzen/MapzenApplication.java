@@ -24,6 +24,7 @@ import static android.provider.BaseColumns._ID;
 public class MapzenApplication extends Application implements LocationListener {
     public static final int LOCATION_UPDATE_FREQUENCY = 1000;
     public static final float LOCATION_UPDATE_MIN_DISTANCE = 10.0f;
+    public static final int HTTP_REQUEST_TIMEOUT_MS = 500;
     private static MapzenApplication app;
     private Location location = null;
     public static final String PELIAS_TEXT = "text";
@@ -97,7 +98,7 @@ public class MapzenApplication extends Application implements LocationListener {
 
     public void setLocation(Location location) {
         Log.v(LOG_TAG, "Location: setting location");
-        if(location == null) {
+        if (location == null) {
             Log.v(LOG_TAG, "Location: location is null");
         }
         this.location = location;
@@ -176,7 +177,7 @@ public class MapzenApplication extends Application implements LocationListener {
 
     public void enqueueApiRequest(Request<?> request) {
         Log.d(LOG_TAG, "request: adding " + request.getUrl());
-        request.setRetryPolicy(new DefaultRetryPolicy(500,
+        request.setRetryPolicy(new DefaultRetryPolicy(HTTP_REQUEST_TIMEOUT_MS,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.cancelAll(new RequestQueue.RequestFilter() {
             @Override

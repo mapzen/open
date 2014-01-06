@@ -17,6 +17,8 @@ import org.oscim.map.Map;
 import java.util.ArrayList;
 
 public class RouteWidgetFragment extends Fragment {
+    public static final int ROUTE_ZOOM_LEVEL = 19;
+    public static final float ROUTE_TILT_LEVEL = 150.0f;
     private ArrayList<Instruction> instructions;
     private MapFragment mapFragment;
     private TextView title, street;
@@ -36,7 +38,7 @@ public class RouteWidgetFragment extends Fragment {
                              Bundle savedInstanceState) {
         routeIndex = 0;
         View rootView = inflater.inflate(R.layout.route_widget, container, false);
-        FrameLayout frame = (FrameLayout)container;
+        FrameLayout frame = (FrameLayout) container;
         frame.setVisibility(View.VISIBLE);
         title = (TextView) rootView.findViewById(R.id.instruction_title);
         street = (TextView) rootView.findViewById(R.id.instruction_street);
@@ -58,8 +60,8 @@ public class RouteWidgetFragment extends Fragment {
 
         double[] firstPoint = instructions.get(index).getPoint();
         Map map = mapFragment.getMap();
-        map.setMapPosition(firstPoint[0], firstPoint[1], Math.pow(2, 19));
-        map.getViewport().setTilt(150.0f);
+        map.setMapPosition(firstPoint[0], firstPoint[1], Math.pow(2, ROUTE_ZOOM_LEVEL));
+        map.getViewport().setTilt(ROUTE_TILT_LEVEL);
         map.getViewport().setRotation(instructions.get(index).getBearing());
     }
 }

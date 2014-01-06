@@ -18,7 +18,8 @@ public class RouteInstruction {
     private String url;
     private RouteLayer layer;
 
-    public void fetchRoute(Context context, Response.Listener<JSONObject> successListener, Response.ErrorListener errorListener) {
+    public void fetchRoute(Context context, Response.Listener<JSONObject> successListener,
+                           Response.ErrorListener errorListener) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null,
                successListener, errorListener);
         MapzenApplication.getApp(context).enqueueApiRequest(jsonObjectRequest);
@@ -34,8 +35,8 @@ public class RouteInstruction {
         // currently only support two points
         GeoPoint to = points.get(0);
         GeoPoint from = points.get(1);
-        this.url = String.format(Locale.ENGLISH, urlTemplate, (int) Math.floor(zoomLevel), to.getLatitude(),
-                to.getLongitude(), from.getLatitude(), from.getLongitude());
+        this.url = String.format(Locale.ENGLISH, urlTemplate, (int) Math.floor(zoomLevel),
+                to.getLatitude(), to.getLongitude(), from.getLatitude(), from.getLongitude());
     }
 
     public void setLayer(RouteLayer layer) {
@@ -44,7 +45,7 @@ public class RouteInstruction {
 
     public void draw(Route route) {
         layer.clear();
-        for(double[] pair : route.getGeometry()) {
+        for (double[] pair : route.getGeometry()) {
             layer.addPoint(new GeoPoint(pair[0], pair[1]));
         }
         layer.updateMap();
