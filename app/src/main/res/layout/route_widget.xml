@@ -2,19 +2,16 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_gravity="fill_horizontal"
-    android:background="@android:color/black"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <TextView
         android:id="@+id/instruction_title"
         android:layout_width="match_parent"
-        android:textColor="#FFFFFF"
         android:textSize="20sp"
         android:layout_height="wrap_content" />
     <TextView
         android:id="@+id/instruction_street"
         android:layout_width="match_parent"
-        android:textColor="#FFFFFF"
         android:textSize="20sp"
         android:layout_below="@id/instruction_title"
         android:layout_height="wrap_content" />

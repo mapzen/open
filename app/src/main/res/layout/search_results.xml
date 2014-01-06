@@ -4,14 +4,15 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:paddingTop="?android:attr/actionBarSize">
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/map_it"
-        android:text="map"
-        android:layout_centerVertical="true"/>
+        android:text="map" />
+
     <ListView xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/results"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content" />
+        android:id="@+id/results"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </LinearLayout>
