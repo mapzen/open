@@ -2,6 +2,7 @@ package com.mapzen.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -15,7 +16,6 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.mapzen.AutoCompleteCursor;
 import com.mapzen.MapzenApplication;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
@@ -40,7 +40,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     private MapzenApplication app;
 
     public AutoCompleteAdapter(Context context, MapzenApplication app) {
-        super(context, new AutoCompleteCursor(app.getColumns()), 0);
+        super(context, new MatrixCursor(app.getColumns()), 0);
         this.context = context;
         this.app = app;
     }
@@ -130,7 +130,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     }
 
     private Response.Listener<JSONObject> getAutoCompleteSuccessResponseListener() {
-        final AutoCompleteCursor cursor = new AutoCompleteCursor(app.getColumns());
+        final MatrixCursor cursor = new MatrixCursor(app.getColumns());
         return new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject jsonObject) {
