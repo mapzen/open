@@ -7,3 +7,9 @@
 [submodule "geojson"]
 	path = geojson
 	url = https://github.com/mapzen/simple-geojson.git
+[submodule "android-volley-fork"]
+	path = android-volley-fork
+	url = https://github.com/mapzen/android-volley-fork.git
+[submodule "volley"]
+	path = volley
+	url = https://github.com/mapzen/android-volley-fork.git
