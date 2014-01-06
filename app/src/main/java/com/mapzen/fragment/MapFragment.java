@@ -116,18 +116,18 @@ public class MapFragment extends Fragment {
         poiMarkersLayer = new PoiLayer<MarkerItem>(
                 map, new ArrayList<MarkerItem>(), getDefaultMarkerSymbol(),
                 new ItemizedIconLayer.OnItemGestureListener<MarkerItem>() {
-            @Override
-            public boolean onItemSingleTapUp(int index, MarkerItem item) {
-                Log.v("foo", "testing");
-                return true;
-            }
+                    @Override
+                    public boolean onItemSingleTapUp(int index, MarkerItem item) {
+                        Log.v("foo", "testing");
+                        return true;
+                    }
 
-            @Override
-            public boolean onItemLongPress(int index, MarkerItem item) {
-                Log.v("foo", "testing");
-                return true;
-            }
-        });
+                    @Override
+                    public boolean onItemLongPress(int index, MarkerItem item) {
+                        Log.v("foo", "testing");
+                        return true;
+                    }
+                });
         map.getLayers().add(poiMarkersLayer);
 
         highlightLayer = new ItemizedIconLayer<MarkerItem>(

@@ -187,29 +187,29 @@ public class ResultsFragment extends Fragment {
 
     private Response.ErrorListener getErrorListener() {
         return new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-                    String errorMsg = VolleyHelper.Error.getMessage(volleyError, act);
-                    Log.e(LOG_TAG, "request: error: " + errorMsg);
-                }
-            };
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                String errorMsg = VolleyHelper.Error.getMessage(volleyError, act);
+                Log.e(LOG_TAG, "request: error: " + errorMsg);
+            }
+        };
     }
 
     private Response.Listener<JSONObject> getSearchListener(final SearchView view) {
         return new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject jsonObject) {
-                    Log.v(LOG_TAG, "Search Results: " + jsonObject.toString());
-                    JSONArray jsonArray = new JSONArray();
-                    try {
-                        jsonArray = jsonObject.getJSONArray("features");
-                    } catch (JSONException e) {
-                        Log.e(LOG_TAG, e.toString());
-                    }
-                    setSearchResults(jsonArray);
-                    view.clearFocus();
+            @Override
+            public void onResponse(JSONObject jsonObject) {
+                Log.v(LOG_TAG, "Search Results: " + jsonObject.toString());
+                JSONArray jsonArray = new JSONArray();
+                try {
+                    jsonArray = jsonObject.getJSONArray("features");
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, e.toString());
                 }
-            };
+                setSearchResults(jsonArray);
+                view.clearFocus();
+            }
+        };
     }
 
     private void displayResults(int length, int currentPos) {

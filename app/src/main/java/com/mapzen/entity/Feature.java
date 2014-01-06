@@ -36,7 +36,7 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
     }
 
     public static JsonObjectRequest suggest(String query, Response.Listener successListener,
-                                           Response.ErrorListener errorListener) {
+                                            Response.ErrorListener errorListener) {
         String url = String.format(Locale.ENGLISH, "%s?query=%s", PELIAS_SUGGEST_URL, Uri.encode(query));
         Log.v(LOG_TAG, url);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null,
@@ -45,7 +45,7 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
     }
 
     public static JsonObjectRequest search(Map map, String query, Response.Listener successListener,
-                              Response.ErrorListener errorListener) {
+                                           Response.ErrorListener errorListener) {
         BoundingBox boundingBox = map.getBoundingBox();
         String url = String.format(Locale.ENGLISH, "%s?query=%s&viewbox=%4f,%4f,%4f,%4f",
                 PELIAS_SEARCH_URL, Uri.encode(query),
@@ -59,7 +59,7 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
 
     @Override
     public String toString() {
-        return "'" + getProperty(TITLE)  + "'[" + getLat() + ", " + getLon() + "]";
+        return "'" + getProperty(TITLE) + "'[" + getLat() + ", " + getLon() + "]";
     }
 
     public MarkerItem getMarker() {

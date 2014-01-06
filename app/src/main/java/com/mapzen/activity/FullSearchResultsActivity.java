@@ -53,7 +53,7 @@ public class FullSearchResultsActivity extends Activity {
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         int itemId = item.getItemId();
-        if (itemId  == android.R.id.home) {
+        if (itemId == android.R.id.home) {
             Intent intent = new Intent(this, BaseActivity.class);
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList("features", list);
@@ -71,6 +71,7 @@ public class FullSearchResultsActivity extends Activity {
 
     private class PlaceArrayAdapter extends ArrayAdapter<Feature> {
         private List<Feature> features = new ArrayList<Feature>();
+
         public PlaceArrayAdapter(Context context, int textViewResourceId,
                                  List<Feature> objects) {
             super(context, textViewResourceId, objects);

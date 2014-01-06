@@ -40,7 +40,7 @@ public class MapzenApplication extends Application implements LocationListener {
     private LocationManager locationManager;
 
     private final String[] columns = {
-        _ID, PELIAS_TEXT
+            _ID, PELIAS_TEXT
     };
 
     public String[] getColumns() {

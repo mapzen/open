@@ -132,7 +132,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                 }
                 for (int i = 0; i < jsonArray.length(); i++) {
                     try {
-                        cursor.addRow(new Object[] {i, jsonArray.getJSONObject(i)});
+                        cursor.addRow(new Object[]{i, jsonArray.getJSONObject(i)});
                     } catch (JSONException e) {
                         Log.e(LOG_TAG, e.toString());
                     }

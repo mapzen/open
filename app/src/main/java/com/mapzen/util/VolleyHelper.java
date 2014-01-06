@@ -19,7 +19,8 @@ public final class VolleyHelper {
     public static final int INVALID_DATA = 422;
     public static final int UNAUTHORIZED = 401;
 
-    private VolleyHelper() { }
+    private VolleyHelper() {
+    }
 
     public static class Error {
         public static String getMessage(Object error, Context context) {

@@ -11,6 +11,7 @@ import java.util.List;
 public class SearchViewAdapter extends FragmentStatePagerAdapter {
     private Context context;
     private List<Fragment> fragments = new ArrayList<Fragment>();
+
     public SearchViewAdapter(Context act, FragmentManager fm) {
         super(fm);
         this.context = act;

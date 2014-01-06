@@ -5,7 +5,6 @@ import android.content.Context;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.MapzenApplication;
-import com.mapzen.osrm.Route;
 import com.mapzen.util.RouteLayer;
 
 import org.json.JSONObject;
@@ -21,7 +20,7 @@ public class RouteInstruction {
     public void fetchRoute(Context context, Response.Listener<JSONObject> successListener,
                            Response.ErrorListener errorListener) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null,
-               successListener, errorListener);
+                successListener, errorListener);
         MapzenApplication.getApp(context).enqueueApiRequest(jsonObjectRequest);
     }
 
