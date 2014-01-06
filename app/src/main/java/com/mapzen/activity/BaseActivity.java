@@ -17,7 +17,7 @@ import com.mapzen.R;
 import com.mapzen.adapters.AutoCompleteAdapter;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
-import com.mapzen.fragment.SearchResultsFragment;
+import com.mapzen.fragment.ResultsFragment;
 
 import org.oscim.android.MapActivity;
 import org.oscim.map.Map;
@@ -32,7 +32,7 @@ public class BaseActivity extends MapActivity
     private MenuItem menuItem;
     private MapzenApplication app;
     private MapFragment mapFragment;
-    private SearchResultsFragment searchResultsFragment;
+    private ResultsFragment resultsFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,9 +42,9 @@ public class BaseActivity extends MapActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         setContentView(R.layout.base);
         mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
-        searchResultsFragment = (SearchResultsFragment) fragmentManager.findFragmentById(R.id.search_results_fragment);
+        resultsFragment = (ResultsFragment) fragmentManager.findFragmentById(R.id.search_results_fragment);
         // TODO remove fugly HACK
-        searchResultsFragment.setMapFragment(mapFragment);
+        resultsFragment.setMapFragment(mapFragment);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class BaseActivity extends MapActivity
             if (bundle != null) {
                 ArrayList<Feature> features = bundle.getParcelableArrayList("features");
                 int pos = app.getCurrentPagerPosition();
-                searchResultsFragment.setSearchResults(features, pos);
+                resultsFragment.setSearchResults(features, pos);
                 Feature feature = bundle.getParcelable("feature");
                 if (feature != null) {
                     showPlace(feature, false);
@@ -98,7 +98,7 @@ public class BaseActivity extends MapActivity
 
     @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
-        searchResultsFragment.hideResultsWrapper();
+        resultsFragment.hideResultsWrapper();
         return true;
     }
 
@@ -115,7 +115,7 @@ public class BaseActivity extends MapActivity
             autoCompleteAdapter = new AutoCompleteAdapter(getActionBar().getThemedContext());
             autoCompleteAdapter.setSearchView(searchView);
             autoCompleteAdapter.setMapFragment(mapFragment);
-            autoCompleteAdapter.setSearchResultsFragment(searchResultsFragment);
+            autoCompleteAdapter.setResultsFragment(resultsFragment);
         }
         searchView.setSuggestionsAdapter(autoCompleteAdapter);
     }
@@ -129,14 +129,14 @@ public class BaseActivity extends MapActivity
     }
 
     public void showPlace(Feature feature, boolean clearSearch) {
-        searchResultsFragment.flipTo(feature);
+        resultsFragment.flipTo(feature);
         if (clearSearch) {
             clearSearchText();
         }
         mapFragment.centerOn(feature);
     }
 
-    public SearchResultsFragment getSearchResultsFragment() {
-        return searchResultsFragment;
+    public ResultsFragment getResultsFragment() {
+        return resultsFragment;
     }
 }

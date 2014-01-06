@@ -18,7 +18,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.AutoCompleteCursor;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
-import com.mapzen.fragment.SearchResultsFragment;
+import com.mapzen.fragment.ResultsFragment;
 import com.mapzen.util.VolleyHelper;
 
 import org.json.JSONArray;
@@ -34,7 +34,7 @@ import static com.mapzen.entity.Feature.TITLE;
 public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQueryTextListener {
     private SearchView searchView;
     private MapFragment mapFragment;
-    private SearchResultsFragment searchResultsFragment;
+    private ResultsFragment resultsFragment;
     private Context context;
 
     public AutoCompleteAdapter(Context context) {
@@ -50,8 +50,8 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         this.mapFragment = mapFragment;
     }
 
-    public void setSearchResultsFragment(SearchResultsFragment searchResultsFragment) {
-        this.searchResultsFragment = searchResultsFragment;
+    public void setResultsFragment(ResultsFragment resultsFragment) {
+        this.resultsFragment = resultsFragment;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                 searchView.setQuery("", false);
                 searchView.clearFocus();
                 searchView.setQuery(tv.getText(), false);
-                searchResultsFragment.hideResultsWrapper();
+                resultsFragment.hideResultsWrapper();
                 mapFragment.centerOn(feature);
             }
         });
@@ -104,7 +104,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        return searchResultsFragment.executeSearchOnMap(searchView, query);
+        return resultsFragment.executeSearchOnMap(searchView, query);
     }
 
     @Override

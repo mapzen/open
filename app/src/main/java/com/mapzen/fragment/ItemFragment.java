@@ -18,14 +18,13 @@ import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
 import com.mapzen.entity.RouteInstruction;
 import com.mapzen.osrm.Instruction;
-import com.mapzen.osrm.Route;
 
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
 
 import java.util.ArrayList;
 
-public class SearchResultItemFragment extends Fragment {
+public class ItemFragment extends Fragment {
     private Feature feature;
     private MapFragment mapFragment;
     private MapzenApplication app;
@@ -56,30 +55,30 @@ public class SearchResultItemFragment extends Fragment {
                     BaseActivity act = (BaseActivity) getActivity();
                     ActionBar actionBar = act.getActionBar();
                     actionBar.hide();
-                    act.getSearchResultsFragment().hideResultsWrapper();
+                    act.getResultsFragment().hideResultsWrapper();
 
                     ArrayList<GeoPoint> points = new ArrayList<GeoPoint>(2);
                     points.add(app.getLocationPoint());
                     points.add(feature.getGeoPoint());
-                    final RouteInstruction routeInstruction = new RouteInstruction(
+                    final RouteInstruction routeInstructionInstruction = new RouteInstruction(
                             points, app.getStoredZoomLevel());
 
                     final ProgressDialog progressDialog = new ProgressDialog(act);
                     progressDialog.setTitle("Loading");
                     progressDialog.setMessage("Wait while loading...");
                     progressDialog.show();
-                    routeInstruction.fetchRoute(app, new Response.Listener<JSONObject>() {
+                    routeInstructionInstruction.fetchRoute(app, new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject jsonObject) {
-                                    Route route = new Route(jsonObject);
-                                    routeInstruction.draw(route);
+                                    com.mapzen.osrm.Route route = new com.mapzen.osrm.Route(jsonObject);
+                                    routeInstructionInstruction.draw(route);
                                     ArrayList<Instruction> instructions = route.getRouteInstructions();
                                     progressDialog.dismiss();
-                                    RouteWidgetFragment routeWidgetFragment = new RouteWidgetFragment();
-                                    routeWidgetFragment.setInstructions(instructions);
-                                    routeWidgetFragment.setMapFragment(mapFragment);
+                                    RouteFragment routeFragment = new RouteFragment();
+                                    routeFragment.setInstructions(instructions);
+                                    routeFragment.setMapFragment(mapFragment);
                                     getFragmentManager().beginTransaction()
-                                            .add(R.id.container, routeWidgetFragment)
+                                            .add(R.id.container, routeFragment)
                                             .commit();
 
                                 }
@@ -91,7 +90,7 @@ public class SearchResultItemFragment extends Fragment {
                             }
                     );
 
-                    routeInstruction.setLayer(mapFragment.getRouteLayer());
+                    routeInstructionInstruction.setLayer(mapFragment.getRouteLayer());
                 }
             });
             holder.setButton(button);

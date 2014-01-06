@@ -43,7 +43,7 @@ public class RouteInstruction {
         this.layer = layer;
     }
 
-    public void draw(Route route) {
+    public void draw(com.mapzen.osrm.Route route) {
         layer.clear();
         for (double[] pair : route.getGeometry()) {
             layer.addPoint(new GeoPoint(pair[0], pair[1]));

@@ -16,7 +16,7 @@ import org.oscim.map.Map;
 
 import java.util.ArrayList;
 
-public class RouteWidgetFragment extends Fragment {
+public class RouteFragment extends Fragment {
     public static final int ROUTE_ZOOM_LEVEL = 19;
     public static final float ROUTE_TILT_LEVEL = 150.0f;
     private ArrayList<Instruction> instructions;

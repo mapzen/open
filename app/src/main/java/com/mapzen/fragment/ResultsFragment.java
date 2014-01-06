@@ -38,13 +38,13 @@ import java.util.Locale;
 import static com.mapzen.MapzenApplication.LOG_TAG;
 import static com.mapzen.MapzenApplication.getApp;
 
-public class SearchResultsFragment extends Fragment {
+public class ResultsFragment extends Fragment {
     private SearchViewAdapter adapter;
     private LinearLayout wrapper;
     private BaseActivity act;
     private MapFragment mapFragment;
-    private List<SearchResultItemFragment> currentCollection =
-            new ArrayList<SearchResultItemFragment>();
+    private List<ItemFragment> currentCollection =
+            new ArrayList<ItemFragment>();
     private TextView indicator;
     private ViewPager pager;
     private MapzenApplication app;
@@ -96,7 +96,7 @@ public class SearchResultsFragment extends Fragment {
     }
 
     private void centerOnPlace(int i) {
-        SearchResultItemFragment srf = currentCollection.get(i);
+        ItemFragment srf = currentCollection.get(i);
         app.setCurrentPagerPosition(i);
         Feature feature = srf.getFeature();
         Log.v(LOG_TAG, "feature: " + feature.toString());
@@ -135,13 +135,13 @@ public class SearchResultsFragment extends Fragment {
     public void add(Feature feature) {
         Log.v(LOG_TAG, feature.toString());
         addMarker(feature);
-        SearchResultItemFragment searchResultItemFragment = new SearchResultItemFragment();
-        searchResultItemFragment.setFeature(feature);
-        searchResultItemFragment.setMapFragment(mapFragment);
-        searchResultItemFragment.setApp(app);
-        currentCollection.add(searchResultItemFragment);
+        ItemFragment itemFragment = new ItemFragment();
+        itemFragment.setFeature(feature);
+        itemFragment.setMapFragment(mapFragment);
+        itemFragment.setApp(app);
+        currentCollection.add(itemFragment);
         features.add(feature);
-        adapter.addFragment(searchResultItemFragment);
+        adapter.addFragment(itemFragment);
     }
 
     public void notifyNewData() {
