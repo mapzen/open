@@ -36,6 +36,7 @@ public class MapzenApplication extends Application {
     public static final double DEFAULT_LONGITUDE = -21.933333;
     public static final int DEFAULT_ZOOMLEVEL = 15;
     public static final String LOG_TAG = "Mapzen: ";
+    public static final int LOCATION_PRIORITY_COLLECTION_CAPACITY = 3;
     private static MapzenApplication app;
     private static MapPosition mapPosition =
             new MapPosition(DEFAULT_LATITUDE, DEFAULT_LONGITUDE, Math.pow(2, DEFAULT_ZOOMLEVEL));
@@ -46,10 +47,11 @@ public class MapzenApplication extends Application {
     private int currentPagerPosition = 0;
     private RequestQueue queue;
     private LocationManager locationManager;
-    private SparseArray<Location> location = new SparseArray<Location>(3);
-    private LocationListener high_priority_listener = new PriorityLocationListener(HIGH_PRIORITY);
-    private LocationListener med_priority_listener = new PriorityLocationListener(MEDIUM_PRIORITY);
-    private LocationListener low_priority_listener = new PriorityLocationListener(LOW_PRIORITY);
+    private SparseArray<Location> location =
+            new SparseArray<Location>(LOCATION_PRIORITY_COLLECTION_CAPACITY);
+    private LocationListener highPriorityListener = new PriorityLocationListener(HIGH_PRIORITY);
+    private LocationListener medPriorityListener = new PriorityLocationListener(MEDIUM_PRIORITY);
+    private LocationListener lowPriorityListener = new PriorityLocationListener(LOW_PRIORITY);
 
     public MapzenApplication() {
         super();
@@ -114,13 +116,13 @@ public class MapzenApplication extends Application {
         return loc;
     }
 
-    public void setLocation(int weight, Location location) {
-        Logger.d("Location: setting location: weight: " +
-                String.valueOf(weight) + ", time: " + new Date().toString());
-        if (location == null) {
+    public void setLocation(int weight, Location loc) {
+        Logger.d("Location: setting location: weight: "
+                + String.valueOf(weight) + ", time: " + new Date().toString());
+        if (loc == null) {
             Logger.d("Location: location is null");
         } else {
-            this.location.put(weight, location);
+            this.location.put(weight, loc);
         }
     }
 
@@ -135,22 +137,22 @@ public class MapzenApplication extends Application {
         Logger.d("Location: Requesting updates");
         locationManager.requestLocationUpdates(getBestProvider(),
                 LOCATION_UPDATE_FREQUENCY, LOCATION_UPDATE_MIN_DISTANCE,
-                high_priority_listener);
+                highPriorityListener);
         locationManager.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER,
                 LOCATION_UPDATE_FREQUENCY, LOCATION_UPDATE_MIN_DISTANCE,
-                med_priority_listener);
+                medPriorityListener);
         locationManager.requestLocationUpdates(
                 LocationManager.PASSIVE_PROVIDER,
                 LOCATION_UPDATE_FREQUENCY, LOCATION_UPDATE_MIN_DISTANCE,
-                low_priority_listener);
+                lowPriorityListener);
     }
 
     public void stopLocationUpdates() {
         if (locationManager != null) {
-            locationManager.removeUpdates(low_priority_listener);
-            locationManager.removeUpdates(med_priority_listener);
-            locationManager.removeUpdates(high_priority_listener);
+            locationManager.removeUpdates(lowPriorityListener);
+            locationManager.removeUpdates(medPriorityListener);
+            locationManager.removeUpdates(highPriorityListener);
         }
     }
 

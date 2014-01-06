@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,8 +23,6 @@ import org.oscim.android.MapActivity;
 import org.oscim.map.Map;
 
 import java.util.ArrayList;
-
-import static com.mapzen.MapzenApplication.LOG_TAG;
 
 public class BaseActivity extends MapActivity
         implements MenuItem.OnActionExpandListener {

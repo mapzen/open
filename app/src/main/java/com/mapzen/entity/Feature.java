@@ -3,7 +3,6 @@ package com.mapzen.entity;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -16,8 +15,6 @@ import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.Map;
 
 import java.util.Locale;
-
-import static com.mapzen.MapzenApplication.LOG_TAG;
 
 public class Feature extends com.mapzen.geo.Feature implements Parcelable {
     private static final String PELIAS_URL = "http://api-pelias-test.mapzen.com/";

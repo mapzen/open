@@ -33,6 +33,7 @@ import static com.mapzen.entity.Feature.FEATURES;
 import static com.mapzen.entity.Feature.TITLE;
 
 public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQueryTextListener {
+    public static final int AUTOCOMPLETE_THRESHOLD = 3;
     private SearchView searchView;
     private MapFragment mapFragment;
     private ResultsFragment resultsFragment;
@@ -112,9 +113,9 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        if (newText.length() < 3) {
-            Logger.d("search: newText shorter than 3 " +
-                    "was:" + String.valueOf(newText.length()));
+        if (newText.length() < AUTOCOMPLETE_THRESHOLD) {
+            Logger.d("search: newText shorter than 3 "
+                    + "was:" + String.valueOf(newText.length()));
             return true;
         }
 
