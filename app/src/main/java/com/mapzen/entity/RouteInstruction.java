@@ -14,6 +14,7 @@ import org.oscim.core.GeoPoint;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 
 public class RouteInstruction {
@@ -36,7 +37,7 @@ public class RouteInstruction {
         // currently only support two points
         GeoPoint to = points.get(0);
         GeoPoint from = points.get(1);
-        this.url = String.format(urlTemplate, (int) Math.floor(zoomLevel), to.getLatitude(),
+        this.url = String.format(Locale.ENGLISH, urlTemplate, (int) Math.floor(zoomLevel), to.getLatitude(),
                 to.getLongitude(), from.getLatitude(), from.getLongitude());
     }
 

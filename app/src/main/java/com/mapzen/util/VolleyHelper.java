@@ -11,6 +11,8 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.mapzen.R;
 
+import java.util.Locale;
+
 public class VolleyHelper {
     static public class Error {
         public static String getMessage(Object error, Context context) {
@@ -40,9 +42,9 @@ public class VolleyHelper {
                     case 404:
                     case 422:
                     case 401:
-                        return String.format("%d: %s", response.statusCode, error.getMessage());
+                        return String.format(Locale.ENGLISH, "%d: %s", response.statusCode, error.getMessage());
                     default:
-                        return String.format("%d: %s", response.statusCode, context.getResources().getString(R.string.generic_server_down));
+                        return String.format(Locale.ENGLISH, "%d: %s", response.statusCode, context.getResources().getString(R.string.generic_server_down));
                 }
             }
             return context.getResources().getString(R.string.generic_error);

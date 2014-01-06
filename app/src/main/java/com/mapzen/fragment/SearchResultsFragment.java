@@ -33,6 +33,7 @@ import org.oscim.layers.marker.MarkerItem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static com.mapzen.MapzenApplication.LOG_TAG;
 import static com.mapzen.MapzenApplication.getApp;
@@ -99,7 +100,7 @@ public class SearchResultsFragment extends Fragment {
         app.setCurrentPagerPosition(i);
         Feature feature = srf.getFeature();
         Log.v(LOG_TAG, "feature: " + feature.toString());
-        String indicatorText = String.format(PAGINATE_TEMPLATE, i + 1, currentCollection.size());
+        String indicatorText = String.format(Locale.ENGLISH, PAGINATE_TEMPLATE, i + 1, currentCollection.size());
         indicator.setText(indicatorText);
         mapFragment.centerOn(feature);
     }
@@ -213,7 +214,7 @@ public class SearchResultsFragment extends Fragment {
 
     private void displayResults(int length, int currentPos) {
         notifyNewData();
-        String initialIndicatorText = String.format(PAGINATE_TEMPLATE, 1, length);
+        String initialIndicatorText = String.format(Locale.ENGLISH, PAGINATE_TEMPLATE, 1, length);
         indicator.setText(initialIndicatorText);
         showResultsWrapper();
         centerOnPlace(currentPos);

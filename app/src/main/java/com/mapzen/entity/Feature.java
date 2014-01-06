@@ -14,6 +14,8 @@ import org.oscim.core.GeoPoint;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.Map;
 
+import java.util.Locale;
+
 import static com.mapzen.MapzenApplication.LOG_TAG;
 
 public class Feature extends com.mapzen.geo.Feature implements Parcelable {
@@ -35,7 +37,7 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
 
     public static JsonObjectRequest suggest(String query, Response.Listener successListener,
                                            Response.ErrorListener errorListener) {
-        String url = String.format("%s?query=%s", PELIAS_SUGGEST_URL, Uri.encode(query));
+        String url = String.format(Locale.ENGLISH, "%s?query=%s", PELIAS_SUGGEST_URL, Uri.encode(query));
         Log.v(LOG_TAG, url);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null,
                 successListener, errorListener);
@@ -45,7 +47,7 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
     public static JsonObjectRequest search(Map map, String query, Response.Listener successListener,
                               Response.ErrorListener errorListener) {
         BoundingBox boundingBox = map.getBoundingBox();
-        String url = String.format("%s?query=%s&viewbox=%4f,%4f,%4f,%4f",
+        String url = String.format(Locale.ENGLISH, "%s?query=%s&viewbox=%4f,%4f,%4f,%4f",
                 PELIAS_SEARCH_URL, Uri.encode(query),
                 boundingBox.getMinLongitude(), boundingBox.getMaxLatitude(),
                 boundingBox.getMaxLongitude(), boundingBox.getMinLatitude());
@@ -132,7 +134,7 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
         public void setFromFeature(Feature feature) {
             if (feature != null) {
                 title.setText(feature.getProperty(TITLE));
-                address.setText(String.format("%s, %s",
+                address.setText(String.format(Locale.ENGLISH, "%s, %s",
                         feature.getProperty(ADMIN1_NAME), feature.getProperty(ADMIN1_ABBR)));
             }
         }
