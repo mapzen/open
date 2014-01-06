@@ -43,6 +43,11 @@ android {
     sourceSets {
         instrumentTest.setRoot('src/test')
     }
+
+    lintOptions {
+        warningsAsErrors true
+        abortOnError true
+    }
 }
 
 repositories {
