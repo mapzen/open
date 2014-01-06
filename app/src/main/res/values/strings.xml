@@ -9,4 +9,7 @@
     <string name="request_timed_out">Timeout error</string>
     <string name="no_internet">Device doesn\'t have connection</string>
     <string name="generic_error">something is up</string>
+    <string name="start_route">lets go</string>
+    <string name="route_next">Next</string>
+    <string name="view_all"><![CDATA[View All &#187;]]></string>
 </resources>
