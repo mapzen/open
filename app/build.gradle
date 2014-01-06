@@ -71,6 +71,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
     compile project(':vtm-android')
     compile project(':vtm')
+    compile project(':geo-json')
     compile 'com.crashlytics.android:crashlytics:1.+'
     testCompile 'junit:junit:4.10'
     testCompile 'org.robolectric:robolectric:2.3-SNAPSHOT'
