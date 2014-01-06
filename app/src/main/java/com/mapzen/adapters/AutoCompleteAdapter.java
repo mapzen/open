@@ -110,6 +110,12 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
 
     @Override
     public boolean onQueryTextChange(String newText) {
+        if (newText.length() < 3) {
+            Logger.d("search: newText shorter than 3 " +
+                    "was:" + String.valueOf(newText.length()));
+            return true;
+        }
+
         Logger.d("search: " + getApp(context).getCurrentSearchTerm());
         if (!newText.isEmpty()) {
             JsonObjectRequest jsonObjectRequest = Feature.suggest(newText,
