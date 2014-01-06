@@ -8,6 +8,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseArray;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -19,7 +20,6 @@ import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import static android.provider.BaseColumns._ID;
@@ -31,32 +31,25 @@ public class MapzenApplication extends Application {
     public static final int LOCATION_UPDATE_FREQUENCY = 1000;
     public static final float LOCATION_UPDATE_MIN_DISTANCE = 10.0f;
     public static final int HTTP_REQUEST_TIMEOUT_MS = 500;
-    private static MapzenApplication app;
     public static final String PELIAS_TEXT = "text";
     public static final double DEFAULT_LATITUDE = 64.133333;
     public static final double DEFAULT_LONGITUDE = -21.933333;
     public static final int DEFAULT_ZOOMLEVEL = 15;
+    public static final String LOG_TAG = "Mapzen: ";
+    private static MapzenApplication app;
     private static MapPosition mapPosition =
             new MapPosition(DEFAULT_LATITUDE, DEFAULT_LONGITUDE, Math.pow(2, DEFAULT_ZOOMLEVEL));
-    private String currentSearchTerm = "";
-    private int currentPagerPosition = 0;
-    private RequestQueue queue;
-
-    private LocationManager locationManager;
-    private HashMap<Integer, Location> location = new HashMap<Integer, Location>(3);
-    private LocationListener high_priority_listener = new PriorityLocationListener(HIGH_PRIORITY);
-    private LocationListener med_priority_listener = new PriorityLocationListener(MEDIUM_PRIORITY);
-    private LocationListener low_priority_listener = new PriorityLocationListener(LOW_PRIORITY);
-
     private final String[] columns = {
             _ID, PELIAS_TEXT
     };
-
-    public String[] getColumns() {
-        return columns;
-    }
-
-    public static final String LOG_TAG = "Mapzen: ";
+    private String currentSearchTerm = "";
+    private int currentPagerPosition = 0;
+    private RequestQueue queue;
+    private LocationManager locationManager;
+    private SparseArray<Location> location = new SparseArray<Location>(3);
+    private LocationListener high_priority_listener = new PriorityLocationListener(HIGH_PRIORITY);
+    private LocationListener med_priority_listener = new PriorityLocationListener(MEDIUM_PRIORITY);
+    private LocationListener low_priority_listener = new PriorityLocationListener(LOW_PRIORITY);
 
     public MapzenApplication() {
         super();
@@ -72,6 +65,10 @@ public class MapzenApplication extends Application {
                 context.getSystemService(Context.LOCATION_SERVICE);
         app.setLocation(PriorityLocationListener.LOW_PRIORITY, app.findBestLocation());
         return app;
+    }
+
+    public String[] getColumns() {
+        return columns;
     }
 
     public Location findBestLocation() {
