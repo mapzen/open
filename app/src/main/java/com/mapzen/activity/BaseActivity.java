@@ -113,7 +113,7 @@ public class BaseActivity extends MapActivity
 
     private void setupAdapter(SearchView searchView) {
         if (autoCompleteAdapter == null) {
-            autoCompleteAdapter = new AutoCompleteAdapter(getActionBar().getThemedContext());
+            autoCompleteAdapter = new AutoCompleteAdapter(getActionBar().getThemedContext(), app);
             autoCompleteAdapter.setSearchView(searchView);
             autoCompleteAdapter.setMapFragment(mapFragment);
             autoCompleteAdapter.setResultsFragment(resultsFragment);

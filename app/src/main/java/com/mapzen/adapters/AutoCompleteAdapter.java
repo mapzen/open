@@ -16,6 +16,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.AutoCompleteCursor;
+import com.mapzen.MapzenApplication;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.fragment.ResultsFragment;
@@ -28,7 +29,6 @@ import org.json.JSONObject;
 
 import static com.mapzen.MapzenApplication.LOG_TAG;
 import static com.mapzen.MapzenApplication.PELIAS_TEXT;
-import static com.mapzen.MapzenApplication.getApp;
 import static com.mapzen.entity.Feature.FEATURES;
 import static com.mapzen.entity.Feature.TITLE;
 
@@ -37,10 +37,12 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     private MapFragment mapFragment;
     private ResultsFragment resultsFragment;
     private Context context;
+    private MapzenApplication app;
 
-    public AutoCompleteAdapter(Context context) {
-        super(context, new AutoCompleteCursor(getApp(context).getColumns()), 0);
+    public AutoCompleteAdapter(Context context, MapzenApplication app) {
+        super(context, new AutoCompleteCursor(app.getColumns()), 0);
         this.context = context;
+        this.app = app;
     }
 
     public void setSearchView(SearchView view) {
@@ -65,7 +67,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
             public void onClick(View view) {
                 TextView tv = (TextView) view;
                 Feature feature = (Feature) tv.getTag();
-                getApp(c).setCurrentSearchTerm("");
+                app.setCurrentSearchTerm("");
                 searchView.setQuery("", false);
                 searchView.clearFocus();
                 searchView.setQuery(tv.getText(), false);
@@ -116,20 +118,23 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
             return true;
         }
 
-        Logger.d("search: " + getApp(context).getCurrentSearchTerm());
+        Logger.d("search: " + app.getCurrentSearchTerm());
         if (!newText.isEmpty()) {
+            Logger.d("search: autocomplete starts");
             JsonObjectRequest jsonObjectRequest = Feature.suggest(newText,
                     getAutoCompleteSuccessResponseListener(), getAutoCompleteErrorResponseListener());
-            getApp(context).enqueueApiRequest(jsonObjectRequest);
+            app.enqueueApiRequest(jsonObjectRequest);
+            Logger.d("search: autocomplete request enqueued");
         }
         return true;
     }
 
     private Response.Listener<JSONObject> getAutoCompleteSuccessResponseListener() {
-        final AutoCompleteCursor cursor = new AutoCompleteCursor(getApp(context).getColumns());
+        final AutoCompleteCursor cursor = new AutoCompleteCursor(app.getColumns());
         return new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject jsonObject) {
+                Logger.d("search: autocomplete request returned");
                 Logger.d("request: success" + jsonObject.toString());
                 JSONArray jsonArray = new JSONArray();
                 try {
@@ -144,6 +149,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                         Log.e(LOG_TAG, e.toString());
                     }
                 }
+                Logger.d("search: swapping cursor");
                 swapCursor(cursor);
             }
         };
