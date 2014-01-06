@@ -16,7 +16,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.AutoCompleteCursor;
-import com.mapzen.MapzenApplication;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.fragment.SearchResultsFragment;

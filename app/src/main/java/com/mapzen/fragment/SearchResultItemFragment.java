@@ -4,14 +4,11 @@ import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -22,15 +19,11 @@ import com.mapzen.entity.Feature;
 import com.mapzen.entity.RouteInstruction;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
-import com.mapzen.util.RouteLayer;
 
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
-import org.oscim.map.Map;
 
 import java.util.ArrayList;
-
-import static com.mapzen.MapzenApplication.LOG_TAG;
 
 public class SearchResultItemFragment extends Fragment {
     private Feature feature;

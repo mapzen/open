@@ -1,7 +1,6 @@
 package com.mapzen;
 
 import android.app.Application;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
@@ -9,17 +8,14 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ProgressBar;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.Volley;
 
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
-import org.oscim.map.Map;
 
 import java.util.List;
 

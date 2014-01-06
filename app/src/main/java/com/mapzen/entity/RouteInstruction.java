@@ -3,7 +3,6 @@ package com.mapzen.entity;
 import android.content.Context;
 
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.MapzenApplication;
 import com.mapzen.osrm.Route;
@@ -12,10 +11,8 @@ import com.mapzen.util.RouteLayer;
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.concurrent.Callable;
 
 public class RouteInstruction {
     private String url;
