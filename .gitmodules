@@ -1,3 +1,9 @@
 [submodule "geo-json"]
 	path = geo-json
 	url = git@github.com:mapzen/simple-geojson.git
+[submodule "simple-geojson"]
+	path = simple-geojson
+	url = https://github.com/mapzen/simple-geojson.git
+[submodule "geojson"]
+	path = geojson
+	url = https://github.com/mapzen/simple-geojson.git
