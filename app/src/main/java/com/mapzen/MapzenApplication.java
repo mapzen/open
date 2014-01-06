@@ -13,6 +13,7 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.mapzen.util.Logger;
 
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
@@ -97,9 +98,9 @@ public class MapzenApplication extends Application implements LocationListener {
     }
 
     public void setLocation(Location location) {
-        Log.v(LOG_TAG, "Location: setting location");
+        Logger.d("Location: setting location");
         if (location == null) {
-            Log.v(LOG_TAG, "Location: location is null");
+            Logger.d("Location: location is null");
         }
         this.location = location;
     }
@@ -107,12 +108,12 @@ public class MapzenApplication extends Application implements LocationListener {
     private String getBestProvider() {
         Criteria criteria = new Criteria();
         String provider = locationManager.getBestProvider(criteria, true);
-        Log.v(LOG_TAG, "Location: Best provider: " + provider);
+        Logger.d("Location: Best provider: " + provider);
         return provider;
     }
 
     public void setupLocationUpdates() {
-        Log.v(LOG_TAG, "Location: Requesting updates");
+        Logger.d("Location: Requesting updates");
         locationManager.requestLocationUpdates(getBestProvider(),
                 LOCATION_UPDATE_FREQUENCY, LOCATION_UPDATE_MIN_DISTANCE, this);
     }
@@ -125,7 +126,7 @@ public class MapzenApplication extends Application implements LocationListener {
 
     @Override
     public void onLocationChanged(Location loc) {
-        Log.v(LOG_TAG, "Location: setting location: ");
+        Logger.d("Location: setting location: ");
         setLocation(loc);
     }
 
@@ -147,12 +148,12 @@ public class MapzenApplication extends Application implements LocationListener {
 
     public MapPosition getLocationPosition() {
         if (location != null) {
-            Log.v(LOG_TAG, "Location: get location position");
+            Logger.d("Location: get location position");
             double lat = getLocation().getLatitude();
             double lon = getLocation().getLongitude();
             mapPosition = new MapPosition(lat, lon, Math.pow(2, getStoredZoomLevel()));
         } else {
-            Log.v(LOG_TAG, "Location: get location position");
+            Logger.d("Location: get location position");
             mapPosition =
                     new MapPosition(DEFAULT_LATITUDE, DEFAULT_LONGITUDE, Math.pow(2, getStoredZoomLevel()));
         }

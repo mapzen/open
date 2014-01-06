@@ -23,6 +23,7 @@ import com.mapzen.activity.BaseActivity;
 import com.mapzen.activity.FullSearchResultsActivity;
 import com.mapzen.adapters.SearchViewAdapter;
 import com.mapzen.entity.Feature;
+import com.mapzen.util.Logger;
 import com.mapzen.util.VolleyHelper;
 
 import org.json.JSONArray;
@@ -99,7 +100,7 @@ public class ResultsFragment extends Fragment {
         ItemFragment srf = currentCollection.get(i);
         app.setCurrentPagerPosition(i);
         Feature feature = srf.getFeature();
-        Log.v(LOG_TAG, "feature: " + feature.toString());
+        Logger.d("feature: " + feature.toString());
         String indicatorText = String.format(Locale.ENGLISH, PAGINATE_TEMPLATE, i + 1, currentCollection.size());
         indicator.setText(indicatorText);
         mapFragment.centerOn(feature);
@@ -133,7 +134,7 @@ public class ResultsFragment extends Fragment {
     }
 
     public void add(Feature feature) {
-        Log.v(LOG_TAG, feature.toString());
+        Logger.d(feature.toString());
         addMarker(feature);
         ItemFragment itemFragment = new ItemFragment();
         itemFragment.setFeature(feature);
@@ -199,7 +200,7 @@ public class ResultsFragment extends Fragment {
         return new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject jsonObject) {
-                Log.v(LOG_TAG, "Search Results: " + jsonObject.toString());
+                Logger.d("Search Results: " + jsonObject.toString());
                 JSONArray jsonArray = new JSONArray();
                 try {
                     jsonArray = jsonObject.getJSONArray("features");

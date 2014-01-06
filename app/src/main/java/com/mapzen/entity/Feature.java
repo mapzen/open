@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.mapzen.util.Logger;
 
 import org.oscim.core.BoundingBox;
 import org.oscim.core.GeoPoint;
@@ -38,7 +39,7 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
     public static JsonObjectRequest suggest(String query, Response.Listener successListener,
                                             Response.ErrorListener errorListener) {
         String url = String.format(Locale.ENGLISH, "%s?query=%s", PELIAS_SUGGEST_URL, Uri.encode(query));
-        Log.v(LOG_TAG, url);
+        Logger.d(url);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null,
                 successListener, errorListener);
         return jsonObjectRequest;
@@ -51,7 +52,7 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
                 PELIAS_SEARCH_URL, Uri.encode(query),
                 boundingBox.getMinLongitude(), boundingBox.getMaxLatitude(),
                 boundingBox.getMaxLongitude(), boundingBox.getMinLatitude());
-        Log.v(LOG_TAG, url);
+        Logger.d(url);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null,
                 successListener, errorListener);
         return jsonObjectRequest;

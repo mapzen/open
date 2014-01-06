@@ -18,6 +18,7 @@ import com.mapzen.adapters.AutoCompleteAdapter;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.fragment.ResultsFragment;
+import com.mapzen.util.Logger;
 
 import org.oscim.android.MapActivity;
 import org.oscim.map.Map;
@@ -79,7 +80,7 @@ public class BaseActivity extends MapActivity
         searchView.setOnQueryTextListener(autoCompleteAdapter);
         if (!app.getCurrentSearchTerm().isEmpty()) {
             menuItem.expandActionView();
-            Log.v(LOG_TAG, "search: " + app.getCurrentSearchTerm());
+            Logger.d("search: " + app.getCurrentSearchTerm());
             searchView.setQuery(app.getCurrentSearchTerm(), false);
             searchView.clearFocus();
         }
