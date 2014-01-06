@@ -180,13 +180,6 @@ public class MapzenApplication extends Application implements LocationListener {
         Log.d(LOG_TAG, "request: adding " + request.getUrl());
         request.setRetryPolicy(new DefaultRetryPolicy(HTTP_REQUEST_TIMEOUT_MS,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.cancelAll(new RequestQueue.RequestFilter() {
-            @Override
-            public boolean apply(Request<?> request) {
-                Log.d(LOG_TAG, "request: cancelling " + request.getUrl());
-                return true;
-            }
-        });
         queue.add(request);
     }
 }
