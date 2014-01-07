@@ -80,11 +80,11 @@ public class MapzenApplication extends Application {
         for (String provider : providers) {
             Logger.d("location: provider: " + provider.toString());
             Location loc = locationManager.getLastKnownLocation(provider);
-            Logger.d("location: last known location: " + loc.toString());
             if (loc == null) {
                 Logger.d("location: is null");
                 continue;
             }
+            Logger.d("location: last known location: " + loc.toString());
             if (bestLocation == null
                     || loc.getAccuracy() < bestLocation.getAccuracy()) {
                 bestLocation = loc;
