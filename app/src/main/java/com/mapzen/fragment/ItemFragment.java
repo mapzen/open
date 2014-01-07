@@ -1,6 +1,5 @@
 package com.mapzen.fragment;
 
-import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -52,9 +51,8 @@ public class ItemFragment extends Fragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    BaseActivity act = (BaseActivity) getActivity();
-                    ActionBar actionBar = act.getActionBar();
-                    actionBar.hide();
+                    final BaseActivity act = (BaseActivity) getActivity();
+                    act.hideActionBar();
                     act.getResultsFragment().hideResultsWrapper();
 
                     ArrayList<GeoPoint> points = new ArrayList<GeoPoint>(2);
@@ -74,18 +72,12 @@ public class ItemFragment extends Fragment {
                                     routeInstructionInstruction.draw(route);
                                     ArrayList<Instruction> instructions = route.getRouteInstructions();
                                     progressDialog.dismiss();
-                                    RouteFragment routeFragment = new RouteFragment();
-                                    routeFragment.setInstructions(instructions);
-                                    routeFragment.setMapFragment(mapFragment);
-                                    getFragmentManager().beginTransaction()
-                                            .add(R.id.container, routeFragment)
-                                            .commit();
-
+                                    act.showRouteFragment(instructions);
                                 }
                             }, new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError volleyError) {
-                                    progressDialog.dismiss();
+                                    //progressDialog.dismiss();
                                 }
                             }
                     );

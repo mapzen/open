@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,11 +37,10 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.mapzen.MapzenApplication.LOG_TAG;
-import static com.mapzen.MapzenApplication.getApp;
 
 public class ResultsFragment extends Fragment {
     private SearchViewAdapter adapter;
-    private LinearLayout wrapper;
+    private FrameLayout wrapper;
     private BaseActivity act;
     private MapFragment mapFragment;
     private List<ItemFragment> currentCollection =
@@ -57,12 +56,13 @@ public class ResultsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search_results,
                 container, false);
-        assert view != null;
-        act = (BaseActivity) getActivity();
-        assert act != null;
-        app = getApp(act);
         indicator = (TextView) view.findViewById(R.id.pagination);
-        Button viewAll = (Button) view.findViewById(R.id.view_all);
+        setViewAll((Button) view.findViewById(R.id.view_all));
+        setPager((ViewPager) view.findViewById(R.id.results));
+        return view;
+    }
+
+    private void setViewAll(Button viewAll) {
         viewAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,8 +71,12 @@ public class ResultsFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        pager = (ViewPager) view.findViewById(R.id.results);
-        pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+    }
+
+    private void setPager(ViewPager pager) {
+        this.pager = pager;
+
+        this.pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i2) {
             }
@@ -86,10 +90,19 @@ public class ResultsFragment extends Fragment {
             public void onPageScrollStateChanged(int i) {
             }
         });
-        adapter = new SearchViewAdapter(act, act.getSupportFragmentManager());
-        pager.setAdapter(adapter);
-        wrapper = (LinearLayout) view.findViewById(R.id.results_wrapper);
-        return view;
+        this.pager.setAdapter(adapter);
+    }
+
+    public void setActivity(BaseActivity act) {
+        this.act = act;
+    }
+
+    public void setAdapter(SearchViewAdapter adapter) {
+        this.adapter = adapter;
+    }
+
+    public void setApp(MapzenApplication app) {
+        this.app = app;
     }
 
     public void setMapFragment(MapFragment map) {
@@ -108,11 +121,21 @@ public class ResultsFragment extends Fragment {
 
     public void showResultsWrapper() {
         mapFragment.pullUp();
+        act.getSupportFragmentManager().beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.results_container, this, "results")
+                .commit();
+        wrapper = (FrameLayout) act.findViewById(R.id.results_container);
         wrapper.setVisibility(View.VISIBLE);
     }
 
     public void hideResultsWrapper() {
-        wrapper.setVisibility(View.GONE);
+        /*
+        act.getSupportFragmentManager().beginTransaction()
+                .addToBackStack(null)
+                .remove(this)
+                .commit();
+                */
         mapFragment.pullDown();
         mapFragment.clearMarkers();
         mapFragment.updateMap();
@@ -178,6 +201,7 @@ public class ResultsFragment extends Fragment {
     }
 
     public boolean executeSearchOnMap(final SearchView view, String query) {
+        showResultsWrapper();
         app.setCurrentSearchTerm(query);
         JsonObjectRequest jsonObjectRequest =
                 Feature.search(mapFragment.getMap(), query,
@@ -217,7 +241,6 @@ public class ResultsFragment extends Fragment {
         notifyNewData();
         String initialIndicatorText = String.format(Locale.ENGLISH, PAGINATE_TEMPLATE, 1, length);
         indicator.setText(initialIndicatorText);
-        showResultsWrapper();
         centerOnPlace(currentPos);
         mapFragment.updateMap();
     }

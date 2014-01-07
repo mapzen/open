@@ -9,12 +9,16 @@
         android:layout_height="wrap_content"
         class="com.mapzen.fragment.MapFragment" />
 
-    <fragment
-        android:id="@+id/search_results_fragment"
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/results_container"
         android:layout_width="match_parent"
         android:layout_height="120dp"
+        android:background="@android:color/white"
+        android:visibility="gone"
         android:layout_alignParentBottom="true"
-        class="com.mapzen.fragment.ResultsFragment" />
+        tools:context="com.mapzen.activity.BaseActivity"
+        tools:ignore="MergeRootFrame" />
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -25,4 +29,5 @@
         android:visibility="gone"
         tools:context="com.mapzen.activity.BaseActivity"
         tools:ignore="MergeRootFrame" />
+
 </RelativeLayout>

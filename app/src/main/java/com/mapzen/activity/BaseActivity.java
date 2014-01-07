@@ -14,9 +14,12 @@ import com.crashlytics.android.Crashlytics;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.adapters.AutoCompleteAdapter;
+import com.mapzen.adapters.SearchViewAdapter;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.fragment.ResultsFragment;
+import com.mapzen.fragment.RouteFragment;
+import com.mapzen.osrm.Instruction;
 import com.mapzen.util.Logger;
 
 import org.oscim.android.MapActivity;
@@ -40,7 +43,14 @@ public class BaseActivity extends MapActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         setContentView(R.layout.base);
         mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
-        resultsFragment = (ResultsFragment) fragmentManager.findFragmentById(R.id.search_results_fragment);
+        initResultsFragment();
+    }
+
+    private void initResultsFragment() {
+        resultsFragment = new ResultsFragment();
+        resultsFragment.setActivity(this);
+        resultsFragment.setApp(app);
+        resultsFragment.setAdapter(new SearchViewAdapter(this, getSupportFragmentManager()));
         // TODO remove fugly HACK
         resultsFragment.setMapFragment(mapFragment);
     }
@@ -110,7 +120,8 @@ public class BaseActivity extends MapActivity
 
     private void setupAdapter(SearchView searchView) {
         if (autoCompleteAdapter == null) {
-            autoCompleteAdapter = new AutoCompleteAdapter(getActionBar().getThemedContext(), app);
+            autoCompleteAdapter =
+                    new AutoCompleteAdapter(getActionBar().getThemedContext(), app);
             autoCompleteAdapter.setSearchView(searchView);
             autoCompleteAdapter.setMapFragment(mapFragment);
             autoCompleteAdapter.setResultsFragment(resultsFragment);
@@ -137,4 +148,24 @@ public class BaseActivity extends MapActivity
     public ResultsFragment getResultsFragment() {
         return resultsFragment;
     }
+
+    public void hideActionBar() {
+        getActionBar().hide();
+    }
+
+    public void showActionBar() {
+        getActionBar().show();
+    }
+
+    public void showRouteFragment(ArrayList<Instruction> instructions) {
+        final RouteFragment routeFragment = new RouteFragment();
+        routeFragment.setInstructions(instructions);
+        routeFragment.setMapFragment(mapFragment);
+        getSupportFragmentManager().beginTransaction()
+                .addToBackStack(null)
+                .add(R.id.container, routeFragment, "route")
+                .commit();
+    }
+
+
 }
