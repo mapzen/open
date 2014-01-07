@@ -120,7 +120,6 @@ public class ResultsFragment extends Fragment {
     }
 
     public void showResultsWrapper() {
-        mapFragment.pullUp();
         act.getSupportFragmentManager().beginTransaction()
                 .addToBackStack(null)
                 .replace(R.id.results_container, this, "results")
@@ -136,7 +135,6 @@ public class ResultsFragment extends Fragment {
                 .remove(this)
                 .commit();
                 */
-        mapFragment.pullDown();
         mapFragment.clearMarkers();
         mapFragment.updateMap();
     }

@@ -1,10 +1,8 @@
 package com.mapzen.fragment;
 
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +39,6 @@ import java.util.ArrayList;
 public class MapFragment extends Fragment {
     public static final int ANIMATION_DURATION = 1300;
     public static final int DEFAULT_ZOOMLEVEL = 17;
-    public static final int BOTTOM_MARGIN = 120;
     public static final int LINE_WIDTH = 5;
     public static final int DURATION = 800;
     private VectorTileLayer baseLayer;
@@ -154,19 +151,6 @@ public class MapFragment extends Fragment {
 
     public Map getMap() {
         return map;
-    }
-
-    public void pullUp() {
-        RelativeLayout.LayoutParams layoutParams = getLayoutParams();
-        Resources res = activity.getResources();
-        int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, BOTTOM_MARGIN,
-                res.getDisplayMetrics());
-        layoutParams.setMargins(0, 0, 0, px);
-    }
-
-    public void pullDown() {
-        RelativeLayout.LayoutParams p = getLayoutParams();
-        p.setMargins(0, 0, 0, 0);
     }
 
     public void clearMarkers() {
