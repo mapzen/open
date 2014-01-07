@@ -119,22 +119,20 @@ public class ResultsFragment extends Fragment {
         mapFragment.centerOn(feature);
     }
 
-    public void showResultsWrapper() {
+    public void addFragment() {
         act.getSupportFragmentManager().beginTransaction()
                 .addToBackStack(null)
                 .replace(R.id.results_container, this, "results")
                 .commit();
         wrapper = (FrameLayout) act.findViewById(R.id.results_container);
+    }
+
+    public void showResultsWrapper() {
         wrapper.setVisibility(View.VISIBLE);
     }
 
     public void hideResultsWrapper() {
-        /*
-        act.getSupportFragmentManager().beginTransaction()
-                .addToBackStack(null)
-                .remove(this)
-                .commit();
-                */
+        wrapper.setVisibility(View.GONE);
         mapFragment.clearMarkers();
         mapFragment.updateMap();
     }
@@ -199,7 +197,7 @@ public class ResultsFragment extends Fragment {
     }
 
     public boolean executeSearchOnMap(final SearchView view, String query) {
-        showResultsWrapper();
+        addFragment();
         app.setCurrentSearchTerm(query);
         JsonObjectRequest jsonObjectRequest =
                 Feature.search(mapFragment.getMap(), query,
@@ -230,6 +228,7 @@ public class ResultsFragment extends Fragment {
                     Log.e(LOG_TAG, e.toString());
                 }
                 setSearchResults(jsonArray);
+                showResultsWrapper();
                 view.clearFocus();
             }
         };
