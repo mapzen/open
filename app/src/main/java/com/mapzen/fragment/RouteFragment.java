@@ -86,11 +86,6 @@ public class RouteFragment extends Fragment {
         pager.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-        Map map = mapFragment.getMap();
-        MapPosition pos = map.getMapPostion();
-        storedTilt = pos.tilt;
-        storedBearing = pos.angle;
-        storedZoom = pos.zoomLevel;
         return rootView;
     }
 
@@ -147,11 +142,6 @@ public class RouteFragment extends Fragment {
 
     private void clearRoute() {
         RouteLayer layer = mapFragment.getRouteLayer();
-        Map map = mapFragment.getMap();
-        map.getViewport().setTilt(storedTilt);
-        map.getViewport().setRotation(storedBearing);
-        map.setMapPosition(destination.getLatitude(),
-                destination.getLongitude(), Math.pow(2, storedZoom));
         layer.clear();
     }
 }

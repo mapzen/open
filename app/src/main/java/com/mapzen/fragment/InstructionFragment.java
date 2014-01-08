@@ -17,8 +17,7 @@ public class InstructionFragment extends Fragment {
 
     private Instruction instruction;
     private Map map;
-    public static final int ROUTE_ZOOM_LEVEL = 19;
-    public static final float ROUTE_TILT_LEVEL = 150.0f;
+    public static final int ROUTE_ZOOM_LEVEL = 17;
 
     public InstructionFragment() {
     }
@@ -49,7 +48,6 @@ public class InstructionFragment extends Fragment {
             double[] point = instruction.getPoint();
             Logger.d("Instructions: " + instruction.toString());
             map.setMapPosition(point[0], point[1], Math.pow(2, ROUTE_ZOOM_LEVEL));
-            map.getViewport().setTilt(ROUTE_TILT_LEVEL);
             map.getViewport().setRotation(instruction.getBearing());
         }
     }
