@@ -7,9 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -34,9 +32,6 @@ import java.util.Locale;
 public class RouteFragment extends Fragment {
     private ArrayList<Instruction> instructions;
     private MapFragment mapFragment;
-    private TextView title, street;
-    private int routeIndex;
-    private Button nextBtn;
     private GeoPoint from, destination;
     private MapzenApplication app;
     private BaseActivity act;
@@ -80,7 +75,6 @@ public class RouteFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        routeIndex = 0;
         View rootView = inflater.inflate(R.layout.route_widget, container, false);
         FrameLayout frame = (FrameLayout) container;
         frame.setVisibility(View.VISIBLE);
