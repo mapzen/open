@@ -111,7 +111,7 @@ public class RouteFragment extends Fragment {
         progressDialog.show();
 
         String url = String.format(Locale.ENGLISH, urlTemplate, (int) Math.floor(app.getStoredZoomLevel()),
-                destination.getLatitude(), destination.getLongitude(), from.getLatitude(), from.getLongitude());
+                from.getLatitude(), from.getLongitude(), destination.getLatitude(), destination.getLongitude());
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
