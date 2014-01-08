@@ -23,8 +23,6 @@ import com.mapzen.util.RouteLayer;
 
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
-import org.oscim.core.MapPosition;
-import org.oscim.map.Map;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -62,7 +60,7 @@ public class RouteFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        BaseActivity act = (BaseActivity) getActivity();
+        act = (BaseActivity) getActivity();
         act.hideActionBar();
     }
 
@@ -97,8 +95,8 @@ public class RouteFragment extends Fragment {
         this.destination = destination;
     }
 
-    public void attachTo(BaseActivity act) {
-        this.act = act;
+    public void attachTo(BaseActivity activity) {
+        act = activity;
         act.hideActionBar();
         act.getResultsFragment().hideResultsWrapper();
         final ProgressDialog progressDialog = new ProgressDialog(act);

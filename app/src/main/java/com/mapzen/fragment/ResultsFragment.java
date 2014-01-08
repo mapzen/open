@@ -119,7 +119,8 @@ public class ResultsFragment extends Fragment {
         mapFragment.centerOn(feature);
     }
 
-    public void attachTo(BaseActivity act) {
+    public void attachTo(BaseActivity activity) {
+        this.act = activity;
         act.getSupportFragmentManager().beginTransaction()
                 .addToBackStack(null)
                 .replace(R.id.top_container, this, "results")
