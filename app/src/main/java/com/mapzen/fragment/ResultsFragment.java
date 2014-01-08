@@ -122,9 +122,9 @@ public class ResultsFragment extends Fragment {
     public void attachTo(BaseActivity act) {
         act.getSupportFragmentManager().beginTransaction()
                 .addToBackStack(null)
-                .replace(R.id.results_container, this, "results")
+                .replace(R.id.top_container, this, "results")
                 .commit();
-        wrapper = (FrameLayout) act.findViewById(R.id.results_container);
+        wrapper = (FrameLayout) act.findViewById(R.id.top_container);
     }
 
     public void showResultsWrapper() {

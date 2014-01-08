@@ -154,7 +154,7 @@ public class RouteFragment extends Fragment {
     private void displayRoute() {
         act.getSupportFragmentManager().beginTransaction()
                 .addToBackStack(null)
-                .add(R.id.container, this, "route")
+                .add(R.id.bottom_container, this, "route")
                 .commit();
     }
 
