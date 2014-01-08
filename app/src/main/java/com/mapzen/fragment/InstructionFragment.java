@@ -13,6 +13,8 @@ import com.mapzen.util.Logger;
 
 import org.oscim.map.Map;
 
+import java.util.Locale;
+
 public class InstructionFragment extends Fragment {
 
     private Instruction instruction;
@@ -38,6 +40,8 @@ public class InstructionFragment extends Fragment {
         title.setText(instruction.getHumanTurnInstruction());
         TextView street = (TextView) view.findViewById(R.id.instruction_street);
         street.setText(instruction.getName());
+        TextView distance = (TextView) view.findViewById(R.id.instruction_distance);
+        distance.setText(String.valueOf(instruction.getHumanDistance(Locale.ENGLISH)));
         return view;
     }
 

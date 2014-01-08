@@ -8,14 +8,24 @@
     <TextView
         android:id="@+id/instruction_title"
         android:layout_width="match_parent"
+        android:textColor="@android:color/white"
         android:textSize="20sp"
         android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/instruction_street"
         android:layout_width="match_parent"
+        android:textColor="@android:color/white"
         android:textSize="20sp"
         android:layout_below="@id/instruction_title"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/instruction_distance"
+        android:layout_width="match_parent"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:layout_below="@id/instruction_street"
         android:layout_height="wrap_content" />
 
 </RelativeLayout>
