@@ -20,6 +20,7 @@ import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.RoutesAdapter;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
+import com.mapzen.util.Logger;
 import com.mapzen.util.RouteLayer;
 
 import org.json.JSONObject;
@@ -55,6 +56,7 @@ public class RouteFragment extends Fragment {
     }
 
     public void setInstructions(ArrayList<Instruction> instructions) {
+        Logger.d("instructions: " + instructions.toString());
         this.instructions = instructions;
     }
 
@@ -63,10 +65,15 @@ public class RouteFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        BaseActivity act = (BaseActivity) getActivity();
+        act.hideActionBar();
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
-        BaseActivity act = (BaseActivity) getActivity();
-        act.showActionBar();
         clearRoute();
     }
 

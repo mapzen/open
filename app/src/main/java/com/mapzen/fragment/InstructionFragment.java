@@ -1,5 +1,6 @@
 package com.mapzen.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import com.mapzen.R;
 import com.mapzen.osrm.Instruction;
+import com.mapzen.util.Logger;
 
 import org.oscim.map.Map;
 
@@ -38,10 +40,18 @@ public class InstructionFragment extends Fragment {
         title.setText(instruction.getHumanTurnInstruction());
         TextView street = (TextView) view.findViewById(R.id.instruction_street);
         street.setText(instruction.getName());
-        double[] point = instruction.getPoint();
-        map.setMapPosition(point[0], point[1], Math.pow(2, ROUTE_ZOOM_LEVEL));
-        map.getViewport().setTilt(ROUTE_TILT_LEVEL);
-        map.getViewport().setRotation(instruction.getBearing());
         return view;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            double[] point = instruction.getPoint();
+            Logger.d("Instructions: " + instruction.toString());
+            map.setMapPosition(point[0], point[1], Math.pow(2, ROUTE_ZOOM_LEVEL));
+            map.getViewport().setTilt(ROUTE_TILT_LEVEL);
+            map.getViewport().setRotation(instruction.getBearing());
+        }
     }
 }
