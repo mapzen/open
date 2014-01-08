@@ -18,8 +18,6 @@ import com.mapzen.adapters.SearchViewAdapter;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.fragment.ResultsFragment;
-import com.mapzen.fragment.RouteFragment;
-import com.mapzen.osrm.Instruction;
 import com.mapzen.util.Logger;
 
 import org.oscim.android.MapActivity;
@@ -154,11 +152,10 @@ public class BaseActivity extends MapActivity
     }
 
     public void showActionBar() {
-        if(!getActionBar().isShowing()) {
+        if (!getActionBar().isShowing()) {
             getActionBar().show();
         }
     }
-
 
 
 }

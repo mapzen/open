@@ -22,6 +22,7 @@ import com.mapzen.util.RouteLayer;
 
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
+import org.oscim.core.MapPosition;
 import org.oscim.map.Map;
 
 import java.util.ArrayList;
@@ -43,6 +44,9 @@ public class RouteFragment extends Fragment {
             + "&loc=%.6f,%.6f"
             + "&loc=%.6f,%.6f"
             + "&instructions=true";
+    private float storedTilt = 0;
+    private double storedBearing = 0;
+    private int storedZoom = 0;
 
     public void setApp(MapzenApplication app) {
         this.app = app;
@@ -91,7 +95,14 @@ public class RouteFragment extends Fragment {
 
         double[] firstPoint = instructions.get(index).getPoint();
         Map map = mapFragment.getMap();
+
+        MapPosition pos = map.getMapPostion();
+        storedTilt = pos.tilt;
+        storedBearing = pos.angle;
+        storedZoom = pos.zoomLevel;
+
         map.setMapPosition(firstPoint[0], firstPoint[1], Math.pow(2, ROUTE_ZOOM_LEVEL));
+
         map.getViewport().setTilt(ROUTE_TILT_LEVEL);
         map.getViewport().setRotation(instructions.get(index).getBearing());
     }
@@ -114,28 +125,29 @@ public class RouteFragment extends Fragment {
         progressDialog.show();
 
         String url = String.format(Locale.ENGLISH, urlTemplate, (int) Math.floor(app.getStoredZoomLevel()),
-                        destination.getLatitude(), destination.getLongitude(), from.getLatitude(), from.getLongitude());
+                destination.getLatitude(), destination.getLongitude(), from.getLatitude(), from.getLongitude());
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Route route = new Route(response);
-                        setInstructions(route.getRouteInstructions());
-                        RouteLayer layer = mapFragment.getRouteLayer();
-                        layer.clear();
-                        for (double[] pair : route.getGeometry()) {
-                            layer.addPoint(new GeoPoint(pair[0], pair[1]));
-                        }
-                        layer.updateMap();
+            @Override
+            public void onResponse(JSONObject response) {
+                Route route = new Route(response);
+                setInstructions(route.getRouteInstructions());
+                RouteLayer layer = mapFragment.getRouteLayer();
+                layer.clear();
+                for (double[] pair : route.getGeometry()) {
+                    layer.addPoint(new GeoPoint(pair[0], pair[1]));
+                }
+                layer.updateMap();
 
-                        progressDialog.dismiss();
-                        displayRoute();
-                    }
-                }, new Response.ErrorListener() {
+                progressDialog.dismiss();
+                displayRoute();
+            }
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressDialog.dismiss();
             }
-        });
+        }
+        );
         app.enqueueApiRequest(jsonObjectRequest);
     }
 
@@ -148,6 +160,11 @@ public class RouteFragment extends Fragment {
 
     private void clearRoute() {
         RouteLayer layer = mapFragment.getRouteLayer();
+        Map map = mapFragment.getMap();
+        map.getViewport().setTilt(storedTilt);
+        map.getViewport().setRotation(storedBearing);
+        map.setMapPosition(destination.getLatitude(),
+                destination.getLongitude(), Math.pow(2, storedZoom));
         layer.clear();
     }
 }

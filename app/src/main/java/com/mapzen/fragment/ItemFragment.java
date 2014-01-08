@@ -8,17 +8,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
-import com.mapzen.osrm.Instruction;
-
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 public class ItemFragment extends Fragment {
     private Feature feature;
@@ -53,7 +46,7 @@ public class ItemFragment extends Fragment {
                     routeFragment.setDestination(feature.getGeoPoint());
                     routeFragment.setMapFragment(mapFragment);
                     routeFragment.setApp(app);
-                    routeFragment.attachTo((BaseActivity)getActivity());
+                    routeFragment.attachTo((BaseActivity) getActivity());
                 }
             });
             holder.setButton(button);
