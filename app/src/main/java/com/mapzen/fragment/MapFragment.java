@@ -39,7 +39,7 @@ import java.util.ArrayList;
 public class MapFragment extends Fragment {
     public static final int ANIMATION_DURATION = 1300;
     public static final int DEFAULT_ZOOMLEVEL = 17;
-    public static final int LINE_WIDTH = 5;
+    public static final int ROUTE_LINE_WIDTH = 15;
     public static final int DURATION = 800;
     private VectorTileLayer baseLayer;
     private BaseActivity activity;
@@ -140,7 +140,7 @@ public class MapFragment extends Fragment {
         });
         setupMyLocationBtn(view);
         setupMeMarkerLayer();
-        routeLayer = new RouteLayer(map, Color.MAGENTA, LINE_WIDTH);
+        routeLayer = new RouteLayer(map, Color.MAGENTA, ROUTE_LINE_WIDTH);
         map.getLayers().add(routeLayer);
         map.setMapPosition(app.getLocationPosition());
     }
