@@ -68,12 +68,13 @@ sourceSets {
 
 dependencies {
     compile 'com.android.support:support-v4:+'
+    compile 'com.crashlytics.android:crashlytics:1.+'
     compile fileTree(dir: 'libs', include: '*.jar')
     compile project(':vtm-android')
     compile project(':vtm')
     compile project(':geojson')
     compile project(':volley')
-    compile 'com.crashlytics.android:crashlytics:1.+'
+    
     testCompile 'junit:junit:4.10'
     testCompile 'org.robolectric:robolectric:2.3-SNAPSHOT'
     testCompile 'com.squareup:fest-android:1.0.+'
@@ -83,5 +84,4 @@ dependencies {
     instrumentTestCompile 'junit:junit:4.10'
     instrumentTestCompile 'org.robolectric:robolectric:2.3-SNAPSHOT'
     instrumentTestCompile 'com.squareup:fest-android:1.0.+'
-
 }
