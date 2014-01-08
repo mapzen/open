@@ -1,5 +1,6 @@
 package com.mapzen.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -119,7 +120,7 @@ public class ResultsFragment extends Fragment {
         mapFragment.centerOn(feature);
     }
 
-    public void addFragment() {
+    public void attachTo(BaseActivity act) {
         act.getSupportFragmentManager().beginTransaction()
                 .addToBackStack(null)
                 .replace(R.id.results_container, this, "results")
@@ -197,7 +198,7 @@ public class ResultsFragment extends Fragment {
     }
 
     public boolean executeSearchOnMap(final SearchView view, String query) {
-        addFragment();
+        attachTo(act);
         app.setCurrentSearchTerm(query);
         JsonObjectRequest jsonObjectRequest =
                 Feature.search(mapFragment.getMap(), query,
@@ -228,13 +229,13 @@ public class ResultsFragment extends Fragment {
                     Log.e(LOG_TAG, e.toString());
                 }
                 setSearchResults(jsonArray);
-                showResultsWrapper();
                 view.clearFocus();
             }
         };
     }
 
     private void displayResults(int length, int currentPos) {
+        showResultsWrapper();
         notifyNewData();
         String initialIndicatorText = String.format(Locale.ENGLISH, PAGINATE_TEMPLATE, 1, length);
         indicator.setText(initialIndicatorText);

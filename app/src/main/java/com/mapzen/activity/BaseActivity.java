@@ -154,18 +154,11 @@ public class BaseActivity extends MapActivity
     }
 
     public void showActionBar() {
-        getActionBar().show();
+        if(!getActionBar().isShowing()) {
+            getActionBar().show();
+        }
     }
 
-    public void showRouteFragment(ArrayList<Instruction> instructions) {
-        final RouteFragment routeFragment = new RouteFragment();
-        routeFragment.setInstructions(instructions);
-        routeFragment.setMapFragment(mapFragment);
-        getSupportFragmentManager().beginTransaction()
-                .addToBackStack(null)
-                .add(R.id.container, routeFragment, "route")
-                .commit();
-    }
 
 
 }

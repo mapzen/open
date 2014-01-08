@@ -1,6 +1,5 @@
 package com.mapzen.fragment;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,11 +14,9 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
-import com.mapzen.entity.RouteInstruction;
 import com.mapzen.osrm.Instruction;
 
 import org.json.JSONObject;
-import org.oscim.core.GeoPoint;
 
 import java.util.ArrayList;
 
@@ -51,43 +48,16 @@ public class ItemFragment extends Fragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    final BaseActivity act = (BaseActivity) getActivity();
-                    act.hideActionBar();
-                    act.getResultsFragment().hideResultsWrapper();
-
-                    ArrayList<GeoPoint> points = new ArrayList<GeoPoint>(2);
-                    points.add(app.getLocationPoint());
-                    points.add(feature.getGeoPoint());
-                    final RouteInstruction routeInstructionInstruction = new RouteInstruction(
-                            points, app.getStoredZoomLevel());
-
-                    final ProgressDialog progressDialog = new ProgressDialog(act);
-                    progressDialog.setTitle("Loading");
-                    progressDialog.setMessage("Wait while loading...");
-                    progressDialog.show();
-                    routeInstructionInstruction.fetchRoute(app, new Response.Listener<JSONObject>() {
-                                @Override
-                                public void onResponse(JSONObject jsonObject) {
-                                    com.mapzen.osrm.Route route = new com.mapzen.osrm.Route(jsonObject);
-                                    routeInstructionInstruction.draw(route);
-                                    ArrayList<Instruction> instructions = route.getRouteInstructions();
-                                    progressDialog.dismiss();
-                                    act.showRouteFragment(instructions);
-                                }
-                            }, new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError volleyError) {
-                                    //progressDialog.dismiss();
-                                }
-                            }
-                    );
-
-                    routeInstructionInstruction.setLayer(mapFragment.getRouteLayer());
+                    RouteFragment routeFragment = new RouteFragment();
+                    routeFragment.setFrom(app.getLocationPoint());
+                    routeFragment.setDestination(feature.getGeoPoint());
+                    routeFragment.setMapFragment(mapFragment);
+                    routeFragment.setApp(app);
+                    routeFragment.attachTo((BaseActivity)getActivity());
                 }
             });
             holder.setButton(button);
             view.setTag(holder);
-
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
