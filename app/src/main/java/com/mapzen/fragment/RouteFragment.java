@@ -2,7 +2,6 @@ package com.mapzen.fragment;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,9 +26,8 @@ import org.oscim.core.GeoPoint;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class RouteFragment extends Fragment {
+public class RouteFragment extends BaseFragment {
     private ArrayList<Instruction> instructions;
-    private MapFragment mapFragment;
     private GeoPoint from, destination;
     private MapzenApplication app;
     private BaseActivity act;
@@ -51,10 +49,6 @@ public class RouteFragment extends Fragment {
     public void setInstructions(ArrayList<Instruction> instructions) {
         Logger.d("instructions: " + instructions.toString());
         this.instructions = instructions;
-    }
-
-    public void setMapFragment(MapFragment mapFragment) {
-        this.mapFragment = mapFragment;
     }
 
     @Override

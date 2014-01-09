@@ -1,7 +1,6 @@
 package com.mapzen.fragment;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,14 +10,11 @@ import com.mapzen.R;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.util.Logger;
 
-import org.oscim.map.Map;
-
 import java.util.Locale;
 
-public class InstructionFragment extends Fragment {
+public class InstructionFragment extends BaseFragment {
 
     private Instruction instruction;
-    private Map map;
     public static final int ROUTE_ZOOM_LEVEL = 17;
 
     public InstructionFragment() {
@@ -26,10 +22,6 @@ public class InstructionFragment extends Fragment {
 
     public void setInstruction(Instruction instruction) {
         this.instruction = instruction;
-    }
-
-    public void setMap(Map map) {
-        this.map = map;
     }
 
     @Override

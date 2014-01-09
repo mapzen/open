@@ -46,7 +46,7 @@ public class BaseActivity extends MapActivity
 
     private void initResultsFragment() {
         resultsFragment = new ResultsFragment();
-        resultsFragment.setActivity(this);
+        resultsFragment.setAct(this);
         resultsFragment.setApp(app);
         resultsFragment.setAdapter(new SearchViewAdapter(this, getSupportFragmentManager()));
         // TODO remove fugly HACK

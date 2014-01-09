@@ -1,13 +1,11 @@
 package com.mapzen.fragment;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 
 import com.mapzen.MapzenApplication;
 import com.mapzen.PoiLayer;
@@ -36,21 +34,18 @@ import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-public class MapFragment extends Fragment {
+public class MapFragment extends BaseFragment {
     public static final int ANIMATION_DURATION = 1300;
     public static final int DEFAULT_ZOOMLEVEL = 17;
     public static final int ROUTE_LINE_WIDTH = 15;
     public static final int DURATION = 800;
     private VectorTileLayer baseLayer;
-    private BaseActivity activity;
-    private Map map;
     private Button myPosition;
     private ItemizedIconLayer<MarkerItem> meMarkerLayer;
     private PoiLayer<MarkerItem> poiMarkersLayer;
     private ItemizedIconLayer<MarkerItem> highlightLayer;
     private RouteLayer routeLayer;
     private ArrayList<MarkerItem> meMarkers = new ArrayList<MarkerItem>(1);
-    private MapzenApplication app;
 
     @Override
     public void onPause() {
@@ -81,7 +76,7 @@ public class MapFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_map,
                 container, false);
-        activity = (BaseActivity) getActivity();
+        act = (BaseActivity) getActivity();
         app = MapzenApplication.getApp(getActivity());
         setupMap(view);
         setupMyLocationBtn(view);
@@ -96,7 +91,7 @@ public class MapFragment extends Fragment {
     }
 
     private void setupMap(View view) {
-        map = activity.getMap();
+        map = act.getMap();
         MapView mapView = (MapView) view.findViewById(R.id.map);
         TileSource tileSource = new OSciMap4TileSource();
         tileSource.setOption(getString(R.string.tiles_source_url_key), getString(R.string.tiles_source_url));
@@ -110,18 +105,16 @@ public class MapFragment extends Fragment {
             }
         });
 
-        poiMarkersLayer = new PoiLayer<MarkerItem>(
-                map, new ArrayList<MarkerItem>(), getDefaultMarkerSymbol(),
+        poiMarkersLayer = new PoiLayer<MarkerItem>(map, new ArrayList<MarkerItem>(),
+                getDefaultMarkerSymbol(),
                 new ItemizedIconLayer.OnItemGestureListener<MarkerItem>() {
                     @Override
                     public boolean onItemSingleTapUp(int index, MarkerItem item) {
-                        Log.v("foo", "testing");
                         return true;
                     }
 
                     @Override
                     public boolean onItemLongPress(int index, MarkerItem item) {
-                        Log.v("foo", "testing");
                         return true;
                     }
                 });
@@ -143,10 +136,6 @@ public class MapFragment extends Fragment {
         routeLayer = new RouteLayer(map, Color.MAGENTA, ROUTE_LINE_WIDTH);
         map.getLayers().add(routeLayer);
         map.setMapPosition(app.getLocationPosition());
-    }
-
-    private RelativeLayout.LayoutParams getLayoutParams() {
-        return (RelativeLayout.LayoutParams) getView().getLayoutParams();
     }
 
     public Map getMap() {

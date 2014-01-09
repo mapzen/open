@@ -2,7 +2,6 @@ package com.mapzen.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,7 +16,6 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.activity.FullSearchResultsActivity;
@@ -38,16 +36,13 @@ import java.util.Locale;
 
 import static com.mapzen.MapzenApplication.LOG_TAG;
 
-public class ResultsFragment extends Fragment {
+public class ResultsFragment extends BaseFragment {
     private SearchViewAdapter adapter;
     private FrameLayout wrapper;
-    private BaseActivity act;
-    private MapFragment mapFragment;
     private List<ItemFragment> currentCollection =
             new ArrayList<ItemFragment>();
     private TextView indicator;
     private ViewPager pager;
-    private MapzenApplication app;
     private ArrayList<Feature> features = new ArrayList<Feature>();
     private static final String PAGINATE_TEMPLATE = "%2d of %2d RESULTS";
 
@@ -93,20 +88,8 @@ public class ResultsFragment extends Fragment {
         this.pager.setAdapter(adapter);
     }
 
-    public void setActivity(BaseActivity act) {
-        this.act = act;
-    }
-
     public void setAdapter(SearchViewAdapter adapter) {
         this.adapter = adapter;
-    }
-
-    public void setApp(MapzenApplication app) {
-        this.app = app;
-    }
-
-    public void setMapFragment(MapFragment map) {
-        mapFragment = map;
     }
 
     private void centerOnPlace(int i) {

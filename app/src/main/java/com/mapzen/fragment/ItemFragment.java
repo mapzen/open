@@ -13,21 +13,11 @@ import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
 
-public class ItemFragment extends Fragment {
+public class ItemFragment extends BaseFragment {
     private Feature feature;
-    private MapFragment mapFragment;
-    private MapzenApplication app;
 
     public void setFeature(Feature feature) {
         this.feature = feature;
-    }
-
-    public void setApp(MapzenApplication app) {
-        this.app = app;
-    }
-
-    public void setMapFragment(MapFragment mapFragment) {
-        this.mapFragment = mapFragment;
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
