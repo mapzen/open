@@ -38,10 +38,17 @@ public class BaseActivity extends MapActivity
         super.onCreate(savedInstanceState);
         Crashlytics.start(this);
         app = MapzenApplication.getApp(this);
-        FragmentManager fragmentManager = getSupportFragmentManager();
         setContentView(R.layout.base);
-        mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
+        initMapFragment();
         initResultsFragment();
+    }
+
+    private void initMapFragment() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
+        mapFragment.setApp(app);
+        mapFragment.setAct(this);
+        mapFragment.setMap(getMap());
     }
 
     private void initResultsFragment() {

@@ -1,20 +1,20 @@
 package com.mapzen.fragment;
 
+import android.content.IntentFilter;
+import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
-import com.mapzen.MapzenApplication;
+import com.mapzen.LocationReceiver;
 import com.mapzen.PoiLayer;
 import com.mapzen.R;
-import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
 import com.mapzen.util.RouteLayer;
 
-import org.oscim.android.MapView;
 import org.oscim.android.canvas.AndroidBitmap;
 import org.oscim.backend.canvas.Bitmap;
 import org.oscim.backend.canvas.Color;
@@ -46,29 +46,51 @@ public class MapFragment extends BaseFragment {
     private ItemizedIconLayer<MarkerItem> highlightLayer;
     private RouteLayer routeLayer;
     private ArrayList<MarkerItem> meMarkers = new ArrayList<MarkerItem>(1);
+    private Location userLocation;
+    // TODO find ways to track state without two variables
+    private boolean followMe = true;
+    private boolean initialRelocateHappened = false;
 
     @Override
     public void onPause() {
         super.onPause();
-        app.stopLocationUpdates();
+        teardownLocationReceiver();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        app.stopLocationUpdates();
+        teardownLocationReceiver();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        app.setupLocationUpdates();
+        View view = getView();
+        setupMap(view);
+        setupMyLocationBtn(view);
+        setupLocationReceiver();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        setupLocationReceiver();
+    }
+
+    private void setupLocationReceiver() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("com.mapzen.updates.location.HIGH");
+        filter.addAction("com.mapzen.updates.location.MED");
+        filter.addAction("com.mapzen.updates.location.LOW");
+        LocationReceiver receiver = new LocationReceiver();
+        receiver.setMapFragment(this);
+        app.registerReceiver(receiver, filter);
         app.setupLocationUpdates();
+    }
+
+    private void teardownLocationReceiver() {
+        app.stopLocationUpdates();
     }
 
     @Override
@@ -76,10 +98,6 @@ public class MapFragment extends BaseFragment {
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_map,
                 container, false);
-        act = (BaseActivity) getActivity();
-        app = MapzenApplication.getApp(getActivity());
-        setupMap(view);
-        setupMyLocationBtn(view);
         return view;
     }
 
@@ -90,22 +108,15 @@ public class MapFragment extends BaseFragment {
         map.getAnimator().animateTo(DURATION, geoPoint, Math.pow(2, DEFAULT_ZOOMLEVEL), false);
     }
 
-    private void setupMap(View view) {
-        map = act.getMap();
-        MapView mapView = (MapView) view.findViewById(R.id.map);
+    private TileSource getTileBase() {
         TileSource tileSource = new OSciMap4TileSource();
-        tileSource.setOption(getString(R.string.tiles_source_url_key), getString(R.string.tiles_source_url));
-        baseLayer = map.setBaseMap(tileSource);
-        map.getLayers().add(new BuildingLayer(map, baseLayer.getTileLayer()));
-        map.getLayers().add(new LabelLayer(map, baseLayer.getTileLayer()));
-        mapView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.v("foo", "testing clicking click");
-            }
-        });
+        tileSource.setOption(
+                getString(R.string.tiles_source_url_key), getString(R.string.tiles_source_url));
+        return tileSource;
+    }
 
-        poiMarkersLayer = new PoiLayer<MarkerItem>(map, new ArrayList<MarkerItem>(),
+    private PoiLayer<MarkerItem> buildPoiMarkersLayer() {
+        return new PoiLayer<MarkerItem>(map, new ArrayList<MarkerItem>(),
                 getDefaultMarkerSymbol(),
                 new ItemizedIconLayer.OnItemGestureListener<MarkerItem>() {
                     @Override
@@ -118,23 +129,53 @@ public class MapFragment extends BaseFragment {
                         return true;
                     }
                 });
+    }
+
+    private ItemizedIconLayer<MarkerItem> buildHighlightLayer() {
+        return new ItemizedIconLayer<MarkerItem>(
+                map, new ArrayList<MarkerItem>(), getHighlightMarkerSymbol(), null);
+    }
+
+    private RouteLayer buildRouteLayer() {
+        return new RouteLayer(map, Color.MAGENTA, ROUTE_LINE_WIDTH);
+    }
+
+    private ItemizedIconLayer<MarkerItem> buildMyPositionLayer() {
+        return new ItemizedIconLayer<MarkerItem>(map, meMarkers, getDefaultMarkerSymbol(), null);
+    }
+
+    private void setupMap(View view) {
+        baseLayer = map.setBaseMap(getTileBase());
+        map.getLayers().add(new BuildingLayer(map, baseLayer.getTileLayer()));
+        map.getLayers().add(new LabelLayer(map, baseLayer.getTileLayer()));
+
+        poiMarkersLayer = buildPoiMarkersLayer();
         map.getLayers().add(poiMarkersLayer);
 
-        highlightLayer = new ItemizedIconLayer<MarkerItem>(
-                map, new ArrayList<MarkerItem>(), getHighlightMarkerSymbol(), null);
+        highlightLayer = buildHighlightLayer();
         map.getLayers().add(highlightLayer);
+
+        routeLayer = buildRouteLayer();
+        map.getLayers().add(routeLayer);
+
+        meMarkerLayer = buildMyPositionLayer();
+        map.getLayers().add(meMarkerLayer);
 
         map.setTheme(InternalRenderTheme.OSMARENDER);
         map.bind(new Map.UpdateListener() {
             @Override
             public void onMapUpdate(MapPosition mapPosition, boolean positionChanged, boolean clear) {
+                if (positionChanged) {
+                    followMe = false;
+                }
                 app.storeMapPosition(mapPosition);
             }
         });
         setupMyLocationBtn(view);
-        setupMeMarkerLayer();
-        routeLayer = new RouteLayer(map, Color.MAGENTA, ROUTE_LINE_WIDTH);
-        map.getLayers().add(routeLayer);
+        setInitialLocation();
+    }
+
+    private void setInitialLocation() {
         map.setMapPosition(app.getLocationPosition());
     }
 
@@ -160,19 +201,49 @@ public class MapFragment extends BaseFragment {
         myPosition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addMyLocation();
-                map.getAnimator().animateTo(ANIMATION_DURATION,
-                        app.getLocationPoint(), Math.pow(2, DEFAULT_ZOOMLEVEL), false);
+                followMe = true;
+                findMe();
             }
         });
     }
 
-    private void addMyLocation() {
-        MarkerItem markerItem = new MarkerItem("ME", "Current Location", app.getLocationPoint());
+    public void setUserLocation(Location location) {
+        userLocation = location;
+        findMe();
+    }
+
+    private GeoPoint getUserLocationPoint() {
+        return new GeoPoint(userLocation.getLatitude(), userLocation.getLongitude());
+    }
+
+    private MarkerItem getUserLocationMarker() {
+        if (userLocation == null) {
+            return null;
+        }
+        MarkerItem markerItem = new MarkerItem("ME", "Current Location", getUserLocationPoint());
         MarkerSymbol symbol = new MarkerSymbol(getMyLocationSymbol(), MarkerItem.HotspotPlace.BOTTOM_CENTER);
         markerItem.setMarker(symbol);
+        return markerItem;
+    }
+
+    private MapPosition getUserLocationPosition() {
+        GeoPoint point = getUserLocationPoint();
+        return new MapPosition(point.getLatitude(), point.getLongitude(),
+                Math.pow(2, app.getStoredZoomLevel()));
+    }
+
+    private void findMe() {
+        MarkerItem marker = getUserLocationMarker();
+        if (marker == null) {
+            Toast.makeText(act, "Don't have a location fix", 1000).show();
+        }
         meMarkerLayer.removeAllItems();
-        meMarkerLayer.addItem(markerItem);
+        meMarkerLayer.addItem(getUserLocationMarker());
+        if (followMe || !initialRelocateHappened) {
+            // TODO find ways to accomplish this without two flags ;(
+            initialRelocateHappened = true;
+            map.setMapPosition(getUserLocationPosition());
+        }
         updateMap();
     }
 
@@ -200,16 +271,6 @@ public class MapFragment extends BaseFragment {
 
     public MarkerSymbol getDefaultMarkerSymbol() {
         return new MarkerSymbol(getPinDefault(), MarkerItem.HotspotPlace.BOTTOM_CENTER);
-    }
-
-    private void setupMeMarkerLayer() {
-        meMarkerLayer = new ItemizedIconLayer<MarkerItem>(map, meMarkers, getDefaultMarkerSymbol(), null);
-        map.getLayers().add(meMarkerLayer);
-        addMyLocation();
-    }
-
-    public GeoPoint getMyLocation() {
-        return meMarkers.get(0).getPoint();
     }
 
     public void updateMap() {

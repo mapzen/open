@@ -1,12 +1,12 @@
 package com.mapzen;
 
 import android.app.Application;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -23,9 +23,6 @@ import java.util.Date;
 import java.util.List;
 
 import static android.provider.BaseColumns._ID;
-import static com.mapzen.MapzenApplication.PriorityLocationListener.HIGH_PRIORITY;
-import static com.mapzen.MapzenApplication.PriorityLocationListener.LOW_PRIORITY;
-import static com.mapzen.MapzenApplication.PriorityLocationListener.MEDIUM_PRIORITY;
 
 public class MapzenApplication extends Application {
     public static final int LOCATION_UPDATE_FREQUENCY = 1000;
@@ -49,9 +46,12 @@ public class MapzenApplication extends Application {
     private LocationManager locationManager;
     private SparseArray<Location> location =
             new SparseArray<Location>(LOCATION_PRIORITY_COLLECTION_CAPACITY);
-    private LocationListener highPriorityListener = new PriorityLocationListener(HIGH_PRIORITY);
-    private LocationListener medPriorityListener = new PriorityLocationListener(MEDIUM_PRIORITY);
-    private LocationListener lowPriorityListener = new PriorityLocationListener(LOW_PRIORITY);
+    public static final int HIGH_PRIORITY_LOCATION = 0;
+    public static final int MED_PRIORITY_LOCATION = 1;
+    public static final int LOW_PRIORITY_LOCATION = 2;
+    private PendingIntent highPriorityLocationIntent;
+    private PendingIntent medPriorityLocationIntent;
+    private PendingIntent lowPriorityLocationIntent;
 
     public MapzenApplication() {
         super();
@@ -65,7 +65,13 @@ public class MapzenApplication extends Application {
         app.queue = Volley.newRequestQueue(context);
         app.locationManager = (LocationManager)
                 context.getSystemService(Context.LOCATION_SERVICE);
-        app.setLocation(PriorityLocationListener.LOW_PRIORITY, app.findBestLocation());
+        Logger.d("LOOKK setting best location");
+        app.highPriorityLocationIntent = PendingIntent.getBroadcast(context, HIGH_PRIORITY_LOCATION,
+                new Intent("com.mapzen.updates.location.HIGH"), 0);
+        app.medPriorityLocationIntent = PendingIntent.getBroadcast(context, MED_PRIORITY_LOCATION,
+                new Intent("com.mapzen.updates.location.MED"), 0);
+        app.lowPriorityLocationIntent = PendingIntent.getBroadcast(context, LOW_PRIORITY_LOCATION,
+                new Intent("com.mapzen.updates.location.LOW"), 0);
         return app;
     }
 
@@ -137,22 +143,20 @@ public class MapzenApplication extends Application {
         Logger.d("Location: Requesting updates");
         locationManager.requestLocationUpdates(getBestProvider(),
                 LOCATION_UPDATE_FREQUENCY, LOCATION_UPDATE_MIN_DISTANCE,
-                highPriorityListener);
+                highPriorityLocationIntent);
         locationManager.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER,
                 LOCATION_UPDATE_FREQUENCY, LOCATION_UPDATE_MIN_DISTANCE,
-                medPriorityListener);
+                medPriorityLocationIntent);
         locationManager.requestLocationUpdates(
                 LocationManager.PASSIVE_PROVIDER,
                 LOCATION_UPDATE_FREQUENCY, LOCATION_UPDATE_MIN_DISTANCE,
-                lowPriorityListener);
+                lowPriorityLocationIntent);
     }
 
     public void stopLocationUpdates() {
         if (locationManager != null) {
-            locationManager.removeUpdates(lowPriorityListener);
-            locationManager.removeUpdates(medPriorityListener);
-            locationManager.removeUpdates(highPriorityListener);
+            locationManager.removeUpdates(highPriorityLocationIntent);
         }
     }
 
@@ -161,11 +165,10 @@ public class MapzenApplication extends Application {
     }
 
     public MapPosition getLocationPosition() {
-        if (location != null) {
-            Logger.d("Location: get location position");
-            double lat = getLocation().getLatitude();
-            double lon = getLocation().getLongitude();
-            mapPosition = new MapPosition(lat, lon, Math.pow(2, getStoredZoomLevel()));
+        Location loc = getLocation();
+        if (loc != null) {
+            mapPosition = new MapPosition(loc.getLatitude(),
+                    loc.getLongitude(), Math.pow(2, getStoredZoomLevel()));
         } else {
             Logger.d("Location: get location position");
             mapPosition =
@@ -195,36 +198,5 @@ public class MapzenApplication extends Application {
         request.setRetryPolicy(new DefaultRetryPolicy(HTTP_REQUEST_TIMEOUT_MS,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(request);
-    }
-
-    public static class PriorityLocationListener implements LocationListener {
-        public static final int HIGH_PRIORITY = 0;
-        public static final int MEDIUM_PRIORITY = 1;
-        public static final int LOW_PRIORITY = 2;
-        private int weight = 2;
-
-        public PriorityLocationListener(int weight) {
-            this.weight = weight;
-        }
-
-        @Override
-        public void onLocationChanged(Location location) {
-            app.setLocation(weight, location);
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-
-        }
     }
 }
