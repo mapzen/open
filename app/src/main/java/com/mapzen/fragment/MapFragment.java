@@ -50,6 +50,7 @@ public class MapFragment extends BaseFragment {
     // TODO find ways to track state without two variables
     private boolean followMe = true;
     private boolean initialRelocateHappened = false;
+    private boolean bootingUp = true;
 
     @Override
     public void onPause() {
@@ -172,11 +173,10 @@ public class MapFragment extends BaseFragment {
             }
         });
         setupMyLocationBtn(view);
-        setInitialLocation();
-    }
-
-    private void setInitialLocation() {
-        map.setMapPosition(app.getLocationPosition());
+        if (bootingUp) {
+            bootingUp = false;
+            map.setMapPosition(app.getLocationPosition());
+        }
     }
 
     public Map getMap() {
