@@ -8,7 +8,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 
 import com.mapzen.fragment.MapFragment;
-import com.mapzen.util.Logger;
 
 public class LocationReceiver extends BroadcastReceiver {
     private MapFragment mapFragment;

@@ -4,11 +4,9 @@ import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.util.Log;
-import android.util.SparseArray;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -19,7 +17,6 @@ import com.mapzen.util.Logger;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 
-import java.util.Date;
 import java.util.List;
 
 import static android.provider.BaseColumns._ID;
