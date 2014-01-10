@@ -33,7 +33,6 @@ public class MapzenApplication extends Application {
     public static final double DEFAULT_LONGITUDE = -21.933333;
     public static final int DEFAULT_ZOOMLEVEL = 15;
     public static final String LOG_TAG = "Mapzen: ";
-    public static final int LOCATION_PRIORITY_COLLECTION_CAPACITY = 3;
     private static MapzenApplication app;
     private static MapPosition mapPosition =
             new MapPosition(DEFAULT_LATITUDE, DEFAULT_LONGITUDE, Math.pow(2, DEFAULT_ZOOMLEVEL));
@@ -44,8 +43,6 @@ public class MapzenApplication extends Application {
     private int currentPagerPosition = 0;
     private RequestQueue queue;
     private LocationManager locationManager;
-    private SparseArray<Location> location =
-            new SparseArray<Location>(LOCATION_PRIORITY_COLLECTION_CAPACITY);
     public static final int HIGH_PRIORITY_LOCATION = 0;
     public static final int MED_PRIORITY_LOCATION = 1;
     public static final int LOW_PRIORITY_LOCATION = 2;
@@ -110,37 +107,9 @@ public class MapzenApplication extends Application {
         return mapPosition.zoomLevel;
     }
 
-    public Location getLocation() {
-        Location loc = location.get(0);
-        if (loc == null) {
-            loc = location.get(1);
-        }
-        if (loc == null) {
-            loc = location.get(2);
-        }
-        return loc;
-    }
-
-    public void setLocation(int weight, Location loc) {
-        Logger.d("Location: setting location: weight: "
-                + String.valueOf(weight) + ", time: " + new Date().toString());
-        if (loc == null) {
-            Logger.d("Location: location is null");
-        } else {
-            this.location.put(weight, loc);
-        }
-    }
-
-    private String getBestProvider() {
-        Criteria criteria = new Criteria();
-        String provider = locationManager.getBestProvider(criteria, true);
-        Logger.d("Location: Best provider: " + provider);
-        return provider;
-    }
-
     public void setupLocationUpdates() {
         Logger.d("Location: Requesting updates");
-        locationManager.requestLocationUpdates(getBestProvider(),
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 LOCATION_UPDATE_FREQUENCY, LOCATION_UPDATE_MIN_DISTANCE,
                 highPriorityLocationIntent);
         locationManager.requestLocationUpdates(
@@ -164,12 +133,12 @@ public class MapzenApplication extends Application {
     }
 
     public MapPosition getLocationPosition() {
-        Location loc = getLocation();
-        if (loc != null) {
-            mapPosition = new MapPosition(loc.getLatitude(),
-                    loc.getLongitude(), Math.pow(2, getStoredZoomLevel()));
+        Location location = findBestLocation();
+        if (location != null) {
+            mapPosition =
+                    new MapPosition(location.getLatitude(), location.getLongitude(),
+                            Math.pow(2, getStoredZoomLevel()));
         } else {
-            Logger.d("Location: get location position");
             mapPosition =
                     new MapPosition(DEFAULT_LATITUDE, DEFAULT_LONGITUDE, Math.pow(2, getStoredZoomLevel()));
         }
