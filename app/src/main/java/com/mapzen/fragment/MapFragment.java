@@ -235,7 +235,7 @@ public class MapFragment extends BaseFragment {
     private void findMe() {
         MarkerItem marker = getUserLocationMarker();
         if (marker == null) {
-            Toast.makeText(act, "Don't have a location fix", 1000).show();
+            Toast.makeText(act, "Don't have a location fix", Toast.LENGTH_LONG).show();
         }
         meMarkerLayer.removeAllItems();
         meMarkerLayer.addItem(getUserLocationMarker());
