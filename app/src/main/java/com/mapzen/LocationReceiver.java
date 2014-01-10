@@ -28,7 +28,6 @@ public class LocationReceiver extends BroadcastReceiver {
         } else if (priority.contains("MED")) {
             prioCode = MapzenApplication.MED_PRIORITY_LOCATION;
         }
-        Logger.d("LOOKK location update with " + String.valueOf(prioCode));
         if (!mapFragment.isDetached()) {
             mapFragment.setUserLocation(location);
         }

@@ -65,7 +65,6 @@ public class MapzenApplication extends Application {
         app.queue = Volley.newRequestQueue(context);
         app.locationManager = (LocationManager)
                 context.getSystemService(Context.LOCATION_SERVICE);
-        Logger.d("LOOKK setting best location");
         app.highPriorityLocationIntent = PendingIntent.getBroadcast(context, HIGH_PRIORITY_LOCATION,
                 new Intent("com.mapzen.updates.location.HIGH"), 0);
         app.medPriorityLocationIntent = PendingIntent.getBroadcast(context, MED_PRIORITY_LOCATION,
