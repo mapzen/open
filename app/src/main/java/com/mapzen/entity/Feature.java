@@ -22,9 +22,9 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
     private static final String PELIAS_SEARCH = "search";
     private static final String PELIAS_SEARCH_URL = PELIAS_URL + PELIAS_SEARCH;
     private static final String PELIAS_SUGGEST_URL = PELIAS_URL + PELIAS_SUGGEST;
-    public static final String TITLE = "title";
+    public static final String NAME = "name";
     public static final String FEATURES = "features";
-    public static final String DESCRIPTION = "description";
+    public static final String TYPE = "type";
     public static final String COUNTRY_CODE = "country_code";
     public static final String COUNTRY_NAME = "country_name";
     public static final String ADMIN1_ABBR = "admin1_abbr";
@@ -57,12 +57,12 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
 
     @Override
     public String toString() {
-        return "'" + getProperty(TITLE) + "'[" + getLat() + ", " + getLon() + "]";
+        return "'" + getProperty(NAME) + "'[" + getLat() + ", " + getLon() + "]";
     }
 
     public MarkerItem getMarker() {
         GeoPoint geoPoint = new GeoPoint(getLat(), getLon());
-        MarkerItem markerItem = new MarkerItem(getProperty(TITLE), "Current Location", geoPoint);
+        MarkerItem markerItem = new MarkerItem(getProperty(NAME), "Current Location", geoPoint);
         markerItem.setMarkerHotspot(MarkerItem.HotspotPlace.TOP_CENTER);
         return markerItem;
     }
@@ -80,8 +80,8 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
     public void writeToParcel(Parcel out, int flags) {
         out.writeDouble(getLat());
         out.writeDouble(getLon());
-        out.writeString(getProperty(TITLE));
-        out.writeString(getProperty(DESCRIPTION));
+        out.writeString(getProperty(NAME));
+        out.writeString(getProperty(TYPE));
         out.writeString(getProperty(COUNTRY_CODE));
         out.writeString(getProperty(COUNTRY_NAME));
         out.writeString(getProperty(ADMIN1_ABBR));
@@ -92,8 +92,8 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
         Feature feature = new Feature();
         feature.setLat(in.readDouble());
         feature.setLon(in.readDouble());
-        feature.setProperty(TITLE, in.readString());
-        feature.setProperty(DESCRIPTION, in.readString());
+        feature.setProperty(NAME, in.readString());
+        feature.setProperty(TYPE, in.readString());
         feature.setProperty(COUNTRY_CODE, in.readString());
         feature.setProperty(COUNTRY_NAME, in.readString());
         feature.setProperty(ADMIN1_ABBR, in.readString());
@@ -117,7 +117,7 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
         Feature other = (Feature) o;
         return getLat() == other.getLat()
                 && getLon() == other.getLon()
-                && getProperty(TITLE).equals(other.getProperty(TITLE));
+                && getProperty(NAME).equals(other.getProperty(NAME));
     }
 
     public int hashCode() {
@@ -143,7 +143,7 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
 
         public void setFromFeature(Feature feature) {
             if (feature != null) {
-                title.setText(feature.getProperty(TITLE));
+                title.setText(feature.getProperty(NAME));
                 address.setText(String.format(Locale.ENGLISH, "%s, %s",
                         feature.getProperty(ADMIN1_NAME), feature.getProperty(ADMIN1_ABBR)));
             }

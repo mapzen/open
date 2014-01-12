@@ -30,7 +30,7 @@ import org.json.JSONObject;
 import static com.mapzen.MapzenApplication.LOG_TAG;
 import static com.mapzen.MapzenApplication.PELIAS_TEXT;
 import static com.mapzen.entity.Feature.FEATURES;
-import static com.mapzen.entity.Feature.TITLE;
+import static com.mapzen.entity.Feature.NAME;
 
 public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQueryTextListener {
     public static final int AUTOCOMPLETE_THRESHOLD = 3;
@@ -103,7 +103,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
             e.printStackTrace();
         }
         tv.setTag(feature);
-        tv.setText(feature.getProperty(TITLE));
+        tv.setText(feature.getProperty(NAME));
     }
 
     @Override
