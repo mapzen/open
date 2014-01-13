@@ -110,7 +110,7 @@ public class RouteFragment extends BaseFragment {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                setRoute(new Route(response));
+                setRouteFromResponse(response);
                 setInstructions(route.getRouteInstructions());
                 drawRoute();
                 progressDialog.dismiss();
@@ -134,8 +134,8 @@ public class RouteFragment extends BaseFragment {
         }
     }
 
-    private void setRoute(Route route) {
-        this.route = route;
+    private void setRouteFromResponse(JSONObject response) {
+        this.route = new Route(response);
     }
 
     private void displayRoute() {
