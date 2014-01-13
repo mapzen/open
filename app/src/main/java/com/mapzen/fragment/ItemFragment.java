@@ -26,6 +26,7 @@ public class ItemFragment extends BaseFragment {
             holder.setTitle((TextView) view.findViewById(R.id.place_title));
             holder.setAddress((TextView) view.findViewById(R.id.place_address));
             Button button = (Button) view.findViewById(R.id.btn_route_go);
+            button.setVisibility(View.VISIBLE);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
