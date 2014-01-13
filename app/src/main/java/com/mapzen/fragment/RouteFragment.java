@@ -61,7 +61,6 @@ public class RouteFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-        clearRoute();
     }
 
     @Override
@@ -85,6 +84,7 @@ public class RouteFragment extends BaseFragment {
     public void onDetach() {
         super.onDetach();
         act.showActionBar();
+        clearRoute();
     }
 
     public void setFrom(GeoPoint from) {
