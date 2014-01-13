@@ -10,8 +10,6 @@ import com.mapzen.R;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.util.Logger;
 
-import java.util.Locale;
-
 public class InstructionFragment extends BaseFragment {
 
     private Instruction instruction;
