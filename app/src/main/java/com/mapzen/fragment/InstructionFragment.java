@@ -28,12 +28,9 @@ public class InstructionFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_instruction, container, false);
-        TextView title = (TextView) view.findViewById(R.id.instruction_title);
-        title.setText(instruction.getHumanTurnInstruction());
-        TextView street = (TextView) view.findViewById(R.id.instruction_street);
-        street.setText(instruction.getName());
-        TextView distance = (TextView) view.findViewById(R.id.instruction_distance);
-        distance.setText(String.valueOf(instruction.getHumanDistance(Locale.ENGLISH)));
+
+        TextView fullInstruction = (TextView) view.findViewById(R.id.full_instruction);
+        fullInstruction.setText(instruction.getFullInstruction());
         return view;
     }
 
