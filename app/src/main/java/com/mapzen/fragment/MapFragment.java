@@ -13,13 +13,14 @@ import com.mapzen.LocationReceiver;
 import com.mapzen.PoiLayer;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
-import com.mapzen.util.RouteLayer;
+import com.mapzen.util.Logger;
 
 import org.oscim.android.canvas.AndroidBitmap;
 import org.oscim.backend.canvas.Bitmap;
 import org.oscim.backend.canvas.Color;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
+import org.oscim.layers.PathLayer;
 import org.oscim.layers.marker.ItemizedIconLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.marker.MarkerSymbol;
@@ -44,7 +45,7 @@ public class MapFragment extends BaseFragment {
     private ItemizedIconLayer<MarkerItem> meMarkerLayer;
     private PoiLayer<MarkerItem> poiMarkersLayer;
     private ItemizedIconLayer<MarkerItem> highlightLayer;
-    private RouteLayer routeLayer;
+    private PathLayer pathLayer;
     private ArrayList<MarkerItem> meMarkers = new ArrayList<MarkerItem>(1);
     private Location userLocation;
     // TODO find ways to track state without two variables
@@ -117,19 +118,22 @@ public class MapFragment extends BaseFragment {
     }
 
     private PoiLayer<MarkerItem> buildPoiMarkersLayer() {
-        return new PoiLayer<MarkerItem>(map, new ArrayList<MarkerItem>(),
+        PoiLayer<MarkerItem> poiLayer = new PoiLayer<MarkerItem>(map, new ArrayList<MarkerItem>(),
                 getDefaultMarkerSymbol(),
                 new ItemizedIconLayer.OnItemGestureListener<MarkerItem>() {
                     @Override
                     public boolean onItemSingleTapUp(int index, MarkerItem item) {
+                        Logger.d("CLICKING item tap");
                         return true;
                     }
 
                     @Override
                     public boolean onItemLongPress(int index, MarkerItem item) {
+                        Logger.d("CLICKING item long press");
                         return true;
                     }
                 });
+        return poiLayer;
     }
 
     private ItemizedIconLayer<MarkerItem> buildHighlightLayer() {
@@ -137,8 +141,8 @@ public class MapFragment extends BaseFragment {
                 map, new ArrayList<MarkerItem>(), getHighlightMarkerSymbol(), null);
     }
 
-    private RouteLayer buildRouteLayer() {
-        return new RouteLayer(map, Color.MAGENTA, ROUTE_LINE_WIDTH);
+    private PathLayer buildPathLayer() {
+        return new PathLayer(map, Color.MAGENTA, ROUTE_LINE_WIDTH);
     }
 
     private ItemizedIconLayer<MarkerItem> buildMyPositionLayer() {
@@ -156,8 +160,8 @@ public class MapFragment extends BaseFragment {
         highlightLayer = buildHighlightLayer();
         map.getLayers().add(highlightLayer);
 
-        routeLayer = buildRouteLayer();
-        map.getLayers().add(routeLayer);
+        pathLayer = buildPathLayer();
+        map.getLayers().add(pathLayer);
 
         meMarkerLayer = buildMyPositionLayer();
         map.getLayers().add(meMarkerLayer);
@@ -192,8 +196,8 @@ public class MapFragment extends BaseFragment {
         return poiMarkersLayer;
     }
 
-    public RouteLayer getRouteLayer() {
-        return routeLayer;
+    public PathLayer getPathLayer() {
+        return pathLayer;
     }
 
     private void setupMyLocationBtn(View view) {

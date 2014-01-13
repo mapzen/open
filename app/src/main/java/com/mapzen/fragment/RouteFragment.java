@@ -18,10 +18,10 @@ import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialog;
-import com.mapzen.util.RouteLayer;
 
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
+import org.oscim.layers.PathLayer;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -41,6 +41,7 @@ public class RouteFragment extends BaseFragment {
     private int storedZoom = 0;
     private ViewPager pager;
     private RoutesAdapter adapter;
+    private Route route;
 
     public void setApp(MapzenApplication app) {
         this.app = app;
@@ -56,11 +57,13 @@ public class RouteFragment extends BaseFragment {
         super.onResume();
         act = (BaseActivity) getActivity();
         act.hideActionBar();
+        drawRoute();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        clearRoute();
     }
 
     @Override
@@ -107,15 +110,9 @@ public class RouteFragment extends BaseFragment {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Route route = new Route(response);
+                setRoute(new Route(response));
                 setInstructions(route.getRouteInstructions());
-                RouteLayer layer = mapFragment.getRouteLayer();
-                layer.clear();
-                for (double[] pair : route.getGeometry()) {
-                    layer.addPoint(new GeoPoint(pair[0], pair[1]));
-                }
-                layer.updateMap();
-
+                drawRoute();
                 progressDialog.dismiss();
                 displayRoute();
             }
@@ -129,6 +126,18 @@ public class RouteFragment extends BaseFragment {
         app.enqueueApiRequest(jsonObjectRequest);
     }
 
+    private void drawRoute() {
+        PathLayer layer = mapFragment.getPathLayer();
+        layer.clearPath();
+        for (double[] pair : route.getGeometry()) {
+            layer.addPoint(new GeoPoint(pair[0], pair[1]));
+        }
+    }
+
+    private void setRoute(Route route) {
+        this.route = route;
+    }
+
     private void displayRoute() {
         act.getSupportFragmentManager().beginTransaction()
                 .addToBackStack(null)
@@ -137,7 +146,7 @@ public class RouteFragment extends BaseFragment {
     }
 
     private void clearRoute() {
-        RouteLayer layer = mapFragment.getRouteLayer();
-        layer.clear();
+        PathLayer layer = mapFragment.getPathLayer();
+        layer.clearPath();
     }
 }
