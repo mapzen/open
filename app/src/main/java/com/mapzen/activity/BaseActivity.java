@@ -51,6 +51,11 @@ public class BaseActivity extends MapActivity
         mapFragment.setMap(getMap());
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
     private void initResultsFragment() {
         resultsFragment = new ResultsFragment();
         resultsFragment.setAct(this);
@@ -112,6 +117,7 @@ public class BaseActivity extends MapActivity
     @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
         resultsFragment.hideResultsWrapper();
+        onBackPressed();
         return true;
     }
 

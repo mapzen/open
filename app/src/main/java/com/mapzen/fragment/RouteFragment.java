@@ -81,6 +81,12 @@ public class RouteFragment extends BaseFragment {
         return rootView;
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        act.showActionBar();
+    }
+
     public void setFrom(GeoPoint from) {
         this.from = from;
     }
@@ -128,7 +134,7 @@ public class RouteFragment extends BaseFragment {
     private void displayRoute() {
         act.getSupportFragmentManager().beginTransaction()
                 .addToBackStack(null)
-                .add(R.id.bottom_container, this, "route")
+                .replace(R.id.bottom_container, this, "route")
                 .commit();
     }
 
