@@ -18,6 +18,7 @@ import com.mapzen.adapters.RoutesAdapter;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.util.Logger;
+import com.mapzen.util.MapzenProgressDialog;
 import com.mapzen.util.RouteLayer;
 
 import org.json.JSONObject;
@@ -99,9 +100,7 @@ public class RouteFragment extends BaseFragment {
         act = activity;
         act.hideActionBar();
         act.getResultsFragment().hideResultsWrapper();
-        final ProgressDialog progressDialog = new ProgressDialog(act);
-        progressDialog.setTitle("Loading");
-        progressDialog.setMessage("Wait while loading...");
+        final MapzenProgressDialog progressDialog = new MapzenProgressDialog(act);
         progressDialog.show();
 
         String url = String.format(Locale.ENGLISH, urlTemplate, (int) Math.floor(app.getStoredZoomLevel()),

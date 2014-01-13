@@ -22,6 +22,7 @@ import com.mapzen.activity.FullSearchResultsActivity;
 import com.mapzen.adapters.SearchViewAdapter;
 import com.mapzen.entity.Feature;
 import com.mapzen.util.Logger;
+import com.mapzen.util.MapzenProgressDialog;
 import com.mapzen.util.VolleyHelper;
 
 import org.json.JSONArray;
@@ -182,10 +183,12 @@ public class ResultsFragment extends BaseFragment {
 
     public boolean executeSearchOnMap(final SearchView view, String query) {
         attachTo(act);
+        final MapzenProgressDialog progressDialog = new MapzenProgressDialog(act);
+        progressDialog.show();
         app.setCurrentSearchTerm(query);
         JsonObjectRequest jsonObjectRequest =
                 Feature.search(mapFragment.getMap(), query,
-                        getSearchListener(view), getErrorListener());
+                        getSearchListener(view, progressDialog), getErrorListener());
         app.enqueueApiRequest(jsonObjectRequest);
         return true;
     }
@@ -200,7 +203,7 @@ public class ResultsFragment extends BaseFragment {
         };
     }
 
-    private Response.Listener<JSONObject> getSearchListener(final SearchView view) {
+    private Response.Listener<JSONObject> getSearchListener(final SearchView view, final MapzenProgressDialog dialog) {
         return new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject jsonObject) {
@@ -212,6 +215,7 @@ public class ResultsFragment extends BaseFragment {
                     Log.e(LOG_TAG, e.toString());
                 }
                 setSearchResults(jsonArray);
+                dialog.dismiss();
                 view.clearFocus();
             }
         };
