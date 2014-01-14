@@ -212,8 +212,10 @@ public class MapFragment extends BaseFragment {
     }
 
     public void setUserLocation(Location location) {
-        userLocation = location;
-        findMe();
+        if (location != null) {
+            userLocation = location;
+            findMe();
+        }
     }
 
     private GeoPoint getUserLocationPoint() {
