@@ -77,6 +77,7 @@ public class RouteFragment extends BaseFragment {
         adapter = new RoutesAdapter(getFragmentManager());
         adapter.setMap(mapFragment.getMap());
         adapter.setInstructions(instructions);
+        adapter.setParent(this);
         pager.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
@@ -96,6 +97,14 @@ public class RouteFragment extends BaseFragment {
 
     public void setDestination(GeoPoint destination) {
         this.destination = destination;
+    }
+
+    public void next() {
+        pager.setCurrentItem(pager.getCurrentItem() + 1);
+    }
+
+    public void prev() {
+        pager.setCurrentItem(pager.getCurrentItem() - 1);
     }
 
     public void attachTo(BaseActivity activity) {
