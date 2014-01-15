@@ -87,7 +87,8 @@ public class InstructionFragment extends BaseFragment {
     }
 
     private int getRouteDrawable(int turnInstruction) {
-        int drawableId = getResources().getIdentifier("ic_route_wh_" + String.valueOf(turnInstruction), "drawable", getActivity().getPackageName());
+        int drawableId = getResources().getIdentifier("ic_route_wh_"
+                + String.valueOf(turnInstruction), "drawable", getActivity().getPackageName());
         if (drawableId == 0) {
             drawableId = R.drawable.ic_route_wh_10;
         }
