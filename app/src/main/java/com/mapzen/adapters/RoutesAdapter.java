@@ -44,6 +44,12 @@ public class RoutesAdapter extends FragmentStatePagerAdapter {
         instructionFragment.setInstruction(instructions.get(i));
         instructionFragment.setMap(map);
         instructionFragment.setParent(parent);
+        if (getCount() > i + 1) {
+            instructionFragment.setHasNext();
+        }
+        if (i != 0) {
+            instructionFragment.setHasPrev();
+        }
         return instructionFragment;
     }
 }

@@ -17,8 +17,18 @@ public class InstructionFragment extends BaseFragment {
     private Instruction instruction;
     public static final int ROUTE_ZOOM_LEVEL = 17;
     private RouteFragment parent;
+    private boolean hasPrev = false;
+    private boolean hasNext = false;
 
     public InstructionFragment() {
+    }
+
+    public void setHasPrev() {
+        this.hasPrev = true;
+    }
+
+    public void setHasNext() {
+        this.hasNext = true;
     }
 
     public void setParent(RouteFragment parent) {
@@ -40,21 +50,27 @@ public class InstructionFragment extends BaseFragment {
         ImageView turnIcon = (ImageView) view.findViewById(R.id.turn_icon);
         turnIcon.setImageResource(getRouteDrawable(instruction.getTurnInstruction()));
 
-        ImageButton next = (ImageButton) view.findViewById(R.id.route_next);
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                parent.next();
-            }
-        });
+        if (hasNext) {
+            ImageButton next = (ImageButton) view.findViewById(R.id.route_next);
+            next.setVisibility(View.VISIBLE);
+            next.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    parent.next();
+                }
+            });
+        }
 
-        ImageButton prev = (ImageButton) view.findViewById(R.id.route_previous);
-        prev.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                parent.prev();
-            }
-        });
+        if (hasPrev) {
+            ImageButton prev = (ImageButton) view.findViewById(R.id.route_previous);
+            prev.setVisibility(View.VISIBLE);
+            prev.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    parent.prev();
+                }
+            });
+        }
 
         return view;
     }
