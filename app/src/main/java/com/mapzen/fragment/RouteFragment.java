@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -112,10 +113,16 @@ public class RouteFragment extends BaseFragment {
             @Override
             public void onResponse(JSONObject response) {
                 setRouteFromResponse(response);
-                setInstructions(route.getRouteInstructions());
-                drawRoute();
-                progressDialog.dismiss();
-                displayRoute();
+                if (route.foundRoute()) {
+                    setInstructions(route.getRouteInstructions());
+                    drawRoute();
+                    progressDialog.dismiss();
+                    displayRoute();
+                } else {
+                    Toast.makeText(act, act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
+                    progressDialog.dismiss();
+                    act.showActionBar();
+                }
             }
         }, new Response.ErrorListener() {
             @Override
