@@ -1,0 +1,3 @@
+int drawable marker_default 0x7f020000
+int drawable marker_default_focused_base 0x7f020001
+int drawable pin 0x7f020002
