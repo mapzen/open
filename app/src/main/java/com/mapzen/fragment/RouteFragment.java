@@ -29,8 +29,6 @@ import java.util.Locale;
 public class RouteFragment extends BaseFragment {
     private ArrayList<Instruction> instructions;
     private GeoPoint from, destination;
-    private MapzenApplication app;
-    private BaseActivity act;
     private String urlTemplate = "http://router.project-osrm.org/viaroute?z=%d"
             + "&output=json"
             + "&loc=%.6f,%.6f"
@@ -43,10 +41,6 @@ public class RouteFragment extends BaseFragment {
     private RoutesAdapter adapter;
     private Route route;
 
-    public void setApp(MapzenApplication app) {
-        this.app = app;
-    }
-
     public void setInstructions(ArrayList<Instruction> instructions) {
         Logger.d("instructions: " + instructions.toString());
         this.instructions = instructions;
@@ -55,7 +49,6 @@ public class RouteFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        act = (BaseActivity) getActivity();
         act.hideActionBar();
         drawRoute();
     }
@@ -107,8 +100,7 @@ public class RouteFragment extends BaseFragment {
         pager.setCurrentItem(pager.getCurrentItem() - 1);
     }
 
-    public void attachTo(BaseActivity activity) {
-        act = activity;
+    public void attachToActivity() {
         act.hideActionBar();
         act.getResultsFragment().hideResultsWrapper();
         final MapzenProgressDialog progressDialog = new MapzenProgressDialog(act);

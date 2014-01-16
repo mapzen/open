@@ -144,6 +144,7 @@ public class ResultsFragment extends BaseFragment {
         itemFragment.setFeature(feature);
         itemFragment.setMapFragment(mapFragment);
         itemFragment.setApp(app);
+        itemFragment.setAct(act);
         currentCollection.add(itemFragment);
         features.add(feature);
         adapter.addFragment(itemFragment);
