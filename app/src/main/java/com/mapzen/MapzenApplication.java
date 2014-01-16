@@ -26,23 +26,23 @@ public class MapzenApplication extends Application {
     public static final float LOCATION_UPDATE_MIN_DISTANCE = 10.0f;
     public static final int HTTP_REQUEST_TIMEOUT_MS = 500;
     public static final String PELIAS_TEXT = "text";
-    public static final double DEFAULT_LATITUDE = 64.133333;
-    public static final double DEFAULT_LONGITUDE = -21.933333;
-    public static final int DEFAULT_ZOOMLEVEL = 15;
-    public static final String LOG_TAG = "Mapzen: ";
-    private static MapzenApplication app;
-    private static MapPosition mapPosition =
-            new MapPosition(DEFAULT_LATITUDE, DEFAULT_LONGITUDE, Math.pow(2, DEFAULT_ZOOMLEVEL));
     private final String[] columns = {
             _ID, PELIAS_TEXT
     };
+    public static final double DEFAULT_LATITUDE = 64.133333;
+    public static final double DEFAULT_LONGITUDE = -21.933333;
+    public static final int DEFAULT_ZOOMLEVEL = 15;
+    private static MapPosition mapPosition =
+            new MapPosition(DEFAULT_LATITUDE, DEFAULT_LONGITUDE, Math.pow(2, DEFAULT_ZOOMLEVEL));
+    public static final String LOG_TAG = "Mapzen: ";
+    public static final int HIGH_PRIORITY_LOCATION = 0;
+    public static final int MED_PRIORITY_LOCATION = 1;
+    public static final int LOW_PRIORITY_LOCATION = 2;
+    private static MapzenApplication app;
     private String currentSearchTerm = "";
     private int currentPagerPosition = 0;
     private RequestQueue queue;
     private LocationManager locationManager;
-    public static final int HIGH_PRIORITY_LOCATION = 0;
-    public static final int MED_PRIORITY_LOCATION = 1;
-    public static final int LOW_PRIORITY_LOCATION = 2;
     private PendingIntent highPriorityLocationIntent;
     private PendingIntent medPriorityLocationIntent;
     private PendingIntent lowPriorityLocationIntent;
