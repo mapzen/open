@@ -159,5 +159,6 @@ public class RouteFragment extends BaseFragment {
     private void clearRoute() {
         PathLayer layer = mapFragment.getPathLayer();
         layer.clearPath();
+        mapFragment.updateMap();
     }
 }
