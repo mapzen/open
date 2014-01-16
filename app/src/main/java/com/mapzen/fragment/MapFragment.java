@@ -239,7 +239,7 @@ public class MapFragment extends BaseFragment {
         GeoPoint point = getUserLocationPoint();
         if (point != null) {
             return new MapPosition(point.getLatitude(), point.getLongitude(),
-                Math.pow(2, app.getStoredZoomLevel()));
+                    Math.pow(2, app.getStoredZoomLevel()));
         }
         return null;
     }
