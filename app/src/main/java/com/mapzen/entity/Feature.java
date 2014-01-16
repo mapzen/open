@@ -3,6 +3,7 @@ package com.mapzen.entity;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -127,7 +128,7 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
     public static class ViewHolder {
         private TextView title;
         private TextView address;
-        private TextView button;
+        private ImageButton button;
 
         public void setTitle(TextView title) {
             this.title = title;
@@ -137,7 +138,7 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
             this.address = address;
         }
 
-        public void setButton(TextView button) {
+        public void setButton(ImageButton button) {
             this.button = button;
         }
 

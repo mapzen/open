@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.mapzen.R;
@@ -25,7 +26,7 @@ public class ItemFragment extends BaseFragment {
             holder = new Feature.ViewHolder();
             holder.setTitle((TextView) view.findViewById(R.id.place_title));
             holder.setAddress((TextView) view.findViewById(R.id.place_address));
-            Button button = (Button) view.findViewById(R.id.btn_route_go);
+            ImageButton button = (ImageButton) view.findViewById(R.id.btn_route_go);
             button.setVisibility(View.VISIBLE);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override

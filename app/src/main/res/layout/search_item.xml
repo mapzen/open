@@ -23,11 +23,13 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
-    <Button
+    <ImageButton
         android:id="@+id/btn_route_go"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignRight="@id/place_address"
         android:visibility="gone"
-        android:text="@string/start_route" />
+        android:background="@null"
+        android:padding="@dimen/default_button_padding"
+        android:src="@drawable/ic_route_lets_go" />
 </RelativeLayout>
