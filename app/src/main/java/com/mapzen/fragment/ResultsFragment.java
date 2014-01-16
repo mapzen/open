@@ -117,7 +117,9 @@ public class ResultsFragment extends BaseFragment {
     }
 
     public void hideResultsWrapper() {
-        wrapper.setVisibility(View.GONE);
+        if (wrapper != null) {
+            wrapper.setVisibility(View.GONE);
+        }
         mapFragment.clearMarkers();
         mapFragment.updateMap();
     }
