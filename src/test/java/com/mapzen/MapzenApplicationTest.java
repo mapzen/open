@@ -22,6 +22,7 @@ public class MapzenApplicationTest {
 
     @Before
     public void setUp() throws Exception {
+        ShadowVolley.clearMockRequestQueue();
         app = (MapzenApplication) Robolectric.application;
     }
 
