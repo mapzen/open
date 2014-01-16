@@ -117,7 +117,9 @@ public class ResultsFragment extends BaseFragment {
     }
 
     public void hideResultsWrapper() {
-        wrapper.setVisibility(View.GONE);
+        if (wrapper != null) {
+            wrapper.setVisibility(View.GONE);
+        }
         mapFragment.clearMarkers();
         mapFragment.updateMap();
     }
@@ -144,6 +146,7 @@ public class ResultsFragment extends BaseFragment {
         itemFragment.setFeature(feature);
         itemFragment.setMapFragment(mapFragment);
         itemFragment.setApp(app);
+        itemFragment.setAct(act);
         currentCollection.add(itemFragment);
         features.add(feature);
         adapter.addFragment(itemFragment);

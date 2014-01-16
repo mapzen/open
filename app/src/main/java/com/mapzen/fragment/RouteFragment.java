@@ -3,16 +3,16 @@ package com.mapzen.fragment;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.mapzen.MapzenApplication;
 import com.mapzen.R;
-import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.RoutesAdapter;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
@@ -29,8 +29,6 @@ import java.util.Locale;
 public class RouteFragment extends BaseFragment {
     private ArrayList<Instruction> instructions;
     private GeoPoint from, destination;
-    private MapzenApplication app;
-    private BaseActivity act;
     private String urlTemplate = "http://router.project-osrm.org/viaroute?z=%d"
             + "&output=json"
             + "&loc=%.6f,%.6f"
@@ -43,10 +41,6 @@ public class RouteFragment extends BaseFragment {
     private RoutesAdapter adapter;
     private Route route;
 
-    public void setApp(MapzenApplication app) {
-        this.app = app;
-    }
-
     public void setInstructions(ArrayList<Instruction> instructions) {
         Logger.d("instructions: " + instructions.toString());
         this.instructions = instructions;
@@ -55,7 +49,6 @@ public class RouteFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        act = (BaseActivity) getActivity();
         act.hideActionBar();
         drawRoute();
     }
@@ -77,6 +70,7 @@ public class RouteFragment extends BaseFragment {
         adapter = new RoutesAdapter(getFragmentManager());
         adapter.setMap(mapFragment.getMap());
         adapter.setInstructions(instructions);
+        adapter.setParent(this);
         pager.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
@@ -98,8 +92,19 @@ public class RouteFragment extends BaseFragment {
         this.destination = destination;
     }
 
-    public void attachTo(BaseActivity activity) {
-        act = activity;
+    public void next() {
+        pager.setCurrentItem(pager.getCurrentItem() + 1);
+    }
+
+    public void prev() {
+        pager.setCurrentItem(pager.getCurrentItem() - 1);
+    }
+
+    public void attachToActivity() {
+        MenuItem searchMenu = act.getSearchMenu();
+        if (searchMenu != null) {
+            searchMenu.collapseActionView();
+        }
         act.hideActionBar();
         act.getResultsFragment().hideResultsWrapper();
         final MapzenProgressDialog progressDialog = new MapzenProgressDialog(act);
@@ -111,10 +116,16 @@ public class RouteFragment extends BaseFragment {
             @Override
             public void onResponse(JSONObject response) {
                 setRouteFromResponse(response);
-                setInstructions(route.getRouteInstructions());
-                drawRoute();
-                progressDialog.dismiss();
-                displayRoute();
+                if (route.foundRoute()) {
+                    setInstructions(route.getRouteInstructions());
+                    drawRoute();
+                    progressDialog.dismiss();
+                    displayRoute();
+                } else {
+                    Toast.makeText(act, act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
+                    progressDialog.dismiss();
+                    act.showActionBar();
+                }
             }
         }, new Response.ErrorListener() {
             @Override

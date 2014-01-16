@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mapzen.R;
@@ -14,8 +16,23 @@ public class InstructionFragment extends BaseFragment {
 
     private Instruction instruction;
     public static final int ROUTE_ZOOM_LEVEL = 17;
+    private RouteFragment parent;
+    private boolean hasPrev = false;
+    private boolean hasNext = false;
 
     public InstructionFragment() {
+    }
+
+    public void setHasPrev() {
+        this.hasPrev = true;
+    }
+
+    public void setHasNext() {
+        this.hasNext = true;
+    }
+
+    public void setParent(RouteFragment parent) {
+        this.parent = parent;
     }
 
     public void setInstruction(Instruction instruction) {
@@ -29,6 +46,32 @@ public class InstructionFragment extends BaseFragment {
 
         TextView fullInstruction = (TextView) view.findViewById(R.id.full_instruction);
         fullInstruction.setText(instruction.getFullInstruction());
+
+        ImageView turnIcon = (ImageView) view.findViewById(R.id.turn_icon);
+        turnIcon.setImageResource(getRouteDrawable(instruction.getTurnInstruction()));
+
+        if (hasNext) {
+            ImageButton next = (ImageButton) view.findViewById(R.id.route_next);
+            next.setVisibility(View.VISIBLE);
+            next.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    parent.next();
+                }
+            });
+        }
+
+        if (hasPrev) {
+            ImageButton prev = (ImageButton) view.findViewById(R.id.route_previous);
+            prev.setVisibility(View.VISIBLE);
+            prev.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    parent.prev();
+                }
+            });
+        }
+
         return view;
     }
 
@@ -41,5 +84,14 @@ public class InstructionFragment extends BaseFragment {
             map.setMapPosition(point[0], point[1], Math.pow(2, ROUTE_ZOOM_LEVEL));
             map.getViewport().setRotation(instruction.getBearing());
         }
+    }
+
+    private int getRouteDrawable(int turnInstruction) {
+        int drawableId = getResources().getIdentifier("ic_route_wh_"
+                + String.valueOf(turnInstruction), "drawable", getActivity().getPackageName());
+        if (drawableId == 0) {
+            drawableId = R.drawable.ic_route_wh_10;
+        }
+        return drawableId;
     }
 }

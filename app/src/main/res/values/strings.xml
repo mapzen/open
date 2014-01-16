@@ -12,7 +12,10 @@
     <string name="generic_error">something is up</string>
     <string name="start_route">lets go</string>
     <string name="route_next">Next</string>
+    <string name="route_description">Turn Icon</string>
+    <string name="route_previous">Prev</string>
     <string name="view_all">View All »</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="no_route_found">No Route Found</string>
 
 </resources>

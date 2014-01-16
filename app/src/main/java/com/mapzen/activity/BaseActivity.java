@@ -117,7 +117,6 @@ public class BaseActivity extends MapActivity
     @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
         resultsFragment.hideResultsWrapper();
-        onBackPressed();
         return true;
     }
 
@@ -127,6 +126,10 @@ public class BaseActivity extends MapActivity
 
     public SearchView getSearchView() {
         return (SearchView) menuItem.getActionView();
+    }
+
+    public MenuItem getSearchMenu() {
+        return menuItem;
     }
 
     private void setupAdapter(SearchView searchView) {
