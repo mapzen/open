@@ -219,7 +219,10 @@ public class MapFragment extends BaseFragment {
     }
 
     private GeoPoint getUserLocationPoint() {
-        return new GeoPoint(userLocation.getLatitude(), userLocation.getLongitude());
+        if (userLocation != null) {
+            return new GeoPoint(userLocation.getLatitude(), userLocation.getLongitude());
+        }
+        return null;
     }
 
     private MarkerItem getUserLocationMarker() {
@@ -234,21 +237,25 @@ public class MapFragment extends BaseFragment {
 
     private MapPosition getUserLocationPosition() {
         GeoPoint point = getUserLocationPoint();
-        return new MapPosition(point.getLatitude(), point.getLongitude(),
+        if (point != null) {
+            return new MapPosition(point.getLatitude(), point.getLongitude(),
                 Math.pow(2, app.getStoredZoomLevel()));
+        }
+        return null;
     }
 
     private void findMe() {
         MarkerItem marker = getUserLocationMarker();
         if (marker == null) {
             Toast.makeText(act, "Don't have a location fix", Toast.LENGTH_LONG).show();
-        }
-        meMarkerLayer.removeAllItems();
-        meMarkerLayer.addItem(getUserLocationMarker());
-        if (followMe || !initialRelocateHappened) {
-            // TODO find ways to accomplish this without two flags ;(
-            initialRelocateHappened = true;
-            map.setMapPosition(getUserLocationPosition());
+        } else {
+            meMarkerLayer.removeAllItems();
+            meMarkerLayer.addItem(getUserLocationMarker());
+            if (followMe || !initialRelocateHappened) {
+                // TODO find ways to accomplish this without two flags ;(
+                initialRelocateHappened = true;
+                map.setMapPosition(getUserLocationPosition());
+            }
         }
         updateMap();
     }
