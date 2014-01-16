@@ -12,6 +12,8 @@ Compile and install the VectorTileMap depenency in the local .m2 repository.
 
 <pre><code>$ clone	git@github.com:mapzen/vtm.git
 $ cd vtm
+$ git submodule init
+$ git submodule update
 $ ./gradlew clean install
 </pre></code>
 
