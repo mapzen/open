@@ -109,10 +109,10 @@ public class PagerResultsFragment extends BaseFragment {
         mapFragment.centerOn(feature);
     }
 
-    public void attachToContainer(int container) {
+    public void attachToContainer() {
         act.getSupportFragmentManager().beginTransaction()
                 .addToBackStack(null)
-                .replace(container, this, "results")
+                .replace(R.id.top_container, this, "results")
                 .commit();
         wrapper = (FrameLayout) act.findViewById(R.id.top_container);
     }
@@ -181,7 +181,7 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     public boolean executeSearchOnMap(final SearchView view, String query) {
-        attachToContainer(R.id.top_container);
+        attachToContainer();
         final MapzenProgressDialog progressDialog = new MapzenProgressDialog(act);
         progressDialog.show();
         app.setCurrentSearchTerm(query);
