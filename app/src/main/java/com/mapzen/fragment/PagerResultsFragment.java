@@ -16,7 +16,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.R;
-import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.PlaceArrayAdapter;
 import com.mapzen.adapters.SearchViewAdapter;
 import com.mapzen.entity.Feature;
@@ -239,7 +238,7 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     public void addMarkers() {
-        for(Feature feature: features) {
+        for (Feature feature : features) {
             addMarker(feature);
         }
     }
