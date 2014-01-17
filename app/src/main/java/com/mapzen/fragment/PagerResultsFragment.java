@@ -65,7 +65,7 @@ public class PagerResultsFragment extends BaseFragment {
                 PlaceArrayAdapter placeArrayAdapter = new PlaceArrayAdapter(act,
                         android.R.layout.simple_list_item_1, features);
                 listResultsFragment.setListAdapter(placeArrayAdapter);
-                listResultsFragment.setBaseActivity(act);
+                listResultsFragment.setAct(act);
                 listResultsFragment.attachToContainer(R.id.full_list);
             }
         });

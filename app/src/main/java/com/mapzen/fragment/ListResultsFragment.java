@@ -14,7 +14,7 @@ public class ListResultsFragment extends ListFragment {
     private FrameLayout wrapper;
     private BaseActivity act;
 
-    public void setBaseActivity(BaseActivity act) {
+    public void setAct(BaseActivity act) {
         this.act = act;
     }
 
