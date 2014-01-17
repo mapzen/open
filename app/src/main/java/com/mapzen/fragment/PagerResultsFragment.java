@@ -72,6 +72,10 @@ public class PagerResultsFragment extends BaseFragment {
         });
     }
 
+    public void setCurrentItem(int position) {
+        pager.setCurrentItem(position);
+    }
+
     private void setPager(ViewPager pager) {
         this.pager = pager;
 

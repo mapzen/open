@@ -2,33 +2,37 @@ package com.mapzen.adapters;
 
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
+import com.mapzen.fragment.PagerResultsFragment;
 
 import java.util.ArrayList;
 
 public class PlaceArrayAdapter extends ArrayAdapter<Feature> {
     private ArrayList<Feature> features = new ArrayList<Feature>();
     private Context context;
+    private PagerResultsFragment pagerResultsFragment;
+    private FrameLayout fullListResults;
 
     public PlaceArrayAdapter(Context context, int textViewResourceId,
                              ArrayList<Feature> objects) {
         super(context, textViewResourceId, objects);
         features = objects;
         this.context = context;
+        pagerResultsFragment = ((BaseActivity) context).getPagerResultsFragment();
+        fullListResults = (FrameLayout) ((BaseActivity) context).findViewById(R.id.full_list);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, final View convertView, ViewGroup parent) {
         View v = convertView;
         final Feature feature = features.get(position);
         Feature.ViewHolder holder;
@@ -44,12 +48,9 @@ public class PlaceArrayAdapter extends ArrayAdapter<Feature> {
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(getContext(), BaseActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable("feature", feature);
-                    bundle.putParcelableArrayList("features", features);
-                    intent.putExtras(bundle);
-                    context.startActivity(intent);
+                    pagerResultsFragment.showResultsWrapper();
+                    pagerResultsFragment.setCurrentItem(position);
+                    fullListResults.setVisibility(View.GONE);
                 }
             });
         } else {

@@ -2,7 +2,6 @@ package com.mapzen.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.view.Menu;
@@ -24,8 +23,6 @@ import com.mapzen.util.Logger;
 
 import org.oscim.android.MapActivity;
 import org.oscim.map.Map;
-
-import java.util.ArrayList;
 
 public class BaseActivity extends MapActivity
         implements MenuItem.OnActionExpandListener {
@@ -67,24 +64,6 @@ public class BaseActivity extends MapActivity
         pagerResultsFragment.setAdapter(new SearchViewAdapter(this, getSupportFragmentManager()));
         // TODO remove fugly HACK
         pagerResultsFragment.setMapFragment(mapFragment);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Intent intent = getIntent();
-        if (intent != null) {
-            Bundle bundle = intent.getExtras();
-            if (bundle != null) {
-                ArrayList<Feature> features = bundle.getParcelableArrayList("features");
-                int pos = app.getCurrentPagerPosition();
-                pagerResultsFragment.setSearchResults(features, pos);
-                Feature feature = bundle.getParcelable("feature");
-                if (feature != null) {
-                    showPlace(feature, false);
-                }
-            }
-        }
     }
 
     @Override
