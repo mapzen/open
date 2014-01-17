@@ -35,7 +35,7 @@ import java.util.Locale;
 
 import static com.mapzen.MapzenApplication.LOG_TAG;
 
-public class ResultsFragment extends BaseFragment {
+public class PagerResultsFragment extends BaseFragment {
     private SearchViewAdapter adapter;
     private FrameLayout wrapper;
     private List<ItemFragment> currentCollection =

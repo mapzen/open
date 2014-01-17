@@ -106,7 +106,7 @@ public class RouteFragment extends BaseFragment {
             searchMenu.collapseActionView();
         }
         act.hideActionBar();
-        act.getResultsFragment().hideResultsWrapper();
+        act.getPagerResultsFragment().hideResultsWrapper();
         final MapzenProgressDialog progressDialog = new MapzenProgressDialog(act);
         progressDialog.show();
 
