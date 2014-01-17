@@ -3,7 +3,6 @@ package com.mapzen.fragment;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -101,10 +100,6 @@ public class RouteFragment extends BaseFragment {
     }
 
     public void attachToActivity() {
-        MenuItem searchMenu = act.getSearchMenu();
-        if (searchMenu != null) {
-            searchMenu.collapseActionView();
-        }
         act.hideActionBar();
         act.getPagerResultsFragment().hideResultsWrapper();
         final MapzenProgressDialog progressDialog = new MapzenProgressDialog(act);

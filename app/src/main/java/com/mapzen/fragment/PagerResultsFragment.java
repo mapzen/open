@@ -17,6 +17,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
+import com.mapzen.adapters.PlaceArrayAdapter;
 import com.mapzen.adapters.SearchViewAdapter;
 import com.mapzen.entity.Feature;
 import com.mapzen.util.Logger;
@@ -61,6 +62,12 @@ public class PagerResultsFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 act.getSearchView().clearFocus();
+                ListResultsFragment listResultsFragment = new ListResultsFragment();
+                PlaceArrayAdapter placeArrayAdapter = new PlaceArrayAdapter(act,
+                        android.R.layout.simple_list_item_1, features);
+                listResultsFragment.setListAdapter(placeArrayAdapter);
+                listResultsFragment.setBaseActivity(act);
+                listResultsFragment.attachToContainer(R.id.full_list);
             }
         });
     }

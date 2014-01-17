@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.SearchView;
 
 import com.crashlytics.android.Crashlytics;
@@ -32,6 +34,7 @@ public class BaseActivity extends MapActivity
     private MapzenApplication app;
     private MapFragment mapFragment;
     private PagerResultsFragment pagerResultsFragment;
+    private FrameLayout fullSearchList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,7 @@ public class BaseActivity extends MapActivity
         setContentView(R.layout.base);
         initMapFragment();
         initResultsFragment();
+        fullSearchList = (FrameLayout) findViewById(R.id.full_list);
     }
 
     private void initMapFragment() {
@@ -111,6 +115,7 @@ public class BaseActivity extends MapActivity
 
     @Override
     public boolean onMenuItemActionExpand(MenuItem item) {
+        fullSearchList.setVisibility(View.GONE);
         return true;
     }
 
@@ -164,7 +169,15 @@ public class BaseActivity extends MapActivity
     }
 
     public void hideActionBar() {
+        blurSearchMenu();
         getActionBar().hide();
+    }
+
+    public void blurSearchMenu() {
+        MenuItem searchMenu = getSearchMenu();
+        if (searchMenu != null) {
+            searchMenu.collapseActionView();
+        }
     }
 
     public void showActionBar() {
