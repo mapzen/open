@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.mapzen.geo.GeoFeature;
 import com.mapzen.util.Logger;
 
 import org.oscim.core.BoundingBox;
@@ -17,7 +18,7 @@ import org.oscim.map.Map;
 
 import java.util.Locale;
 
-public class Feature extends com.mapzen.geo.Feature implements Parcelable {
+public class Feature extends GeoFeature implements Parcelable {
     private static final String PELIAS_URL = "http://api-pelias-test.mapzen.com/";
     private static final String PELIAS_SUGGEST = "suggest";
     private static final String PELIAS_SEARCH = "search";
@@ -45,7 +46,7 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
 
     public static JsonObjectRequest search(Map map, String query, Response.Listener successListener,
                                            Response.ErrorListener errorListener) {
-        BoundingBox boundingBox = map.getBoundingBox();
+        BoundingBox boundingBox = map.getViewport().getViewBox();
         String url = String.format(Locale.ENGLISH, "%s?query=%s&viewbox=%4f,%4f,%4f,%4f",
                 PELIAS_SEARCH_URL, Uri.encode(query),
                 boundingBox.getMinLongitude(), boundingBox.getMaxLatitude(),
