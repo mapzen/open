@@ -88,11 +88,14 @@ dependencies {
 
 task updateManifestToSnapshot {
     isJenkins = "$System.env.JENKINS"
+    buildNr = "$System.env.BUILD_NUMBER"
     if(isJenkins == "true") {
         println "jenkins env flipping to SNAPSHOT"
         File manifest = new File(projectDir.toString() + '/src/main/AndroidManifest.xml')
         String contents = manifest.getText( 'UTF-8' )
-        String updatedManifestContent = contents.replaceAll('-DEVELOPMENT', '-SNAPSHOT')
+        String version = '-SNAPSHOT-' + buildNr
+        println 'building: ' + version
+        String updatedManifestContent = contents.replaceAll('-DEVELOPMENT', version)
         manifest.write(updatedManifestContent, 'UTF-8')
     } else {
         println "regular developer build"
