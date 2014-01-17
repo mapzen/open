@@ -30,12 +30,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activity.FullSearchResultsActivity"
-            android:launchMode="singleTop"
-            android:label="@string/results_activity_title"
-            android:screenOrientation="portrait">
-        </activity>
         <meta-data android:name="com.crashlytics.ApiKey" android:value="5e00ab0747eb48d20d4aa1f96481b30fa1816784"/>
     </application>
 

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/top_container"
         android:layout_width="match_parent"
@@ -21,7 +21,14 @@
         android:layout_height="wrap_content"
         class="com.mapzen.fragment.MapFragment" />
 
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout
+        android:id="@+id/full_list"
+        android:background="@android:color/white"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <FrameLayout
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/bottom_container"
         android:layout_width="match_parent"

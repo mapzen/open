@@ -19,13 +19,10 @@ public abstract class BaseFragment extends Fragment {
 
     public void setAct(BaseActivity act) {
         this.act = act;
+        this.app = (MapzenApplication) act.getApplication();
     }
 
     public void setMapFragment(MapFragment mapFragment) {
         this.mapFragment = mapFragment;
-    }
-
-    public void setApp(MapzenApplication app) {
-        this.app = app;
     }
 }

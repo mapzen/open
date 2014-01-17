@@ -2,12 +2,13 @@ package com.mapzen.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.SearchView;
 
 import com.crashlytics.android.Crashlytics;
@@ -17,13 +18,11 @@ import com.mapzen.adapters.AutoCompleteAdapter;
 import com.mapzen.adapters.SearchViewAdapter;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
-import com.mapzen.fragment.ResultsFragment;
+import com.mapzen.fragment.PagerResultsFragment;
 import com.mapzen.util.Logger;
 
 import org.oscim.android.MapActivity;
 import org.oscim.map.Map;
-
-import java.util.ArrayList;
 
 public class BaseActivity extends MapActivity
         implements MenuItem.OnActionExpandListener {
@@ -31,7 +30,8 @@ public class BaseActivity extends MapActivity
     private MenuItem menuItem;
     private MapzenApplication app;
     private MapFragment mapFragment;
-    private ResultsFragment resultsFragment;
+    private PagerResultsFragment pagerResultsFragment;
+    private FrameLayout fullSearchList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,12 +41,12 @@ public class BaseActivity extends MapActivity
         setContentView(R.layout.base);
         initMapFragment();
         initResultsFragment();
+        fullSearchList = (FrameLayout) findViewById(R.id.full_list);
     }
 
     private void initMapFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
-        mapFragment.setApp(app);
         mapFragment.setAct(this);
         mapFragment.setMap(getMap());
     }
@@ -57,30 +57,11 @@ public class BaseActivity extends MapActivity
     }
 
     private void initResultsFragment() {
-        resultsFragment = new ResultsFragment();
-        resultsFragment.setAct(this);
-        resultsFragment.setApp(app);
-        resultsFragment.setAdapter(new SearchViewAdapter(this, getSupportFragmentManager()));
+        pagerResultsFragment = new PagerResultsFragment();
+        pagerResultsFragment.setAct(this);
+        pagerResultsFragment.setAdapter(new SearchViewAdapter(this, getSupportFragmentManager()));
         // TODO remove fugly HACK
-        resultsFragment.setMapFragment(mapFragment);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Intent intent = getIntent();
-        if (intent != null) {
-            Bundle bundle = intent.getExtras();
-            if (bundle != null) {
-                ArrayList<Feature> features = bundle.getParcelableArrayList("features");
-                int pos = app.getCurrentPagerPosition();
-                resultsFragment.setSearchResults(features, pos);
-                Feature feature = bundle.getParcelable("feature");
-                if (feature != null) {
-                    showPlace(feature, false);
-                }
-            }
-        }
+        pagerResultsFragment.setMapFragment(mapFragment);
     }
 
     @Override
@@ -111,12 +92,13 @@ public class BaseActivity extends MapActivity
 
     @Override
     public boolean onMenuItemActionExpand(MenuItem item) {
+        fullSearchList.setVisibility(View.GONE);
         return true;
     }
 
     @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
-        resultsFragment.hideResultsWrapper();
+        pagerResultsFragment.hideResultsWrapper();
         return true;
     }
 
@@ -138,7 +120,7 @@ public class BaseActivity extends MapActivity
                     new AutoCompleteAdapter(getActionBar().getThemedContext(), app);
             autoCompleteAdapter.setSearchView(searchView);
             autoCompleteAdapter.setMapFragment(mapFragment);
-            autoCompleteAdapter.setResultsFragment(resultsFragment);
+            autoCompleteAdapter.setPagerResultsFragment(pagerResultsFragment);
         }
         searchView.setSuggestionsAdapter(autoCompleteAdapter);
     }
@@ -152,19 +134,27 @@ public class BaseActivity extends MapActivity
     }
 
     public void showPlace(Feature feature, boolean clearSearch) {
-        resultsFragment.flipTo(feature);
+        pagerResultsFragment.flipTo(feature);
         if (clearSearch) {
             clearSearchText();
         }
         mapFragment.centerOn(feature);
     }
 
-    public ResultsFragment getResultsFragment() {
-        return resultsFragment;
+    public PagerResultsFragment getPagerResultsFragment() {
+        return pagerResultsFragment;
     }
 
     public void hideActionBar() {
+        blurSearchMenu();
         getActionBar().hide();
+    }
+
+    public void blurSearchMenu() {
+        MenuItem searchMenu = getSearchMenu();
+        if (searchMenu != null) {
+            searchMenu.collapseActionView();
+        }
     }
 
     public void showActionBar() {

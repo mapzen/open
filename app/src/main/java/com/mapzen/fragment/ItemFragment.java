@@ -35,7 +35,6 @@ public class ItemFragment extends BaseFragment {
                     routeFragment.setDestination(feature.getGeoPoint());
                     routeFragment.setMapFragment(mapFragment);
                     routeFragment.setAct(act);
-                    routeFragment.setApp(app);
                     routeFragment.attachToActivity();
                 }
             });

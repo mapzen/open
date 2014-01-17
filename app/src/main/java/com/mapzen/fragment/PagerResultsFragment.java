@@ -1,6 +1,5 @@
 package com.mapzen.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -17,8 +16,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.R;
-import com.mapzen.activity.BaseActivity;
-import com.mapzen.activity.FullSearchResultsActivity;
+import com.mapzen.adapters.PlaceArrayAdapter;
 import com.mapzen.adapters.SearchViewAdapter;
 import com.mapzen.entity.Feature;
 import com.mapzen.util.Logger;
@@ -37,7 +35,7 @@ import java.util.Locale;
 
 import static com.mapzen.MapzenApplication.LOG_TAG;
 
-public class ResultsFragment extends BaseFragment {
+public class PagerResultsFragment extends BaseFragment {
     private SearchViewAdapter adapter;
     private FrameLayout wrapper;
     private List<ItemFragment> currentCollection =
@@ -63,10 +61,18 @@ public class ResultsFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 act.getSearchView().clearFocus();
-                Intent intent = FullSearchResultsActivity.getIntent(getActivity(), features);
-                startActivity(intent);
+                ListResultsFragment listResultsFragment = new ListResultsFragment();
+                PlaceArrayAdapter placeArrayAdapter = new PlaceArrayAdapter(act,
+                        android.R.layout.simple_list_item_1, features);
+                listResultsFragment.setListAdapter(placeArrayAdapter);
+                listResultsFragment.setAct(act);
+                listResultsFragment.attachToContainer(R.id.full_list);
             }
         });
+    }
+
+    public void setCurrentItem(int position) {
+        pager.setCurrentItem(position);
     }
 
     private void setPager(ViewPager pager) {
@@ -103,8 +109,7 @@ public class ResultsFragment extends BaseFragment {
         mapFragment.centerOn(feature);
     }
 
-    public void attachTo(BaseActivity activity) {
-        this.act = activity;
+    public void attachToContainer() {
         act.getSupportFragmentManager().beginTransaction()
                 .addToBackStack(null)
                 .replace(R.id.top_container, this, "results")
@@ -145,7 +150,6 @@ public class ResultsFragment extends BaseFragment {
         ItemFragment itemFragment = new ItemFragment();
         itemFragment.setFeature(feature);
         itemFragment.setMapFragment(mapFragment);
-        itemFragment.setApp(app);
         itemFragment.setAct(act);
         currentCollection.add(itemFragment);
         features.add(feature);
@@ -154,15 +158,6 @@ public class ResultsFragment extends BaseFragment {
 
     public void notifyNewData() {
         adapter.notifyDataSetChanged();
-    }
-
-    public void setSearchResults(ArrayList<Feature> items, int pos) {
-        clearAll();
-        // TODO we shouldn't have to loop here since the we have all the features already
-        for (int i = 0; i < items.size(); i++) {
-            add(items.get(i));
-        }
-        displayResults(features.size(), pos);
     }
 
     public void setSearchResults(JSONArray jsonArray) {
@@ -185,7 +180,7 @@ public class ResultsFragment extends BaseFragment {
     }
 
     public boolean executeSearchOnMap(final SearchView view, String query) {
-        attachTo(act);
+        attachToContainer();
         final MapzenProgressDialog progressDialog = new MapzenProgressDialog(act);
         progressDialog.show();
         app.setCurrentSearchTerm(query);
@@ -239,5 +234,11 @@ public class ResultsFragment extends BaseFragment {
         m.setMarker(mapFragment.getDefaultMarkerSymbol());
         m.setMarkerHotspot(MarkerItem.HotspotPlace.CENTER);
         poiLayer.addItem(feature.getMarker());
+    }
+
+    public void addMarkers() {
+        for (Feature feature : features) {
+            addMarker(feature);
+        }
     }
 }
