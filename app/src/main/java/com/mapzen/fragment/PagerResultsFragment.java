@@ -163,15 +163,6 @@ public class PagerResultsFragment extends BaseFragment {
         adapter.notifyDataSetChanged();
     }
 
-    public void setSearchResults(ArrayList<Feature> items, int pos) {
-        clearAll();
-        // TODO we shouldn't have to loop here since the we have all the features already
-        for (int i = 0; i < items.size(); i++) {
-            add(items.get(i));
-        }
-        displayResults(features.size(), pos);
-    }
-
     public void setSearchResults(JSONArray jsonArray) {
         clearAll();
         if (jsonArray.length() > 0) {
