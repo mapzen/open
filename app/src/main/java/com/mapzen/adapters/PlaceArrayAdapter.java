@@ -50,6 +50,7 @@ public class PlaceArrayAdapter extends ArrayAdapter<Feature> {
                 public void onClick(View view) {
                     pagerResultsFragment.showResultsWrapper();
                     pagerResultsFragment.setCurrentItem(position);
+                    pagerResultsFragment.addMarkers();
                     fullListResults.setVisibility(View.GONE);
                 }
             });

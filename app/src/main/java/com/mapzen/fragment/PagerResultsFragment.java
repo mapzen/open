@@ -238,4 +238,10 @@ public class PagerResultsFragment extends BaseFragment {
         m.setMarkerHotspot(MarkerItem.HotspotPlace.CENTER);
         poiLayer.addItem(feature.getMarker());
     }
+
+    public void addMarkers() {
+        for(Feature feature: features) {
+            addMarker(feature);
+        }
+    }
 }
