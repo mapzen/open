@@ -87,8 +87,14 @@ dependencies {
 }
 
 task updateManifestToSnapshot {
-    File manifest = new File(projectDir.toString() + '/src/main/AndroidManifest.xml')
-    String contents = manifest.getText( 'UTF-8' )
-    String updatedManifestContent = contents.replaceAll('-DEVELOPMENT', '-SNAPSHOT')
-    manifest.write(updatedManifestContent, 'UTF-8')
+    isJenkins = "$System.env.JENKINS"
+    if(isJenkins == "true") {
+        println "jenkins env flipping to SNAPSHOT"
+        File manifest = new File(projectDir.toString() + '/src/main/AndroidManifest.xml')
+        String contents = manifest.getText( 'UTF-8' )
+        String updatedManifestContent = contents.replaceAll('-DEVELOPMENT', '-SNAPSHOT')
+        manifest.write(updatedManifestContent, 'UTF-8')
+    } else {
+        println "regular developer build"
+    }
 }
