@@ -45,7 +45,7 @@ public class Feature extends com.mapzen.geo.Feature implements Parcelable {
 
     public static JsonObjectRequest search(Map map, String query, Response.Listener successListener,
                                            Response.ErrorListener errorListener) {
-        BoundingBox boundingBox = map.getBoundingBox();
+        BoundingBox boundingBox = map.getViewport().getViewBox();
         String url = String.format(Locale.ENGLISH, "%s?query=%s&viewbox=%4f,%4f,%4f,%4f",
                 PELIAS_SEARCH_URL, Uri.encode(query),
                 boundingBox.getMinLongitude(), boundingBox.getMaxLatitude(),
