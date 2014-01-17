@@ -18,7 +18,6 @@ import java.util.ArrayList;
 
 public class PlaceArrayAdapter extends ArrayAdapter<Feature> {
     private ArrayList<Feature> features = new ArrayList<Feature>();
-    private Context context;
     private PagerResultsFragment pagerResultsFragment;
     private FrameLayout fullListResults;
 
@@ -26,7 +25,6 @@ public class PlaceArrayAdapter extends ArrayAdapter<Feature> {
                              ArrayList<Feature> objects) {
         super(context, textViewResourceId, objects);
         features = objects;
-        this.context = context;
         pagerResultsFragment = ((BaseActivity) context).getPagerResultsFragment();
         fullListResults = (FrameLayout) ((BaseActivity) context).findViewById(R.id.full_list);
     }
@@ -38,8 +36,7 @@ public class PlaceArrayAdapter extends ArrayAdapter<Feature> {
         Feature.ViewHolder holder;
         if (v == null) {
             LayoutInflater vi =
-                    (LayoutInflater) context.getApplicationContext().
-                            getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = vi.inflate(R.layout.search_item, null);
             holder = new Feature.ViewHolder();
             holder.setTitle((TextView) v.findViewById(R.id.place_title));
