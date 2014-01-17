@@ -47,7 +47,6 @@ public class BaseActivity extends MapActivity
     private void initMapFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
-        mapFragment.setApp(app);
         mapFragment.setAct(this);
         mapFragment.setMap(getMap());
     }
@@ -60,7 +59,6 @@ public class BaseActivity extends MapActivity
     private void initResultsFragment() {
         pagerResultsFragment = new PagerResultsFragment();
         pagerResultsFragment.setAct(this);
-        pagerResultsFragment.setApp(app);
         pagerResultsFragment.setAdapter(new SearchViewAdapter(this, getSupportFragmentManager()));
         // TODO remove fugly HACK
         pagerResultsFragment.setMapFragment(mapFragment);

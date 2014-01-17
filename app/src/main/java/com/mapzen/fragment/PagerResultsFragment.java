@@ -150,7 +150,6 @@ public class PagerResultsFragment extends BaseFragment {
         ItemFragment itemFragment = new ItemFragment();
         itemFragment.setFeature(feature);
         itemFragment.setMapFragment(mapFragment);
-        itemFragment.setApp(app);
         itemFragment.setAct(act);
         currentCollection.add(itemFragment);
         features.add(feature);
