@@ -85,3 +85,10 @@ dependencies {
     instrumentTestCompile 'org.robolectric:robolectric:2.3-SNAPSHOT'
     instrumentTestCompile 'com.squareup:fest-android:1.0.+'
 }
+
+task updateManifestToSnapshot {
+    File manifest = new File(projectDir.toString() + '/src/main/AndroidManifest.xml')
+    String contents = manifest.getText( 'UTF-8' )
+    String updatedManifestContent = contents.replaceAll('-DEVELOPMENT', '-SNAPSHOT')
+    manifest.write(updatedManifestContent, 'UTF-8')
+}
