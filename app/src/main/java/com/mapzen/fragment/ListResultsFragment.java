@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
+import com.mapzen.util.Logger;
 
 public class ListResultsFragment extends ListFragment {
     private FrameLayout wrapper;
