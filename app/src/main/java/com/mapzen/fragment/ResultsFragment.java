@@ -1,6 +1,5 @@
 package com.mapzen.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -18,7 +17,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
-import com.mapzen.activity.FullSearchResultsActivity;
 import com.mapzen.adapters.SearchViewAdapter;
 import com.mapzen.entity.Feature;
 import com.mapzen.util.Logger;
@@ -63,8 +61,6 @@ public class ResultsFragment extends BaseFragment {
             @Override
             public void onClick(View view) {
                 act.getSearchView().clearFocus();
-                Intent intent = FullSearchResultsActivity.getIntent(getActivity(), features);
-                startActivity(intent);
             }
         });
     }
