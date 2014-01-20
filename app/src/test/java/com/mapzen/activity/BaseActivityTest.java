@@ -1,21 +1,25 @@
 package com.mapzen.activity;
 
+import com.mapzen.MapzenTestRunner;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.Robolectric;
 
-@RunWith(RobolectricTestRunner.class)
+import static org.fest.assertions.api.ANDROID.assertThat;
+
+@RunWith(MapzenTestRunner.class)
 public class BaseActivityTest {
+    private BaseActivity activity;
+
     @Before
     public void setUp() throws Exception {
-
+        activity = Robolectric.buildActivity(BaseActivity.class).create().get();
     }
 
     @Test
-    public void testOnCreate() throws Exception {
-        //Activity activity = Robolectric.buildActivity(BaseActivity.class).create().get();
-        assert (true);
+    public void shouldNotBeNull() throws Exception {
+        assertThat(activity).isNotNull();
     }
-
 }
