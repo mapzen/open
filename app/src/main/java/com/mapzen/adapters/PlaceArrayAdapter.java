@@ -26,7 +26,6 @@ public class PlaceArrayAdapter extends ArrayAdapter<Feature> {
         super(context, textViewResourceId, objects);
         features = objects;
         pagerResultsFragment = ((BaseActivity) context).getPagerResultsFragment();
-        fullListResults = (FrameLayout) ((BaseActivity) context).findViewById(R.id.full_list);
     }
 
     @Override
@@ -42,15 +41,6 @@ public class PlaceArrayAdapter extends ArrayAdapter<Feature> {
             holder.setTitle((TextView) v.findViewById(R.id.place_title));
             holder.setAddress((TextView) v.findViewById(R.id.place_address));
             v.setTag(holder);
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    pagerResultsFragment.showResultsWrapper();
-                    pagerResultsFragment.setCurrentItem(position);
-                    pagerResultsFragment.addMarkers();
-                    fullListResults.setVisibility(View.GONE);
-                }
-            });
         } else {
             holder = (Feature.ViewHolder) v.getTag();
         }

@@ -4,38 +4,28 @@
     android:layout_height="match_parent">
 
     <FrameLayout
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/top_container"
+        android:id="@+id/pager_results_container"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@android:color/white"
-        android:visibility="gone"
-        tools:context="com.mapzen.activity.BaseActivity"
-        tools:ignore="MergeRootFrame" />
+        android:background="@android:color/white" />
 
     <fragment
         android:id="@+id/map_fragment"
-        android:layout_above="@id/top_container"
+        android:layout_above="@id/pager_results_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         class="com.mapzen.fragment.MapFragment" />
 
     <FrameLayout
         android:id="@+id/full_list"
-        android:background="@android:color/white"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <FrameLayout
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/bottom_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:background="@android:color/black"
-        android:visibility="gone"
-        tools:context="com.mapzen.activity.BaseActivity"
-        tools:ignore="MergeRootFrame" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>

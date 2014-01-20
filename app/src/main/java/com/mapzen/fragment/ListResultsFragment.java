@@ -5,14 +5,20 @@ import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.widget.ListView;
 
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
+import com.mapzen.adapters.PlaceArrayAdapter;
+import com.mapzen.entity.Feature;
+import com.mapzen.util.Logger;
+
+import java.util.ArrayList;
 
 public class ListResultsFragment extends ListFragment {
-    private FrameLayout wrapper;
     private BaseActivity act;
+    public static final String FULL_LIST = "full list";
+    private static ListResultsFragment listResultsFragment;
 
     public void setAct(BaseActivity act) {
         this.act = act;
@@ -25,19 +31,64 @@ public class ListResultsFragment extends ListFragment {
         return view;
     }
 
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        PagerResultsFragment pagerResultsFragment = act.getPagerResultsFragment();
+        pagerResultsFragment.setCurrentItem(position);
+        act.getSearchView().getSuggestionsAdapter().swapCursor(null);
+        detach();
+    }
+
+    public static ListResultsFragment newInstance(BaseActivity act, ArrayList<Feature> features) {
+        if (listResultsFragment == null) {
+            listResultsFragment = new ListResultsFragment();
+        }
+        PlaceArrayAdapter placeArrayAdapter = new PlaceArrayAdapter(act,
+                android.R.layout.simple_list_item_1, features);
+        listResultsFragment.setListAdapter(placeArrayAdapter);
+        listResultsFragment.setAct(act);
+        return listResultsFragment;
+    }
+
     public void attachToContainer(int container) {
+        if (isAdded()) {
+            show();
+        } else {
+            add(container);
+        }
+    }
+
+    private void add(int container) {
         act.getSupportFragmentManager().beginTransaction()
                 .addToBackStack(null)
-                .replace(container, this, "full results")
+                .add(container, this, FULL_LIST)
                 .commit();
-        wrapper = (FrameLayout) act.findViewById(R.id.full_list);
-        wrapper.setVisibility(View.VISIBLE);
-        act.blurSearchMenu();
+    }
+
+    private void show() {
+        act.getSupportFragmentManager().beginTransaction()
+                .addToBackStack(null)
+                .show(this)
+                .commit();
+    }
+
+    public void detach() {
+        act.getSupportFragmentManager().beginTransaction()
+                .addToBackStack(null)
+                .hide(this)
+                .commit();
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Logger.d("on fragment destroy: list restults");
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        wrapper.setVisibility(View.GONE);
+        Logger.d("on fragment detach: list restults");
     }
 }
