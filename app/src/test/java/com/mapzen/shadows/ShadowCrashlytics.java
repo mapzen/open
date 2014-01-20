@@ -12,9 +12,12 @@ import org.robolectric.annotation.Implements;
  */
 @SuppressWarnings("unused")
 @Implements(Crashlytics.class)
-public class ShadowCrashlytics {
+public final class ShadowCrashlytics {
     private static Context context = null;
     private static String userIdentifier = null;
+
+    private ShadowCrashlytics() {
+    }
 
     @Implementation
     public static void start(Context context) {
