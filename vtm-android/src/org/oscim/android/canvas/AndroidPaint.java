@@ -1,6 +1,8 @@
 /*
  * Copyright 2010, 2011, 2012 mapsforge.org
  *
+ * This file is part of the OpenScienceMap project (http://www.opensciencemap.org).
+ *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later version.
@@ -27,7 +29,7 @@ import android.graphics.Shader.TileMode;
 import android.graphics.Typeface;
 
 class AndroidPaint implements Paint {
-	private static int getStyle(org.oscim.backend.canvas.Paint.FontStyle fontStyle) {
+	private static int getStyle(FontStyle fontStyle) {
 		switch (fontStyle) {
 			case BOLD:
 				return 1;
@@ -42,7 +44,7 @@ class AndroidPaint implements Paint {
 		throw new IllegalArgumentException("unknown font style: " + fontStyle);
 	}
 
-	private static Typeface getTypeface(org.oscim.backend.canvas.Paint.FontFamily fontFamily) {
+	private static Typeface getTypeface(FontFamily fontFamily) {
 		switch (fontFamily) {
 			case DEFAULT:
 				return Typeface.DEFAULT;

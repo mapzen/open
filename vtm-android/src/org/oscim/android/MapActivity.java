@@ -1,5 +1,8 @@
 /*
  * Copyright 2010, 2011, 2012 mapsforge.org
+ * Copyright 2013 Hannes Janetzek
+ *
+ * This file is part of the OpenScienceMap project (http://www.opensciencemap.org).
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -25,7 +28,7 @@ import android.support.v4.app.FragmentActivity;
 
 /**
  * MapActivity is the abstract base class which must be extended in order to use
- * a {@link Map}. There are no abstract methods in this implementation which
+ * a {@link org.oscim.map.Map}. There are no abstract methods in this implementation which
  * subclasses need to override and no API key or registration is required.
  * <p>
  * A subclass may create a MapView either via one of the MapView constructors or
@@ -94,7 +97,7 @@ public abstract class MapActivity extends FragmentActivity {
 
 	/**
 	 * This method is called once by each MapView during its setup process.
-	 * 
+	 *
 	 * @param map
 	 *            the calling MapView.
 	 */

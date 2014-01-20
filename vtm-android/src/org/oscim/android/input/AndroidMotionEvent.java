@@ -1,5 +1,7 @@
 /*
- * Copyright 2013
+ * Copyright 2013 Hannes Janetzek
+ *
+ * This file is part of the OpenScienceMap project (http://www.opensciencemap.org).
  *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
@@ -20,8 +22,9 @@ public class AndroidMotionEvent extends MotionEvent {
 
 	android.view.MotionEvent mEvent;
 
-	public void wrap(android.view.MotionEvent e) {
+	public MotionEvent wrap(android.view.MotionEvent e) {
 		mEvent = e;
+		return this;
 	}
 
 	@Override
