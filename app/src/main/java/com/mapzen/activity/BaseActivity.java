@@ -162,6 +162,4 @@ public class BaseActivity extends MapActivity
             getActionBar().show();
         }
     }
-
-
 }
