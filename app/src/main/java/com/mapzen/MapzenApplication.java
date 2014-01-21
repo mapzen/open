@@ -40,7 +40,6 @@ public class MapzenApplication extends Application {
     public static final int LOW_PRIORITY_LOCATION = 2;
     private static MapzenApplication app;
     private String currentSearchTerm = "";
-    private int currentPagerPosition = 0;
     private RequestQueue queue;
     private LocationManager locationManager;
     private PendingIntent highPriorityLocationIntent;

@@ -129,7 +129,6 @@ public class Feature extends GeoFeature implements Parcelable {
     public static class ViewHolder {
         private TextView title;
         private TextView address;
-        private ImageButton button;
 
         public void setTitle(TextView title) {
             this.title = title;

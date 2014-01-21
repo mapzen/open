@@ -40,7 +40,6 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     private PagerResultsFragment pagerResultsFragment;
     private Context context;
     private MapzenApplication app;
-    private BaseActivity act;
 
     public AutoCompleteAdapter(Context context, BaseActivity act, String[] columns) {
         super(context, new MatrixCursor(columns), 0);

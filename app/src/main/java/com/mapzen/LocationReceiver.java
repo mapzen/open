@@ -20,13 +20,6 @@ public class LocationReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Bundle bundle = intent.getExtras();
         Location location = (Location) bundle.get(LocationManager.KEY_LOCATION_CHANGED);
-        String priority = intent.getAction();
-        int prioCode = MapzenApplication.LOW_PRIORITY_LOCATION; //set the default
-        if (priority.contains("HIGH")) {
-            prioCode = MapzenApplication.HIGH_PRIORITY_LOCATION;
-        } else if (priority.contains("MED")) {
-            prioCode = MapzenApplication.MED_PRIORITY_LOCATION;
-        }
         if (!mapFragment.isDetached()) {
             mapFragment.setUserLocation(location);
         }

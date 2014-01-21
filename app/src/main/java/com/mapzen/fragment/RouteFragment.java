@@ -33,9 +33,6 @@ public class RouteFragment extends BaseFragment {
             + "&loc=%.6f,%.6f"
             + "&loc=%.6f,%.6f"
             + "&instructions=true";
-    private float storedTilt = 0;
-    private double storedBearing = 0;
-    private int storedZoom = 0;
     private ViewPager pager;
     private RoutesAdapter adapter;
     private Route route;
