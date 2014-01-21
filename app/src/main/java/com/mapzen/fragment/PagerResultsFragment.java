@@ -112,7 +112,6 @@ public class PagerResultsFragment extends BaseFragment {
 
     private void centerOnPlace(int i) {
         ItemFragment srf = currentCollection.get(i);
-        app.setCurrentPagerPosition(i);
         Feature feature = srf.getFeature();
         Logger.d("feature: " + feature.toString());
         String indicatorText = String.format(Locale.ENGLISH, PAGINATE_TEMPLATE, i + 1, currentCollection.size());
