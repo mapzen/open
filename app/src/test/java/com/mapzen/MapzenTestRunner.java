@@ -1,6 +1,7 @@
 package com.mapzen;
 
 import com.mapzen.shadows.ShadowCrashlytics;
+import com.mapzen.shadows.ShadowGLMatrix;
 import com.mapzen.shadows.ShadowMapView;
 
 import org.junit.runners.model.InitializationError;
@@ -25,8 +26,8 @@ import java.util.List;
  * <li>Customize behavior of the shadow using
  * {@link org.robolectric.annotation.Implementation}.</li>
  * <li>Add the original class name to the {@link #CUSTOM_SHADOW_TARGETS} list.</li>
- * <li>Bind the shadow class by calling {@link ShadowMap.Builder#addShadowClass(Class)} in
- * {@link #createShadowMap()}.</li>
+ * <li>Bind the shadow class by calling
+ * {@link ShadowMap.Builder#addShadowClass(Class)} in {@link #createShadowMap()}.</li>
  * <li>Be sure to use {@code @RunWith(CustomTestRunner.class)} at the top of your tests.</li>
  * </ol>
  */
@@ -38,7 +39,8 @@ public class MapzenTestRunner extends RobolectricTestRunner {
     private static final List<String> CUSTOM_SHADOW_TARGETS =
             Collections.unmodifiableList(Arrays.asList(
                     "com.crashlytics.android.Crashlytics",
-                    "org.oscim.android.MapView"
+                    "org.oscim.android.MapView",
+                    "org.oscim.renderer.GLMatrix"
             ));
 
     public MapzenTestRunner(Class<?> testClass) throws InitializationError {
@@ -54,6 +56,7 @@ public class MapzenTestRunner extends RobolectricTestRunner {
                 .newBuilder()
                 .addShadowClass(ShadowCrashlytics.class)
                 .addShadowClass(ShadowMapView.class)
+                .addShadowClass(ShadowGLMatrix.class)
                 .build();
     }
 

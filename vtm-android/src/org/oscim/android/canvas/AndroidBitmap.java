@@ -1,6 +1,8 @@
 /*
  * Copyright 2013 Hannes Janetzek
  *
+ * This file is part of the OpenScienceMap project (http://www.opensciencemap.org).
+ *
  * This program is free software: you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License as published by the Free Software
  * Foundation, either version 3 of the License, or (at your option) any later version.
@@ -32,11 +34,11 @@ public class AndroidBitmap implements org.oscim.backend.canvas.Bitmap {
 	 * @param format ignored always ARGB8888
 	 */
 	public AndroidBitmap(int width, int height, int format) {
-		mBitmap = android.graphics.Bitmap
-		    .createBitmap(width, height, android.graphics.Bitmap.Config.ARGB_8888);
+		mBitmap = Bitmap
+		    .createBitmap(width, height, Bitmap.Config.ARGB_8888);
 	}
 
-	AndroidBitmap(android.graphics.Bitmap bitmap) {
+	AndroidBitmap(Bitmap bitmap) {
 		mBitmap = bitmap;
 	}
 

@@ -26,6 +26,8 @@ apply plugin: 'crashlytics'
 apply plugin: 'android-test'
 apply plugin: 'android-cq'
 
+defaultTasks = ['clean', 'test', 'checkstyle']
+
 repositories {
     mavenCentral()
     mavenLocal()

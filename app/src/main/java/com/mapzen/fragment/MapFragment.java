@@ -13,7 +13,6 @@ import com.mapzen.LocationReceiver;
 import com.mapzen.PoiLayer;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
-import com.mapzen.util.Logger;
 
 import org.oscim.android.canvas.AndroidBitmap;
 import org.oscim.backend.canvas.Bitmap;
@@ -36,7 +35,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class MapFragment extends BaseFragment {
-    public static final int ANIMATION_DURATION = 1300;
     public static final int DEFAULT_ZOOMLEVEL = 17;
     public static final int ROUTE_LINE_WIDTH = 15;
     public static final int DURATION = 800;
@@ -118,22 +116,7 @@ public class MapFragment extends BaseFragment {
     }
 
     private PoiLayer<MarkerItem> buildPoiMarkersLayer() {
-        PoiLayer<MarkerItem> poiLayer = new PoiLayer<MarkerItem>(map, new ArrayList<MarkerItem>(),
-                getDefaultMarkerSymbol(),
-                new ItemizedIconLayer.OnItemGestureListener<MarkerItem>() {
-                    @Override
-                    public boolean onItemSingleTapUp(int index, MarkerItem item) {
-                        Logger.d("CLICKING item tap");
-                        return true;
-                    }
-
-                    @Override
-                    public boolean onItemLongPress(int index, MarkerItem item) {
-                        Logger.d("CLICKING item long press");
-                        return true;
-                    }
-                });
-        return poiLayer;
+        return new PoiLayer<MarkerItem>(getActivity(), map, getDefaultMarkerSymbol());
     }
 
     private ItemizedIconLayer<MarkerItem> buildHighlightLayer() {
