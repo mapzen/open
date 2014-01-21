@@ -38,6 +38,7 @@ import static com.mapzen.MapzenApplication.LOG_TAG;
 public class PagerResultsFragment extends BaseFragment {
     public static final String PAGER_RESULTS = "results";
     private SearchViewAdapter adapter;
+    private FrameLayout wrapper;
     private List<ItemFragment> currentCollection =
             new ArrayList<ItemFragment>();
     private TextView indicator;
@@ -108,7 +109,7 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     public void initializeAdapter() {
-        this.adapter = new SearchViewAdapter(act.getSupportFragmentManager());
+        this.adapter = new SearchViewAdapter(act, act.getSupportFragmentManager());
     }
 
     private void centerOnPlace(int i) {

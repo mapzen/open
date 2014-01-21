@@ -11,7 +11,7 @@ import java.util.List;
 public class SearchViewAdapter extends FragmentPagerAdapter {
     private List<Fragment> fragments = new ArrayList<Fragment>();
 
-    public SearchViewAdapter(FragmentManager fm) {
+    public SearchViewAdapter(Context act, FragmentManager fm) {
         super(fm);
     }
 
