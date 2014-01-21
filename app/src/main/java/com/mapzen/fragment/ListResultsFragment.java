@@ -11,7 +11,6 @@ import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.PlaceArrayAdapter;
 import com.mapzen.entity.Feature;
-import com.mapzen.util.Logger;
 
 import java.util.ArrayList;
 
@@ -77,18 +76,5 @@ public class ListResultsFragment extends ListFragment {
                 .addToBackStack(null)
                 .hide(this)
                 .commit();
-    }
-
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Logger.d("on fragment destroy: list restults");
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        Logger.d("on fragment detach: list restults");
     }
 }

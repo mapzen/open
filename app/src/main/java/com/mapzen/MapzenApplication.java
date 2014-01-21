@@ -150,10 +150,6 @@ public class MapzenApplication extends Application {
         this.currentSearchTerm = currentSearchTerm;
     }
 
-    public int getCurrentPagerPosition() {
-        return currentPagerPosition;
-    }
-
     public void setCurrentPagerPosition(int currentPagerPosition) {
         this.currentPagerPosition = currentPagerPosition;
     }

@@ -77,11 +77,6 @@ public class BaseActivity extends MapActivity
         return true;
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
     private PagerResultsFragment getActivePagerResults() {
         return (PagerResultsFragment) getSupportFragmentManager()
                 .findFragmentByTag(PagerResultsFragment.PAGER_RESULTS);

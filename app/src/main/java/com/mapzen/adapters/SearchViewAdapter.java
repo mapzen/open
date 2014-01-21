@@ -9,12 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchViewAdapter extends FragmentPagerAdapter {
-    private Context context;
     private List<Fragment> fragments = new ArrayList<Fragment>();
 
     public SearchViewAdapter(Context act, FragmentManager fm) {
         super(fm);
-        this.context = act;
     }
 
     public void addFragment(Fragment fragment) {

@@ -71,14 +71,7 @@ public class PagerResultsFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Logger.d("on fragment destroy: pager");
         clearMap();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        Logger.d("on detach: pager");
     }
 
     private void setViewAll(Button viewAll) {
@@ -127,11 +120,6 @@ public class PagerResultsFragment extends BaseFragment {
         String indicatorText = String.format(Locale.ENGLISH, PAGINATE_TEMPLATE, i + 1, currentCollection.size());
         indicator.setText(indicatorText);
         mapFragment.centerOn(feature);
-    }
-
-    public void detach() {
-        hide();
-        clearMap();
     }
 
     private void hide() {
@@ -183,7 +171,6 @@ public class PagerResultsFragment extends BaseFragment {
         currentCollection.clear();
         features.clear();
     }
-
 
     public void add(Feature feature) {
         Logger.d(feature.toString());
