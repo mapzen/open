@@ -102,7 +102,7 @@ public class RouteFragment extends BaseFragment {
         final MapzenProgressDialog progressDialog = new MapzenProgressDialog(act);
         progressDialog.show();
 
-        String url = String.format(Locale.ENGLISH, urlTemplate, (int) Math.floor(app.getStoredZoomLevel()),
+        String url = String.format(Locale.getDefault(), urlTemplate, (int) Math.floor(app.getStoredZoomLevel()),
                 from.getLatitude(), from.getLongitude(), destination.getLatitude(), destination.getLongitude());
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null, new Response.Listener<JSONObject>() {
             @Override

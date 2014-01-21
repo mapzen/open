@@ -113,7 +113,7 @@ public class PagerResultsFragment extends BaseFragment {
         ItemFragment srf = currentCollection.get(i);
         Feature feature = srf.getFeature();
         Logger.d("feature: " + feature.toString());
-        String indicatorText = String.format(Locale.ENGLISH, PAGINATE_TEMPLATE, i + 1, currentCollection.size());
+        String indicatorText = String.format(Locale.getDefault(), PAGINATE_TEMPLATE, i + 1, currentCollection.size());
         indicator.setText(indicatorText);
         mapFragment.centerOn(feature);
     }
@@ -159,7 +159,7 @@ public class PagerResultsFragment extends BaseFragment {
 
     public void clearAll() {
         Logger.d(String.format(
-                Locale.ENGLISH, "clearing all items: %d", currentCollection.size()));
+                Locale.getDefault(), "clearing all items: %d", currentCollection.size()));
         ItemizedIconLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
         poiLayer.removeAllItems();
         pager.setCurrentItem(0);
@@ -246,7 +246,7 @@ public class PagerResultsFragment extends BaseFragment {
 
     private void displayResults(int length, int currentPos) {
         notifyNewData();
-        String initialIndicatorText = String.format(Locale.ENGLISH, PAGINATE_TEMPLATE, 1, length);
+        String initialIndicatorText = String.format(Locale.getDefault(), PAGINATE_TEMPLATE, 1, length);
         indicator.setText(initialIndicatorText);
         centerOnPlace(currentPos);
         mapFragment.updateMap();
