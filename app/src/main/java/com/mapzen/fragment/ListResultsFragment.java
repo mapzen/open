@@ -39,9 +39,7 @@ public class ListResultsFragment extends ListFragment {
     }
 
     public static ListResultsFragment newInstance(BaseActivity act, ArrayList<Feature> features) {
-        if (listResultsFragment == null) {
-            listResultsFragment = new ListResultsFragment();
-        }
+        listResultsFragment = new ListResultsFragment();
         PlaceArrayAdapter placeArrayAdapter = new PlaceArrayAdapter(act,
                 android.R.layout.simple_list_item_1, features);
         listResultsFragment.setListAdapter(placeArrayAdapter);

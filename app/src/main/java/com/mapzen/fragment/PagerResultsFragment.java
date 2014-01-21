@@ -47,13 +47,11 @@ public class PagerResultsFragment extends BaseFragment {
     private static final String PAGINATE_TEMPLATE = "%2d of %2d RESULTS";
     private static PagerResultsFragment pagerResultsFragment;
 
-    public static PagerResultsFragment getInstance(BaseActivity act) {
-        if (pagerResultsFragment == null) {
-            pagerResultsFragment = new PagerResultsFragment();
-            pagerResultsFragment.setAct(act);
-            pagerResultsFragment.initializeAdapter();
-            pagerResultsFragment.setMapFragment(act.getMapFragment());
-        }
+    public static PagerResultsFragment newInstance(BaseActivity act) {
+        pagerResultsFragment = new PagerResultsFragment();
+        pagerResultsFragment.setAct(act);
+        pagerResultsFragment.initializeAdapter();
+        pagerResultsFragment.setMapFragment(act.getMapFragment());
         return pagerResultsFragment;
     }
 

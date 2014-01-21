@@ -37,7 +37,7 @@ public class BaseActivity extends MapActivity
         app = MapzenApplication.getApp(this);
         setContentView(R.layout.base);
         initMapFragment();
-        pagerResultsFragment = PagerResultsFragment.getInstance(this);
+        pagerResultsFragment = PagerResultsFragment.newInstance(this);
     }
 
     private void initMapFragment() {

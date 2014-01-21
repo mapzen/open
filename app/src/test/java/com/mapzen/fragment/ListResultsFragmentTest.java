@@ -60,11 +60,4 @@ public class ListResultsFragmentTest {
         fragment = ListResultsFragment.newInstance(act, list);
         assert (fragment.getListAdapter().getCount() == 1);
     }
-
-    @Test
-    public void shouldBeSingleton() throws Exception {
-        fragment = ListResultsFragment.newInstance(act, null);
-        ListResultsFragment anotherFragment = ListResultsFragment.newInstance(act, null);
-        assertThat(fragment).isEqualTo(anotherFragment);
-    }
 }
