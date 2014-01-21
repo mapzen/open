@@ -58,6 +58,6 @@ public class ListResultsFragmentTest {
         ArrayList<Feature> list = new ArrayList<Feature>();
         list.add(feature);
         fragment = ListResultsFragment.newInstance(act, list);
-        assert (fragment.getListAdapter().getCount() == 1);
+        assert(fragment.getListAdapter().getCount() == 1);
     }
 }
