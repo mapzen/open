@@ -4,5 +4,5 @@
     "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 
 <suppressions>
-    <suppress checks="MethodName" files=".*/app/src/test/java/com/mapzen/shadows/*" />
+    <suppress checks="MethodName" files=".*/app/src/test/java/*" />
 </suppressions>
