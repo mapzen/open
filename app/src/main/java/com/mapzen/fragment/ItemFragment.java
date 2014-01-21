@@ -38,7 +38,6 @@ public class ItemFragment extends BaseFragment {
                     routeFragment.attachToActivity();
                 }
             });
-            holder.setButton(button);
             view.setTag(holder);
 
             view.setOnClickListener(new View.OnClickListener() {
