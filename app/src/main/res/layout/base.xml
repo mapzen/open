@@ -23,7 +23,7 @@
         android:layout_height="match_parent" />
 
     <FrameLayout
-        android:id="@+id/bottom_container"
+        android:id="@+id/routes_container"
         android:background="@android:color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
