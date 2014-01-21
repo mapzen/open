@@ -9,6 +9,12 @@
         The Basic Ruleset contains a collection of good practices which everyone should follow.
     </description>
 
+    <rule ref="rulesets/unusedcode.xml/UnusedFormalParameter"></rule>
+    <rule name="UnusedPrivateFieldRule" class="net.sourceforge.pmd.rules.UnusedPrivateFieldRule"></rule>
+    <rule name="UnusedLocalVariableRule" class="net.sourceforge.pmd.rules.UnusedLocalVariableRule"></rule>
+    <rule name="UnusedLocalFieldRule" class="net.sourceforge.pmd.rules.UnusedPrivateMethodRule"></rule>
+    <rule name="UnusedPrivateMethodRule" class="net.sourceforge.pmd.rules.UnusedPrivateMethodRule"></rule>
+    <rule name="UnusedFormalParameterRule" class="net.sourceforge.pmd.rules.UnusedFormalParameterRule"></rule>
 
     <rule name="EmptyCatchBlock"
           since="0.1"
