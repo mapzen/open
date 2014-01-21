@@ -107,7 +107,7 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     public void initializeAdapter() {
-        this.adapter = new SearchViewAdapter(act, act.getSupportFragmentManager());
+        this.adapter = new SearchViewAdapter(act.getSupportFragmentManager());
     }
 
     private void centerOnPlace(int i) {
