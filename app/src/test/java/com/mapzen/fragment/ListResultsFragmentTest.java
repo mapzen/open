@@ -34,14 +34,14 @@ public class ListResultsFragmentTest {
     @Test
     public void shouldNotBeAttached() throws Exception {
         fragment = ListResultsFragment.newInstance(act, null);
-        assert (!fragment.isAdded());
+        assertThat(fragment).isNotAdded();
     }
 
     @Test
     public void shouldBeAttached() throws Exception {
         fragment = ListResultsFragment.newInstance(act, null);
         fragment.attachToContainer(R.id.full_list);
-        assert (fragment.isAdded());
+        assertThat(fragment).isAdded();
     }
 
     @Test
@@ -49,7 +49,7 @@ public class ListResultsFragmentTest {
         fragment = ListResultsFragment.newInstance(act, null);
         fragment.attachToContainer(R.id.full_list);
         fragment.detach();
-        assert (fragment.isHidden());
+        assertThat(fragment).isHidden();
     }
 
     @Test
@@ -58,6 +58,6 @@ public class ListResultsFragmentTest {
         ArrayList<Feature> list = new ArrayList<Feature>();
         list.add(feature);
         fragment = ListResultsFragment.newInstance(act, list);
-        assert(fragment.getListAdapter().getCount() == 1);
+        assertThat(fragment.getListAdapter()).hasCount(1);
     }
 }

@@ -84,14 +84,14 @@ public class BaseActivity extends MapActivity
                 .findFragmentByTag(PagerResultsFragment.PAGER_RESULTS);
     }
 
-    private ListResultsFragment getActiveListRestults() {
+    private ListResultsFragment getActiveListResults() {
         return (ListResultsFragment) getSupportFragmentManager()
                 .findFragmentByTag(ListResultsFragment.FULL_LIST);
     }
 
     @Override
     public boolean onMenuItemActionCollapse(MenuItem item) {
-        if (getActiveListRestults() != null || getActivePagerResults() != null) {
+        if (getActiveListResults() != null || getActivePagerResults() != null) {
             onBackPressed();
         }
         return true;
