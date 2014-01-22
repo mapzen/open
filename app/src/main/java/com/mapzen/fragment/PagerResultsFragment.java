@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.mapzen.MapzenApplication.LOG_TAG;
+import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
 
 public class PagerResultsFragment extends BaseFragment {
     public static final String PAGER_RESULTS = "results";
@@ -135,14 +135,14 @@ public class PagerResultsFragment extends BaseFragment {
 
     private void add() {
         act.getSupportFragmentManager().beginTransaction()
-                .addToBackStack(null)
+                .addToBackStack(SEARCH_RESULTS_STACK)
                 .add(R.id.pager_results_container, this, PAGER_RESULTS)
                 .commit();
     }
 
     private void show() {
         act.getSupportFragmentManager().beginTransaction()
-                .addToBackStack(null)
+                .addToBackStack(SEARCH_RESULTS_STACK)
                 .show(this)
                 .commit();
     }

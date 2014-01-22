@@ -14,6 +14,8 @@ import com.mapzen.entity.Feature;
 
 import java.util.ArrayList;
 
+import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
+
 public class ListResultsFragment extends ListFragment {
     private BaseActivity act;
     public static final String FULL_LIST = "full list";
@@ -57,21 +59,21 @@ public class ListResultsFragment extends ListFragment {
 
     private void add(int container) {
         act.getSupportFragmentManager().beginTransaction()
-                .addToBackStack(null)
+                .addToBackStack(SEARCH_RESULTS_STACK)
                 .add(container, this, FULL_LIST)
                 .commit();
     }
 
     private void show() {
         act.getSupportFragmentManager().beginTransaction()
-                .addToBackStack(null)
+                .addToBackStack(SEARCH_RESULTS_STACK)
                 .show(this)
                 .commit();
     }
 
     public void detach() {
         act.getSupportFragmentManager().beginTransaction()
-                .addToBackStack(null)
+                .addToBackStack(SEARCH_RESULTS_STACK)
                 .hide(this)
                 .commit();
     }

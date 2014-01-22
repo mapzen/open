@@ -29,6 +29,8 @@ public class BaseActivity extends MapActivity
     private MapzenApplication app;
     private MapFragment mapFragment;
     private PagerResultsFragment pagerResultsFragment;
+    public static final String SEARCH_RESULTS_STACK = "search_results_stack";
+    public static final String ROUTE_STACK = "route_stack";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

@@ -3,7 +3,6 @@ package com.mapzen.entity;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.android.volley.Response;
