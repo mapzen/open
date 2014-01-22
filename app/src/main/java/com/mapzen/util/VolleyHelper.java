@@ -50,10 +50,10 @@ public final class VolleyHelper {
                     case NOT_FOUND:
                     case INVALID_DATA:
                     case UNAUTHORIZED:
-                        return String.format(Locale.ENGLISH,
+                        return String.format(Locale.getDefault(),
                                 "%d: %s", response.statusCode, error.getMessage());
                     default:
-                        return String.format(Locale.ENGLISH, "%d: %s", response.statusCode,
+                        return String.format(Locale.getDefault(), "%d: %s", response.statusCode,
                                 context.getResources().getString(R.string.generic_server_down));
                 }
             }

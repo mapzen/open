@@ -3,7 +3,6 @@ package com.mapzen.entity;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -37,7 +36,7 @@ public class Feature extends GeoFeature implements Parcelable {
 
     public static JsonObjectRequest suggest(String query, Response.Listener successListener,
                                             Response.ErrorListener errorListener) {
-        String url = String.format(Locale.ENGLISH, "%s?query=%s", PELIAS_SUGGEST_URL, Uri.encode(query));
+        String url = String.format(Locale.getDefault(), "%s?query=%s", PELIAS_SUGGEST_URL, Uri.encode(query));
         Logger.d(url);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null,
                 successListener, errorListener);
@@ -47,7 +46,7 @@ public class Feature extends GeoFeature implements Parcelable {
     public static JsonObjectRequest search(Map map, String query, Response.Listener successListener,
                                            Response.ErrorListener errorListener) {
         BoundingBox boundingBox = map.getViewport().getViewBox();
-        String url = String.format(Locale.ENGLISH, "%s?query=%s&viewbox=%4f,%4f,%4f,%4f",
+        String url = String.format(Locale.getDefault(), "%s?query=%s&viewbox=%4f,%4f,%4f,%4f",
                 PELIAS_SEARCH_URL, Uri.encode(query),
                 boundingBox.getMinLongitude(), boundingBox.getMaxLatitude(),
                 boundingBox.getMaxLongitude(), boundingBox.getMinLatitude());
@@ -129,7 +128,6 @@ public class Feature extends GeoFeature implements Parcelable {
     public static class ViewHolder {
         private TextView title;
         private TextView address;
-        private ImageButton button;
 
         public void setTitle(TextView title) {
             this.title = title;
@@ -139,14 +137,10 @@ public class Feature extends GeoFeature implements Parcelable {
             this.address = address;
         }
 
-        public void setButton(ImageButton button) {
-            this.button = button;
-        }
-
         public void setFromFeature(Feature feature) {
             if (feature != null) {
                 title.setText(feature.getProperty(NAME));
-                address.setText(String.format(Locale.ENGLISH, "%s, %s",
+                address.setText(String.format(Locale.getDefault(), "%s, %s",
                         feature.getProperty(ADMIN1_NAME), feature.getProperty(ADMIN1_ABBR)));
             }
         }

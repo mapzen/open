@@ -40,7 +40,6 @@ public class MapzenApplication extends Application {
     public static final int LOW_PRIORITY_LOCATION = 2;
     private static MapzenApplication app;
     private String currentSearchTerm = "";
-    private int currentPagerPosition = 0;
     private RequestQueue queue;
     private LocationManager locationManager;
     private PendingIntent highPriorityLocationIntent;
@@ -148,14 +147,6 @@ public class MapzenApplication extends Application {
 
     public void setCurrentSearchTerm(String currentSearchTerm) {
         this.currentSearchTerm = currentSearchTerm;
-    }
-
-    public int getCurrentPagerPosition() {
-        return currentPagerPosition;
-    }
-
-    public void setCurrentPagerPosition(int currentPagerPosition) {
-        this.currentPagerPosition = currentPagerPosition;
     }
 
     public void enqueueApiRequest(Request<?> request) {

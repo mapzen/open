@@ -17,6 +17,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.MapzenApplication;
+import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.fragment.PagerResultsFragment;
@@ -40,10 +41,10 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     private Context context;
     private MapzenApplication app;
 
-    public AutoCompleteAdapter(Context context, MapzenApplication app) {
-        super(context, new MatrixCursor(app.getColumns()), 0);
+    public AutoCompleteAdapter(Context context, BaseActivity act, String[] columns) {
+        super(context, new MatrixCursor(columns), 0);
         this.context = context;
-        this.app = app;
+        this.app = (MapzenApplication) act.getApplication();
     }
 
     public void setSearchView(SearchView view) {
@@ -72,7 +73,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                 searchView.setQuery("", false);
                 searchView.clearFocus();
                 searchView.setQuery(tv.getText(), false);
-                pagerResultsFragment.hideResultsWrapper();
+                pagerResultsFragment.clearMap();
                 mapFragment.centerOn(feature);
             }
         });
@@ -113,13 +114,14 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
 
     @Override
     public boolean onQueryTextChange(String newText) {
+        Logger.d("onQueryTextChange: text" + newText);
         if (newText.length() < AUTOCOMPLETE_THRESHOLD) {
             Logger.d("search: newText shorter than 3 "
                     + "was:" + String.valueOf(newText.length()));
             return true;
         }
 
-        Logger.d("search: " + app.getCurrentSearchTerm());
+        Logger.d("search: term newText: " + newText);
         if (!newText.isEmpty()) {
             Logger.d("search: autocomplete starts");
             JsonObjectRequest jsonObjectRequest = Feature.suggest(newText,

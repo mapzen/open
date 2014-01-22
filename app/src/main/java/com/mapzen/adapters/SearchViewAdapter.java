@@ -1,20 +1,17 @@
 package com.mapzen.adapters;
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchViewAdapter extends FragmentStatePagerAdapter {
-    private Context context;
+public class SearchViewAdapter extends FragmentPagerAdapter {
     private List<Fragment> fragments = new ArrayList<Fragment>();
 
-    public SearchViewAdapter(Context act, FragmentManager fm) {
+    public SearchViewAdapter(FragmentManager fm) {
         super(fm);
-        this.context = act;
     }
 
     public void addFragment(Fragment fragment) {

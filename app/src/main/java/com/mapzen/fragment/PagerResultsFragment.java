@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,7 +15,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.R;
-import com.mapzen.adapters.PlaceArrayAdapter;
+import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.SearchViewAdapter;
 import com.mapzen.entity.Feature;
 import com.mapzen.util.Logger;
@@ -34,16 +33,26 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.mapzen.MapzenApplication.LOG_TAG;
+import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
 
 public class PagerResultsFragment extends BaseFragment {
+    public static final String PAGER_RESULTS = "results";
     private SearchViewAdapter adapter;
-    private FrameLayout wrapper;
     private List<ItemFragment> currentCollection =
             new ArrayList<ItemFragment>();
     private TextView indicator;
     private ViewPager pager;
     private ArrayList<Feature> features = new ArrayList<Feature>();
     private static final String PAGINATE_TEMPLATE = "%2d of %2d RESULTS";
+    private static PagerResultsFragment pagerResultsFragment;
+
+    public static PagerResultsFragment newInstance(BaseActivity act) {
+        pagerResultsFragment = new PagerResultsFragment();
+        pagerResultsFragment.setAct(act);
+        pagerResultsFragment.initializeAdapter();
+        pagerResultsFragment.setMapFragment(act.getMapFragment());
+        return pagerResultsFragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,17 +65,18 @@ public class PagerResultsFragment extends BaseFragment {
         return view;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        clearMap();
+    }
+
     private void setViewAll(Button viewAll) {
         viewAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 act.getSearchView().clearFocus();
-                ListResultsFragment listResultsFragment = new ListResultsFragment();
-                PlaceArrayAdapter placeArrayAdapter = new PlaceArrayAdapter(act,
-                        android.R.layout.simple_list_item_1, features);
-                listResultsFragment.setListAdapter(placeArrayAdapter);
-                listResultsFragment.setAct(act);
-                listResultsFragment.attachToContainer(R.id.full_list);
+                ListResultsFragment.newInstance(act, features).attachToContainer(R.id.full_list);
             }
         });
     }
@@ -95,36 +105,49 @@ public class PagerResultsFragment extends BaseFragment {
         this.pager.setAdapter(adapter);
     }
 
-    public void setAdapter(SearchViewAdapter adapter) {
-        this.adapter = adapter;
+    public void initializeAdapter() {
+        this.adapter = new SearchViewAdapter(act.getSupportFragmentManager());
     }
 
     private void centerOnPlace(int i) {
         ItemFragment srf = currentCollection.get(i);
-        app.setCurrentPagerPosition(i);
         Feature feature = srf.getFeature();
         Logger.d("feature: " + feature.toString());
-        String indicatorText = String.format(Locale.ENGLISH, PAGINATE_TEMPLATE, i + 1, currentCollection.size());
+        String indicatorText = String.format(Locale.getDefault(), PAGINATE_TEMPLATE, i + 1, currentCollection.size());
         indicator.setText(indicatorText);
         mapFragment.centerOn(feature);
     }
 
-    public void attachToContainer() {
+    private void hide() {
         act.getSupportFragmentManager().beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.top_container, this, "results")
+                .hide(this)
                 .commit();
-        wrapper = (FrameLayout) act.findViewById(R.id.top_container);
     }
 
-    public void showResultsWrapper() {
-        wrapper.setVisibility(View.VISIBLE);
-    }
-
-    public void hideResultsWrapper() {
-        if (wrapper != null) {
-            wrapper.setVisibility(View.GONE);
+    public void attachToContainer() {
+        if (isAdded()) {
+            show();
+        } else {
+            add();
         }
+        act.getSearchView().clearFocus();
+    }
+
+    private void add() {
+        act.getSupportFragmentManager().beginTransaction()
+                .addToBackStack(SEARCH_RESULTS_STACK)
+                .add(R.id.pager_results_container, this, PAGER_RESULTS)
+                .commit();
+    }
+
+    private void show() {
+        act.getSupportFragmentManager().beginTransaction()
+                .addToBackStack(SEARCH_RESULTS_STACK)
+                .show(this)
+                .commit();
+    }
+
+    public void clearMap() {
         mapFragment.clearMarkers();
         mapFragment.updateMap();
     }
@@ -135,13 +158,14 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     public void clearAll() {
+        Logger.d(String.format(
+                Locale.getDefault(), "clearing all items: %d", currentCollection.size()));
         ItemizedIconLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
         poiLayer.removeAllItems();
         pager.setCurrentItem(0);
         adapter.clearFragments();
         currentCollection.clear();
         features.clear();
-        hideResultsWrapper();
     }
 
     public void add(Feature feature) {
@@ -174,6 +198,7 @@ public class PagerResultsFragment extends BaseFragment {
             }
             displayResults(jsonArray.length(), pager.getCurrentItem());
         } else {
+            hide();
             Toast.makeText(act, "No results where found for: " + act.getSearchView().getQuery(),
                     Toast.LENGTH_LONG).show();
         }
@@ -220,9 +245,8 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     private void displayResults(int length, int currentPos) {
-        showResultsWrapper();
         notifyNewData();
-        String initialIndicatorText = String.format(Locale.ENGLISH, PAGINATE_TEMPLATE, 1, length);
+        String initialIndicatorText = String.format(Locale.getDefault(), PAGINATE_TEMPLATE, 1, length);
         indicator.setText(initialIndicatorText);
         centerOnPlace(currentPos);
         mapFragment.updateMap();
@@ -234,11 +258,5 @@ public class PagerResultsFragment extends BaseFragment {
         m.setMarker(mapFragment.getDefaultMarkerSymbol());
         m.setMarkerHotspot(MarkerItem.HotspotPlace.CENTER);
         poiLayer.addItem(feature.getMarker());
-    }
-
-    public void addMarkers() {
-        for (Feature feature : features) {
-            addMarker(feature);
-        }
     }
 }

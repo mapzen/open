@@ -1,6 +1,7 @@
 package com.mapzen.fragment;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +26,9 @@ import org.oscim.layers.PathLayer;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import static com.mapzen.activity.BaseActivity.ROUTE_STACK;
+import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
+
 public class RouteFragment extends BaseFragment {
     private ArrayList<Instruction> instructions;
     private GeoPoint from, destination;
@@ -33,9 +37,6 @@ public class RouteFragment extends BaseFragment {
             + "&loc=%.6f,%.6f"
             + "&loc=%.6f,%.6f"
             + "&instructions=true";
-    private float storedTilt = 0;
-    private double storedBearing = 0;
-    private int storedZoom = 0;
     private ViewPager pager;
     private RoutesAdapter adapter;
     private Route route;
@@ -101,11 +102,11 @@ public class RouteFragment extends BaseFragment {
 
     public void attachToActivity() {
         act.hideActionBar();
-        act.getPagerResultsFragment().hideResultsWrapper();
+        act.getPagerResultsFragment().clearMap();
         final MapzenProgressDialog progressDialog = new MapzenProgressDialog(act);
         progressDialog.show();
-
-        String url = String.format(Locale.ENGLISH, urlTemplate, (int) Math.floor(app.getStoredZoomLevel()),
+        popSearchResultsStack();
+        String url = String.format(Locale.getDefault(), urlTemplate, (int) Math.floor(app.getStoredZoomLevel()),
                 from.getLatitude(), from.getLongitude(), destination.getLatitude(), destination.getLongitude());
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null, new Response.Listener<JSONObject>() {
             @Override
@@ -132,6 +133,11 @@ public class RouteFragment extends BaseFragment {
         app.enqueueApiRequest(jsonObjectRequest);
     }
 
+    private void popSearchResultsStack() {
+        act.getSupportFragmentManager()
+                .popBackStack(SEARCH_RESULTS_STACK, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+    }
+
     private void drawRoute() {
         PathLayer layer = mapFragment.getPathLayer();
         layer.clearPath();
@@ -146,8 +152,8 @@ public class RouteFragment extends BaseFragment {
 
     private void displayRoute() {
         act.getSupportFragmentManager().beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.bottom_container, this, "route")
+                .addToBackStack(ROUTE_STACK)
+                .add(R.id.routes_container, this, "route")
                 .commit();
     }
 
