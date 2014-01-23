@@ -79,6 +79,8 @@ public class BaseActivity extends MapActivity
             Logger.d("data = " + data.toString());
             if (data.toString().contains("geo:")) {
                 handleGeoIntent(searchView, data);
+            } else if (data.toString().contains("maps.google.com")) {
+                handleMapsIntent(searchView, data);
             }
         }
 
@@ -88,7 +90,16 @@ public class BaseActivity extends MapActivity
     private void handleGeoIntent(SearchView searchView, Uri data) {
         if (data.toString().contains("q=")) {
             menuItem.expandActionView();
-            String queryString = data.toString().split("q=")[1];
+            String queryString = Uri.decode(data.toString().split("q=")[1]);
+            app.setCurrentSearchTerm(queryString);
+            searchView.setQuery(queryString, true);
+        }
+    }
+
+    private void handleMapsIntent(SearchView searchView, Uri data) {
+        if (data.toString().contains("q=")) {
+            menuItem.expandActionView();
+            String queryString = Uri.decode(data.toString().split("q=")[1].split("@")[0]);
             app.setCurrentSearchTerm(queryString);
             searchView.setQuery(queryString, true);
         }

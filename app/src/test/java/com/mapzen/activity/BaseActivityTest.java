@@ -56,21 +56,46 @@ public class BaseActivityTest {
 
     @Test
     public void geoIntent_shouldSetCurrentSearchTerm() throws Exception {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=Query"));
+        Intent intent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("geo:0,0?q=Empire State Building"));
         activity.setIntent(intent);
         activity.onCreateOptionsMenu(new TestMenu());
         String currentSearchTerm = ((MapzenApplication) application).getCurrentSearchTerm();
-        assertThat(currentSearchTerm).isEqualTo("Query");
+        assertThat(currentSearchTerm).isEqualTo("Empire State Building");
     }
 
     @Test
     public void geoIntent_shouldSetQuery() throws Exception {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=Query"));
+        Intent intent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("geo:0,0?q=Empire State Building"));
         Menu menu = new TestMenu();
         activity.setIntent(intent);
         activity.onCreateOptionsMenu(menu);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        assertThat(searchView.getQuery().toString()).isEqualTo("Query");
+        assertThat(searchView.getQuery().toString()).isEqualTo("Empire State Building");
+    }
+
+    @Test
+    public void mapsIntent_shouldSetCurrentSearchTerm() throws Exception {
+        Intent intent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://maps.google.com/maps?z=16&"
+                        + "q=Empire State Building@40.74828,-73.985565"));
+        activity.setIntent(intent);
+        activity.onCreateOptionsMenu(new TestMenu());
+        String currentSearchTerm = ((MapzenApplication) application).getCurrentSearchTerm();
+        assertThat(currentSearchTerm).isEqualTo("Empire State Building");
+    }
+
+    @Test
+    public void mapsIntent_shouldSetQuery() throws Exception {
+        Intent intent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://maps.google.com/maps?z=16&"
+                        + "q=Empire State Building@40.74828,-73.985565"));
+        Menu menu = new TestMenu();
+        activity.setIntent(intent);
+        activity.onCreateOptionsMenu(menu);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        assertThat(searchView.getQuery().toString()).isEqualTo("Empire State Building");
     }
 
     public static void simulateLocation(double lng, double lat) {
