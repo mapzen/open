@@ -31,9 +31,6 @@ public class Feature extends GeoFeature implements Parcelable {
     public static final String ADMIN1_ABBR = "admin1_abbr";
     public static final String ADMIN1_NAME = "admin1_name";
 
-    public Feature() {
-    }
-
     public static JsonObjectRequest suggest(String query, Response.Listener successListener,
                                             Response.ErrorListener errorListener) {
         String url = String.format(Locale.getDefault(), "%s?query=%s", PELIAS_SUGGEST_URL, Uri.encode(query));

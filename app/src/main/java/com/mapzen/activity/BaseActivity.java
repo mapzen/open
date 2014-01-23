@@ -2,6 +2,7 @@ package com.mapzen.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.view.Menu;
@@ -65,13 +66,32 @@ public class BaseActivity extends MapActivity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         setupAdapter(searchView);
         searchView.setOnQueryTextListener(autoCompleteAdapter);
+
         if (!app.getCurrentSearchTerm().isEmpty()) {
             menuItem.expandActionView();
             Logger.d("search: " + app.getCurrentSearchTerm());
             searchView.setQuery(app.getCurrentSearchTerm(), false);
             searchView.clearFocus();
         }
+
+        Uri data = getIntent().getData();
+        if (data != null) {
+            Logger.d("data = " + data.toString());
+            if (data.toString().contains("geo:")) {
+                handleGeoIntent(searchView, data);
+            }
+        }
+
         return true;
+    }
+
+    private void handleGeoIntent(SearchView searchView, Uri data) {
+        if (data.toString().contains("q=")) {
+            menuItem.expandActionView();
+            String queryString = data.toString().split("q=")[1];
+            app.setCurrentSearchTerm(queryString);
+            searchView.setQuery(queryString, true);
+        }
     }
 
     @Override
