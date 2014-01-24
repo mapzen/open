@@ -5,6 +5,10 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.mapzen.shadows.ShadowVolley;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,6 +42,21 @@ public class MapzenApplicationTest {
     public void shouldFindBestLocation() throws Exception {
         assertThat(app.findBestLocation()).hasLatitude(1.0);
         assertThat(app.findBestLocation()).hasLongitude(2.0);
+    }
+
+    @Test
+    public void shouldEnqueueRequest() throws Exception {
+        Request request = new JsonObjectRequest(null, null, null, null);
+        app.enqueueApiRequest(request);
+        assertThat(ShadowVolley.getMockRequestQueue().getRequests()).hasSize(1);
+    }
+
+    @Test
+    public void shouldCancelRequest() throws Exception {
+        Request request = new JsonObjectRequest(null, null, null, null);
+        app.enqueueApiRequest(request);
+        app.cancelAllApiRequests();
+        assertThat(request.isCanceled()).isTrue();
     }
 
     public static void simulateLocation(double lat, double lon) {
