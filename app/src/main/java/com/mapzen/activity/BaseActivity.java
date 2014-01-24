@@ -37,7 +37,7 @@ public class BaseActivity extends MapActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Crashlytics.start(this);
-        app = MapzenApplication.getApp(this);
+        app = (MapzenApplication) getApplication();
         setContentView(R.layout.base);
         initMapFragment();
         pagerResultsFragment = PagerResultsFragment.newInstance(this);

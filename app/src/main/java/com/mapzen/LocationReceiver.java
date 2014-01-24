@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 
 import com.mapzen.fragment.MapFragment;
+import com.mapzen.util.Logger;
 
 public class LocationReceiver extends BroadcastReceiver {
     private MapFragment mapFragment;
@@ -19,6 +20,7 @@ public class LocationReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Bundle bundle = intent.getExtras();
+        Logger.d("LocationReceiver.onReceive: " + intent.toString());
         Location location = (Location) bundle.get(LocationManager.KEY_LOCATION_CHANGED);
         if (!mapFragment.isDetached()) {
             mapFragment.setUserLocation(location);
