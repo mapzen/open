@@ -17,8 +17,11 @@ import java.util.Set;
  */
 @SuppressWarnings("unused")
 @Implements(Volley.class)
-public class ShadowVolley {
+public final class ShadowVolley {
     private static MockRequestQueue requestQueue = new MockRequestQueue();
+
+    private ShadowVolley() {
+    }
 
     @Implementation
     public static RequestQueue newRequestQueue(Context context) {

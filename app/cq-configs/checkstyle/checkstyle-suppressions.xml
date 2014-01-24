@@ -5,4 +5,5 @@
 
 <suppressions>
     <suppress checks="MethodName" files=".*/app/src/test/java/*" />
+    <suppress checks="MagicNumberCheck" files=".*/app/src/test/java/*" />
 </suppressions>

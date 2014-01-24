@@ -14,7 +14,10 @@ import org.robolectric.Robolectric;
 import org.robolectric.shadows.ShadowLocationManager;
 import org.robolectric.tester.android.view.TestMenu;
 
-public class TestHelper {
+public final class TestHelper {
+    private TestHelper() {
+    }
+
     public static void simulateLocation(double lat, double lon) {
         Location location = new Location(LocationManager.GPS_PROVIDER);
         location.setLatitude(lat);
