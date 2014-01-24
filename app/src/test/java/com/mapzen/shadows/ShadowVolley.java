@@ -29,6 +29,10 @@ public class ShadowVolley {
         return requestQueue;
     }
 
+    public static void clearMockRequestQueue() {
+        requestQueue.getRequests().clear();
+    }
+
     public static class MockRequestQueue extends RequestQueue {
         private final Set<Request> requests = new HashSet<Request>();
 

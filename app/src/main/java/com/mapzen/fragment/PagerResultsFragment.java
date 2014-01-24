@@ -205,6 +205,7 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     public boolean executeSearchOnMap(final SearchView view, String query) {
+        app.cancelAllApiRequests();
         attachToContainer();
         final MapzenProgressDialog progressDialog = new MapzenProgressDialog(act);
         progressDialog.show();
