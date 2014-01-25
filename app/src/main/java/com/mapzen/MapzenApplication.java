@@ -1,29 +1,20 @@
 package com.mapzen;
 
 import android.app.Application;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.location.Location;
-import android.location.LocationManager;
 import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.mapzen.util.Logger;
 
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 
-import java.util.List;
-
 import static android.provider.BaseColumns._ID;
 
 public class MapzenApplication extends Application {
-    public static final int LOCATION_UPDATE_FREQUENCY = 1000;
-    public static final float LOCATION_UPDATE_MIN_DISTANCE = 10.0f;
     public static final int HTTP_REQUEST_TIMEOUT_MS = 500;
     public static final String PELIAS_TEXT = "text";
     private final String[] columns = {
@@ -35,56 +26,20 @@ public class MapzenApplication extends Application {
     private static MapPosition mapPosition =
             new MapPosition(DEFAULT_LATITUDE, DEFAULT_LONGITUDE, Math.pow(2, DEFAULT_ZOOMLEVEL));
     public static final String LOG_TAG = "Mapzen: ";
-    public static final int HIGH_PRIORITY_LOCATION = 0;
-    public static final int MED_PRIORITY_LOCATION = 1;
-    public static final int LOW_PRIORITY_LOCATION = 2;
     private String currentSearchTerm = "";
     private RequestQueue queue;
-    private LocationManager locationManager;
-    private PendingIntent highPriorityLocationIntent;
-    private PendingIntent medPriorityLocationIntent;
-    private PendingIntent lowPriorityLocationIntent;
+    private Location location;
 
     @Override
     public void onCreate() {
         super.onCreate();
         queue = Volley.newRequestQueue(this);
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        highPriorityLocationIntent = PendingIntent.getBroadcast(this, HIGH_PRIORITY_LOCATION,
-                new Intent("com.mapzen.updates.location.HIGH"), 0);
-        medPriorityLocationIntent = PendingIntent.getBroadcast(this, MED_PRIORITY_LOCATION,
-                new Intent("com.mapzen.updates.location.MED"), 0);
-        lowPriorityLocationIntent = PendingIntent.getBroadcast(this, LOW_PRIORITY_LOCATION,
-                new Intent("com.mapzen.updates.location.LOW"), 0);
     }
 
     public String[] getColumns() {
         return columns;
     }
 
-    public Location findBestLocation() {
-        List<String> providers = locationManager.getProviders(true);
-        Logger.d("location: providers" + providers.toString());
-        Location bestLocation = null;
-        for (String provider : providers) {
-            Logger.d("location: provider: " + provider.toString());
-            Location loc = locationManager.getLastKnownLocation(provider);
-            if (loc == null) {
-                Logger.d("location: is null");
-                continue;
-            }
-            Logger.d("location: last known location: " + loc.toString());
-            if (bestLocation == null
-                    || loc.getAccuracy() < bestLocation.getAccuracy()) {
-                bestLocation = loc;
-                Logger.d("location: bestLocation: " + bestLocation.toString());
-            }
-        }
-        if (bestLocation == null) {
-            return null;
-        }
-        return bestLocation;
-    }
 
     public void storeMapPosition(MapPosition pos) {
         mapPosition = pos;
@@ -94,33 +49,15 @@ public class MapzenApplication extends Application {
         return mapPosition.zoomLevel;
     }
 
-    public void setupLocationUpdates() {
-        Logger.d("Location: Requesting updates");
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                LOCATION_UPDATE_FREQUENCY, LOCATION_UPDATE_MIN_DISTANCE,
-                highPriorityLocationIntent);
-        locationManager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER,
-                LOCATION_UPDATE_FREQUENCY, LOCATION_UPDATE_MIN_DISTANCE,
-                medPriorityLocationIntent);
-        locationManager.requestLocationUpdates(
-                LocationManager.PASSIVE_PROVIDER,
-                LOCATION_UPDATE_FREQUENCY, LOCATION_UPDATE_MIN_DISTANCE,
-                lowPriorityLocationIntent);
-    }
-
-    public void stopLocationUpdates() {
-        if (locationManager != null) {
-            locationManager.removeUpdates(highPriorityLocationIntent);
-        }
-    }
-
     public GeoPoint getLocationPoint() {
         return getLocationPosition().getGeoPoint();
     }
 
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
     public MapPosition getLocationPosition() {
-        Location location = findBestLocation();
         if (location != null) {
             mapPosition =
                     new MapPosition(location.getLatitude(), location.getLongitude(),

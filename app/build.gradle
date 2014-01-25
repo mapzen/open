@@ -74,6 +74,7 @@ dependencies {
     compile 'com.android.support:support-v4:+'
     compile 'com.crashlytics.android:crashlytics:1.+'
     compile 'org.oscim:vtm:0.1-SNAPSHOT'
+    compile 'com.google.android.gms:play-services:4.0.30'
     compile fileTree(dir: 'libs', include: '*.jar')
     compile project(':vtm-android')
     compile project(':geojson')

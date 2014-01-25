@@ -16,7 +16,6 @@ import org.robolectric.tester.android.view.TestMenu;
 
 import static com.mapzen.util.TestHelper.initBaseActivity;
 import static com.mapzen.util.TestHelper.initMapFragment;
-import static com.mapzen.util.TestHelper.simulateLocation;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
@@ -27,7 +26,6 @@ public class BaseActivityTest {
 
     @Before
     public void setUp() throws Exception {
-        simulateLocation(0, 0);
         activity = initBaseActivity();
         initMapFragment(activity);
     }

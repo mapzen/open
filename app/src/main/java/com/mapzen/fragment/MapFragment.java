@@ -1,6 +1,5 @@
 package com.mapzen.fragment;
 
-import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.mapzen.LocationReceiver;
 import com.mapzen.PoiLayer;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
@@ -52,45 +50,11 @@ public class MapFragment extends BaseFragment {
     private boolean bootingUp = true;
 
     @Override
-    public void onPause() {
-        super.onPause();
-        teardownLocationReceiver();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        teardownLocationReceiver();
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
         View view = getView();
         setupMap(view);
         setupMyLocationBtn(view);
-        setupLocationReceiver();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        setupLocationReceiver();
-    }
-
-    private void setupLocationReceiver() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("com.mapzen.updates.location.HIGH");
-        filter.addAction("com.mapzen.updates.location.MED");
-        filter.addAction("com.mapzen.updates.location.LOW");
-        LocationReceiver receiver = new LocationReceiver();
-        receiver.setMapFragment(this);
-        app.registerReceiver(receiver, filter);
-        app.setupLocationUpdates();
-    }
-
-    private void teardownLocationReceiver() {
-        app.stopLocationUpdates();
     }
 
     @Override
