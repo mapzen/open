@@ -33,7 +33,8 @@ public class Feature extends GeoFeature implements Parcelable {
 
     public static JsonObjectRequest suggest(String query, Response.Listener successListener,
                                             Response.ErrorListener errorListener) {
-        final String url = String.format("%s?query=%s", PELIAS_SUGGEST_URL, Uri.encode(query));
+        final String url = String.format(Locale.US, "%s?query=%s", PELIAS_SUGGEST_URL,
+                Uri.encode(query));
         Logger.d(url);
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null,
                 successListener, errorListener);
@@ -43,7 +44,7 @@ public class Feature extends GeoFeature implements Parcelable {
     public static JsonObjectRequest search(Map map, String query, Response.Listener successListener,
                                            Response.ErrorListener errorListener) {
         final BoundingBox boundingBox = map.getViewport().getViewBox();
-        final String url = String.format("%s?query=%s&viewbox=%4f,%4f,%4f,%4f",
+        final String url = String.format(Locale.US, "%s?query=%s&viewbox=%4f,%4f,%4f,%4f",
                 PELIAS_SEARCH_URL, Uri.encode(query),
                 boundingBox.getMinLongitude(), boundingBox.getMaxLatitude(),
                 boundingBox.getMaxLongitude(), boundingBox.getMinLatitude());
