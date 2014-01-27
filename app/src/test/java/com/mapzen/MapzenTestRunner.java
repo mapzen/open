@@ -3,6 +3,7 @@ package com.mapzen;
 import com.mapzen.shadows.ShadowCrashlytics;
 import com.mapzen.shadows.ShadowGLMatrix;
 import com.mapzen.shadows.ShadowMapView;
+import com.mapzen.shadows.ShadowVolley;
 
 import org.junit.runners.model.InitializationError;
 import org.robolectric.RobolectricTestRunner;
@@ -40,7 +41,8 @@ public class MapzenTestRunner extends RobolectricTestRunner {
             Collections.unmodifiableList(Arrays.asList(
                     "com.crashlytics.android.Crashlytics",
                     "org.oscim.android.MapView",
-                    "org.oscim.renderer.GLMatrix"
+                    "org.oscim.renderer.GLMatrix",
+                    "com.android.volley.toolbox.Volley"
             ));
 
     public MapzenTestRunner(Class<?> testClass) throws InitializationError {
@@ -57,6 +59,7 @@ public class MapzenTestRunner extends RobolectricTestRunner {
                 .addShadowClass(ShadowCrashlytics.class)
                 .addShadowClass(ShadowMapView.class)
                 .addShadowClass(ShadowGLMatrix.class)
+                .addShadowClass(ShadowVolley.class)
                 .build();
     }
 

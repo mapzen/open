@@ -38,7 +38,6 @@ public class MapzenApplication extends Application {
     public static final int HIGH_PRIORITY_LOCATION = 0;
     public static final int MED_PRIORITY_LOCATION = 1;
     public static final int LOW_PRIORITY_LOCATION = 2;
-    private static MapzenApplication app;
     private String currentSearchTerm = "";
     private RequestQueue queue;
     private LocationManager locationManager;
@@ -46,25 +45,17 @@ public class MapzenApplication extends Application {
     private PendingIntent medPriorityLocationIntent;
     private PendingIntent lowPriorityLocationIntent;
 
-    public MapzenApplication() {
-        super();
-        app = this;
-    }
-
-    public static MapzenApplication getApp(Context context) {
-        if (app == null) {
-            app = new MapzenApplication();
-        }
-        app.queue = Volley.newRequestQueue(context);
-        app.locationManager = (LocationManager)
-                context.getSystemService(Context.LOCATION_SERVICE);
-        app.highPriorityLocationIntent = PendingIntent.getBroadcast(context, HIGH_PRIORITY_LOCATION,
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        queue = Volley.newRequestQueue(this);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        highPriorityLocationIntent = PendingIntent.getBroadcast(this, HIGH_PRIORITY_LOCATION,
                 new Intent("com.mapzen.updates.location.HIGH"), 0);
-        app.medPriorityLocationIntent = PendingIntent.getBroadcast(context, MED_PRIORITY_LOCATION,
+        medPriorityLocationIntent = PendingIntent.getBroadcast(this, MED_PRIORITY_LOCATION,
                 new Intent("com.mapzen.updates.location.MED"), 0);
-        app.lowPriorityLocationIntent = PendingIntent.getBroadcast(context, LOW_PRIORITY_LOCATION,
+        lowPriorityLocationIntent = PendingIntent.getBroadcast(this, LOW_PRIORITY_LOCATION,
                 new Intent("com.mapzen.updates.location.LOW"), 0);
-        return app;
     }
 
     public String[] getColumns() {
