@@ -1,17 +1,13 @@
 package com.mapzen.fragment;
 
 import com.mapzen.MapzenTestRunner;
-import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
-import com.mapzen.entity.Feature;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.oscim.core.GeoPoint;
 import org.robolectric.Robolectric;
-
-import java.util.ArrayList;
 
 import static org.fest.assertions.api.ANDROID.assertThat;
 
@@ -36,7 +32,7 @@ public class RouteFragmentTest {
 
     @Test
     public void shouldNotBeAdded() throws Exception {
-       assertThat(fragment).isNotAdded();
+        assertThat(fragment).isNotAdded();
     }
 
     @Test

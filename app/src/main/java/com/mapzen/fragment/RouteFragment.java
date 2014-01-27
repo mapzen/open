@@ -29,11 +29,11 @@ import java.util.ArrayList;
 
 import static com.mapzen.activity.BaseActivity.ROUTE_STACK;
 import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
+import static com.mapzen.util.ApiConstants.HTTP_SCHEMA;
 import static com.mapzen.util.ApiConstants.ROUTE_CAR_PATH;
 import static com.mapzen.util.ApiConstants.ROUTE_INSTRUCTIONS_KEY;
 import static com.mapzen.util.ApiConstants.ROUTE_LOCATION_KEY;
 import static com.mapzen.util.ApiConstants.ROUTE_OUTPUT_KEY;
-import static com.mapzen.util.ApiConstants.ROUTE_SCHEMA;
 import static com.mapzen.util.ApiConstants.ROUTE_URL;
 import static com.mapzen.util.ApiConstants.ROUTE_ZOOMLEVEL;
 import static com.mapzen.util.ApiConstants.TRUE;
@@ -110,7 +110,8 @@ public class RouteFragment extends BaseFragment {
         final MapzenProgressDialog progressDialog = new MapzenProgressDialog(act);
         progressDialog.show();
         popSearchResultsStack();
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrl(), null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrl(), null,
+                new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 setRouteFromResponse(response);
@@ -137,7 +138,7 @@ public class RouteFragment extends BaseFragment {
 
     private String getRouteUrl() {
         Uri.Builder url = new Uri.Builder();
-        url.scheme(ROUTE_SCHEMA).authority(ROUTE_URL).path(ROUTE_CAR_PATH);
+        url.scheme(HTTP_SCHEMA).authority(ROUTE_URL).path(ROUTE_CAR_PATH);
         url.appendQueryParameter(ROUTE_ZOOMLEVEL, String.valueOf((int)
                 Math.floor(app.getStoredZoomLevel())));
         url.appendQueryParameter(ROUTE_OUTPUT_KEY, ApiConstants.JSON);

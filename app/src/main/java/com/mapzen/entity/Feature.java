@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.geo.GeoFeature;
+import com.mapzen.util.ApiConstants;
 import com.mapzen.util.Logger;
 
 import org.oscim.core.BoundingBox;
@@ -17,12 +18,14 @@ import org.oscim.map.Map;
 
 import java.util.Locale;
 
+import static com.mapzen.util.ApiConstants.HTTP_SCHEMA;
+import static com.mapzen.util.ApiConstants.PELIAS_QUERY_KEY;
+import static com.mapzen.util.ApiConstants.PELIAS_SEARCH_PATH;
+import static com.mapzen.util.ApiConstants.PELIAS_SUGGEST_PATH;
+import static com.mapzen.util.ApiConstants.PELIAS_URL;
+import static com.mapzen.util.ApiConstants.PELIAS_VIEWBOX_KEY;
+
 public class Feature extends GeoFeature implements Parcelable {
-    private static final String PELIAS_URL = "http://api-pelias-test.mapzen.com/";
-    private static final String PELIAS_SUGGEST = "suggest";
-    private static final String PELIAS_SEARCH = "search";
-    private static final String PELIAS_SEARCH_URL = PELIAS_URL + PELIAS_SEARCH;
-    private static final String PELIAS_SUGGEST_URL = PELIAS_URL + PELIAS_SUGGEST;
     public static final String NAME = "name";
     public static final String FEATURES = "features";
     public static final String TYPE = "type";
@@ -33,24 +36,16 @@ public class Feature extends GeoFeature implements Parcelable {
 
     public static JsonObjectRequest suggest(String query, Response.Listener successListener,
                                             Response.ErrorListener errorListener) {
-        final String url = String.format(Locale.US, "%s?query=%s", PELIAS_SUGGEST_URL,
-                Uri.encode(query));
-        Logger.d(url);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null,
-                successListener, errorListener);
+        JsonObjectRequest jsonObjectRequest =
+                new JsonObjectRequest(getUrlForSuggest(query).toString(), null, successListener,
+                        errorListener);
         return jsonObjectRequest;
     }
 
     public static JsonObjectRequest search(Map map, String query, Response.Listener successListener,
                                            Response.ErrorListener errorListener) {
-        final BoundingBox boundingBox = map.getViewport().getViewBox();
-        final String url = String.format(Locale.US, "%s?query=%s&viewbox=%4f,%4f,%4f,%4f",
-                PELIAS_SEARCH_URL, Uri.encode(query),
-                boundingBox.getMinLongitude(), boundingBox.getMaxLatitude(),
-                boundingBox.getMaxLongitude(), boundingBox.getMinLatitude());
-        Logger.d(url);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null,
-                successListener, errorListener);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getUrlForSearch(query,
+                map.getViewport().getViewBox()), null, successListener, errorListener);
         return jsonObjectRequest;
     }
 
@@ -143,4 +138,26 @@ public class Feature extends GeoFeature implements Parcelable {
             }
         }
     }
+
+    private static String getUrlForSuggest(String query) {
+        Uri.Builder url = new Uri.Builder();
+        url.scheme(HTTP_SCHEMA).authority(PELIAS_URL).path(PELIAS_SUGGEST_PATH);
+        url.appendQueryParameter(PELIAS_QUERY_KEY, query);
+        Logger.d("PELIAS: suggest: " + url.toString());
+        return url.toString();
+    }
+
+    private static String getUrlForSearch(String query, BoundingBox boundingBox) {
+        Uri.Builder url = new Uri.Builder();
+        url.scheme(HTTP_SCHEMA).authority(PELIAS_URL).path(PELIAS_SEARCH_PATH);
+        url.appendQueryParameter(PELIAS_QUERY_KEY, query);
+        url.appendQueryParameter(PELIAS_VIEWBOX_KEY,
+                String.valueOf(boundingBox.getMinLongitude()) + ","
+                        + String.valueOf(boundingBox.getMaxLatitude()) + ","
+                        + String.valueOf(boundingBox.getMaxLongitude()) + ", "
+                        + String.valueOf(boundingBox.getMinLatitude()));
+        Logger.d("PELIAS: search: " + url.toString());
+        return url.toString();
+    }
+
 }
