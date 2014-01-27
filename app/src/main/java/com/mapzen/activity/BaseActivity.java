@@ -98,7 +98,7 @@ public class BaseActivity extends MapActivity
     private OnConnectionFailedListener onConnectionFailedListener = new OnConnectionFailedListener() {
         @Override
         public void onConnectionFailed(ConnectionResult connectionResult) {
-            Toast.makeText(getApplicationContext(), PLAY_SERVICE_FAIL_MESSAGE, Toast.LENGTH_LONG);
+            Toast.makeText(getApplicationContext(), PLAY_SERVICE_FAIL_MESSAGE, Toast.LENGTH_LONG).show();
         }
     };
 
