@@ -24,19 +24,14 @@ import org.oscim.core.GeoPoint;
 import org.oscim.layers.PathLayer;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import static com.mapzen.activity.BaseActivity.ROUTE_STACK;
 import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
+import static com.mapzen.util.ApiHelper.getRouteUrl;
 
 public class RouteFragment extends BaseFragment {
     private ArrayList<Instruction> instructions;
     private GeoPoint from, destination;
-    private String urlTemplate = "http://router.project-osrm.org/viaroute?z=%d"
-            + "&output=json"
-            + "&loc=%.6f,%.6f"
-            + "&loc=%.6f,%.6f"
-            + "&instructions=true";
     private ViewPager pager;
     private RoutesAdapter adapter;
     private Route route;
@@ -106,24 +101,24 @@ public class RouteFragment extends BaseFragment {
         final MapzenProgressDialog progressDialog = new MapzenProgressDialog(act);
         progressDialog.show();
         popSearchResultsStack();
-        String url = String.format(Locale.getDefault(), urlTemplate, (int) Math.floor(app.getStoredZoomLevel()),
-                from.getLatitude(), from.getLongitude(), destination.getLatitude(), destination.getLongitude());
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                setRouteFromResponse(response);
-                if (route.foundRoute()) {
-                    setInstructions(route.getRouteInstructions());
-                    drawRoute();
-                    progressDialog.dismiss();
-                    displayRoute();
-                } else {
-                    Toast.makeText(act, act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
-                    progressDialog.dismiss();
-                    act.showActionBar();
-                }
-            }
-        }, new Response.ErrorListener() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrl(
+                app.getStoredZoomLevel(), from, destination), null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        setRouteFromResponse(response);
+                        if (route.foundRoute()) {
+                            setInstructions(route.getRouteInstructions());
+                            drawRoute();
+                            progressDialog.dismiss();
+                            displayRoute();
+                        } else {
+                            Toast.makeText(act, act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
+                            progressDialog.dismiss();
+                            act.showActionBar();
+                        }
+                    }
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressDialog.dismiss();

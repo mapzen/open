@@ -1,6 +1,5 @@
 package com.mapzen.entity;
 
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.widget.TextView;
@@ -8,21 +7,17 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.geo.GeoFeature;
-import com.mapzen.util.Logger;
 
-import org.oscim.core.BoundingBox;
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.Map;
 
 import java.util.Locale;
 
+import static com.mapzen.util.ApiHelper.getUrlForSearch;
+import static com.mapzen.util.ApiHelper.getUrlForSuggest;
+
 public class Feature extends GeoFeature implements Parcelable {
-    private static final String PELIAS_URL = "http://api-pelias-test.mapzen.com/";
-    private static final String PELIAS_SUGGEST = "suggest";
-    private static final String PELIAS_SEARCH = "search";
-    private static final String PELIAS_SEARCH_URL = PELIAS_URL + PELIAS_SEARCH;
-    private static final String PELIAS_SUGGEST_URL = PELIAS_URL + PELIAS_SUGGEST;
     public static final String NAME = "name";
     public static final String FEATURES = "features";
     public static final String TYPE = "type";
@@ -33,24 +28,16 @@ public class Feature extends GeoFeature implements Parcelable {
 
     public static JsonObjectRequest suggest(String query, Response.Listener successListener,
                                             Response.ErrorListener errorListener) {
-        final String url = String.format(Locale.US, "%s?query=%s", PELIAS_SUGGEST_URL,
-                Uri.encode(query));
-        Logger.d(url);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null,
-                successListener, errorListener);
+        JsonObjectRequest jsonObjectRequest =
+                new JsonObjectRequest(getUrlForSuggest(query).toString(), null, successListener,
+                        errorListener);
         return jsonObjectRequest;
     }
 
     public static JsonObjectRequest search(Map map, String query, Response.Listener successListener,
                                            Response.ErrorListener errorListener) {
-        final BoundingBox boundingBox = map.getViewport().getViewBox();
-        final String url = String.format(Locale.US, "%s?query=%s&viewbox=%4f,%4f,%4f,%4f",
-                PELIAS_SEARCH_URL, Uri.encode(query),
-                boundingBox.getMinLongitude(), boundingBox.getMaxLatitude(),
-                boundingBox.getMaxLongitude(), boundingBox.getMinLatitude());
-        Logger.d(url);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(url, null,
-                successListener, errorListener);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getUrlForSearch(query,
+                map.getViewport().getViewBox()), null, successListener, errorListener);
         return jsonObjectRequest;
     }
 

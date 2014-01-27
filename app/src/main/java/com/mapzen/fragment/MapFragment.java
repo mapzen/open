@@ -171,8 +171,13 @@ public class MapFragment extends BaseFragment {
     }
 
     public void clearMarkers() {
-        poiMarkersLayer.removeAllItems();
-        highlightLayer.removeAllItems();
+        if (poiMarkersLayer != null) {
+            poiMarkersLayer.removeAllItems();
+        }
+
+        if (highlightLayer != null) {
+            highlightLayer.removeAllItems();
+        }
     }
 
     public ItemizedIconLayer getPoiLayer() {
@@ -270,6 +275,8 @@ public class MapFragment extends BaseFragment {
     }
 
     public void updateMap() {
-        map.updateMap(true);
+        if (map != null) {
+            map.updateMap(true);
+        }
     }
 }
