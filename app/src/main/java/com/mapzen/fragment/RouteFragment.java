@@ -1,6 +1,5 @@
 package com.mapzen.fragment;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -17,7 +16,6 @@ import com.mapzen.R;
 import com.mapzen.adapters.RoutesAdapter;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
-import com.mapzen.util.ApiConstants;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialog;
 
@@ -29,14 +27,7 @@ import java.util.ArrayList;
 
 import static com.mapzen.activity.BaseActivity.ROUTE_STACK;
 import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
-import static com.mapzen.util.ApiConstants.HTTP_SCHEMA;
-import static com.mapzen.util.ApiConstants.ROUTE_CAR_PATH;
-import static com.mapzen.util.ApiConstants.ROUTE_INSTRUCTIONS_KEY;
-import static com.mapzen.util.ApiConstants.ROUTE_LOCATION_KEY;
-import static com.mapzen.util.ApiConstants.ROUTE_OUTPUT_KEY;
-import static com.mapzen.util.ApiConstants.ROUTE_URL;
-import static com.mapzen.util.ApiConstants.ROUTE_ZOOMLEVEL;
-import static com.mapzen.util.ApiConstants.TRUE;
+import static com.mapzen.util.ApiHelper.getRouteUrl;
 
 public class RouteFragment extends BaseFragment {
     private ArrayList<Instruction> instructions;
@@ -110,23 +101,24 @@ public class RouteFragment extends BaseFragment {
         final MapzenProgressDialog progressDialog = new MapzenProgressDialog(act);
         progressDialog.show();
         popSearchResultsStack();
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrl(), null,
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrl(
+                app.getStoredZoomLevel(), from, destination), null,
                 new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                setRouteFromResponse(response);
-                if (route.foundRoute()) {
-                    setInstructions(route.getRouteInstructions());
-                    drawRoute();
-                    progressDialog.dismiss();
-                    displayRoute();
-                } else {
-                    Toast.makeText(act, act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
-                    progressDialog.dismiss();
-                    act.showActionBar();
-                }
-            }
-        }, new Response.ErrorListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        setRouteFromResponse(response);
+                        if (route.foundRoute()) {
+                            setInstructions(route.getRouteInstructions());
+                            drawRoute();
+                            progressDialog.dismiss();
+                            displayRoute();
+                        } else {
+                            Toast.makeText(act, act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
+                            progressDialog.dismiss();
+                            act.showActionBar();
+                        }
+                    }
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressDialog.dismiss();
@@ -134,20 +126,6 @@ public class RouteFragment extends BaseFragment {
         }
         );
         app.enqueueApiRequest(jsonObjectRequest);
-    }
-
-    private String getRouteUrl() {
-        Uri.Builder url = new Uri.Builder();
-        url.scheme(HTTP_SCHEMA).authority(ROUTE_URL).path(ROUTE_CAR_PATH);
-        url.appendQueryParameter(ROUTE_ZOOMLEVEL, String.valueOf((int)
-                Math.floor(app.getStoredZoomLevel())));
-        url.appendQueryParameter(ROUTE_OUTPUT_KEY, ApiConstants.JSON);
-        url.appendQueryParameter(ROUTE_LOCATION_KEY,
-                String.valueOf(from.getLatitude()) + "," + String.valueOf(from.getLongitude()));
-        url.appendQueryParameter(ROUTE_LOCATION_KEY, String.valueOf(
-                destination.getLatitude()) + "," + String.valueOf(destination.getLongitude()));
-        url.appendQueryParameter(ROUTE_INSTRUCTIONS_KEY, TRUE);
-        return url.toString();
     }
 
     private void popSearchResultsStack() {

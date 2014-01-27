@@ -1,6 +1,5 @@
 package com.mapzen.entity;
 
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.widget.TextView;
@@ -8,22 +7,15 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.geo.GeoFeature;
-import com.mapzen.util.ApiConstants;
-import com.mapzen.util.Logger;
 
-import org.oscim.core.BoundingBox;
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.Map;
 
 import java.util.Locale;
 
-import static com.mapzen.util.ApiConstants.HTTP_SCHEMA;
-import static com.mapzen.util.ApiConstants.PELIAS_QUERY_KEY;
-import static com.mapzen.util.ApiConstants.PELIAS_SEARCH_PATH;
-import static com.mapzen.util.ApiConstants.PELIAS_SUGGEST_PATH;
-import static com.mapzen.util.ApiConstants.PELIAS_URL;
-import static com.mapzen.util.ApiConstants.PELIAS_VIEWBOX_KEY;
+import static com.mapzen.util.ApiHelper.getUrlForSearch;
+import static com.mapzen.util.ApiHelper.getUrlForSuggest;
 
 public class Feature extends GeoFeature implements Parcelable {
     public static final String NAME = "name";
@@ -138,26 +130,4 @@ public class Feature extends GeoFeature implements Parcelable {
             }
         }
     }
-
-    private static String getUrlForSuggest(String query) {
-        Uri.Builder url = new Uri.Builder();
-        url.scheme(HTTP_SCHEMA).authority(PELIAS_URL).path(PELIAS_SUGGEST_PATH);
-        url.appendQueryParameter(PELIAS_QUERY_KEY, query);
-        Logger.d("PELIAS: suggest: " + url.toString());
-        return url.toString();
-    }
-
-    private static String getUrlForSearch(String query, BoundingBox boundingBox) {
-        Uri.Builder url = new Uri.Builder();
-        url.scheme(HTTP_SCHEMA).authority(PELIAS_URL).path(PELIAS_SEARCH_PATH);
-        url.appendQueryParameter(PELIAS_QUERY_KEY, query);
-        url.appendQueryParameter(PELIAS_VIEWBOX_KEY,
-                String.valueOf(boundingBox.getMinLongitude()) + ","
-                        + String.valueOf(boundingBox.getMaxLatitude()) + ","
-                        + String.valueOf(boundingBox.getMaxLongitude()) + ", "
-                        + String.valueOf(boundingBox.getMinLatitude()));
-        Logger.d("PELIAS: search: " + url.toString());
-        return url.toString();
-    }
-
 }
