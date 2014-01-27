@@ -254,4 +254,8 @@ public class BaseActivity extends MapActivity
             getActionBar().show();
         }
     }
+
+    public LocationClient getLocationClient() {
+        return locationClient;
+    }
 }

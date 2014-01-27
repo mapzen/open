@@ -5,6 +5,7 @@ import android.location.Location;
 
 import com.google.android.gms.location.LocationClient;
 
+import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 
 import static com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
@@ -13,16 +14,34 @@ import static com.google.android.gms.common.GooglePlayServicesClient.OnConnectio
 @SuppressWarnings("unused")
 @Implements(LocationClient.class)
 public class ShadowLocationClient {
+    private boolean connected = false;
+
     public void __constructor__(Context context,
                                 ConnectionCallbacks connectionCallbacks,
                                 OnConnectionFailedListener failedListener) {
     }
 
+    @Implementation
     public void connect() {
+        connected = true;
     }
 
+    @Implementation
+    public void disconnect() {
+        connected = false;
+    }
+
+    @Implementation
     public Location getLastLocation() {
         return new Location("fused");
+    }
+
+    public boolean testConnected() {
+        return connected;
+    }
+
+    public boolean testDisconnected() {
+        return !connected;
     }
 }
 
