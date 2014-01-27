@@ -1,8 +1,5 @@
 package com.mapzen.util;
 
-import android.content.Context;
-import android.location.Location;
-import android.location.LocationManager;
 import android.support.v4.app.FragmentManager;
 
 import com.mapzen.R;
@@ -11,7 +8,6 @@ import com.mapzen.fragment.MapFragment;
 
 import org.oscim.map.TestMap;
 import org.robolectric.Robolectric;
-import org.robolectric.shadows.ShadowLocationManager;
 import org.robolectric.tester.android.view.TestMenu;
 
 public final class TestHelper {
