@@ -1,6 +1,10 @@
 package com.mapzen.fragment;
 
+import android.view.LayoutInflater;
+import android.view.View;
+
 import com.mapzen.MapzenTestRunner;
+import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 
 import org.junit.Before;
@@ -39,5 +43,12 @@ public class RouteFragmentTest {
     public void shouldHideActionBar() throws Exception {
         fragment.attachToActivity();
         assertThat(act.getActionBar()).isNotShowing();
+    }
+
+    @Test
+    public void shouldKeepScreenOn() throws Exception {
+        LayoutInflater inflater = act.getLayoutInflater();
+        View view = inflater.inflate(R.layout.route_widget, null, false);
+        assertThat(view).isKeepingScreenOn();
     }
 }
