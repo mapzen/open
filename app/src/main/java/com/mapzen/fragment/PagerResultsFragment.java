@@ -42,13 +42,11 @@ public class PagerResultsFragment extends BaseFragment {
     private ArrayList<Feature> features = new ArrayList<Feature>();
     private static final String PAGINATE_TEMPLATE = "%2d of %2d RESULTS";
     private static PagerResultsFragment pagerResultsFragment;
-    private MapzenProgressDialog progressDialog;
 
     public static PagerResultsFragment newInstance(BaseActivity act) {
         pagerResultsFragment = new PagerResultsFragment();
         pagerResultsFragment.setAct(act);
         pagerResultsFragment.initializeAdapter();
-        pagerResultsFragment.initializeProgressDialog();
         pagerResultsFragment.setMapFragment(act.getMapFragment());
         return pagerResultsFragment;
     }
@@ -206,7 +204,7 @@ public class PagerResultsFragment extends BaseFragment {
     public boolean executeSearchOnMap(final SearchView view, String query) {
         app.cancelAllApiRequests();
         attachToContainer();
-        progressDialog.show();
+        act.showProgressDialog();
         app.setCurrentSearchTerm(query);
         JsonObjectRequest jsonObjectRequest =
                 Feature.search(mapFragment.getMap(), query,
@@ -215,19 +213,11 @@ public class PagerResultsFragment extends BaseFragment {
         return true;
     }
 
-    public MapzenProgressDialog getProgressDialog() {
-        return progressDialog;
-    }
-
-    public void initializeProgressDialog() {
-        progressDialog = new MapzenProgressDialog(act);
-    }
-
     private Response.ErrorListener getErrorListener() {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                onServerError(progressDialog, volleyError);
+                onServerError(volleyError);
             }
         };
     }
@@ -244,7 +234,7 @@ public class PagerResultsFragment extends BaseFragment {
                     Logger.e(e.toString());
                 }
                 setSearchResults(jsonArray);
-                progressDialog.dismiss();
+                act.dismissProgressDialog();
                 view.clearFocus();
             }
         };

@@ -37,7 +37,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private Button button;
     private RoutesAdapter adapter;
     private Route route;
-    private MapzenProgressDialog progressDialog;
 
     public void setInstructions(ArrayList<Instruction> instructions) {
         Logger.d("instructions: " + instructions.toString());
@@ -113,8 +112,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void attachToActivity() {
         act.hideActionBar();
         act.getPagerResultsFragment().clearMap();
-        progressDialog = new MapzenProgressDialog(act);
-        progressDialog.show();
+        act.showProgressDialog();
         popSearchResultsStack();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrl(
                 app.getStoredZoomLevel(), from, destination), null,
@@ -125,26 +123,22 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                         if (route.foundRoute()) {
                             setInstructions(route.getRouteInstructions());
                             drawRoute();
-                            progressDialog.dismiss();
+                            act.dismissProgressDialog();
                             displayRoute();
                         } else {
                             Toast.makeText(act, act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
-                            progressDialog.dismiss();
+                            act.dismissProgressDialog();
                             act.showActionBar();
                         }
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                onServerError(progressDialog, volleyError);
+                onServerError(volleyError);
             }
         }
         );
         app.enqueueApiRequest(jsonObjectRequest);
-    }
-
-    public MapzenProgressDialog getProgressDialog() {
-        return progressDialog;
     }
 
     private void popSearchResultsStack() {
