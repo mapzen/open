@@ -1,0 +1,203 @@
+{
+    "alternative_geometries": [
+        "gmvplAfl}blCvv@g|AcW}WeK~HcThPuk@xhAqNtXgc@gd@u@w@aNmNcOoO{sAjgCst@vyAmO~[wJzQcg@wa@ud@o^ud@m^f~@}`C"
+    ],
+    "alternative_indices": [
+        0,
+        19
+    ],
+    "alternative_instructions": [
+        [
+            [
+                "10",
+                "19th Street",
+                160,
+                0,
+                0,
+                "160m",
+                "SE",
+                128
+            ],
+            [
+                "7",
+                "7th Avenue",
+                54,
+                1,
+                0,
+                "54m",
+                "NE",
+                38
+            ],
+            [
+                "7",
+                "18th Street",
+                241,
+                2,
+                0,
+                "241m",
+                "NW",
+                328
+            ],
+            [
+                "3",
+                "6th Avenue",
+                155,
+                6,
+                0,
+                "155m",
+                "NE",
+                38
+            ],
+            [
+                "7",
+                "Prospect Avenue",
+                475,
+                10,
+                0,
+                "475m",
+                "NW",
+                309
+            ],
+            [
+                "3",
+                "4th Avenue",
+                244,
+                14,
+                0,
+                "244m",
+                "NE",
+                33
+            ],
+            [
+                "3",
+                "14th Street",
+                208,
+                17,
+                0,
+                "208m",
+                "SE",
+                123
+            ],
+            [
+                "15",
+                "",
+                0,
+                18,
+                0,
+                "",
+                "N",
+                0.0
+            ]
+        ]
+    ],
+    "alternative_names": [
+        [
+            "Prospect Avenue",
+            "4th Avenue"
+        ]
+    ],
+    "alternative_summaries": [
+        {
+            "end_point": "14th Street",
+            "start_point": "19th Street",
+            "total_distance": 1540,
+            "total_time": 139
+        }
+    ],
+    "hint_data": {
+        "checksum": 0,
+        "locations": [
+            "iPplAQakAAAdAAAA____f13_oOjJA8Y_5G5sAiwDl_s",
+            "dNllAQmkAAAsAQAA____fwmFFlEdLOw_xIRsAhsEl_s"
+        ]
+    },
+    "route_geometry": "gmvplAfl}blCvv@g|Ajb@vc@arA|hCcrAthC_sAphCcb@kc@_b@kc@}a@oc@}SuTuKaLcg@wa@ud@o^ud@m^f~@}`C",
+    "route_instructions": [
+        [
+            "10",
+            "19th Street",
+            160,
+            0,
+            0,
+            "160m",
+            "SE",
+            128
+        ],
+        [
+            "3",
+            "7th Avenue",
+            80,
+            1,
+            0,
+            "80m",
+            "SW",
+            218
+        ],
+        [
+            "3",
+            "20th Street",
+            713,
+            2,
+            0,
+            "713m",
+            "NW",
+            308
+        ],
+        [
+            "3",
+            "4th Avenue",
+            558,
+            5,
+            0,
+            "558m",
+            "NE",
+            38
+        ],
+        [
+            "3",
+            "14th Street",
+            208,
+            13,
+            0,
+            "208m",
+            "SE",
+            123
+        ],
+        [
+            "15",
+            "",
+            0,
+            14,
+            0,
+            "",
+            "N",
+            0.0
+        ]
+    ],
+    "route_name": [
+        "20th Street",
+        "4th Avenue"
+    ],
+    "route_summary": {
+        "end_point": "14th Street",
+        "start_point": "19th Street",
+        "total_distance": 1721,
+        "total_time": 128
+    },
+    "status": 0,
+    "status_message": "Found route between points",
+    "via_indices": [
+        0,
+        14
+    ],
+    "via_points": [
+        [
+            40.660708,
+            -73.989332
+        ],
+        [
+            40.666308,
+            -73.989093
+        ]
+    ]
+}
