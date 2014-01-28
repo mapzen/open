@@ -32,13 +32,14 @@ import static org.robolectric.Robolectric.application;
 public class PagerResultsFragmentTest {
     private PagerResultsFragment fragment;
     private MapzenApplication app;
+    private BaseActivity act;
 
     @Before
     public void setUp() throws Exception {
         ShadowVolley.clearMockRequestQueue();
-        BaseActivity activity = initBaseActivity();
-        initMapFragment(activity);
-        fragment = PagerResultsFragment.newInstance(activity);
+        act = initBaseActivity();
+        initMapFragment(act);
+        fragment = PagerResultsFragment.newInstance(act);
         FragmentTestUtil.startFragment(fragment);
         app = (MapzenApplication) application;
     }
@@ -64,10 +65,10 @@ public class PagerResultsFragmentTest {
 
     @Test
     public void executeSearchOnMap_shouldDismissProgressDialogOnError() throws Exception {
-        MapzenProgressDialog dialog = fragment.getProgressDialog();
+        MapzenProgressDialog dialog = act.getProgressDialog();
         fragment.executeSearchOnMap(new SearchView(app), "Empire State Building");
         assertThat(dialog).isShowing();
-        Set<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
+        List<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
         Request<JSONObject> request = requestSet.iterator().next();
         request.deliverError(null);
         assertThat(dialog).isNotShowing();
@@ -75,10 +76,10 @@ public class PagerResultsFragmentTest {
 
     @Test
     public void executeSearchOnMap_shouldToastAnError() {
-        MapzenProgressDialog dialog = fragment.getProgressDialog();
+        MapzenProgressDialog dialog = act.getProgressDialog();
         fragment.executeSearchOnMap(new SearchView(app), "Empire State Building");
         assertThat(dialog).isShowing();
-        Set<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
+        List<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
         Request<JSONObject> request = requestSet.iterator().next();
         request.deliverError(null);
         assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(app.getString(R.string.generic_server_error));

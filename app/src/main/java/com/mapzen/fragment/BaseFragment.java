@@ -32,9 +32,9 @@ public abstract class BaseFragment extends Fragment {
         this.mapFragment = mapFragment;
     }
 
-    protected void onServerError(MapzenProgressDialog dialog, VolleyError error) {
+    protected void onServerError(VolleyError error) {
         Toast.makeText(act, act.getString(R.string.generic_server_error), Toast.LENGTH_LONG).show();
-        dialog.dismiss();
+        act.dismissProgressDialog();
         String errorMsg = VolleyHelper.Error.getMessage(error, act);
         Log.e(MapzenApplication.LOG_TAG, "request: error: " + errorMsg);
     }

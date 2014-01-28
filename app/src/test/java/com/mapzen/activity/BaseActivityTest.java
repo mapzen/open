@@ -9,6 +9,7 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.MapzenTestRunner;
 import com.mapzen.R;
 import com.mapzen.shadows.ShadowLocationClient;
+import com.mapzen.shadows.ShadowVolley;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +30,7 @@ public class BaseActivityTest {
 
     @Before
     public void setUp() throws Exception {
+        ShadowVolley.clearMockRequestQueue();
         activity = initBaseActivity();
         shadowLocationClient = Robolectric.shadowOf_(activity.getLocationClient());
         initMapFragment(activity);

@@ -21,6 +21,7 @@ import org.oscim.core.GeoPoint;
 import org.robolectric.Robolectric;
 import org.robolectric.shadows.ShadowToast;
 
+import java.util.List;
 import java.util.Set;
 
 import static com.mapzen.util.TestHelper.initMapFragment;
@@ -205,17 +206,17 @@ public class RouteFragmentTest {
     @Test
     public void attachToActivity_shouldDismissProgressDialogOnError() throws Exception {
         fragment.attachToActivity();
-        assertThat(fragment.getProgressDialog()).isShowing();
-        Set<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
+        assertThat(act.getProgressDialog()).isShowing();
+        List<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
         Request<JSONObject> request = requestSet.iterator().next();
         request.deliverError(null);
-        assertThat(fragment.getProgressDialog()).isNotShowing();
+        assertThat(act.getProgressDialog()).isNotShowing();
     }
 
     @Test
     public void attachToActivity_shouldToastOnError() throws Exception {
         fragment.attachToActivity();
-        Set<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
+        List<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
         Request<JSONObject> request = requestSet.iterator().next();
         request.deliverError(null);
         assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(act.getString(R.string.generic_server_error));
