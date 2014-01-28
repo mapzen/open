@@ -37,6 +37,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private Button button;
     private RoutesAdapter adapter;
     private Route route;
+    private MapzenProgressDialog progressDialog;
 
     public void setInstructions(ArrayList<Instruction> instructions) {
         Logger.d("instructions: " + instructions.toString());
@@ -112,7 +113,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void attachToActivity() {
         act.hideActionBar();
         act.getPagerResultsFragment().clearMap();
-        final MapzenProgressDialog progressDialog = new MapzenProgressDialog(act);
+        progressDialog = new MapzenProgressDialog(act);
         progressDialog.show();
         popSearchResultsStack();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrl(
@@ -134,12 +135,16 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     }
                 }, new Response.ErrorListener() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                progressDialog.dismiss();
+            public void onErrorResponse(VolleyError volleyError) {
+                onServerError(progressDialog, volleyError);
             }
         }
         );
         app.enqueueApiRequest(jsonObjectRequest);
+    }
+
+    public MapzenProgressDialog getProgressDialog() {
+        return progressDialog;
     }
 
     private void popSearchResultsStack() {

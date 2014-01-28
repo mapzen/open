@@ -19,5 +19,6 @@
     <string name="no_route_found">No Route Found</string>
     <string name="view_steps">View steps</string>
     <string name="current_location">Current Location</string>
+    <string name="generic_server_error">Server Error</string>
 
 </resources>

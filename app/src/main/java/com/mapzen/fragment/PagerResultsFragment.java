@@ -2,7 +2,6 @@ package com.mapzen.fragment;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,6 @@ import com.mapzen.adapters.SearchViewAdapter;
 import com.mapzen.entity.Feature;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialog;
-import com.mapzen.util.VolleyHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,7 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static com.mapzen.MapzenApplication.LOG_TAG;
 import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
 
 public class PagerResultsFragment extends BaseFragment {
@@ -45,11 +42,13 @@ public class PagerResultsFragment extends BaseFragment {
     private ArrayList<Feature> features = new ArrayList<Feature>();
     private static final String PAGINATE_TEMPLATE = "%2d of %2d RESULTS";
     private static PagerResultsFragment pagerResultsFragment;
+    private MapzenProgressDialog progressDialog;
 
     public static PagerResultsFragment newInstance(BaseActivity act) {
         pagerResultsFragment = new PagerResultsFragment();
         pagerResultsFragment.setAct(act);
         pagerResultsFragment.initializeAdapter();
+        pagerResultsFragment.initializeProgressDialog();
         pagerResultsFragment.setMapFragment(act.getMapFragment());
         return pagerResultsFragment;
     }
@@ -207,27 +206,33 @@ public class PagerResultsFragment extends BaseFragment {
     public boolean executeSearchOnMap(final SearchView view, String query) {
         app.cancelAllApiRequests();
         attachToContainer();
-        final MapzenProgressDialog progressDialog = new MapzenProgressDialog(act);
         progressDialog.show();
         app.setCurrentSearchTerm(query);
         JsonObjectRequest jsonObjectRequest =
                 Feature.search(mapFragment.getMap(), query,
-                        getSearchListener(view, progressDialog), getErrorListener());
+                        getSearchListener(view), getErrorListener());
         app.enqueueApiRequest(jsonObjectRequest);
         return true;
+    }
+
+    public MapzenProgressDialog getProgressDialog() {
+        return progressDialog;
+    }
+
+    public void initializeProgressDialog() {
+        progressDialog = new MapzenProgressDialog(act);
     }
 
     private Response.ErrorListener getErrorListener() {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                String errorMsg = VolleyHelper.Error.getMessage(volleyError, act);
-                Log.e(LOG_TAG, "request: error: " + errorMsg);
+                onServerError(progressDialog, volleyError);
             }
         };
     }
 
-    private Response.Listener<JSONObject> getSearchListener(final SearchView view, final MapzenProgressDialog dialog) {
+    private Response.Listener<JSONObject> getSearchListener(final SearchView view) {
         return new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject jsonObject) {
@@ -239,7 +244,7 @@ public class PagerResultsFragment extends BaseFragment {
                     Logger.e(e.toString());
                 }
                 setSearchResults(jsonArray);
-                dialog.dismiss();
+                progressDialog.dismiss();
                 view.clearFocus();
             }
         };
