@@ -192,7 +192,7 @@ public class PagerResultsFragment extends BaseFragment {
                 try {
                     feature.buildFromJSON(jsonArray.getJSONObject(i));
                 } catch (JSONException e) {
-                    Log.e(LOG_TAG, e.toString());
+                    Logger.e(e.toString());
                 }
                 add(feature);
             }
@@ -236,7 +236,7 @@ public class PagerResultsFragment extends BaseFragment {
                 try {
                     jsonArray = jsonObject.getJSONArray("features");
                 } catch (JSONException e) {
-                    Log.e(LOG_TAG, e.toString());
+                    Logger.e(e.toString());
                 }
                 setSearchResults(jsonArray);
                 dialog.dismiss();
