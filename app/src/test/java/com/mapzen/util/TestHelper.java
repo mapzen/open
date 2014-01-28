@@ -10,6 +10,10 @@ import org.oscim.map.TestMap;
 import org.robolectric.Robolectric;
 import org.robolectric.tester.android.view.TestMenu;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+
 public final class TestHelper {
     private TestHelper() {
     }
@@ -28,5 +32,17 @@ public final class TestHelper {
         mapFragment.setMap(new TestMap());
         mapFragment.onStart();
         return mapFragment;
+    }
+
+    public static String getFixture(String name) {
+        String basedir = System.getProperty("user.dir");
+        File file = new File(basedir + "/src/test/fixtures/" + name + ".fixture");
+        String fixture = "";
+        try {
+            fixture = FileUtils.readFileToString(file, "UTF-8");
+        } catch (Exception e) {
+            fixture = "not found";
+        }
+        return fixture;
     }
 }

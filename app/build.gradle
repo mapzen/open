@@ -83,12 +83,15 @@ dependencies {
     testCompile 'junit:junit:4.10'
     testCompile 'org.robolectric:robolectric:2.3-SNAPSHOT'
     testCompile 'com.squareup:fest-android:1.0.+'
+    testCompile 'org.apache.commons:commons-io:1.3.2'
     testLocalCompile 'junit:junit:4.10'
     testLocalCompile 'org.robolectric:robolectric:2.3-SNAPSHOT'
     testLocalCompile 'com.squareup:fest-android:1.0.+'
+    testLocalCompile 'org.apache.commons:commons-io:1.3.2'
     instrumentTestCompile 'junit:junit:4.10'
     instrumentTestCompile 'org.robolectric:robolectric:2.3-SNAPSHOT'
     instrumentTestCompile 'com.squareup:fest-android:1.0.+'
+    instrumentTestCompile 'org.apache.commons:commons-io:1.3.2'
 }
 
 task updateManifestToSnapshot {
