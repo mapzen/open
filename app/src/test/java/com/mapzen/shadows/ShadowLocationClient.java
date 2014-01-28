@@ -36,12 +36,8 @@ public class ShadowLocationClient {
         return new Location("fused");
     }
 
-    public boolean testConnected() {
+    public boolean isConnected() {
         return connected;
-    }
-
-    public boolean testDisconnected() {
-        return !connected;
     }
 }
 

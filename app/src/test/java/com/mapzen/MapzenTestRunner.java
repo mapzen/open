@@ -43,8 +43,7 @@ public class MapzenTestRunner extends RobolectricTestRunner {
                     "com.crashlytics.android.Crashlytics",
                     "org.oscim.android.MapView",
                     "org.oscim.renderer.GLMatrix",
-                    "com.android.volley.toolbox.Volley",
-                    "com.google.android.gsm.location.LocationClient"
+                    "com.android.volley.toolbox.Volley"
             ));
 
     public MapzenTestRunner(Class<?> testClass) throws InitializationError {

@@ -85,19 +85,19 @@ public class BaseActivityTest {
 
     @Test
     public void onCreate_shouldConnectLocationClient() throws Exception {
-        assert (shadowLocationClient.testConnected());
+        assertThat(shadowLocationClient.isConnected()).isTrue();
     }
 
     @Test
     public void onPause_shouldDisconnectLocationClient() throws Exception {
         activity.onPause();
-        assert (shadowLocationClient.testDisconnected());
+        assertThat(shadowLocationClient.isConnected()).isFalse();
     }
 
     @Test
     public void onResume_shouldReConnectLocationClient() throws Exception {
         shadowLocationClient.disconnect();
         activity.onResume();
-        assert (shadowLocationClient.testConnected());
+        assertThat(shadowLocationClient.isConnected()).isTrue();
     }
 }
