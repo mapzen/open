@@ -3,8 +3,10 @@ package com.mapzen.fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.Request;
 import com.mapzen.MapzenTestRunner;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
@@ -17,9 +19,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.oscim.core.GeoPoint;
 import org.robolectric.Robolectric;
+import org.robolectric.shadows.ShadowToast;
+
+import java.util.Set;
 
 import static com.mapzen.util.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(MapzenTestRunner.class)
 public class RouteFragmentTest {
@@ -120,6 +126,7 @@ public class RouteFragmentTest {
 
     @Before
     public void setUp() throws Exception {
+        ShadowVolley.clearMockRequestQueue();
         act = Robolectric.buildActivity(BaseActivity.class).create().get();
         fragment = new RouteFragment();
         fragment.setDestination(new GeoPoint(1.0, 2.0));
@@ -193,5 +200,25 @@ public class RouteFragmentTest {
         ShadowVolley.MockRequestQueue queue = ShadowVolley.getMockRequestQueue();
         JsonObjectRequest request = (JsonObjectRequest) queue.getRequests().get(0);
         queue.deliverResponse(request, new JSONObject(MOCK_ROUTE_JSON));
+    }
+
+    @Test
+    public void attachToActivity_shouldDismissProgressDialogOnError() throws Exception {
+        fragment.attachToActivity();
+        assertThat(fragment.getProgressDialog()).isShowing();
+        Set<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
+        Request<JSONObject> request = requestSet.iterator().next();
+        request.deliverError(null);
+        assertThat(fragment.getProgressDialog()).isNotShowing();
+    }
+
+    @Test
+    public void attachToActivity_shouldToastOnError() throws Exception {
+        fragment.attachToActivity();
+        Set<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
+        Request<JSONObject> request = requestSet.iterator().next();
+        request.deliverError(null);
+        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(act.getString(R.string.generic_server_error));
+        assertThat(ShadowToast.getLatestToast()).hasDuration(Toast.LENGTH_LONG);
     }
 }

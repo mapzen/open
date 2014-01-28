@@ -3,7 +3,6 @@ package com.mapzen.adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,7 +27,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.mapzen.MapzenApplication.LOG_TAG;
 import static com.mapzen.MapzenApplication.PELIAS_TEXT;
 import static com.mapzen.entity.Feature.FEATURES;
 import static com.mapzen.entity.Feature.NAME;
