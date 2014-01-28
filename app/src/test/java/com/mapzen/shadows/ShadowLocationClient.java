@@ -36,6 +36,7 @@ public class ShadowLocationClient {
         return new Location("fused");
     }
 
+    @Implementation
     public boolean isConnected() {
         return connected;
     }
