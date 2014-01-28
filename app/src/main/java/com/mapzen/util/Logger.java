@@ -14,4 +14,10 @@ public final class Logger {
             Log.v(TAG, msg);
         }
     }
+
+    public static void e(String msg) {
+        if (enabled) {
+            Log.e(TAG, msg);
+        }
+    }
 }
