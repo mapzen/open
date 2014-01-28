@@ -2,6 +2,7 @@ package com.mapzen.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -9,8 +10,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.adapters.AutoCompleteAdapter;
@@ -23,8 +29,14 @@ import com.mapzen.util.Logger;
 import org.oscim.android.MapActivity;
 import org.oscim.map.Map;
 
+import static com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
+import static com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
+import static com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY;
+
 public class BaseActivity extends MapActivity
         implements MenuItem.OnActionExpandListener {
+    public static final int LOCATION_INTERVAL = 5000;
+    public static final String PLAY_SERVICE_FAIL_MESSAGE = "Your device cannot be located";
     private AutoCompleteAdapter autoCompleteAdapter;
     private MenuItem menuItem;
     private MapzenApplication app;
@@ -32,6 +44,14 @@ public class BaseActivity extends MapActivity
     private PagerResultsFragment pagerResultsFragment;
     public static final String SEARCH_RESULTS_STACK = "search_results_stack";
     public static final String ROUTE_STACK = "route_stack";
+    private LocationClient locationClient;
+    private LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            Logger.d("Location: receiving new location: " + location.toString());
+            mapFragment.setUserLocation(location);
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,7 +60,52 @@ public class BaseActivity extends MapActivity
         app = (MapzenApplication) getApplication();
         setContentView(R.layout.base);
         initMapFragment();
+        initLocationClient();
         pagerResultsFragment = PagerResultsFragment.newInstance(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        locationClient.disconnect();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        locationClient.connect();
+    }
+
+    private ConnectionCallbacks connectionCallback = new ConnectionCallbacks() {
+        @Override
+        public void onConnected(Bundle bundle) {
+            Location location = locationClient.getLastLocation();
+            mapFragment.setUserLocation(location);
+            app.setLocation(location);
+            Logger.d("Location: last location: " + location.toString());
+            LocationRequest locationRequest = LocationRequest.create();
+            locationRequest.setInterval(LOCATION_INTERVAL);
+            locationRequest.setPriority(PRIORITY_HIGH_ACCURACY);
+            locationClient.requestLocationUpdates(locationRequest, locationListener);
+        }
+
+        @Override
+        public void onDisconnected() {
+            locationClient.removeLocationUpdates(locationListener);
+        }
+    };
+
+    private OnConnectionFailedListener onConnectionFailedListener = new OnConnectionFailedListener() {
+        @Override
+        public void onConnectionFailed(ConnectionResult connectionResult) {
+            Toast.makeText(getApplicationContext(), PLAY_SERVICE_FAIL_MESSAGE, Toast.LENGTH_LONG).show();
+        }
+    };
+
+    private void initLocationClient() {
+        Logger.d("Location: initializing");
+        locationClient = new LocationClient(this, connectionCallback, onConnectionFailedListener);
+        locationClient.connect();
     }
 
     private void initMapFragment() {
@@ -188,5 +253,9 @@ public class BaseActivity extends MapActivity
         if (!getActionBar().isShowing()) {
             getActionBar().show();
         }
+    }
+
+    public LocationClient getLocationClient() {
+        return locationClient;
     }
 }

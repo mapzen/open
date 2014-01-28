@@ -2,6 +2,7 @@ package com.mapzen;
 
 import com.mapzen.shadows.ShadowCrashlytics;
 import com.mapzen.shadows.ShadowGLMatrix;
+import com.mapzen.shadows.ShadowLocationClient;
 import com.mapzen.shadows.ShadowMapView;
 import com.mapzen.shadows.ShadowVolley;
 
@@ -60,6 +61,7 @@ public class MapzenTestRunner extends RobolectricTestRunner {
                 .addShadowClass(ShadowMapView.class)
                 .addShadowClass(ShadowGLMatrix.class)
                 .addShadowClass(ShadowVolley.class)
+                .addShadowClass(ShadowLocationClient.class)
                 .build();
     }
 

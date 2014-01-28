@@ -1,8 +1,5 @@
 package com.mapzen.util;
 
-import android.content.Context;
-import android.location.Location;
-import android.location.LocationManager;
 import android.support.v4.app.FragmentManager;
 
 import com.mapzen.R;
@@ -11,26 +8,10 @@ import com.mapzen.fragment.MapFragment;
 
 import org.oscim.map.TestMap;
 import org.robolectric.Robolectric;
-import org.robolectric.shadows.ShadowLocationManager;
 import org.robolectric.tester.android.view.TestMenu;
 
 public final class TestHelper {
     private TestHelper() {
-    }
-
-    public static void simulateLocation(double lat, double lon) {
-        Location location = new Location(LocationManager.GPS_PROVIDER);
-        location.setLatitude(lat);
-        location.setLongitude(lon);
-        location.setProvider(LocationManager.GPS_PROVIDER);
-
-        LocationManager manager = (LocationManager)
-                Robolectric.application.getSystemService(Context.LOCATION_SERVICE);
-        ShadowLocationManager shadowManager = Robolectric.shadowOf(manager);
-        shadowManager.setProviderEnabled(LocationManager.GPS_PROVIDER, true);
-        shadowManager.setProviderEnabled(LocationManager.NETWORK_PROVIDER, true);
-        shadowManager.setProviderEnabled(LocationManager.PASSIVE_PROVIDER, true);
-        shadowManager.simulateLocation(location);
     }
 
     public static BaseActivity initBaseActivity() {

@@ -19,7 +19,6 @@ import java.util.Set;
 
 import static com.mapzen.util.TestHelper.initBaseActivity;
 import static com.mapzen.util.TestHelper.initMapFragment;
-import static com.mapzen.util.TestHelper.simulateLocation;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
@@ -30,7 +29,6 @@ public class PagerResultsFragmentTest {
 
     @Before
     public void setUp() throws Exception {
-        simulateLocation(0, 0);
         BaseActivity activity = initBaseActivity();
         initMapFragment(activity);
         fragment = PagerResultsFragment.newInstance(activity);

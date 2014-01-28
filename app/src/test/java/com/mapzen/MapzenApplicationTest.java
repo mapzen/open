@@ -11,8 +11,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 
-import static com.mapzen.util.TestHelper.simulateLocation;
-import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(MapzenTestRunner.class)
@@ -21,7 +19,6 @@ public class MapzenApplicationTest {
 
     @Before
     public void setUp() throws Exception {
-        simulateLocation(1.0, 2.0);
         app = (MapzenApplication) Robolectric.application;
     }
 
@@ -33,12 +30,6 @@ public class MapzenApplicationTest {
     @Test
     public void shouldReturnSameInstance() throws Exception {
         assertThat(app).isSameAs((MapzenApplication) new Activity().getApplication());
-    }
-
-    @Test
-    public void shouldFindBestLocation() throws Exception {
-        assertThat(app.findBestLocation()).hasLatitude(1.0);
-        assertThat(app.findBestLocation()).hasLongitude(2.0);
     }
 
     @Test

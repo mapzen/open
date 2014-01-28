@@ -8,15 +8,16 @@ import android.widget.SearchView;
 import com.mapzen.MapzenApplication;
 import com.mapzen.MapzenTestRunner;
 import com.mapzen.R;
+import com.mapzen.shadows.ShadowLocationClient;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.tester.android.view.TestMenu;
 
 import static com.mapzen.util.TestHelper.initBaseActivity;
 import static com.mapzen.util.TestHelper.initMapFragment;
-import static com.mapzen.util.TestHelper.simulateLocation;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
@@ -24,11 +25,12 @@ import static org.robolectric.Robolectric.application;
 @RunWith(MapzenTestRunner.class)
 public class BaseActivityTest {
     private BaseActivity activity;
+    private ShadowLocationClient shadowLocationClient;
 
     @Before
     public void setUp() throws Exception {
-        simulateLocation(0, 0);
         activity = initBaseActivity();
+        shadowLocationClient = Robolectric.shadowOf_(activity.getLocationClient());
         initMapFragment(activity);
     }
 
@@ -79,5 +81,23 @@ public class BaseActivityTest {
         activity.onCreateOptionsMenu(menu);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         assertThat(searchView.getQuery().toString()).isEqualTo("Empire State Building");
+    }
+
+    @Test
+    public void onCreate_shouldConnectLocationClient() throws Exception {
+        assertThat(shadowLocationClient.isConnected()).isTrue();
+    }
+
+    @Test
+    public void onPause_shouldDisconnectLocationClient() throws Exception {
+        activity.onPause();
+        assertThat(shadowLocationClient.isConnected()).isFalse();
+    }
+
+    @Test
+    public void onResume_shouldReConnectLocationClient() throws Exception {
+        shadowLocationClient.disconnect();
+        activity.onResume();
+        assertThat(shadowLocationClient.isConnected()).isTrue();
     }
 }
