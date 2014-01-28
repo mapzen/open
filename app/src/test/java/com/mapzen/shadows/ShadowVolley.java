@@ -4,13 +4,18 @@ import android.content.Context;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONObject;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.android.volley.Response.Listener;
+import static org.fest.reflect.core.Reflection.field;
 
 /**
  * Shadow implementation for {@link com.android.volley.toolbox.Volley}.
@@ -37,7 +42,7 @@ public final class ShadowVolley {
     }
 
     public static class MockRequestQueue extends RequestQueue {
-        private final Set<Request> requests = new HashSet<Request>();
+        private final List<Request> requests = new ArrayList<Request>();
 
         public MockRequestQueue() {
             super(null, null);
@@ -49,8 +54,13 @@ public final class ShadowVolley {
             return super.add(request);
         }
 
-        public Set<Request> getRequests() {
+        public List<Request> getRequests() {
             return requests;
+        }
+
+        @SuppressWarnings("unchecked")
+        public void deliverResponse(JsonObjectRequest request, JSONObject response) {
+            field("mListener").ofType(Listener.class).in(request).get().onResponse(response);
         }
     }
 }

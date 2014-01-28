@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.util.FragmentTestUtil;
 
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 
 import static com.mapzen.util.TestHelper.initBaseActivity;
 import static com.mapzen.util.TestHelper.initMapFragment;
@@ -47,7 +47,7 @@ public class PagerResultsFragmentTest {
         app.enqueueApiRequest(Feature.suggest("Empire", null, null));
         app.enqueueApiRequest(Feature.suggest("Empire State", null, null));
         fragment.executeSearchOnMap(new SearchView(app), "Empire State Building");
-        Set<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
+        List<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
         assertThat(requestSet).hasSize(3);
 
         Iterator<Request> iterator = requestSet.iterator();
