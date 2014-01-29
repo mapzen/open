@@ -17,5 +17,7 @@
     <string name="view_all">View All »</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="no_route_found">No Route Found</string>
+    <string name="view_steps">View steps</string>
+    <string name="current_location">Current Location</string>
 
 </resources>
