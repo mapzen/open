@@ -4,7 +4,6 @@ import android.location.Location;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.android.volley.Request;
