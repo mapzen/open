@@ -1,12 +1,10 @@
 package com.mapzen.fragment;
 
-import android.content.ClipData;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,37 +63,37 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.getLocationClient().requestLocationUpdates(locationRequest, this);
     }
 
-    private Location getNextTurn() {
-        Location nextTurn = new Location("internal");
-        Instruction nextInstruction = getNextInstruction();
+    private Location getNextTurnTo(Instruction nextInstruction) {
+        Location nextTurn = new Location(getResources().getString(R.string.application_name));
         nextTurn.setLatitude(nextInstruction.getPoint()[0]);
-        nextTurn.setLatitude(nextInstruction.getPoint()[1]);
+        nextTurn.setLongitude(nextInstruction.getPoint()[1]);
         return nextTurn;
     }
 
     @Override
     public void onLocationChanged(Location location) {
         Logger.d("RouteFragment::onLocationChangeLocation" + instructions.toString());
-
         for(Instruction instruction: instructions) {
-            Location nextTurn = new Location("boo");
-            nextTurn.setLatitude(instruction.getPoint()[0]);
-            nextTurn.setLongitude(instruction.getPoint()[1]);
-
-            System.out.println("foooshow");
+            Location nextTurn = getNextTurnTo(instruction);
             if(location != null && nextTurn != null) {
                 int distanceToNextTurn = (int) Math.floor(location.distanceTo(nextTurn));
                 if(distanceToNextTurn > WALKING_THRESH_HOLD) {
-                    Logger.d("RouteFragment::onLocationChangeLocation: outside defined radius");
+                    Logger.d("RouteFragment::onLocationChangeLocation: " +
+                            "outside defined radius");
                     Toast.makeText(act, "outside", Toast.LENGTH_SHORT).show();
                 } else {
-                    Logger.d("RouteFragment::onLocationChangeLocation: inside defined radius advancing");
-                    goTo(instructions.indexOf(instruction));
+                    Logger.d("RouteFragment::onLocationChangeLocation: " +
+                            "inside defined radius advancing");
+                    advanceTo(instructions.indexOf(instruction));
                 }
-                Logger.d("RouteFragment::onLocationChangeLocation: new current location: " + location.toString());
-                Logger.d("RouteFragment::onLocationChangeLocation: next turn: " + nextTurn.toString());
-                Logger.d("RouteFragment::onLocationChangeLocation: distance to next turn: " + String.valueOf(distanceToNextTurn));
-                Logger.d("RouteFragment::onLocationChangeLocation: threshold: " + String.valueOf(WALKING_THRESH_HOLD));
+                Logger.d("RouteFragment::onLocationChangeLocation: " +
+                        "new current location: " + location.toString());
+                Logger.d("RouteFragment::onLocationChangeLocation: " +
+                        "next turn: " + nextTurn.toString());
+                Logger.d("RouteFragment::onLocationChangeLocation: " +
+                        "distance to next turn: " + String.valueOf(distanceToNextTurn));
+                Logger.d("RouteFragment::onLocationChangeLocation: " +
+                        "threshold: " + String.valueOf(WALKING_THRESH_HOLD));
             } else {
                 if (location == null) {
                     Logger.d("RouteFragment::onLocationChangeLocation: **next turn** is null screw it");
@@ -167,7 +165,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager.setCurrentItem(pager.getCurrentItem() + 1);
     }
 
-    public void goTo(int i) {
+    public void advanceTo(int i) {
         pager.setCurrentItem(i);
     }
 
