@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.mapzen.R;
 import com.mapzen.osrm.Instruction;
+import com.mapzen.util.DisplayHelper;
 
 import java.util.List;
 import java.util.Locale;
@@ -85,42 +86,19 @@ public class DirectionListFragment extends ListFragment {
                     view.findViewById(R.id.simple_instruction);
             final TextView distance = (TextView) view.findViewById(R.id.distance);
 
-
             if (position == 0) {
                 icon.setImageResource(R.drawable.ic_locate_active);
                 simpleInstruction.setText(context.getResources()
                         .getString(R.string.current_location));
             } else {
                 final Instruction current = instructions.get(position - CURRENT_LOCATION_OFFSET);
-                icon.setImageResource(getRouteDrawable(current.getTurnInstruction()));
+                icon.setImageResource(DisplayHelper.getRouteDrawable(context,
+                        current.getTurnInstruction(), DisplayHelper.IconStyle.BLACK));
                 simpleInstruction.setText(current.getSimpleInstruction());
-                distance.setText(formatDistance(current));
+                distance.setText(current.getShortFormatDistance(Locale.US));
             }
 
             return view;
-        }
-
-        private String formatDistance(Instruction instruction) {
-            double distanceInMiles = instruction.getDistanceInMiles();
-
-            if (distanceInMiles < 1) {
-                return String.format(Locale.US, "%d ft", instruction.getDistanceLessThanMileInFeet());
-            }
-
-            if (distanceInMiles == (int) distanceInMiles) {
-                return String.format(Locale.US, "%d mi", (int) distanceInMiles);
-            }
-
-            return String.format(Locale.US, "%.2f mi", distanceInMiles);
-        }
-
-        private int getRouteDrawable(int turnInstruction) {
-            int drawableId = context.getResources().getIdentifier("ic_route_bl_"
-                    + turnInstruction, "drawable", context.getPackageName());
-            if (drawableId == 0) {
-                drawableId = R.drawable.ic_route_bl_10;
-            }
-            return drawableId;
         }
     }
 }
