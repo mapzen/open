@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.oscim.core.GeoPoint;
 import org.robolectric.Robolectric;
+import org.robolectric.shadows.ShadowLog;
 import org.robolectric.shadows.ShadowToast;
 
 import java.util.List;
@@ -46,6 +47,7 @@ public class RouteFragmentTest {
 
     @Before
     public void setUp() throws Exception {
+        ShadowLog.stream = System.out;
         ShadowVolley.clearMockRequestQueue();
         act = Robolectric.buildActivity(BaseActivity.class).create().get();
         fragment = new RouteFragment();
@@ -197,28 +199,29 @@ public class RouteFragmentTest {
         return instruction;
     }
 
+    private Location getTestLocation(double lat, double lng) {
+        Location testLocation = new Location("testing");
+        testLocation.setLatitude(lat);
+        testLocation.setLongitude(lng);
+        return testLocation;
+    }
+
     @Test
     public void onLocationChange_shouldAdvance() throws Exception {
-        ShadowLocationClient shadowLocationClient = Robolectric.shadowOf_(act.getLocationClient());
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(1, 1));
+        instructions.add(getTestInstruction(2, 2));
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
 
         assertThat(fragment.getCurrentItem()).isEqualTo(0);
-        Location testLocation = new Location("testing");
-        testLocation.setLatitude(0.0);
-        testLocation.setLongitude(0.0);
-        LocationListener listener = shadowLocationClient.getLocationListener();
-        listener.onLocationChanged(testLocation);
+        fragment.onLocationChanged(getTestLocation(1, 1));
         assertThat(fragment.getCurrentItem()).isEqualTo(1);
     }
 
     @Test
     public void onLocationChange_shouldNotAdvance() throws Exception {
-        ShadowLocationClient shadowLocationClient = Robolectric.shadowOf_(act.getLocationClient());
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(0, 0));
@@ -227,11 +230,25 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
 
         assertThat(fragment.getCurrentItem()).isEqualTo(0);
-        Location testLocation = new Location("testing");
-        testLocation.setLatitude(1.0);
-        testLocation.setLongitude(1.0);
-        LocationListener listener = shadowLocationClient.getLocationListener();
-        listener.onLocationChanged(testLocation);
+        fragment.onLocationChanged(getTestLocation(1, 0));
         assertThat(fragment.getCurrentItem()).isEqualTo(0);
+    }
+
+    @Test
+    public void onLocationChange_shouldAdvanceToNextReleventTurn() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(6, 6));
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+
+        assertThat(fragment.getCurrentItem()).isEqualTo(0);
+        fragment.onLocationChanged(getTestLocation(6, 6));
+        assertThat(fragment.getCurrentItem()).isEqualTo(6);
     }
 }

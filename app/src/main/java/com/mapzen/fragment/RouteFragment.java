@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +16,11 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.RoutesAdapter;
-import com.mapzen.entity.Feature;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.util.Logger;
@@ -29,7 +28,6 @@ import com.mapzen.util.Logger;
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.PathLayer;
-import org.oscim.layers.marker.ItemizedIconLayer;
 
 import java.util.ArrayList;
 
@@ -37,7 +35,7 @@ import static com.mapzen.activity.BaseActivity.ROUTE_STACK;
 import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
 import static com.mapzen.util.ApiHelper.getRouteUrl;
 
-public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener {
+public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener, LocationListener {
     private ArrayList<Instruction> instructions;
     private GeoPoint from, destination;
     private ViewPager pager;
@@ -45,6 +43,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private RoutesAdapter adapter;
     private Route route;
     private LocationRequest locationRequest;
+    public static final int WALKING_THRESH_HOLD = 10;
 
     public void setInstructions(ArrayList<Instruction> instructions) {
         Logger.d("instructions: " + instructions.toString());
@@ -54,55 +53,64 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onResume() {
         super.onResume();
-        locationRequest = LocationRequest.create();
-        locationRequest.setInterval(BaseActivity.LOCATION_INTERVAL);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        act.getLocationClient().requestLocationUpdates(locationRequest, locationListener);
+        initLocationClient();
         act.hideActionBar();
         drawRoute();
     }
 
-    private LocationListener locationListener = new LocationListener() {
-        @Override
-        public void onLocationChanged(Location location) {
-            Location other = getNextMidPoint();
-            if(other != null) {
-                int distanceToOther = (int) Math.floor(location.distanceTo(other));
-                int distanceTreshhold = (int) Math.floor(getNextInstruction().getDistance() / 2);
-                if(distanceToOther > distanceTreshhold) {
-                    Logger.d("Location: in routes: outside");
+    private void initLocationClient() {
+        locationRequest = LocationRequest.create();
+        locationRequest.setInterval(BaseActivity.LOCATION_INTERVAL);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        act.getLocationClient().requestLocationUpdates(locationRequest, this);
+    }
+
+    private Location getNextTurn() {
+        Location nextTurn = new Location("internal");
+        Instruction nextInstruction = getNextInstruction();
+        nextTurn.setLatitude(nextInstruction.getPoint()[0]);
+        nextTurn.setLatitude(nextInstruction.getPoint()[1]);
+        return nextTurn;
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Logger.d("RouteFragment::onLocationChangeLocation" + instructions.toString());
+
+        for(Instruction instruction: instructions) {
+            Location nextTurn = new Location("boo");
+            nextTurn.setLatitude(instruction.getPoint()[0]);
+            nextTurn.setLongitude(instruction.getPoint()[1]);
+
+            System.out.println("foooshow");
+            if(location != null && nextTurn != null) {
+                int distanceToNextTurn = (int) Math.floor(location.distanceTo(nextTurn));
+                if(distanceToNextTurn > WALKING_THRESH_HOLD) {
+                    Logger.d("RouteFragment::onLocationChangeLocation: outside defined radius");
                     Toast.makeText(act, "outside", Toast.LENGTH_SHORT).show();
                 } else {
-                    Logger.d("Location: in routes: inside");
-                    next();
+                    Logger.d("RouteFragment::onLocationChangeLocation: inside defined radius advancing");
+                    goTo(instructions.indexOf(instruction));
                 }
-                Logger.d("Location: in routes fragment next mid: " + other.toString());
-                Logger.d("Location: in routes fragment distance calc: to other: " + String.valueOf(distanceToOther));
-                Logger.d("Location: in routes fragment distance calc: threshold: " + String.valueOf(distanceTreshhold));
-                Logger.d("Location: in routes fragment: " + location.toString());
+                Logger.d("RouteFragment::onLocationChangeLocation: new current location: " + location.toString());
+                Logger.d("RouteFragment::onLocationChangeLocation: next turn: " + nextTurn.toString());
+                Logger.d("RouteFragment::onLocationChangeLocation: distance to next turn: " + String.valueOf(distanceToNextTurn));
+                Logger.d("RouteFragment::onLocationChangeLocation: threshold: " + String.valueOf(WALKING_THRESH_HOLD));
             } else {
-                Logger.d("Location: in routes fragment: other is null screw it");
+                if (location == null) {
+                    Logger.d("RouteFragment::onLocationChangeLocation: **next turn** is null screw it");
+                }
+                if (nextTurn == null) {
+                    Logger.d("RouteFragment::onLocationChangeLocation: **location** is null screw it");
+                }
             }
         }
-    };
-
-    private Location getNextMidPoint() {
-        Instruction i1 = getNextInstruction();
-        Instruction i2 = getNextNextInstruction();
-        if(i1 != null && i2 != null) {
-            double[] foo = i1.calculateMidpointToNext(i2.getPoint());
-            Location loc = new Location("stuff");
-            loc.setLatitude(foo[0]);
-            loc.setLongitude(foo[1]);
-            return loc;
-        }
-        return null;
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        act.getLocationClient().removeLocationUpdates(locationListener);
+        act.getLocationClient().removeLocationUpdates(this);
         clearRoute();
     }
 
@@ -159,16 +167,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager.setCurrentItem(pager.getCurrentItem() + 1);
     }
 
+    public void goTo(int i) {
+        pager.setCurrentItem(i);
+    }
+
     public Instruction getNextInstruction() {
         if(instructions.size() > pager.getCurrentItem() + 1) {
             return instructions.get(pager.getCurrentItem() + 1);
-        }
-        return null;
-    }
-
-    public Instruction getNextNextInstruction() {
-        if(instructions.size() > pager.getCurrentItem() + 2) {
-            return instructions.get(pager.getCurrentItem() + 2);
         }
         return null;
     }
