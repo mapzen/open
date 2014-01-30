@@ -35,7 +35,8 @@ import static com.mapzen.activity.BaseActivity.ROUTE_STACK;
 import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
 import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
 
-public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener, LocationListener {
+public class RouteFragment extends BaseFragment
+        implements DirectionListFragment.DirectionListener, LocationListener {
     public static final int WALKING_THRESH_HOLD = 10;
     private ArrayList<Instruction> instructions;
     private GeoPoint from, destination;
