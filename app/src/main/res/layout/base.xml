@@ -18,14 +18,14 @@
         class="com.mapzen.fragment.MapFragment" />
 
     <FrameLayout
-        android:id="@+id/full_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <FrameLayout
         android:id="@+id/routes_container"
         android:background="@android:color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <FrameLayout
+        android:id="@+id/full_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

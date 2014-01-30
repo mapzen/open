@@ -1,12 +1,13 @@
 package com.mapzen.fragment;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -29,10 +30,11 @@ import static com.mapzen.activity.BaseActivity.ROUTE_STACK;
 import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
 import static com.mapzen.util.ApiHelper.getRouteUrl;
 
-public class RouteFragment extends BaseFragment {
+public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener {
     private ArrayList<Instruction> instructions;
     private GeoPoint from, destination;
     private ViewPager pager;
+    private Button button;
     private RoutesAdapter adapter;
     private Route route;
 
@@ -56,12 +58,16 @@ public class RouteFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.route_widget, container, false);
-        FrameLayout frame = (FrameLayout) container;
-        frame.setVisibility(View.VISIBLE);
-
         pager = (ViewPager) rootView.findViewById(R.id.routes);
+        button = (Button) rootView.findViewById(R.id.view_steps);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDirectionListFragment();
+            }
+        });
         adapter = new RoutesAdapter(getFragmentManager());
         adapter.setMap(mapFragment.getMap());
         adapter.setInstructions(instructions);
@@ -70,6 +76,14 @@ public class RouteFragment extends BaseFragment {
         adapter.notifyDataSetChanged();
 
         return rootView;
+    }
+
+    private void showDirectionListFragment() {
+        final Fragment fragment = DirectionListFragment.newInstance(instructions, this);
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .add(R.id.full_list, fragment, DirectionListFragment.TAG)
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
@@ -156,5 +170,10 @@ public class RouteFragment extends BaseFragment {
         PathLayer layer = mapFragment.getPathLayer();
         layer.clearPath();
         mapFragment.updateMap();
+    }
+
+    @Override
+    public void onInstructionSelected(int index) {
+        pager.setCurrentItem(index, true);
     }
 }
