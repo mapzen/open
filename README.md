@@ -10,7 +10,7 @@ The following dependencies must be installed locally prior to building/running t
 
 Compile and install the VectorTileMap depenency in the local .m2 repository.
 
-<pre><code>$ clone	git@github.com:mapzen/vtm.git
+<pre><code>$ git clone	git@github.com:mapzen/vtm.git
 $ cd vtm
 $ git submodule init
 $ git submodule update
@@ -25,7 +25,7 @@ Clone project and import `build.gradle` in project root into Android Studio.
 
 Build via command line using the Gradle wrapper.
 
-<pre><code>$ clone git@github.com:mapzen/android.git mapzen
+<pre><code>$ git clone git@github.com:mapzen/android.git mapzen
 $ cd mapzen
 $ ./gradlew clean installDebug
 </pre></code>
