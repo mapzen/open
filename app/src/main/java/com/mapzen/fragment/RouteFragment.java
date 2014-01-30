@@ -4,6 +4,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +20,6 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
-import com.mapzen.adapters.RoutesAdapter;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.util.Logger;
@@ -27,6 +27,7 @@ import com.mapzen.util.Logger;
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.PathLayer;
+import org.oscim.map.Map;
 
 import java.util.ArrayList;
 
@@ -35,6 +36,7 @@ import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
 import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener, LocationListener {
+    public static final int WALKING_THRESH_HOLD = 10;
     private ArrayList<Instruction> instructions;
     private GeoPoint from, destination;
     private ViewPager pager;
@@ -42,7 +44,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private RoutesAdapter adapter;
     private Route route;
     private LocationRequest locationRequest;
-    public static final int WALKING_THRESH_HOLD = 10;
 
     public void setInstructions(ArrayList<Instruction> instructions) {
         Logger.d("instructions: " + instructions.toString());
@@ -115,7 +116,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.route_widget, container, false);
         FrameLayout frame = (FrameLayout) container;
         if (frame != null) {
@@ -245,5 +246,47 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onInstructionSelected(int index) {
         pager.setCurrentItem(index, true);
+    }
+
+    private static class RoutesAdapter extends FragmentStatePagerAdapter {
+        private ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        private Map map;
+        private RouteFragment parent;
+
+        public RoutesAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public int getCount() {
+            return instructions.size();
+        }
+
+        public void setInstructions(ArrayList<Instruction> instructions) {
+            this.instructions = instructions;
+        }
+
+        public void setMap(Map map) {
+            this.map = map;
+        }
+
+        public void setParent(RouteFragment parent) {
+            this.parent = parent;
+        }
+
+        @Override
+        public Fragment getItem(int i) {
+            InstructionFragment instructionFragment = new InstructionFragment();
+            instructionFragment.setInstruction(instructions.get(i));
+            instructionFragment.setMap(map);
+            instructionFragment.setParent(parent);
+            if (getCount() > i + 1) {
+                instructionFragment.setHasNext();
+            }
+            if (i != 0) {
+                instructionFragment.setHasPrev();
+            }
+            return instructionFragment;
+        }
     }
 }
