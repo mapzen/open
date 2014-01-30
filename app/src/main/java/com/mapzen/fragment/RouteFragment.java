@@ -32,7 +32,7 @@ import java.util.ArrayList;
 
 import static com.mapzen.activity.BaseActivity.ROUTE_STACK;
 import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
-import static com.mapzen.util.ApiHelper.getRouteUrlForFoot;
+import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener, LocationListener {
     private ArrayList<Instruction> instructions;
@@ -170,13 +170,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager.setCurrentItem(i);
     }
 
-    public Instruction getNextInstruction() {
-        if (instructions.size() > pager.getCurrentItem() + 1) {
-            return instructions.get(pager.getCurrentItem() + 1);
-        }
-        return null;
-    }
-
     public void prev() {
         pager.setCurrentItem(pager.getCurrentItem() - 1);
     }
@@ -190,7 +183,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.getPagerResultsFragment().clearMap();
         act.showProgressDialog();
         popSearchResultsStack();
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrlForFoot(
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrlForCar(
                 app.getStoredZoomLevel(), from, destination), null,
                 new Response.Listener<JSONObject>() {
                     @Override
