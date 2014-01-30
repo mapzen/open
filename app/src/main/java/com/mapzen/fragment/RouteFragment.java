@@ -1,5 +1,7 @@
 package com.mapzen.fragment;
 
+import android.content.ClipData;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,8 +15,13 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.mapzen.R;
+import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.RoutesAdapter;
+import com.mapzen.entity.Feature;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.util.Logger;
@@ -22,6 +29,7 @@ import com.mapzen.util.Logger;
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.PathLayer;
+import org.oscim.layers.marker.ItemizedIconLayer;
 
 import java.util.ArrayList;
 
@@ -36,6 +44,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private Button button;
     private RoutesAdapter adapter;
     private Route route;
+    private LocationRequest locationRequest;
 
     public void setInstructions(ArrayList<Instruction> instructions) {
         Logger.d("instructions: " + instructions.toString());
@@ -45,13 +54,55 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onResume() {
         super.onResume();
+        locationRequest = LocationRequest.create();
+        locationRequest.setInterval(BaseActivity.LOCATION_INTERVAL);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        act.getLocationClient().requestLocationUpdates(locationRequest, locationListener);
         act.hideActionBar();
         drawRoute();
+    }
+
+    private LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            Location other = getNextMidPoint();
+            if(other != null) {
+                int distanceToOther = (int) Math.floor(location.distanceTo(other));
+                int distanceTreshhold = (int) Math.floor(getNextInstruction().getDistance() / 2);
+                if(distanceToOther > distanceTreshhold) {
+                    Logger.d("Location: in routes: outside");
+                    Toast.makeText(act, "outside", Toast.LENGTH_SHORT).show();
+                } else {
+                    Logger.d("Location: in routes: inside");
+                    next();
+                }
+                Logger.d("Location: in routes fragment next mid: " + other.toString());
+                Logger.d("Location: in routes fragment distance calc: to other: " + String.valueOf(distanceToOther));
+                Logger.d("Location: in routes fragment distance calc: threshold: " + String.valueOf(distanceTreshhold));
+                Logger.d("Location: in routes fragment: " + location.toString());
+            } else {
+                Logger.d("Location: in routes fragment: other is null screw it");
+            }
+        }
+    };
+
+    private Location getNextMidPoint() {
+        Instruction i1 = getNextInstruction();
+        Instruction i2 = getNextNextInstruction();
+        if(i1 != null && i2 != null) {
+            double[] foo = i1.calculateMidpointToNext(i2.getPoint());
+            Location loc = new Location("stuff");
+            loc.setLatitude(foo[0]);
+            loc.setLongitude(foo[1]);
+            return loc;
+        }
+        return null;
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        act.getLocationClient().removeLocationUpdates(locationListener);
         clearRoute();
     }
 
@@ -59,6 +110,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.route_widget, container, false);
+        FrameLayout frame = (FrameLayout) container;
+        if(frame != null) {
+            frame.setVisibility(View.VISIBLE);
+        }
         pager = (ViewPager) rootView.findViewById(R.id.routes);
         button = (Button) rootView.findViewById(R.id.view_steps);
         button.setOnClickListener(new View.OnClickListener() {
@@ -104,8 +159,26 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager.setCurrentItem(pager.getCurrentItem() + 1);
     }
 
+    public Instruction getNextInstruction() {
+        if(instructions.size() > pager.getCurrentItem() + 1) {
+            return instructions.get(pager.getCurrentItem() + 1);
+        }
+        return null;
+    }
+
+    public Instruction getNextNextInstruction() {
+        if(instructions.size() > pager.getCurrentItem() + 2) {
+            return instructions.get(pager.getCurrentItem() + 2);
+        }
+        return null;
+    }
+
     public void prev() {
         pager.setCurrentItem(pager.getCurrentItem() - 1);
+    }
+
+    public int getCurrentItem() {
+        return pager.getCurrentItem();
     }
 
     public void attachToActivity() {
@@ -148,8 +221,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private void drawRoute() {
         PathLayer layer = mapFragment.getPathLayer();
         layer.clearPath();
-        for (double[] pair : route.getGeometry()) {
-            layer.addPoint(new GeoPoint(pair[0], pair[1]));
+        if (route != null) {
+            for (double[] pair : route.getGeometry()) {
+                layer.addPoint(new GeoPoint(pair[0], pair[1]));
+            }
         }
     }
 
