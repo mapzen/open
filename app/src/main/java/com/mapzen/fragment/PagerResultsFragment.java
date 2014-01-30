@@ -2,7 +2,6 @@ package com.mapzen.fragment;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,6 @@ import com.mapzen.adapters.SearchViewAdapter;
 import com.mapzen.entity.Feature;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialog;
-import com.mapzen.util.VolleyHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,7 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static com.mapzen.MapzenApplication.LOG_TAG;
 import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
 
 public class PagerResultsFragment extends BaseFragment {
@@ -192,7 +189,7 @@ public class PagerResultsFragment extends BaseFragment {
                 try {
                     feature.buildFromJSON(jsonArray.getJSONObject(i));
                 } catch (JSONException e) {
-                    Log.e(LOG_TAG, e.toString());
+                    Logger.e(e.toString());
                 }
                 add(feature);
             }
@@ -207,12 +204,11 @@ public class PagerResultsFragment extends BaseFragment {
     public boolean executeSearchOnMap(final SearchView view, String query) {
         app.cancelAllApiRequests();
         attachToContainer();
-        final MapzenProgressDialog progressDialog = new MapzenProgressDialog(act);
-        progressDialog.show();
+        act.showProgressDialog();
         app.setCurrentSearchTerm(query);
         JsonObjectRequest jsonObjectRequest =
                 Feature.search(mapFragment.getMap(), query,
-                        getSearchListener(view, progressDialog), getErrorListener());
+                        getSearchListener(view), getErrorListener());
         app.enqueueApiRequest(jsonObjectRequest);
         return true;
     }
@@ -221,13 +217,12 @@ public class PagerResultsFragment extends BaseFragment {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                String errorMsg = VolleyHelper.Error.getMessage(volleyError, act);
-                Log.e(LOG_TAG, "request: error: " + errorMsg);
+                onServerError(volleyError);
             }
         };
     }
 
-    private Response.Listener<JSONObject> getSearchListener(final SearchView view, final MapzenProgressDialog dialog) {
+    private Response.Listener<JSONObject> getSearchListener(final SearchView view) {
         return new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject jsonObject) {
@@ -236,10 +231,10 @@ public class PagerResultsFragment extends BaseFragment {
                 try {
                     jsonArray = jsonObject.getJSONArray("features");
                 } catch (JSONException e) {
-                    Log.e(LOG_TAG, e.toString());
+                    Logger.e(e.toString());
                 }
                 setSearchResults(jsonArray);
-                dialog.dismiss();
+                act.dismissProgressDialog();
                 view.clearFocus();
             }
         };
