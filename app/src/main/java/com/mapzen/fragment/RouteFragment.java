@@ -118,10 +118,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.route_widget, container, false);
-        FrameLayout frame = (FrameLayout) container;
-        if (frame != null) {
-            frame.setVisibility(View.VISIBLE);
-        }
         pager = (ViewPager) rootView.findViewById(R.id.routes);
         button = (Button) rootView.findViewById(R.id.view_steps);
         button.setOnClickListener(new View.OnClickListener() {
