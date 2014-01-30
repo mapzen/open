@@ -31,7 +31,7 @@ import java.util.ArrayList;
 
 import static com.mapzen.activity.BaseActivity.ROUTE_STACK;
 import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
-import static com.mapzen.util.ApiHelper.getRouteUrl;
+import static com.mapzen.util.ApiHelper.getRouteUrlForFoot;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener, LocationListener {
     private ArrayList<Instruction> instructions;
@@ -73,11 +73,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onLocationChanged(Location location) {
         Logger.d("RouteFragment::onLocationChangeLocation" + instructions.toString());
-        for(Instruction instruction: instructions) {
+        for (Instruction instruction : instructions) {
             Location nextTurn = getNextTurnTo(instruction);
-            if(location != null && nextTurn != null) {
+            if (location != null && nextTurn != null) {
                 int distanceToNextTurn = (int) Math.floor(location.distanceTo(nextTurn));
-                if(distanceToNextTurn > WALKING_THRESH_HOLD) {
+                if (distanceToNextTurn > WALKING_THRESH_HOLD) {
                     Logger.d("RouteFragment::onLocationChangeLocation: " +
                             "outside defined radius");
                     Toast.makeText(act, "outside", Toast.LENGTH_SHORT).show();
@@ -117,7 +117,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.route_widget, container, false);
         FrameLayout frame = (FrameLayout) container;
-        if(frame != null) {
+        if (frame != null) {
             frame.setVisibility(View.VISIBLE);
         }
         pager = (ViewPager) rootView.findViewById(R.id.routes);
@@ -170,7 +170,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public Instruction getNextInstruction() {
-        if(instructions.size() > pager.getCurrentItem() + 1) {
+        if (instructions.size() > pager.getCurrentItem() + 1) {
             return instructions.get(pager.getCurrentItem() + 1);
         }
         return null;
@@ -189,7 +189,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.getPagerResultsFragment().clearMap();
         act.showProgressDialog();
         popSearchResultsStack();
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrl(
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrlForFoot(
                 app.getStoredZoomLevel(), from, destination), null,
                 new Response.Listener<JSONObject>() {
                     @Override

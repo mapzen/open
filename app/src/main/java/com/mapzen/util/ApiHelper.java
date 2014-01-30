@@ -11,6 +11,7 @@ public abstract class ApiHelper {
     public static final String TRUE = "true";
 
     public static final String ROUTE_URL = "osrm.test.mapzen.com";
+    public static final String ROUTE_FOOT_PATH = "foot/viaroute";
     public static final String ROUTE_CAR_PATH = "car/viaroute";
     public static final String ROUTE_ZOOMLEVEL = "z";
     public static final String ROUTE_OUTPUT_KEY = "output";
@@ -44,10 +45,18 @@ public abstract class ApiHelper {
         return url.toString();
     }
 
-    public static String getRouteUrl(double zoomLevel, GeoPoint from, GeoPoint destination) {
+    public static String getRouteUrlForFoot(double zoomLevel, GeoPoint from, GeoPoint destination) {
+        return getRouteUrl(ROUTE_FOOT_PATH, zoomLevel, from, destination);
+    }
+
+    public static String getRouteUrlForCar(double zoomLevel, GeoPoint from, GeoPoint destination) {
+        return getRouteUrl(ROUTE_CAR_PATH, zoomLevel, from, destination);
+    }
+
+    public static String getRouteUrl(String type, double zoomLevel, GeoPoint from, GeoPoint destination) {
         int zoom = (int) zoomLevel;
         Uri.Builder url = new Uri.Builder();
-        url.scheme(HTTP_SCHEMA).authority(ROUTE_URL).path(ROUTE_CAR_PATH);
+        url.scheme(HTTP_SCHEMA).authority(ROUTE_URL).path(type);
         url.appendQueryParameter(ROUTE_ZOOMLEVEL, String.valueOf(zoom));
         url.appendQueryParameter(ROUTE_OUTPUT_KEY, ApiHelper.JSON);
         url.appendQueryParameter(ROUTE_LOCATION_KEY,

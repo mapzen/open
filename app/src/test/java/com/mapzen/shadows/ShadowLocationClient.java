@@ -31,13 +31,13 @@ public class ShadowLocationClient {
     }
 
     @Implementation
-    public void requestLocationUpdates(LocationRequest request, LocationListener locationListener) {
+    public void requestLocationUpdates(LocationRequest request, LocationListener listener) {
         updatesRequested = true;
-        this.locationListener = locationListener;
+        this.locationListener = listener;
     }
 
     @Implementation
-    public void removeLocationUpdates(LocationListener locationListener) {
+    public void removeLocationUpdates(LocationListener listener) {
         updatesRequested = false;
     }
 

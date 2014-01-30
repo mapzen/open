@@ -194,7 +194,7 @@ public class RouteFragmentTest {
                 "            128\n" + // azimuth
                 "        ]\n";
         Instruction instruction = new Instruction(new JSONArray(raw));
-        double[] point = { lat , lng };
+        double[] point = {lat, lng};
         instruction.setPoint(point);
         return instruction;
     }
