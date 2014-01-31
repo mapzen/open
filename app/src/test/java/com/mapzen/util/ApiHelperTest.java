@@ -10,7 +10,6 @@ import org.oscim.core.GeoPoint;
 import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
 import static com.mapzen.util.ApiHelper.getRouteUrlForFoot;
 import static com.mapzen.util.ApiHelper.getUrlForSearch;
-import static com.mapzen.util.ApiHelper.getUrlForSuggest;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 

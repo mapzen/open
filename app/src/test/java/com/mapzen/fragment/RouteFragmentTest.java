@@ -19,22 +19,20 @@ import com.mapzen.shadows.ShadowLocationClient;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.util.TestHelper;
 
-import org.json.JSONException;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.oscim.core.GeoPoint;
-import org.oscim.map.TestMap;
 import org.robolectric.Robolectric;
 import org.robolectric.shadows.ShadowLog;
 import org.robolectric.shadows.ShadowToast;
-
-import java.util.List;
 import org.robolectric.util.FragmentTestUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.mapzen.util.TestHelper.initBaseActivity;
 import static com.mapzen.util.TestHelper.initMapFragment;
@@ -275,7 +273,7 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void shouldHavePrevArrow() throws Exception{
+    public void shouldHavePrevArrow() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(0, 0));

@@ -6,11 +6,10 @@ import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.fragment.MapFragment;
 
+import org.apache.commons.io.FileUtils;
 import org.oscim.map.TestMap;
 import org.robolectric.Robolectric;
 import org.robolectric.tester.android.view.TestMenu;
-
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 

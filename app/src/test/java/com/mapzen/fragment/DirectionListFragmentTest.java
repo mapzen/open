@@ -114,7 +114,7 @@ public class DirectionListFragmentTest {
         private double distanceInMiles;
 
         public TestInstruction(String simpleInstruction, int turnInstruction,
-                double distanceInMiles) throws Exception {
+                               double distanceInMiles) throws Exception {
             this.simpleInstruction = simpleInstruction;
             this.turnInstruction = turnInstruction;
             this.distanceInMiles = distanceInMiles;
