@@ -43,7 +43,7 @@ public class ApiHelperTest {
 
     @Test
     public void testGetCarRouteUrl() throws Exception {
-        String expected = "http://api-osrm-test.mapzen.com/"
+        String expected = "http://osrm.test.mapzen.com/"
                 + "car/viaroute?z=17&output=json&loc=1.0%2C2.0&loc=3.0%2C4.0&instructions=true";
         String actual = getRouteUrlForCar(17, new GeoPoint(1.0, 2.0), new GeoPoint(3.0, 4.0));
         assertThat(actual, equalTo(expected));

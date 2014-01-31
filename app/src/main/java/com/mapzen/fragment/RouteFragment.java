@@ -1,15 +1,22 @@
 package com.mapzen.fragment;
 
+import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -17,10 +24,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
+import com.mapzen.entity.Feature;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
+import com.mapzen.util.DisplayHelper;
 import com.mapzen.util.Logger;
 
 import org.json.JSONObject;
@@ -29,6 +39,7 @@ import org.oscim.layers.PathLayer;
 import org.oscim.map.Map;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.mapzen.activity.BaseActivity.ROUTE_STACK;
 import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
@@ -44,6 +55,8 @@ public class RouteFragment extends BaseFragment
     private RoutesAdapter adapter;
     private Route route;
     private LocationRequest locationRequest;
+    public static final int ROUTE_ZOOM_LEVEL = 17;
+
 
     public void setInstructions(ArrayList<Instruction> instructions) {
         Logger.d("instructions: " + instructions.toString());
@@ -126,11 +139,26 @@ public class RouteFragment extends BaseFragment
                 showDirectionListFragment();
             }
         });
-        adapter = new RoutesAdapter(getFragmentManager());
-        adapter.setMap(mapFragment.getMap());
-        adapter.setInstructions(instructions);
+        adapter = new RoutesAdapter(act, instructions);
         adapter.setParent(this);
         pager.setAdapter(adapter);
+        pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i2) {
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                double[] point = instructions.get(i).getPoint();
+                Map map = act.getMap();
+                map.setMapPosition(point[0], point[1], Math.pow(2, ROUTE_ZOOM_LEVEL));
+                map.getViewport().setRotation(instructions.get(i).getBearing());
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+            }
+        });
         adapter.notifyDataSetChanged();
 
         return rootView;
@@ -244,26 +272,15 @@ public class RouteFragment extends BaseFragment
         pager.setCurrentItem(index, true);
     }
 
-    private static class RoutesAdapter extends FragmentStatePagerAdapter {
-        private ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        private Map map;
+    private static class RoutesAdapter extends PagerAdapter {
+        private List<Instruction> instructions = new ArrayList<Instruction>();
         private RouteFragment parent;
+        private Context context;
 
-        public RoutesAdapter(FragmentManager fm) {
-            super(fm);
-        }
 
-        @Override
-        public int getCount() {
-            return instructions.size();
-        }
-
-        public void setInstructions(ArrayList<Instruction> instructions) {
+        public RoutesAdapter(Context context, List<Instruction> instructions) {
+            this.context = context;
             this.instructions = instructions;
-        }
-
-        public void setMap(Map map) {
-            this.map = map;
         }
 
         public void setParent(RouteFragment parent) {
@@ -271,18 +288,60 @@ public class RouteFragment extends BaseFragment
         }
 
         @Override
-        public Fragment getItem(int i) {
-            InstructionFragment instructionFragment = new InstructionFragment();
-            instructionFragment.setInstruction(instructions.get(i));
-            instructionFragment.setMap(map);
-            instructionFragment.setParent(parent);
-            if (getCount() > i + 1) {
-                instructionFragment.setHasNext();
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            Logger.d("RoutesAdapter::destroyItem item: " + String.valueOf(position));
+            container.removeView((View) object);
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            Logger.d("RoutesAdapter::instantiateItem " + String.valueOf(position));
+            Instruction instruction = instructions.get(position);
+            View view = View.inflate(context, R.layout.fragment_instruction, null);
+
+            TextView fullInstruction = (TextView) view.findViewById(R.id.full_instruction);
+            fullInstruction.setText(instruction.getFullInstruction());
+            Logger.d("RoutesAdapter::instantiateItem " + fullInstruction.getText());
+
+            ImageView turnIcon = (ImageView) view.findViewById(R.id.turn_icon);
+            turnIcon.setImageResource(DisplayHelper.getRouteDrawable(context,
+                    instruction.getTurnInstruction(), DisplayHelper.IconStyle.WHITE));
+
+            if (instructions.size() != position + 1) {
+                ImageButton next = (ImageButton) view.findViewById(R.id.route_next);
+                next.setVisibility(View.VISIBLE);
+                next.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        parent.next();
+                    }
+                });
             }
-            if (i != 0) {
-                instructionFragment.setHasPrev();
+
+            if (position > 0) {
+                ImageButton prev = (ImageButton) view.findViewById(R.id.route_previous);
+                prev.setVisibility(View.VISIBLE);
+                prev.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        parent.prev();
+                    }
+                });
             }
-            return instructionFragment;
+            container.addView(view);
+            return view;
+        }
+
+        @Override
+        public int getCount() {
+            Logger.d("RoutesAdapter::getCount: " + String.valueOf(instructions.size()));
+            return instructions.size();
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            Logger.d("RoutesAdapter::isViewFromObject: " + String.valueOf(view == object));
+            return view == object;
         }
     }
 }
