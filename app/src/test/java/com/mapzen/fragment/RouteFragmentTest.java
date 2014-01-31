@@ -121,14 +121,6 @@ public class RouteFragmentTest {
         assertThat(act.getSupportFragmentManager()).hasFragmentWithTag(DirectionListFragment.TAG);
     }
 
-    private void attachFragment() throws JSONException {
-        ShadowVolley.clearMockRequestQueue();
-        fragment.attachToActivity();
-        ShadowVolley.MockRequestQueue queue = ShadowVolley.getMockRequestQueue();
-        JsonObjectRequest request = (JsonObjectRequest) queue.getRequests().get(0);
-        queue.deliverResponse(request, new JSONObject(MOCK_ROUTE_JSON));
-    }
-
     @Test
     public void attachToActivity_shouldDismissProgressDialogOnError() throws Exception {
         fragment.attachToActivity();
@@ -147,6 +139,14 @@ public class RouteFragmentTest {
         request.deliverError(null);
         assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(act.getString(R.string.generic_server_error));
         assertThat(ShadowToast.getLatestToast()).hasDuration(Toast.LENGTH_LONG);
+    }
+
+    private void attachFragment() throws JSONException {
+        ShadowVolley.clearMockRequestQueue();
+        fragment.attachToActivity();
+        ShadowVolley.MockRequestQueue queue = ShadowVolley.getMockRequestQueue();
+        JsonObjectRequest request = (JsonObjectRequest) queue.getRequests().get(0);
+        queue.deliverResponse(request, new JSONObject(MOCK_ROUTE_JSON));
     }
 
     @Test

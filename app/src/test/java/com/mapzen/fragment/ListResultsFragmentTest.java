@@ -1,7 +1,6 @@
 package com.mapzen.fragment;
 
 import com.mapzen.MapzenTestRunner;
-import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
 
@@ -29,27 +28,6 @@ public class ListResultsFragmentTest {
     public void shouldNotBeNull() throws Exception {
         fragment = ListResultsFragment.newInstance(act, null);
         assertThat(fragment).isNotNull();
-    }
-
-    @Test
-    public void shouldNotBeAttached() throws Exception {
-        fragment = ListResultsFragment.newInstance(act, null);
-        assertThat(fragment).isNotAdded();
-    }
-
-    @Test
-    public void shouldBeAttached() throws Exception {
-        fragment = ListResultsFragment.newInstance(act, null);
-        fragment.attachToContainer(R.id.full_list);
-        assertThat(fragment).isAdded();
-    }
-
-    @Test
-    public void shouldBeHidden() throws Exception {
-        fragment = ListResultsFragment.newInstance(act, null);
-        fragment.attachToContainer(R.id.full_list);
-        fragment.detach();
-        assertThat(fragment).isHidden();
     }
 
     @Test

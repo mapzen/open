@@ -1,5 +1,6 @@
 package com.mapzen.fragment;
 
+import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -17,6 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.shadows.ShadowToast;
+import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.util.FragmentTestUtil;
 
 import java.util.Iterator;
@@ -33,11 +35,13 @@ public class PagerResultsFragmentTest {
     private PagerResultsFragment fragment;
     private MapzenApplication app;
     private BaseActivity act;
+    private TestMenu menu;
 
     @Before
     public void setUp() throws Exception {
         ShadowVolley.clearMockRequestQueue();
-        act = initBaseActivity();
+        menu = new TestMenu();
+        act = initBaseActivity(menu);
         initMapFragment(act);
         fragment = PagerResultsFragment.newInstance(act);
         FragmentTestUtil.startFragment(fragment);
@@ -84,6 +88,21 @@ public class PagerResultsFragmentTest {
         assertThat(ShadowToast.getTextOfLatestToast())
                 .isEqualTo(app.getString(R.string.generic_server_error));
         assertThat(ShadowToast.getLatestToast()).hasDuration(Toast.LENGTH_LONG);
+    }
+
+    @Test
+    public void viewAll_shouldAddListResultsFragment() throws Exception {
+        Button viewAllButton = (Button) fragment.getView().findViewById(R.id.view_all);
+        viewAllButton.performClick();
+        assertThat(act.getSupportFragmentManager()).hasFragmentWithTag(ListResultsFragment.TAG);
+    }
+
+    @Test
+    public void viewAll_shouldCollapseSearchView() throws Exception {
+        menu.findItem(R.id.search).expandActionView();
+        Button viewAllButton = (Button) fragment.getView().findViewById(R.id.view_all);
+        viewAllButton.performClick();
+        assertThat(menu.findItem(R.id.search).isActionViewExpanded()).isFalse();
     }
 
     private void assertRequest(Request request) {

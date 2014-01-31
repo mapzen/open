@@ -14,12 +14,10 @@ import com.mapzen.entity.Feature;
 
 import java.util.ArrayList;
 
-import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
-
 public class ListResultsFragment extends ListFragment {
-    private BaseActivity act;
-    public static final String FULL_LIST = "full list";
+    public static final String TAG = ListResultsFragment.class.getSimpleName();
     private static ListResultsFragment listResultsFragment;
+    private BaseActivity act;
 
     public void setAct(BaseActivity act) {
         this.act = act;
@@ -36,7 +34,7 @@ public class ListResultsFragment extends ListFragment {
         PagerResultsFragment pagerResultsFragment = act.getPagerResultsFragment();
         pagerResultsFragment.setCurrentItem(position);
         act.getSearchView().getSuggestionsAdapter().swapCursor(null);
-        detach();
+        act.onBackPressed();
     }
 
     public static ListResultsFragment newInstance(BaseActivity act, ArrayList<Feature> features) {
@@ -46,34 +44,5 @@ public class ListResultsFragment extends ListFragment {
         listResultsFragment.setListAdapter(placeArrayAdapter);
         listResultsFragment.setAct(act);
         return listResultsFragment;
-    }
-
-    public void attachToContainer(int container) {
-        if (isAdded()) {
-            show();
-        } else {
-            add(container);
-        }
-    }
-
-    private void add(int container) {
-        act.getSupportFragmentManager().beginTransaction()
-                .addToBackStack(SEARCH_RESULTS_STACK)
-                .add(container, this, FULL_LIST)
-                .commit();
-    }
-
-    private void show() {
-        act.getSupportFragmentManager().beginTransaction()
-                .addToBackStack(SEARCH_RESULTS_STACK)
-                .show(this)
-                .commit();
-    }
-
-    public void detach() {
-        act.getSupportFragmentManager().beginTransaction()
-                .addToBackStack(SEARCH_RESULTS_STACK)
-                .hide(this)
-                .commit();
     }
 }

@@ -22,7 +22,6 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.adapters.AutoCompleteAdapter;
 import com.mapzen.entity.Feature;
-import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.fragment.PagerResultsFragment;
 import com.mapzen.util.Logger;
@@ -35,8 +34,7 @@ import static com.google.android.gms.common.GooglePlayServicesClient.ConnectionC
 import static com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
 import static com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY;
 
-public class BaseActivity extends MapActivity
-        implements MenuItem.OnActionExpandListener {
+public class BaseActivity extends MapActivity {
     public static final int LOCATION_INTERVAL = 5000;
     public static final String PLAY_SERVICE_FAIL_MESSAGE = "Your device cannot be located";
     public static final String COM_MAPZEN_UPDATES_LOCATION = "com.mapzen.updates.location";
@@ -145,7 +143,6 @@ public class BaseActivity extends MapActivity
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         menuItem = menu.findItem(R.id.search);
-        menuItem.setOnActionExpandListener(this);
         final SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         setupAdapter(searchView);
@@ -187,29 +184,6 @@ public class BaseActivity extends MapActivity
             app.setCurrentSearchTerm(queryString);
             searchView.setQuery(queryString, true);
         }
-    }
-
-    @Override
-    public boolean onMenuItemActionExpand(MenuItem item) {
-        return true;
-    }
-
-    private PagerResultsFragment getActivePagerResults() {
-        return (PagerResultsFragment) getSupportFragmentManager()
-                .findFragmentByTag(PagerResultsFragment.PAGER_RESULTS);
-    }
-
-    private ListResultsFragment getActiveListResults() {
-        return (ListResultsFragment) getSupportFragmentManager()
-                .findFragmentByTag(ListResultsFragment.FULL_LIST);
-    }
-
-    @Override
-    public boolean onMenuItemActionCollapse(MenuItem item) {
-        if (getActiveListResults() != null || getActivePagerResults() != null) {
-            onBackPressed();
-        }
-        return true;
     }
 
     public Map getMap() {
@@ -257,11 +231,11 @@ public class BaseActivity extends MapActivity
     }
 
     public void hideActionBar() {
-        blurSearchMenu();
+        collapseSearchView();
         getActionBar().hide();
     }
 
-    public void blurSearchMenu() {
+    public void collapseSearchView() {
         MenuItem searchMenu = getSearchMenu();
         if (searchMenu != null) {
             searchMenu.collapseActionView();

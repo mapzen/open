@@ -8,18 +8,23 @@ import com.mapzen.fragment.MapFragment;
 
 import org.apache.commons.io.FileUtils;
 import org.oscim.map.TestMap;
-import org.robolectric.Robolectric;
 import org.robolectric.tester.android.view.TestMenu;
 
 import java.io.File;
+
+import static org.robolectric.Robolectric.buildActivity;
 
 public final class TestHelper {
     private TestHelper() {
     }
 
     public static BaseActivity initBaseActivity() {
-        BaseActivity activity = Robolectric.buildActivity(BaseActivity.class).create().get();
-        activity.onCreateOptionsMenu(new TestMenu());
+        return initBaseActivity(new TestMenu());
+    }
+
+    public static BaseActivity initBaseActivity(TestMenu menu) {
+        BaseActivity activity = buildActivity(BaseActivity.class).create().visible().get();
+        activity.onCreateOptionsMenu(menu);
         activity.registerMapView(new TestMap());
         return activity;
     }

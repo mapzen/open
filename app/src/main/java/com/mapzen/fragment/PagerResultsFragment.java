@@ -1,6 +1,7 @@
 package com.mapzen.fragment;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,8 +72,13 @@ public class PagerResultsFragment extends BaseFragment {
         viewAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                act.getSearchView().clearFocus();
-                ListResultsFragment.newInstance(act, features).attachToContainer(R.id.full_list);
+                act.collapseSearchView();
+
+                final Fragment fragment = ListResultsFragment.newInstance(act, features);
+                act.getSupportFragmentManager().beginTransaction()
+                        .add(R.id.full_list, fragment, ListResultsFragment.TAG)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
     }
