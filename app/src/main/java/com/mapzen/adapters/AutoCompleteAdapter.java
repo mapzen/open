@@ -3,7 +3,6 @@ package com.mapzen.adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,7 +27,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.mapzen.MapzenApplication.LOG_TAG;
 import static com.mapzen.MapzenApplication.PELIAS_TEXT;
 import static com.mapzen.entity.Feature.FEATURES;
 import static com.mapzen.entity.Feature.NAME;
@@ -143,13 +141,13 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                 try {
                     jsonArray = jsonObject.getJSONArray(FEATURES);
                 } catch (JSONException e) {
-                    Log.e(LOG_TAG, e.toString());
+                    Logger.e(e.toString());
                 }
                 for (int i = 0; i < jsonArray.length(); i++) {
                     try {
                         cursor.addRow(new Object[]{i, jsonArray.getJSONObject(i)});
                     } catch (JSONException e) {
-                        Log.e(LOG_TAG, e.toString());
+                        Logger.e(e.toString());
                     }
                 }
                 Logger.d("search: swapping cursor");
@@ -163,7 +161,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 String errorMsg = VolleyHelper.Error.getMessage(volleyError, context);
-                Log.e(LOG_TAG, "request: error: " + errorMsg);
+                Logger.e("request: error: " + errorMsg);
             }
         };
     }

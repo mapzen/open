@@ -25,6 +25,7 @@ import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.fragment.PagerResultsFragment;
 import com.mapzen.util.Logger;
+import com.mapzen.util.MapzenProgressDialogFragment;
 
 import org.oscim.android.MapActivity;
 import org.oscim.map.Map;
@@ -44,6 +45,7 @@ public class BaseActivity extends MapActivity
     private PagerResultsFragment pagerResultsFragment;
     public static final String SEARCH_RESULTS_STACK = "search_results_stack";
     public static final String ROUTE_STACK = "route_stack";
+    private MapzenProgressDialogFragment progressDialogFragment;
     private LocationClient locationClient;
     private LocationListener locationListener = new LocationListener() {
         @Override
@@ -62,6 +64,7 @@ public class BaseActivity extends MapActivity
         initMapFragment();
         initLocationClient();
         pagerResultsFragment = PagerResultsFragment.newInstance(this);
+        progressDialogFragment = new MapzenProgressDialogFragment();
     }
 
     @Override
@@ -74,6 +77,18 @@ public class BaseActivity extends MapActivity
     protected void onResume() {
         super.onResume();
         locationClient.connect();
+    }
+
+    public void showProgressDialog() {
+        progressDialogFragment.show(getSupportFragmentManager(), "dialog");
+    }
+
+    public void dismissProgressDialog() {
+        progressDialogFragment.dismiss();
+    }
+
+    public MapzenProgressDialogFragment getProgressDialogFragment() {
+        return progressDialogFragment;
     }
 
     private ConnectionCallbacks connectionCallback = new ConnectionCallbacks() {

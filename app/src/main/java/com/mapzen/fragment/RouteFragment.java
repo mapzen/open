@@ -18,7 +18,6 @@ import com.mapzen.adapters.RoutesAdapter;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.util.Logger;
-import com.mapzen.util.MapzenProgressDialog;
 
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
@@ -112,8 +111,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void attachToActivity() {
         act.hideActionBar();
         act.getPagerResultsFragment().clearMap();
-        final MapzenProgressDialog progressDialog = new MapzenProgressDialog(act);
-        progressDialog.show();
+        act.showProgressDialog();
         popSearchResultsStack();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrl(
                 app.getStoredZoomLevel(), from, destination), null,
@@ -124,18 +122,18 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                         if (route.foundRoute()) {
                             setInstructions(route.getRouteInstructions());
                             drawRoute();
-                            progressDialog.dismiss();
+                            act.dismissProgressDialog();
                             displayRoute();
                         } else {
                             Toast.makeText(act, act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
-                            progressDialog.dismiss();
+                            act.dismissProgressDialog();
                             act.showActionBar();
                         }
                     }
                 }, new Response.ErrorListener() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                progressDialog.dismiss();
+            public void onErrorResponse(VolleyError volleyError) {
+                onServerError(volleyError);
             }
         }
         );

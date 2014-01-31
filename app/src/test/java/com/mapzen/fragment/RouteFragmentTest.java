@@ -3,12 +3,15 @@ package com.mapzen.fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.MapzenTestRunner;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.shadows.ShadowVolley;
+import com.mapzen.util.TestHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,109 +20,24 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.oscim.core.GeoPoint;
 import org.robolectric.Robolectric;
+import org.robolectric.shadows.ShadowToast;
+
+import java.util.List;
 
 import static com.mapzen.util.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(MapzenTestRunner.class)
 public class RouteFragmentTest {
-    public static final String MOCK_ROUTE_JSON = "{\n" +
-            "    \"alternative_geometries\": [],\n" +
-            "    \"alternative_indices\": [],\n" +
-            "    \"alternative_instructions\": [],\n" +
-            "    \"alternative_names\": [\n" +
-            "        [\n" +
-            "            \"\",\n" +
-            "            \"\"\n" +
-            "        ]\n" +
-            "    ],\n" +
-            "    \"alternative_summaries\": [],\n" +
-            "    \"hint_data\": {\n" +
-            "        \"checksum\": 0,\n" +
-            "        \"locations\": [\n" +
-            "            \"yhZmAQqkAAAdAAAA____f13_oOjJA8Y_5G5sAiwDl_s\",\n" +
-            "            \"WEtmAdIPAADHAAAAjAAAAEceNbcnvuI_NaZsAkw1l_s\"\n" +
-            "        ]\n" +
-            "    },\n" +
-            // sample geometry taken from:
-            // https://developers.google.com/maps/documentation/utilities/polylinealgorithm?csw=1
-            // Points: (38.5, -120.2), (40.7, -120.95), (43.252, -126.453)
-            "    \"route_geometry\": \"_p~iF~ps|U_ulLnnqC_mqNvxq`@\",\n" +
-            "    \"route_instructions\": [\n" +
-            "        [\n" +
-            "            \"10\",\n" + // turn instruction
-            "            \"19th Street\",\n" + // way
-            "            160,\n" + // length in meters
-            "            0,\n" + // position?
-            "            0,\n" + // time in seconds
-            "            \"160m\",\n" + // length with unit
-            "            \"SE\",\n" + //earth direction
-            "            128\n" + // azimuth
-            "        ],\n" +
-            "        [\n" +
-            "            \"7\",\n" +
-            "            \"7th Avenue\",\n" +
-            "            1937,\n" +
-            "            1,\n" +
-            "            0,\n" +
-            "            \"1937m\",\n" +
-            "            \"NE\",\n" +
-            "            38\n" +
-            "        ],\n" +
-            "        [\n" +
-            "            \"7\",\n" +
-            "            \"Union Street\",\n" +
-            "            97,\n" +
-            "            29,\n" +
-            "            0,\n" +
-            "            \"97m\",\n" +
-            "            \"NW\",\n" +
-            "            297\n" +
-            "        ],\n" +
-            "        [\n" +
-            "            \"15\",\n" +
-            "            \"\",\n" +
-            "            0,\n" +
-            "            30,\n" +
-            "            0,\n" +
-            "            \"\",\n" +
-            "            \"N\",\n" +
-            "            0.0\n" +
-            "        ]\n" +
-            "    ],\n" +
-            "    \"route_name\": [\n" +
-            "        \"19th Street\",\n" +
-            "        \"7th Avenue\"\n" +
-            "    ],\n" +
-            "    \"route_summary\": {\n" +
-            "        \"end_point\": \"Union Street\",\n" +
-            "        \"start_point\": \"19th Street\",\n" +
-            "        \"total_distance\": 2195,\n" +
-            "        \"total_time\": 211\n" +
-            "    },\n" +
-            "    \"status\": 0,\n" +
-            "    \"status_message\": \"Found route between points\",\n" +
-            "    \"via_indices\": [\n" +
-            "        0,\n" +
-            "        30\n" +
-            "    ],\n" +
-            "    \"via_points\": [\n" +
-            "        [\n" +
-            "            40.660708,\n" +
-            "            -73.989332\n" +
-            "        ],\n" +
-            "        [\n" +
-            "            40.674869,\n" +
-            "            -73.9765\n" +
-            "        ]\n" +
-            "    ]\n" +
-            "}\n";
+    public static final String MOCK_ROUTE_JSON = TestHelper.getFixture("basic_route");
 
     private BaseActivity act;
     private RouteFragment fragment;
 
     @Before
     public void setUp() throws Exception {
+        ShadowVolley.clearMockRequestQueue();
         act = Robolectric.buildActivity(BaseActivity.class).create().get();
         fragment = new RouteFragment();
         fragment.setDestination(new GeoPoint(1.0, 2.0));
@@ -193,5 +111,25 @@ public class RouteFragmentTest {
         ShadowVolley.MockRequestQueue queue = ShadowVolley.getMockRequestQueue();
         JsonObjectRequest request = (JsonObjectRequest) queue.getRequests().get(0);
         queue.deliverResponse(request, new JSONObject(MOCK_ROUTE_JSON));
+    }
+
+    @Test
+    public void attachToActivity_shouldDismissProgressDialogOnError() throws Exception {
+        fragment.attachToActivity();
+        assertThat(act.getProgressDialogFragment()).isAdded();
+        List<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
+        Request<JSONObject> request = requestSet.iterator().next();
+        request.deliverError(null);
+        assertThat(act.getProgressDialogFragment()).isNotAdded();
+    }
+
+    @Test
+    public void attachToActivity_shouldToastOnError() throws Exception {
+        fragment.attachToActivity();
+        List<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
+        Request<JSONObject> request = requestSet.iterator().next();
+        request.deliverError(null);
+        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(act.getString(R.string.generic_server_error));
+        assertThat(ShadowToast.getLatestToast()).hasDuration(Toast.LENGTH_LONG);
     }
 }
