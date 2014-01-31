@@ -18,7 +18,6 @@ import com.mapzen.adapters.RoutesAdapter;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.util.Logger;
-import com.mapzen.util.MapzenProgressDialog;
 
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;

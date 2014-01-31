@@ -10,7 +10,7 @@ import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
 import com.mapzen.shadows.ShadowVolley;
-import com.mapzen.util.MapzenProgressDialog;
+import com.mapzen.util.MapzenProgressDialogFragment;
 
 import org.json.JSONObject;
 import org.junit.Before;
@@ -65,24 +65,24 @@ public class PagerResultsFragmentTest {
 
     @Test
     public void executeSearchOnMap_shouldDismissProgressDialogOnError() throws Exception {
-        MapzenProgressDialog dialog = act.getProgressDialog();
+        MapzenProgressDialogFragment dialogFragment = act.getProgressDialogFragment();
         fragment.executeSearchOnMap(new SearchView(app), "Empire State Building");
-        assertThat(dialog).isShowing();
+        assertThat(dialogFragment).isAdded();
         List<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
         Request<JSONObject> request = requestSet.iterator().next();
         request.deliverError(null);
-        assertThat(dialog).isNotShowing();
+        assertThat(dialogFragment).isNotAdded();
     }
 
     @Test
     public void executeSearchOnMap_shouldToastAnError() {
-        MapzenProgressDialog dialog = act.getProgressDialog();
         fragment.executeSearchOnMap(new SearchView(app), "Empire State Building");
-        assertThat(dialog).isShowing();
+        assertThat(act.getProgressDialogFragment()).isAdded();
         List<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
         Request<JSONObject> request = requestSet.iterator().next();
         request.deliverError(null);
-        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(app.getString(R.string.generic_server_error));
+        assertThat(ShadowToast.getTextOfLatestToast())
+                .isEqualTo(app.getString(R.string.generic_server_error));
         assertThat(ShadowToast.getLatestToast()).hasDuration(Toast.LENGTH_LONG);
     }
 

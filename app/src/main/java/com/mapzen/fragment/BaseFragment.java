@@ -8,7 +8,6 @@ import com.android.volley.VolleyError;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
-import com.mapzen.util.MapzenProgressDialog;
 import com.mapzen.util.VolleyHelper;
 
 import org.oscim.map.Map;

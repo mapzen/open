@@ -18,7 +18,6 @@ import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.SearchViewAdapter;
 import com.mapzen.entity.Feature;
 import com.mapzen.util.Logger;
-import com.mapzen.util.MapzenProgressDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;

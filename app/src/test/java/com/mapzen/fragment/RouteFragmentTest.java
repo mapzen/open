@@ -5,8 +5,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.MapzenTestRunner;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
@@ -23,7 +23,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.shadows.ShadowToast;
 
 import java.util.List;
-import java.util.Set;
 
 import static com.mapzen.util.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
@@ -117,11 +116,11 @@ public class RouteFragmentTest {
     @Test
     public void attachToActivity_shouldDismissProgressDialogOnError() throws Exception {
         fragment.attachToActivity();
-        assertThat(act.getProgressDialog()).isShowing();
+        assertThat(act.getProgressDialogFragment()).isAdded();
         List<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
         Request<JSONObject> request = requestSet.iterator().next();
         request.deliverError(null);
-        assertThat(act.getProgressDialog()).isNotShowing();
+        assertThat(act.getProgressDialogFragment()).isNotAdded();
     }
 
     @Test
