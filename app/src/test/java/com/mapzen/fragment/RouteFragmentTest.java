@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.oscim.core.GeoPoint;
+import org.oscim.map.TestMap;
 import org.robolectric.Robolectric;
 import org.robolectric.shadows.ShadowLog;
 import org.robolectric.shadows.ShadowToast;
@@ -33,6 +34,7 @@ import org.robolectric.util.FragmentTestUtil;
 
 import java.util.ArrayList;
 
+import static com.mapzen.util.TestHelper.initBaseActivity;
 import static com.mapzen.util.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -48,7 +50,7 @@ public class RouteFragmentTest {
     public void setUp() throws Exception {
         ShadowLog.stream = System.out;
         ShadowVolley.clearMockRequestQueue();
-        act = Robolectric.buildActivity(BaseActivity.class).create().get();
+        act = initBaseActivity();
         fragment = new RouteFragment();
         fragment.setDestination(new GeoPoint(1.0, 2.0));
         fragment.setFrom(new GeoPoint(3.0, 4.0));

@@ -57,7 +57,6 @@ public class RouteFragment extends BaseFragment
     private LocationRequest locationRequest;
     public static final int ROUTE_ZOOM_LEVEL = 17;
 
-
     public void setInstructions(ArrayList<Instruction> instructions) {
         Logger.d("instructions: " + instructions.toString());
         this.instructions = instructions;
