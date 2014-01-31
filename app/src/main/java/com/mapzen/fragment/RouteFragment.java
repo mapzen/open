@@ -45,8 +45,8 @@ import static com.mapzen.activity.BaseActivity.ROUTE_STACK;
 import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
 import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
 
-public class RouteFragment extends BaseFragment
-        implements DirectionListFragment.DirectionListener, LocationListener {
+public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
+        LocationListener, ViewPager.OnPageChangeListener {
     public static final int WALKING_THRESH_HOLD = 10;
     private ArrayList<Instruction> instructions;
     private GeoPoint from, destination;
@@ -130,7 +130,6 @@ public class RouteFragment extends BaseFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.route_widget, container, false);
-        pager = (ViewPager) rootView.findViewById(R.id.routes);
         button = (Button) rootView.findViewById(R.id.view_steps);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,26 +137,10 @@ public class RouteFragment extends BaseFragment
                 showDirectionListFragment();
             }
         });
-        adapter = new RoutesAdapter(act, instructions);
-        adapter.setParent(this);
+        adapter = new RoutesAdapter(act, this, instructions);
+        pager = (ViewPager) rootView.findViewById(R.id.routes);
         pager.setAdapter(adapter);
-        pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int i, float v, int i2) {
-            }
-
-            @Override
-            public void onPageSelected(int i) {
-                double[] point = instructions.get(i).getPoint();
-                Map map = act.getMap();
-                map.setMapPosition(point[0], point[1], Math.pow(2, ROUTE_ZOOM_LEVEL));
-                map.getViewport().setRotation(instructions.get(i).getBearing());
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int i) {
-            }
-        });
+        pager.setOnPageChangeListener(this);
         adapter.notifyDataSetChanged();
 
         return rootView;
@@ -271,36 +254,45 @@ public class RouteFragment extends BaseFragment
         pager.setCurrentItem(index, true);
     }
 
+    @Override
+    public void onPageScrolled(int i, float v, int i2) {
+    }
+
+    @Override
+    public void onPageSelected(int i) {
+        double[] point = instructions.get(i).getPoint();
+        Map map = act.getMap();
+        map.setMapPosition(point[0], point[1], Math.pow(2, ROUTE_ZOOM_LEVEL));
+        map.getViewport().setRotation(instructions.get(i).getBearing());
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int i) {
+    }
+
     private static class RoutesAdapter extends PagerAdapter {
         private List<Instruction> instructions = new ArrayList<Instruction>();
         private RouteFragment parent;
         private Context context;
 
-
-        public RoutesAdapter(Context context, List<Instruction> instructions) {
+        public RoutesAdapter(Context context, RouteFragment parent, List<Instruction> instructions) {
             this.context = context;
             this.instructions = instructions;
-        }
-
-        public void setParent(RouteFragment parent) {
             this.parent = parent;
         }
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-            Logger.d("RoutesAdapter::destroyItem item: " + String.valueOf(position));
             container.removeView((View) object);
         }
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            Logger.d("RoutesAdapter::instantiateItem " + String.valueOf(position));
             Instruction instruction = instructions.get(position);
             View view = View.inflate(context, R.layout.fragment_instruction, null);
 
             TextView fullInstruction = (TextView) view.findViewById(R.id.full_instruction);
             fullInstruction.setText(instruction.getFullInstruction());
-            Logger.d("RoutesAdapter::instantiateItem " + fullInstruction.getText());
 
             ImageView turnIcon = (ImageView) view.findViewById(R.id.turn_icon);
             turnIcon.setImageResource(DisplayHelper.getRouteDrawable(context,
@@ -333,13 +325,11 @@ public class RouteFragment extends BaseFragment
 
         @Override
         public int getCount() {
-            Logger.d("RoutesAdapter::getCount: " + String.valueOf(instructions.size()));
             return instructions.size();
         }
 
         @Override
         public boolean isViewFromObject(View view, Object object) {
-            Logger.d("RoutesAdapter::isViewFromObject: " + String.valueOf(view == object));
             return view == object;
         }
     }

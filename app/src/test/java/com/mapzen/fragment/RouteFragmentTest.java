@@ -1,8 +1,10 @@
 package com.mapzen.fragment;
 
 import android.location.Location;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -252,4 +254,55 @@ public class RouteFragmentTest {
         fragment.onLocationChanged(getTestLocation(6, 6));
         assertThat(fragment.getCurrentItem()).isEqualTo(6);
     }
+
+    @Test
+    public void shouldHaveNextArrow() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(getInstructionView(0).findViewById(R.id.route_next)).isVisible();
+    }
+
+    @Test
+    public void shouldNotHaveNextArrow() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(getInstructionView(0).findViewById(R.id.route_next)).isNotVisible();
+    }
+
+    @Test
+    public void shouldHavePrevArrow() throws Exception{
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(getInstructionView(1).findViewById(R.id.route_previous)).isVisible();
+    }
+
+    @Test
+    public void shouldNotHavePrevArrow() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(getInstructionView(0).findViewById(R.id.route_previous)).isNotVisible();
+    }
+
+    private View getInstructionView(int position) {
+        ViewPager pager = (ViewPager) fragment.getView().findViewById(R.id.routes);
+        ViewGroup group = new ViewGroup(act) {
+            @Override
+            protected void onLayout(boolean changed, int l, int t, int r, int b) {
+
+            }
+        };
+        return (View) pager.getAdapter().instantiateItem(group, position);
+    }
+
 }
