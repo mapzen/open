@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.PlaceArrayAdapter;
@@ -71,6 +72,10 @@ public class ListResultsFragment extends ListFragment {
             actionBar.setDisplayHomeAsUpEnabled(false);
             actionBar.setTitle(R.string.application_name);
         }
+
+        act.supportInvalidateOptionsMenu();
+        act.getSearchView().setQuery(((MapzenApplication) act.getApplication())
+                .getCurrentSearchTerm(), false);
     }
 
     public static ListResultsFragment newInstance(BaseActivity act, ArrayList<Feature> features) {

@@ -2,6 +2,7 @@ package com.mapzen.fragment;
 
 import android.view.MenuItem;
 
+import com.mapzen.MapzenApplication;
 import com.mapzen.MapzenTestRunner;
 import com.mapzen.entity.Feature;
 import com.mapzen.support.TestActionBar;
@@ -10,6 +11,7 @@ import com.mapzen.support.TestBaseActivity;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.tester.android.view.TestMenuItem;
 
@@ -81,5 +83,12 @@ public class ListResultsFragmentTest {
     public void onDetach_shouldResetActionBarTitle() throws Exception {
         fragment.onDetach();
         assertThat(act.getActionBar().getTitle()).isEqualTo("Mapzen");
+    }
+
+    @Test
+    public void onDetach_shouldSetSearchQuery() throws Exception {
+        ((MapzenApplication) Robolectric.application).setCurrentSearchTerm("term");
+        fragment.onDetach();
+        assertThat(act.getSearchView().getQuery().toString()).isEqualTo("term");
     }
 }
