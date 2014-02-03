@@ -34,10 +34,11 @@ public class ListResultsFragment extends ListFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ActionBar actionBar = getActivity().getActionBar();
+        final ActionBar actionBar = act.getActionBar();
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.results_title);
         }
     }
 
@@ -57,6 +58,17 @@ public class ListResultsFragment extends ListFragment {
         pagerResultsFragment.setCurrentItem(position);
         act.getSearchView().getSuggestionsAdapter().swapCursor(null);
         act.onBackPressed();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        final ActionBar actionBar = act.getActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(false);
+            actionBar.setDisplayHomeAsUpEnabled(false);
+            actionBar.setTitle(R.string.application_name);
+        }
     }
 
     public static ListResultsFragment newInstance(BaseActivity act, ArrayList<Feature> features) {
