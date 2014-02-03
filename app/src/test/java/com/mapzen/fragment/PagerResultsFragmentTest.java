@@ -97,14 +97,6 @@ public class PagerResultsFragmentTest {
         assertThat(act.getSupportFragmentManager()).hasFragmentWithTag(ListResultsFragment.TAG);
     }
 
-    @Test
-    public void viewAll_shouldCollapseSearchView() throws Exception {
-        menu.findItem(R.id.search).expandActionView();
-        Button viewAllButton = (Button) fragment.getView().findViewById(R.id.view_all);
-        viewAllButton.performClick();
-        assertThat(menu.findItem(R.id.search).isActionViewExpanded()).isFalse();
-    }
-
     private void assertRequest(Request request) {
         if (request.getUrl().contains("Building")) {
             assertThat(request.isCanceled()).isFalse();

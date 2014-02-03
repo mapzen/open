@@ -67,7 +67,6 @@ public class BaseActivity extends MapActivity {
         setContentView(R.layout.base);
         initMapFragment();
         initLocationClient();
-        pagerResultsFragment = PagerResultsFragment.newInstance(this);
         progressDialogFragment = new MapzenProgressDialogFragment();
     }
 
@@ -158,6 +157,24 @@ public class BaseActivity extends MapActivity {
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         menuItem = menu.findItem(R.id.search);
+        menuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                ListResultsFragment listResultsFragment = (ListResultsFragment)
+                        getSupportFragmentManager().findFragmentByTag(ListResultsFragment.TAG);
+                if (pagerResultsFragment != null && pagerResultsFragment.isAdded()
+                        && listResultsFragment == null) {
+                    onBackPressed();
+                }
+                return true;
+            }
+        });
+
         final SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         setupAdapter(searchView);
@@ -226,12 +243,10 @@ public class BaseActivity extends MapActivity {
 
     private void setupAdapter(SearchView searchView) {
         if (autoCompleteAdapter == null) {
-            autoCompleteAdapter =
-                    new AutoCompleteAdapter(getActionBar().getThemedContext(),
-                            this, app.getColumns());
+            autoCompleteAdapter = new AutoCompleteAdapter(getActionBar().getThemedContext(),
+                    this, app.getColumns());
             autoCompleteAdapter.setSearchView(searchView);
             autoCompleteAdapter.setMapFragment(mapFragment);
-            autoCompleteAdapter.setPagerResultsFragment(pagerResultsFragment);
         }
 
         searchView.setSuggestionsAdapter(autoCompleteAdapter);
@@ -277,5 +292,21 @@ public class BaseActivity extends MapActivity {
 
     public LocationClient getLocationClient() {
         return locationClient;
+    }
+
+    public boolean executeSearchOnMap(String query) {
+        if (pagerResultsFragment == null) {
+            pagerResultsFragment = PagerResultsFragment.newInstance(this);
+        }
+
+        if (!pagerResultsFragment.isAdded()) {
+            getSupportFragmentManager().beginTransaction()
+                    .addToBackStack(null)
+                    .add(R.id.pager_results_container, pagerResultsFragment,
+                            PagerResultsFragment.TAG)
+                    .commit();
+        }
+
+        return pagerResultsFragment.executeSearchOnMap(getSearchView(), query);
     }
 }

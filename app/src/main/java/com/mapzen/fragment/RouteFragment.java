@@ -175,7 +175,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     public void attachToActivity() {
         act.hideActionBar();
-        act.getPagerResultsFragment().clearMap();
+        mapFragment.clearMarkers();
+        mapFragment.updateMap();
         act.showProgressDialog();
         popSearchResultsStack();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrlForCar(

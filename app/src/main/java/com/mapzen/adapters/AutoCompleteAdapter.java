@@ -19,7 +19,6 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
-import com.mapzen.fragment.PagerResultsFragment;
 import com.mapzen.util.Logger;
 import com.mapzen.util.VolleyHelper;
 
@@ -35,13 +34,12 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     public static final int AUTOCOMPLETE_THRESHOLD = 3;
     private SearchView searchView;
     private MapFragment mapFragment;
-    private PagerResultsFragment pagerResultsFragment;
-    private Context context;
+    private BaseActivity act;
     private MapzenApplication app;
 
     public AutoCompleteAdapter(Context context, BaseActivity act, String[] columns) {
         super(context, new MatrixCursor(columns), 0);
-        this.context = context;
+        this.act = act;
         this.app = (MapzenApplication) act.getApplication();
     }
 
@@ -51,10 +49,6 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
 
     public void setMapFragment(MapFragment mapFragment) {
         this.mapFragment = mapFragment;
-    }
-
-    public void setPagerResultsFragment(PagerResultsFragment pagerResultsFragment) {
-        this.pagerResultsFragment = pagerResultsFragment;
     }
 
     @Override
@@ -71,7 +65,8 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                 searchView.setQuery("", false);
                 searchView.clearFocus();
                 searchView.setQuery(tv.getText(), false);
-                pagerResultsFragment.clearMap();
+                mapFragment.clearMarkers();
+                mapFragment.updateMap();
                 mapFragment.centerOn(feature);
             }
         });
@@ -86,8 +81,8 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     }
 
     private void dismissKeyboard() {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(
-                Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) act
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
     }
 
@@ -107,7 +102,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        return pagerResultsFragment.executeSearchOnMap(searchView, query);
+        return act.executeSearchOnMap(query);
     }
 
     @Override
@@ -160,7 +155,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-                String errorMsg = VolleyHelper.Error.getMessage(volleyError, context);
+                String errorMsg = VolleyHelper.Error.getMessage(volleyError, act);
                 Logger.e("request: error: " + errorMsg);
             }
         };

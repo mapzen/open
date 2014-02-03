@@ -12,6 +12,7 @@ import com.mapzen.R;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.shadows.ShadowLocationClient;
 import com.mapzen.shadows.ShadowVolley;
+import com.mapzen.support.TestBaseActivity;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,11 +30,13 @@ import static org.robolectric.Robolectric.application;
 public class BaseActivityTest {
     private BaseActivity activity;
     private ShadowLocationClient shadowLocationClient;
+    private TestMenu menu;
 
     @Before
     public void setUp() throws Exception {
         ShadowVolley.clearMockRequestQueue();
-        activity = initBaseActivity();
+        menu = new TestMenu();
+        activity = initBaseActivity(menu);
         shadowLocationClient = Robolectric.shadowOf_(activity.getLocationClient());
         initMapFragment(activity);
     }
@@ -116,5 +119,12 @@ public class BaseActivityTest {
         activity.onCreateOptionsMenu(menu);
         activity.onPrepareOptionsMenu(menu);
         assertThat(menu.findItem(R.id.search)).isNotVisible();
+    }
+
+    @Test
+    public void onMenuItemActionCollapse_shouldPopPagerResultsFragment() throws Exception {
+        activity.executeSearchOnMap("query");
+        menu.findItem(R.id.search).collapseActionView();
+        assertThat(((TestBaseActivity) activity).isBackPressed()).isTrue();
     }
 }
