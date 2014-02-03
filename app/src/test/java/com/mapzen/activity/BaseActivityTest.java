@@ -1,7 +1,5 @@
 package com.mapzen.activity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.Menu;
