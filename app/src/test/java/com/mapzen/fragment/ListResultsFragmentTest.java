@@ -10,11 +10,12 @@ import com.mapzen.support.TestBaseActivity;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
+import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.tester.android.view.TestMenuItem;
 
 import java.util.ArrayList;
 
+import static com.mapzen.util.TestHelper.initBaseActivity;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.util.FragmentTestUtil.startFragment;
@@ -23,10 +24,12 @@ import static org.robolectric.util.FragmentTestUtil.startFragment;
 public class ListResultsFragmentTest {
     private ListResultsFragment fragment;
     private TestBaseActivity act;
+    private TestMenu menu;
 
     @Before
     public void setUp() throws Exception {
-        act = Robolectric.buildActivity(TestBaseActivity.class).create().get();
+        menu = new TestMenu();
+        act = initBaseActivity(menu);
         Feature feature = new Feature();
         ArrayList<Feature> list = new ArrayList<Feature>();
         list.add(feature);
@@ -56,10 +59,15 @@ public class ListResultsFragmentTest {
     }
 
     @Test
+    public void onViewCreated_shouldInvalidateOptionsMenu() throws Exception {
+        assertThat(act.isOptionsMenuInvalidated()).isTrue();
+    }
+
+    @Test
     public void onOptionsItemSelected_shouldPopBackStack() throws Exception {
         MenuItem menu = new TestMenuItem(android.R.id.home);
         fragment.onOptionsItemSelected(menu);
-        assertThat(act.getBackPressed()).isTrue();
+        assertThat(act.isBackPressed()).isTrue();
     }
 
     @Test

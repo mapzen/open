@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.fragment.MapFragment;
+import com.mapzen.support.TestBaseActivity;
 
 import org.apache.commons.io.FileUtils;
 import org.oscim.map.TestMap;
@@ -18,12 +19,12 @@ public final class TestHelper {
     private TestHelper() {
     }
 
-    public static BaseActivity initBaseActivity() {
+    public static TestBaseActivity initBaseActivity() {
         return initBaseActivity(new TestMenu());
     }
 
-    public static BaseActivity initBaseActivity(TestMenu menu) {
-        BaseActivity activity = buildActivity(BaseActivity.class).create().visible().get();
+    public static TestBaseActivity initBaseActivity(TestMenu menu) {
+        TestBaseActivity activity = buildActivity(TestBaseActivity.class).create().visible().get();
         activity.onCreateOptionsMenu(menu);
         activity.registerMapView(new TestMap());
         return activity;

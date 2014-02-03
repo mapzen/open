@@ -2,12 +2,14 @@ package com.mapzen.activity;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.app.Fragment;
 import android.view.Menu;
 import android.widget.SearchView;
 
 import com.mapzen.MapzenApplication;
 import com.mapzen.MapzenTestRunner;
 import com.mapzen.R;
+import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.shadows.ShadowLocationClient;
 import com.mapzen.shadows.ShadowVolley;
 
@@ -101,5 +103,18 @@ public class BaseActivityTest {
         shadowLocationClient.disconnect();
         activity.onResume();
         assertThat(shadowLocationClient.isConnected()).isTrue();
+    }
+
+    @Test
+    public void onPrepareOptionsMenu_shouldHideSearchWhenResultsVisible() throws Exception {
+        Fragment fragment = ListResultsFragment.newInstance(activity, null);
+        activity.getSupportFragmentManager().beginTransaction()
+                .add(fragment, ListResultsFragment.TAG)
+                .commit();
+
+        Menu menu = new TestMenu();
+        activity.onCreateOptionsMenu(menu);
+        activity.onPrepareOptionsMenu(menu);
+        assertThat(menu.findItem(R.id.search)).isNotVisible();
     }
 }

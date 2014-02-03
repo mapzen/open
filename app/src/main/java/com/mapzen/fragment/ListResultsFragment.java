@@ -40,6 +40,8 @@ public class ListResultsFragment extends ListFragment {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(R.string.results_title);
         }
+
+        act.supportInvalidateOptionsMenu();
     }
 
     @Override

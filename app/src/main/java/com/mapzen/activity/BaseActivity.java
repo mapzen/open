@@ -183,6 +183,17 @@ public class BaseActivity extends MapActivity {
         return true;
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(ListResultsFragment.TAG);
+        if (fragment != null && fragment.isAdded()) {
+            collapseSearchView();
+            menu.findItem(R.id.search).setVisible(false);
+        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     private void handleGeoIntent(SearchView searchView, Uri data) {
         if (data.toString().contains("q=")) {
             menuItem.expandActionView();
@@ -222,6 +233,7 @@ public class BaseActivity extends MapActivity {
             autoCompleteAdapter.setMapFragment(mapFragment);
             autoCompleteAdapter.setPagerResultsFragment(pagerResultsFragment);
         }
+
         searchView.setSuggestionsAdapter(autoCompleteAdapter);
     }
 

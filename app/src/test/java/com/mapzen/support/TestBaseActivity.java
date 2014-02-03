@@ -5,8 +5,14 @@ import android.app.ActionBar;
 import com.mapzen.activity.BaseActivity;
 
 public class TestBaseActivity extends BaseActivity {
-    private boolean backPressed = false;
     private ActionBar actionBar = new TestActionBar();
+    private boolean backPressed = false;
+    private boolean optionsMenuInvalidated = false;
+
+    @Override
+    public ActionBar getActionBar() {
+        return actionBar;
+    }
 
     @Override
     public void onBackPressed() {
@@ -14,12 +20,17 @@ public class TestBaseActivity extends BaseActivity {
         backPressed = true;
     }
 
-    @Override
-    public ActionBar getActionBar() {
-        return actionBar;
+    public boolean isBackPressed() {
+        return backPressed;
     }
 
-    public boolean getBackPressed() {
-        return backPressed;
+    @Override
+    public void supportInvalidateOptionsMenu() {
+        super.supportInvalidateOptionsMenu();
+        optionsMenuInvalidated = true;
+    }
+
+    public boolean isOptionsMenuInvalidated() {
+        return optionsMenuInvalidated;
     }
 }
