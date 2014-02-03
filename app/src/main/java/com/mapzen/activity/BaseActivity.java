@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +23,7 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.adapters.AutoCompleteAdapter;
 import com.mapzen.entity.Feature;
+import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.fragment.PagerResultsFragment;
 import com.mapzen.util.Logger;
@@ -79,6 +81,19 @@ public class BaseActivity extends MapActivity {
     protected void onResume() {
         super.onResume();
         locationClient.connect();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            final Fragment fragment = getSupportFragmentManager()
+                    .findFragmentByTag(ListResultsFragment.TAG);
+            if (fragment != null) {
+                return fragment.onOptionsItemSelected(item);
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public void showProgressDialog() {
