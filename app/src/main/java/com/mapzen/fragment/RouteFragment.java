@@ -1,6 +1,9 @@
 package com.mapzen.fragment;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,8 +22,6 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.osrm.Instruction;
@@ -36,12 +37,13 @@ import org.oscim.map.Map;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.activity.BaseActivity.ROUTE_STACK;
 import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
 import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
-        LocationListener, ViewPager.OnPageChangeListener {
+        ViewPager.OnPageChangeListener {
     public static final int WALKING_THRESH_HOLD = 10;
     private ArrayList<Instruction> instructions;
     private GeoPoint from, destination;
@@ -49,7 +51,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private Button button;
     private RoutesAdapter adapter;
     private Route route;
-    private LocationRequest locationRequest;
     public static final int ROUTE_ZOOM_LEVEL = 17;
 
     public void setInstructions(ArrayList<Instruction> instructions) {
@@ -60,16 +61,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onResume() {
         super.onResume();
-        initLocationClient();
+        initLocationReciever();
         act.hideActionBar();
         drawRoute();
-    }
-
-    private void initLocationClient() {
-        locationRequest = LocationRequest.create();
-        locationRequest.setInterval(BaseActivity.LOCATION_INTERVAL);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        act.getLocationClient().requestLocationUpdates(locationRequest, this);
     }
 
     private Location getNextTurnTo(Instruction nextInstruction) {
@@ -79,7 +73,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return nextTurn;
     }
 
-    @Override
     public void onLocationChanged(Location location) {
         Logger.d("RouteFragment::onLocationChangeLocation" + instructions.toString());
         for (Instruction instruction : instructions) {
@@ -117,7 +110,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onPause() {
         super.onPause();
-        act.getLocationClient().removeLocationUpdates(this);
         clearRoute();
     }
 
@@ -326,6 +318,22 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         @Override
         public boolean isViewFromObject(View view, Object object) {
             return view == object;
+        }
+    }
+
+    private void initLocationReciever() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(COM_MAPZEN_UPDATES_LOCATION);
+        LocationReceiver receiver = new LocationReceiver();
+        act.registerReceiver(receiver, filter);
+    }
+
+    private class LocationReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            Location location = bundle.getParcelable("location");
+            onLocationChanged(location);
         }
     }
 }

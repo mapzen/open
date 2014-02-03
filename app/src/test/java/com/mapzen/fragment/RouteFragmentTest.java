@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.android.gms.location.LocationListener;
 import com.mapzen.MapzenTestRunner;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
@@ -145,41 +144,17 @@ public class RouteFragmentTest {
         assertThat(ShadowToast.getLatestToast()).hasDuration(Toast.LENGTH_LONG);
     }
 
-    public void onResume_shouldRequestLocationUpdates() throws Exception {
-        ShadowLocationClient shadowLocationClient = Robolectric.shadowOf_(act.getLocationClient());
-        shadowLocationClient.clearAll();
-        fragment.onResume();
-        assertThat(shadowLocationClient.hasUpdatesRequests()).isTrue();
-    }
-
-    @Test
-    public void onPause_shouldRemoveLocationUpdates() throws Exception {
-        ShadowLocationClient shadowLocationClient = Robolectric.shadowOf_(act.getLocationClient());
-        shadowLocationClient.clearAll();
-        fragment.onResume();
-        assertThat(shadowLocationClient.hasUpdatesRequests()).isTrue();
-        fragment.onPause();
-        assertThat(shadowLocationClient.hasUpdatesRequests()).isFalse();
-    }
-
     @Test
     public void onLocationChange_shouldToastShort() throws Exception {
-        fragment.setInstructions(new ArrayList<Instruction>());
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
         ShadowVolley.clearMockRequestQueue();
         ShadowLocationClient shadowLocationClient = Robolectric.shadowOf_(act.getLocationClient());
         shadowLocationClient.clearAll();
-        fragment.onResume();
-        fragment.attachToActivity();
-        ShadowVolley.MockRequestQueue queue = ShadowVolley.getMockRequestQueue();
-        JsonObjectRequest request = (JsonObjectRequest) queue.getRequests().get(0);
-        JSONObject json = new JSONObject(MOCK_ROUTE_JSON);
-        queue.deliverResponse(request, json);
-        Location testLocation = new Location("testing");
-        testLocation.setLatitude(1.0);
-        testLocation.setLongitude(1.0);
-        LocationListener listener = shadowLocationClient.getLocationListener();
-        listener.onLocationChanged(testLocation);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onLocationChanged(getTestLocation(1, 1));
         assertThat(ShadowToast.getLatestToast()).hasDuration(Toast.LENGTH_SHORT);
     }
 
@@ -290,6 +265,11 @@ public class RouteFragmentTest {
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
         assertThat(getInstructionView(0).findViewById(R.id.route_previous)).isNotVisible();
+    }
+
+    @Test
+    public void shouldRegisterReceiver() throws Exception {
+        //TODO
     }
 
     private View getInstructionView(int position) {
