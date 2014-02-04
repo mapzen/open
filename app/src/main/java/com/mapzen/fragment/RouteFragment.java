@@ -146,6 +146,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
         destinationName.setText(feature.getProperty(NAME));
         distanceLeftView = (TextView) rootView.findViewById(R.id.destination_distance);
+        if (route != null) {
+            distanceLeftView.setText(String.valueOf(route.getTotalDistance()));
+        }
         pager.setAdapter(adapter);
         pager.setOnPageChangeListener(this);
         adapter.notifyDataSetChanged();
@@ -193,8 +196,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (route.foundRoute()) {
             setInstructions(route.getRouteInstructions());
             drawRoute();
-            distanceLeftView.setText(String.valueOf(route.getTotalDistance()));
-            act.dismissProgressDialog();
             displayRoute();
         } else {
             Toast.makeText(act, act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
@@ -204,26 +205,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public void attachToActivity() {
-        act.hideActionBar();
-        mapFragment.clearMarkers();
-        mapFragment.updateMap();
-        act.showProgressDialog();
-        popSearchResultsStack();
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrlForCar(
-                app.getStoredZoomLevel(), from, getDestinationPoint()), null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        onRouteSuccess(response);
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                onServerError(volleyError);
-            }
-        }
-        );
-        app.enqueueApiRequest(jsonObjectRequest);
     }
 
     private void popSearchResultsStack() {

@@ -7,12 +7,30 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
+import com.mapzen.util.ApiHelper;
+
+import org.json.JSONObject;
+
+import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
 
 public class ItemFragment extends BaseFragment {
     private Feature feature;
+    private RouteFragment routeFragment;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        routeFragment = new RouteFragment();
+        routeFragment.setFeature(feature);
+        routeFragment.setMapFragment(mapFragment);
+        routeFragment.setAct(act);
+    }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search_item, container, false);
@@ -26,12 +44,26 @@ public class ItemFragment extends BaseFragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    RouteFragment routeFragment = new RouteFragment();
-                    routeFragment.setFrom(app.getLocationPoint());
-                    routeFragment.setFeature(feature);
-                    routeFragment.setMapFragment(mapFragment);
-                    routeFragment.setAct(act);
-                    routeFragment.attachToActivity();
+                    act.hideActionBar();
+                    act.showProgressDialog();
+                    mapFragment.clearMarkers();
+                    mapFragment.updateMap();
+                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrlForCar(
+                            app.getStoredZoomLevel(), app.getLocationPoint(), routeFragment.getDestinationPoint()), null,
+                            new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    act.dismissProgressDialog();
+                                    routeFragment.onRouteSuccess(response);
+                                }
+                            }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            onServerError(volleyError);
+                        }
+                    }
+                    );
+                    app.enqueueApiRequest(jsonObjectRequest);
                 }
             });
             view.setTag(holder);
@@ -48,6 +80,10 @@ public class ItemFragment extends BaseFragment {
 
         holder.setFromFeature(feature);
         return view;
+    }
+
+    public RouteFragment getRouteFragment() {
+       return routeFragment;
     }
 
     public void setFeature(Feature feature) {
