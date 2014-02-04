@@ -40,6 +40,7 @@ import java.util.List;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.activity.BaseActivity.ROUTE_STACK;
 import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
+import static com.mapzen.entity.Feature.NAME;
 import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
@@ -141,6 +142,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         });
         adapter = new RoutesAdapter(act, this, instructions);
         pager = (ViewPager) rootView.findViewById(R.id.routes);
+        TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
+        destinationName.setText(feature.getProperty(NAME));
         pager.setAdapter(adapter);
         pager.setOnPageChangeListener(this);
         adapter.notifyDataSetChanged();

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -37,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
+import static com.mapzen.entity.Feature.NAME;
 import static com.mapzen.support.TestHelper.initBaseActivity;
 import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
@@ -61,7 +63,7 @@ public class RouteFragmentTest {
 
     private Feature getTestFeature() {
         Feature feature = new Feature();
-        feature.setProperty(Feature.NAME, "Awesome Test Place");
+        feature.setProperty(NAME, "Awesome Test Place");
         feature.setLat(1.0);
         feature.setLon(2.0);
         return feature;
@@ -311,6 +313,14 @@ public class RouteFragmentTest {
         Feature feature = getTestFeature();
         fragment.setFeature(feature);
         assertThat(fragment.getFeature()).isEqualTo(feature);
+    }
+
+    @Test
+    public void onCreateView_shouldShowNameOfDestination() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        Feature feature = getTestFeature();
+        TextView view = (TextView) fragment.getView().findViewById(R.id.destination_name);
+        assertThat(view.getText()).isEqualTo(feature.getProperty(NAME));
     }
 
     private View getInstructionView(int position) {
