@@ -54,12 +54,18 @@ public class RouteFragmentTest {
         ShadowLog.stream = System.out;
         ShadowVolley.clearMockRequestQueue();
         act = initBaseActivity();
+        initTestFragment();
+        app = Robolectric.getShadowApplication();
+    }
+
+    private void initTestFragment() {
         fragment = new RouteFragment();
         fragment.setDestination(new GeoPoint(1.0, 2.0));
         fragment.setFrom(new GeoPoint(3.0, 4.0));
         fragment.setAct(act);
         fragment.setMapFragment(initMapFragment(act));
-        app = Robolectric.getShadowApplication(); // Robolectric.shadowOf(act.getApplication());
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        fragment.setInstructions(instructions);
     }
 
     @Test
@@ -273,21 +279,20 @@ public class RouteFragmentTest {
 
     @Test
     public void shouldRegisterReceiver() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
         assertThat(app.hasReceiverForIntent(new Intent(COM_MAPZEN_UPDATES_LOCATION))).isTrue();
     }
 
     @Test
     public void shouldUnRegisterReceiver() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
         fragment.onPause();
         assertThat(app.hasReceiverForIntent(new Intent(COM_MAPZEN_UPDATES_LOCATION))).isFalse();
+    }
+
+    @Test
+    public void setFeature_ShouldGenerateDestinationCorrdinates() throws Exception {
+
     }
 
     private View getInstructionView(int position) {
