@@ -50,6 +50,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private Button button;
     private RoutesAdapter adapter;
     private Route route;
+    private LocationReceiver locationReceiver;
     public static final int ROUTE_ZOOM_LEVEL = 17;
 
     public void setInstructions(ArrayList<Instruction> instructions) {
@@ -60,7 +61,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onResume() {
         super.onResume();
-        initLocationReciever();
+        initLocationReceiver();
         act.hideActionBar();
         drawRoute();
     }
@@ -109,12 +110,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onPause() {
         super.onPause();
+        act.unregisterReceiver(locationReceiver);
         clearRoute();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.route_widget, container, false);
         button = (Button) rootView.findViewById(R.id.view_steps);
         button.setOnClickListener(new View.OnClickListener() {
@@ -320,11 +322,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    private void initLocationReciever() {
+    private void initLocationReceiver() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(COM_MAPZEN_UPDATES_LOCATION);
-        LocationReceiver receiver = new LocationReceiver();
-        act.registerReceiver(receiver, filter);
+        locationReceiver = new LocationReceiver();
+        act.registerReceiver(locationReceiver, filter);
     }
 
     private class LocationReceiver extends BroadcastReceiver {

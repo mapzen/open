@@ -1,5 +1,6 @@
 package com.mapzen.fragment;
 
+import android.content.Intent;
 import android.location.Location;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -26,6 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.oscim.core.GeoPoint;
 import org.robolectric.Robolectric;
+import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowLog;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.FragmentTestUtil;
@@ -33,6 +35,7 @@ import org.robolectric.util.FragmentTestUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.util.TestHelper.initBaseActivity;
 import static com.mapzen.util.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
@@ -44,6 +47,7 @@ public class RouteFragmentTest {
 
     private BaseActivity act;
     private RouteFragment fragment;
+    private ShadowApplication app;
 
     @Before
     public void setUp() throws Exception {
@@ -55,6 +59,7 @@ public class RouteFragmentTest {
         fragment.setFrom(new GeoPoint(3.0, 4.0));
         fragment.setAct(act);
         fragment.setMapFragment(initMapFragment(act));
+        app = Robolectric.getShadowApplication(); // Robolectric.shadowOf(act.getApplication());
     }
 
     @Test
@@ -153,7 +158,6 @@ public class RouteFragmentTest {
         ShadowVolley.clearMockRequestQueue();
         ShadowLocationClient shadowLocationClient = Robolectric.shadowOf_(act.getLocationClient());
         shadowLocationClient.clearAll();
-        FragmentTestUtil.startFragment(fragment);
         fragment.onLocationChanged(getTestLocation(1, 1));
         assertThat(ShadowToast.getLatestToast()).hasDuration(Toast.LENGTH_SHORT);
     }
@@ -211,7 +215,7 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onLocationChange_shouldAdvanceToNextReleventTurn() throws Exception {
+    public void onLocationChange_shouldAdvanceToNextRelevantTurn() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(0, 0));
@@ -269,7 +273,21 @@ public class RouteFragmentTest {
 
     @Test
     public void shouldRegisterReceiver() throws Exception {
-        //TODO
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(app.hasReceiverForIntent(new Intent(COM_MAPZEN_UPDATES_LOCATION))).isTrue();
+    }
+
+    @Test
+    public void shouldUnRegisterReceiver() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onPause();
+        assertThat(app.hasReceiverForIntent(new Intent(COM_MAPZEN_UPDATES_LOCATION))).isFalse();
     }
 
     private View getInstructionView(int position) {

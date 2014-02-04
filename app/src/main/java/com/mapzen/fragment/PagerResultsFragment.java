@@ -52,7 +52,7 @@ public class PagerResultsFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search_results,
                 container, false);
         indicator = (TextView) view.findViewById(R.id.pagination);

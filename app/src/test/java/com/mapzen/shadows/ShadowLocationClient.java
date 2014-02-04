@@ -21,8 +21,8 @@ public class ShadowLocationClient {
     private LocationListener locationListener;
 
     public void __constructor__(Context context,
-                                ConnectionCallbacks connectionCallbacks,
-                                OnConnectionFailedListener failedListener) {
+            ConnectionCallbacks connectionCallbacks,
+            OnConnectionFailedListener failedListener) {
     }
 
     public void clearAll() {

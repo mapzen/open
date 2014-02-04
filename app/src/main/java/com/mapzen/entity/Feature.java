@@ -27,7 +27,7 @@ public class Feature extends GeoFeature implements Parcelable {
     public static final String ADMIN1_NAME = "admin1_name";
 
     public static JsonObjectRequest suggest(String query, Response.Listener successListener,
-                                            Response.ErrorListener errorListener) {
+            Response.ErrorListener errorListener) {
         JsonObjectRequest jsonObjectRequest =
                 new JsonObjectRequest(getUrlForSuggest(query).toString(), null, successListener,
                         errorListener);
@@ -35,7 +35,7 @@ public class Feature extends GeoFeature implements Parcelable {
     }
 
     public static JsonObjectRequest search(Map map, String query, Response.Listener successListener,
-                                           Response.ErrorListener errorListener) {
+            Response.ErrorListener errorListener) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getUrlForSearch(query,
                 map.getViewport().getViewBox()), null, successListener, errorListener);
         return jsonObjectRequest;

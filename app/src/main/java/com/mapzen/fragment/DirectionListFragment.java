@@ -24,7 +24,7 @@ public class DirectionListFragment extends ListFragment {
     private DirectionListener listener;
 
     public static DirectionListFragment newInstance(List<Instruction> instructions,
-                                                    DirectionListener listener) {
+            DirectionListener listener) {
         final DirectionListFragment fragment = new DirectionListFragment();
         fragment.instructions = instructions;
         fragment.listener = listener;
@@ -33,7 +33,7 @@ public class DirectionListFragment extends ListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_direction_list, container, false);
         final ListView listView = (ListView) view.findViewById(android.R.id.list);
         listView.setAdapter(new DirectionListAdapter(getActivity(), instructions));

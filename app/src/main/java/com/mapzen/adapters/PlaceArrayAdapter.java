@@ -16,7 +16,7 @@ public class PlaceArrayAdapter extends ArrayAdapter<Feature> {
     private ArrayList<Feature> features = new ArrayList<Feature>();
 
     public PlaceArrayAdapter(Context context, int textViewResourceId,
-                             ArrayList<Feature> objects) {
+            ArrayList<Feature> objects) {
         super(context, textViewResourceId, objects);
         features = objects;
     }

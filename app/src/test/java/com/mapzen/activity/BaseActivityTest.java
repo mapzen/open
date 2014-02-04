@@ -102,14 +102,4 @@ public class BaseActivityTest {
         activity.onResume();
         assertThat(shadowLocationClient.isConnected()).isTrue();
     }
-
-    @Test
-    public void onLocationChanged_shouldSetMapPostition() throws Exception {
-        //TODO
-    }
-
-    @Test
-    public void onLocationChanged_shouldBroadcastLocation() throws Exception {
-        //TODO
-    }
 }
