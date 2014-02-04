@@ -2,6 +2,7 @@ package com.mapzen.activity;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -38,6 +39,7 @@ public class BaseActivity extends MapActivity
         implements MenuItem.OnActionExpandListener {
     public static final int LOCATION_INTERVAL = 5000;
     public static final String PLAY_SERVICE_FAIL_MESSAGE = "Your device cannot be located";
+    public static final String COM_MAPZEN_UPDATES_LOCATION = "com.mapzen.updates.location";
     private AutoCompleteAdapter autoCompleteAdapter;
     private MenuItem menuItem;
     private MapzenApplication app;
@@ -50,8 +52,10 @@ public class BaseActivity extends MapActivity
     private LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            Logger.d("Location: receiving new location: " + location.toString());
             mapFragment.setUserLocation(location);
+            Intent toBroadcast = new Intent(COM_MAPZEN_UPDATES_LOCATION);
+            toBroadcast.putExtra("location", location);
+            sendBroadcast(toBroadcast);
         }
     };
 

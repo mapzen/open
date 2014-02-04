@@ -12,9 +12,9 @@ public final class DisplayHelper {
     /**
      * Fetch the resource drawable ID of the turn icon for the given instruction and style.
      *
-     * @param context current context in which to display the icon.
+     * @param context         current context in which to display the icon.
      * @param turnInstruction the integer value representing this turn instruction.
-     * @param iconStyle use {@link IconStyle#WHITE} or {@link IconStyle#BLACK}.
+     * @param iconStyle       use {@link IconStyle#WHITE} or {@link IconStyle#BLACK}.
      * @return the resource ID of the turn icon to display.
      */
     public static int getRouteDrawable(Context context, int turnInstruction, String iconStyle) {
