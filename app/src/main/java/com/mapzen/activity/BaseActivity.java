@@ -44,7 +44,6 @@ public class BaseActivity extends MapActivity {
     private MenuItem menuItem;
     private MapzenApplication app;
     private MapFragment mapFragment;
-    private PagerResultsFragment pagerResultsFragment;
     public static final String SEARCH_RESULTS_STACK = "search_results_stack";
     public static final String ROUTE_STACK = "route_stack";
     private MapzenProgressDialogFragment progressDialogFragment;
@@ -96,7 +95,9 @@ public class BaseActivity extends MapActivity {
     }
 
     public void showProgressDialog() {
-        progressDialogFragment.show(getSupportFragmentManager(), "dialog");
+        if (!progressDialogFragment.isAdded()) {
+            progressDialogFragment.show(getSupportFragmentManager(), "dialog");
+        }
     }
 
     public void dismissProgressDialog() {
@@ -165,7 +166,9 @@ public class BaseActivity extends MapActivity {
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                ListResultsFragment listResultsFragment = (ListResultsFragment)
+                final PagerResultsFragment pagerResultsFragment = (PagerResultsFragment)
+                        getSupportFragmentManager().findFragmentByTag(PagerResultsFragment.TAG);
+                final ListResultsFragment listResultsFragment = (ListResultsFragment)
                         getSupportFragmentManager().findFragmentByTag(ListResultsFragment.TAG);
                 if (pagerResultsFragment != null && pagerResultsFragment.isAdded()
                         && listResultsFragment == null) {
@@ -261,15 +264,14 @@ public class BaseActivity extends MapActivity {
     }
 
     public void showPlace(Feature feature, boolean clearSearch) {
+        final PagerResultsFragment pagerResultsFragment = (PagerResultsFragment)
+                getSupportFragmentManager().findFragmentByTag(PagerResultsFragment.TAG);
+
         pagerResultsFragment.flipTo(feature);
         if (clearSearch) {
             clearSearchText();
         }
         mapFragment.centerOn(feature);
-    }
-
-    public PagerResultsFragment getPagerResultsFragment() {
-        return pagerResultsFragment;
     }
 
     public void hideActionBar() {
@@ -295,9 +297,7 @@ public class BaseActivity extends MapActivity {
     }
 
     public boolean executeSearchOnMap(String query) {
-        if (pagerResultsFragment == null) {
-            pagerResultsFragment = PagerResultsFragment.newInstance(this);
-        }
+        PagerResultsFragment pagerResultsFragment = PagerResultsFragment.newInstance(this);
 
         if (!pagerResultsFragment.isAdded()) {
             getSupportFragmentManager().beginTransaction()

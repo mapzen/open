@@ -2,26 +2,18 @@ package com.mapzen.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
-import java.util.ArrayList;
+import com.mapzen.fragment.ItemFragment;
+
 import java.util.List;
 
-public class SearchViewAdapter extends FragmentPagerAdapter {
-    private List<Fragment> fragments = new ArrayList<Fragment>();
+public class SearchViewAdapter extends FragmentStatePagerAdapter {
+    private List<ItemFragment> fragments;
 
-    public SearchViewAdapter(FragmentManager fm) {
+    public SearchViewAdapter(FragmentManager fm, List<ItemFragment> fragments) {
         super(fm);
-    }
-
-    public void addFragment(Fragment fragment) {
-        fragments.add(fragment);
-        notifyDataSetChanged();
-    }
-
-    public void clearFragments() {
-        fragments.clear();
-        notifyDataSetChanged();
+        this.fragments = fragments;
     }
 
     @Override
@@ -36,9 +28,6 @@ public class SearchViewAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getItemPosition(Object object) {
-        // TODO remove this yuck stuggested at
-        // http://stackoverflow.com/questions/13695649/refresh-images-on-fragmentstatepageradapter-on-resuming-activity
-        // This defeats the whole purpose of using a state adapter ;)
-        return POSITION_NONE;
+        return fragments.indexOf(object);
     }
 }
