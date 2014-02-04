@@ -79,6 +79,10 @@ public class PagerResultsFragment extends BaseFragment {
         pager.setCurrentItem(position);
     }
 
+    public int getCurrentItem() {
+        return pager.getCurrentItem();
+    }
+
     private void setPager(ViewPager pager) {
         this.pager = pager;
 
@@ -89,7 +93,7 @@ public class PagerResultsFragment extends BaseFragment {
 
             @Override
             public void onPageSelected(int i) {
-                centerOnPlace(i);
+                centerOnPlace(i, Math.pow(2, app.getStoredZoomLevel()));
             }
 
             @Override
@@ -99,13 +103,17 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     private void centerOnPlace(int i) {
+        centerOnPlace(i, Math.pow(2, MapFragment.DEFAULT_ZOOMLEVEL));
+    }
+
+    private void centerOnPlace(int i, double zoom) {
         ItemFragment srf = currentCollection.get(i);
         Feature feature = srf.getFeature();
         Logger.d("feature: " + feature.toString());
         String indicatorText = String.format(Locale.getDefault(), PAGINATE_TEMPLATE, i + 1,
                 currentCollection.size());
         indicator.setText(indicatorText);
-        mapFragment.centerOn(feature);
+        mapFragment.centerOn(feature, zoom);
     }
 
     private void hide() {

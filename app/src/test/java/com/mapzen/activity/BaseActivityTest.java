@@ -7,25 +7,28 @@ import android.view.Menu;
 import android.widget.SearchView;
 
 import com.mapzen.MapzenApplication;
-import com.mapzen.MapzenTestRunner;
 import com.mapzen.R;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.fragment.PagerResultsFragment;
 import com.mapzen.shadows.ShadowLocationClient;
 import com.mapzen.shadows.ShadowVolley;
+import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.tester.android.view.TestMenu;
 
-import static com.mapzen.util.TestHelper.initBaseActivity;
-import static com.mapzen.util.TestHelper.initMapFragment;
+import static com.mapzen.support.TestHelper.initBaseActivity;
+import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
+import static org.robolectric.util.FragmentTestUtil.startFragment;
 
 @RunWith(MapzenTestRunner.class)
 public class BaseActivityTest {
@@ -140,5 +143,23 @@ public class BaseActivityTest {
                 activity.getSupportFragmentManager().findFragmentByTag(PagerResultsFragment.TAG);
 
         assertThat(fragment1).isNotSameAs(fragment2);
+    }
+
+    @Test
+    public void onPoiClick_shouldPagerResultsFragmentCurrentItem() throws Exception {
+        PagerResultsFragment pagerResultsFragment = PagerResultsFragment.newInstance(activity);
+        startFragment(pagerResultsFragment);
+        activity.getSupportFragmentManager().beginTransaction()
+                .add(R.id.pager_results_container, pagerResultsFragment,
+                        PagerResultsFragment.TAG)
+                .commit();
+
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put(new JSONObject());
+        jsonArray.put(new JSONObject());
+        pagerResultsFragment.setSearchResults(jsonArray);
+        pagerResultsFragment.setCurrentItem(0);
+        activity.getMapFragment().getOnPoiClickListener().onPoiClick(1, null);
+        assertThat(pagerResultsFragment.getCurrentItem()).isEqualTo(1);
     }
 }

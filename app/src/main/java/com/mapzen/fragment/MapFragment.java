@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.mapzen.PoiLayer;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
+import com.mapzen.search.OnPoiClickListener;
 
 import org.oscim.android.canvas.AndroidBitmap;
 import org.oscim.backend.canvas.Bitmap;
@@ -32,6 +32,8 @@ import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import static org.oscim.layers.marker.ItemizedIconLayer.OnItemGestureListener;
+
 public class MapFragment extends BaseFragment {
     public static final int DEFAULT_ZOOMLEVEL = 17;
     public static final int ROUTE_LINE_WIDTH = 15;
@@ -39,7 +41,7 @@ public class MapFragment extends BaseFragment {
     private VectorTileLayer baseLayer;
     private Button myPosition;
     private ItemizedIconLayer<MarkerItem> meMarkerLayer;
-    private PoiLayer<MarkerItem> poiMarkersLayer;
+    private ItemizedIconLayer<MarkerItem> poiMarkersLayer;
     private ItemizedIconLayer<MarkerItem> highlightLayer;
     private PathLayer pathLayer;
     private ArrayList<MarkerItem> meMarkers = new ArrayList<MarkerItem>(1);
@@ -48,6 +50,7 @@ public class MapFragment extends BaseFragment {
     private boolean followMe = true;
     private boolean initialRelocateHappened = false;
     private boolean bootingUp = true;
+    private OnPoiClickListener onPoiClickListener;
 
     @Override
     public void onStart() {
@@ -66,10 +69,14 @@ public class MapFragment extends BaseFragment {
     }
 
     public void centerOn(Feature feature) {
+        centerOn(feature, Math.pow(2, DEFAULT_ZOOMLEVEL));
+    }
+
+    public void centerOn(Feature feature, double zoom) {
         highlightLayer.removeAllItems();
         highlightLayer.addItem(feature.getMarker());
         GeoPoint geoPoint = feature.getGeoPoint();
-        map.getAnimator().animateTo(DURATION, geoPoint, Math.pow(2, DEFAULT_ZOOMLEVEL), false);
+        map.getAnimator().animateTo(DURATION, geoPoint, zoom, false);
     }
 
     private TileSource getTileBase() {
@@ -79,8 +86,23 @@ public class MapFragment extends BaseFragment {
         return tileSource;
     }
 
-    private PoiLayer<MarkerItem> buildPoiMarkersLayer() {
-        return new PoiLayer<MarkerItem>(getActivity(), map, getDefaultMarkerSymbol());
+    private ItemizedIconLayer<MarkerItem> buildPoiMarkersLayer() {
+        return new ItemizedIconLayer<MarkerItem>(map, new ArrayList<MarkerItem>(),
+                getDefaultMarkerSymbol(), new OnItemGestureListener<MarkerItem>() {
+            @Override
+            public boolean onItemSingleTapUp(int index, MarkerItem item) {
+                Toast.makeText(act, item.getTitle(), Toast.LENGTH_SHORT).show();
+                if (onPoiClickListener != null) {
+                    onPoiClickListener.onPoiClick(index, item);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onItemLongPress(int index, MarkerItem item) {
+                return true;
+            }
+        });
     }
 
     private ItemizedIconLayer<MarkerItem> buildHighlightLayer() {
@@ -242,5 +264,13 @@ public class MapFragment extends BaseFragment {
         if (map != null) {
             map.updateMap(true);
         }
+    }
+
+    public void setOnPoiClickListener(OnPoiClickListener onPoiClickListener) {
+        this.onPoiClickListener = onPoiClickListener;
+    }
+
+    public OnPoiClickListener getOnPoiClickListener() {
+        return onPoiClickListener;
     }
 }

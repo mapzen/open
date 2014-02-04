@@ -6,9 +6,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.mapzen.MapzenTestRunner;
 import com.mapzen.R;
 import com.mapzen.osrm.Instruction;
+import com.mapzen.support.MapzenTestRunner;
 
 import org.junit.Before;
 import org.junit.Test;

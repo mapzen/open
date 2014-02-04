@@ -1,4 +1,4 @@
-package com.mapzen;
+package com.mapzen.support;
 
 import com.mapzen.shadows.ShadowCrashlytics;
 import com.mapzen.shadows.ShadowGLMatrix;

@@ -5,6 +5,7 @@ import android.app.Activity;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.shadows.ShadowVolley;
+import com.mapzen.support.MapzenTestRunner;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -1,11 +1,10 @@
-package com.mapzen.util;
+package com.mapzen.support;
 
 import android.support.v4.app.FragmentManager;
 
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.fragment.MapFragment;
-import com.mapzen.support.TestBaseActivity;
 
 import org.apache.commons.io.FileUtils;
 import org.oscim.map.TestMap;
