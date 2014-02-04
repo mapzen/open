@@ -1,12 +1,15 @@
 package com.mapzen.fragment;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.PlaceArrayAdapter;
@@ -14,12 +17,10 @@ import com.mapzen.entity.Feature;
 
 import java.util.ArrayList;
 
-import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
-
 public class ListResultsFragment extends ListFragment {
-    private BaseActivity act;
-    public static final String FULL_LIST = "full list";
+    public static final String TAG = ListResultsFragment.class.getSimpleName();
     private static ListResultsFragment listResultsFragment;
+    private BaseActivity act;
 
     public void setAct(BaseActivity act) {
         this.act = act;
@@ -32,11 +33,49 @@ public class ListResultsFragment extends ListFragment {
     }
 
     @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        final ActionBar actionBar = act.getActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(R.string.results_title);
+        }
+
+        act.supportInvalidateOptionsMenu();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            act.onBackPressed();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         PagerResultsFragment pagerResultsFragment = act.getPagerResultsFragment();
         pagerResultsFragment.setCurrentItem(position);
         act.getSearchView().getSuggestionsAdapter().swapCursor(null);
-        detach();
+        act.onBackPressed();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        final ActionBar actionBar = act.getActionBar();
+        if (actionBar != null) {
+            actionBar.setHomeButtonEnabled(false);
+            actionBar.setDisplayHomeAsUpEnabled(false);
+            actionBar.setTitle(R.string.application_name);
+        }
+
+        act.supportInvalidateOptionsMenu();
+        act.getSearchView().setQuery(((MapzenApplication) act.getApplication())
+                .getCurrentSearchTerm(), false);
     }
 
     public static ListResultsFragment newInstance(BaseActivity act, ArrayList<Feature> features) {
@@ -46,34 +85,5 @@ public class ListResultsFragment extends ListFragment {
         listResultsFragment.setListAdapter(placeArrayAdapter);
         listResultsFragment.setAct(act);
         return listResultsFragment;
-    }
-
-    public void attachToContainer(int container) {
-        if (isAdded()) {
-            show();
-        } else {
-            add(container);
-        }
-    }
-
-    private void add(int container) {
-        act.getSupportFragmentManager().beginTransaction()
-                .addToBackStack(SEARCH_RESULTS_STACK)
-                .add(container, this, FULL_LIST)
-                .commit();
-    }
-
-    private void show() {
-        act.getSupportFragmentManager().beginTransaction()
-                .addToBackStack(SEARCH_RESULTS_STACK)
-                .show(this)
-                .commit();
-    }
-
-    public void detach() {
-        act.getSupportFragmentManager().beginTransaction()
-                .addToBackStack(SEARCH_RESULTS_STACK)
-                .hide(this)
-                .commit();
     }
 }

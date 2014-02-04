@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,8 +36,7 @@ import static com.google.android.gms.common.GooglePlayServicesClient.ConnectionC
 import static com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
 import static com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY;
 
-public class BaseActivity extends MapActivity
-        implements MenuItem.OnActionExpandListener {
+public class BaseActivity extends MapActivity {
     public static final int LOCATION_INTERVAL = 5000;
     public static final String PLAY_SERVICE_FAIL_MESSAGE = "Your device cannot be located";
     public static final String COM_MAPZEN_UPDATES_LOCATION = "com.mapzen.updates.location";
@@ -67,7 +67,6 @@ public class BaseActivity extends MapActivity
         setContentView(R.layout.base);
         initMapFragment();
         initLocationClient();
-        pagerResultsFragment = PagerResultsFragment.newInstance(this);
         progressDialogFragment = new MapzenProgressDialogFragment();
     }
 
@@ -81,6 +80,19 @@ public class BaseActivity extends MapActivity
     protected void onResume() {
         super.onResume();
         locationClient.connect();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            final Fragment fragment = getSupportFragmentManager()
+                    .findFragmentByTag(ListResultsFragment.TAG);
+            if (fragment != null) {
+                return fragment.onOptionsItemSelected(item);
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public void showProgressDialog() {
@@ -145,7 +157,24 @@ public class BaseActivity extends MapActivity
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         menuItem = menu.findItem(R.id.search);
-        menuItem.setOnActionExpandListener(this);
+        menuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                ListResultsFragment listResultsFragment = (ListResultsFragment)
+                        getSupportFragmentManager().findFragmentByTag(ListResultsFragment.TAG);
+                if (pagerResultsFragment != null && pagerResultsFragment.isAdded()
+                        && listResultsFragment == null) {
+                    onBackPressed();
+                }
+                return true;
+            }
+        });
+
         final SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         setupAdapter(searchView);
@@ -171,6 +200,17 @@ public class BaseActivity extends MapActivity
         return true;
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(ListResultsFragment.TAG);
+        if (fragment != null && fragment.isAdded()) {
+            collapseSearchView();
+            menu.findItem(R.id.search).setVisible(false);
+        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     private void handleGeoIntent(SearchView searchView, Uri data) {
         if (data.toString().contains("q=")) {
             menuItem.expandActionView();
@@ -189,29 +229,6 @@ public class BaseActivity extends MapActivity
         }
     }
 
-    @Override
-    public boolean onMenuItemActionExpand(MenuItem item) {
-        return true;
-    }
-
-    private PagerResultsFragment getActivePagerResults() {
-        return (PagerResultsFragment) getSupportFragmentManager()
-                .findFragmentByTag(PagerResultsFragment.PAGER_RESULTS);
-    }
-
-    private ListResultsFragment getActiveListResults() {
-        return (ListResultsFragment) getSupportFragmentManager()
-                .findFragmentByTag(ListResultsFragment.FULL_LIST);
-    }
-
-    @Override
-    public boolean onMenuItemActionCollapse(MenuItem item) {
-        if (getActiveListResults() != null || getActivePagerResults() != null) {
-            onBackPressed();
-        }
-        return true;
-    }
-
     public Map getMap() {
         return mMap;
     }
@@ -226,13 +243,12 @@ public class BaseActivity extends MapActivity
 
     private void setupAdapter(SearchView searchView) {
         if (autoCompleteAdapter == null) {
-            autoCompleteAdapter =
-                    new AutoCompleteAdapter(getActionBar().getThemedContext(),
-                            this, app.getColumns());
+            autoCompleteAdapter = new AutoCompleteAdapter(getActionBar().getThemedContext(),
+                    this, app.getColumns());
             autoCompleteAdapter.setSearchView(searchView);
             autoCompleteAdapter.setMapFragment(mapFragment);
-            autoCompleteAdapter.setPagerResultsFragment(pagerResultsFragment);
         }
+
         searchView.setSuggestionsAdapter(autoCompleteAdapter);
     }
 
@@ -257,11 +273,11 @@ public class BaseActivity extends MapActivity
     }
 
     public void hideActionBar() {
-        blurSearchMenu();
+        collapseSearchView();
         getActionBar().hide();
     }
 
-    public void blurSearchMenu() {
+    public void collapseSearchView() {
         MenuItem searchMenu = getSearchMenu();
         if (searchMenu != null) {
             searchMenu.collapseActionView();
@@ -276,5 +292,21 @@ public class BaseActivity extends MapActivity
 
     public LocationClient getLocationClient() {
         return locationClient;
+    }
+
+    public boolean executeSearchOnMap(String query) {
+        if (pagerResultsFragment == null) {
+            pagerResultsFragment = PagerResultsFragment.newInstance(this);
+        }
+
+        if (!pagerResultsFragment.isAdded()) {
+            getSupportFragmentManager().beginTransaction()
+                    .addToBackStack(null)
+                    .add(R.id.pager_results_container, pagerResultsFragment,
+                            PagerResultsFragment.TAG)
+                    .commit();
+        }
+
+        return pagerResultsFragment.executeSearchOnMap(getSearchView(), query);
     }
 }

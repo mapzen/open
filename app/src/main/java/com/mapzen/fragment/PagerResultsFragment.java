@@ -1,6 +1,7 @@
 package com.mapzen.fragment;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,10 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
-
 public class PagerResultsFragment extends BaseFragment {
-    public static final String PAGER_RESULTS = "results";
+    public static final String TAG = PagerResultsFragment.class.getSimpleName();
     private SearchViewAdapter adapter;
     private List<ItemFragment> currentCollection =
             new ArrayList<ItemFragment>();
@@ -40,10 +39,9 @@ public class PagerResultsFragment extends BaseFragment {
     private ViewPager pager;
     private ArrayList<Feature> features = new ArrayList<Feature>();
     private static final String PAGINATE_TEMPLATE = "%2d of %2d RESULTS";
-    private static PagerResultsFragment pagerResultsFragment;
 
     public static PagerResultsFragment newInstance(BaseActivity act) {
-        pagerResultsFragment = new PagerResultsFragment();
+        PagerResultsFragment pagerResultsFragment = new PagerResultsFragment();
         pagerResultsFragment.setAct(act);
         pagerResultsFragment.initializeAdapter();
         pagerResultsFragment.setMapFragment(act.getMapFragment());
@@ -71,8 +69,11 @@ public class PagerResultsFragment extends BaseFragment {
         viewAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                act.getSearchView().clearFocus();
-                ListResultsFragment.newInstance(act, features).attachToContainer(R.id.full_list);
+                final Fragment fragment = ListResultsFragment.newInstance(act, features);
+                act.getSupportFragmentManager().beginTransaction()
+                        .add(R.id.full_list, fragment, ListResultsFragment.TAG)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
     }
@@ -117,29 +118,6 @@ public class PagerResultsFragment extends BaseFragment {
     private void hide() {
         act.getSupportFragmentManager().beginTransaction()
                 .hide(this)
-                .commit();
-    }
-
-    public void attachToContainer() {
-        if (isAdded()) {
-            show();
-        } else {
-            add();
-        }
-        act.getSearchView().clearFocus();
-    }
-
-    private void add() {
-        act.getSupportFragmentManager().beginTransaction()
-                .addToBackStack(SEARCH_RESULTS_STACK)
-                .add(R.id.pager_results_container, this, PAGER_RESULTS)
-                .commit();
-    }
-
-    private void show() {
-        act.getSupportFragmentManager().beginTransaction()
-                .addToBackStack(SEARCH_RESULTS_STACK)
-                .show(this)
                 .commit();
     }
 
@@ -202,7 +180,6 @@ public class PagerResultsFragment extends BaseFragment {
 
     public boolean executeSearchOnMap(final SearchView view, String query) {
         app.cancelAllApiRequests();
-        attachToContainer();
         act.showProgressDialog();
         app.setCurrentSearchTerm(query);
         JsonObjectRequest jsonObjectRequest =
