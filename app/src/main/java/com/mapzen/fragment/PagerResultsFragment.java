@@ -32,9 +32,7 @@ import java.util.Locale;
 
 public class PagerResultsFragment extends BaseFragment {
     public static final String TAG = PagerResultsFragment.class.getSimpleName();
-    private SearchViewAdapter adapter;
-    private List<ItemFragment> currentCollection =
-            new ArrayList<ItemFragment>();
+    private List<ItemFragment> currentCollection = new ArrayList<ItemFragment>();
     private TextView indicator;
     private ViewPager pager;
     private ArrayList<Feature> features = new ArrayList<Feature>();
@@ -43,7 +41,6 @@ public class PagerResultsFragment extends BaseFragment {
     public static PagerResultsFragment newInstance(BaseActivity act) {
         PagerResultsFragment pagerResultsFragment = new PagerResultsFragment();
         pagerResultsFragment.setAct(act);
-        pagerResultsFragment.initializeAdapter();
         pagerResultsFragment.setMapFragment(act.getMapFragment());
         return pagerResultsFragment;
     }
@@ -99,18 +96,14 @@ public class PagerResultsFragment extends BaseFragment {
             public void onPageScrollStateChanged(int i) {
             }
         });
-        this.pager.setAdapter(adapter);
-    }
-
-    public void initializeAdapter() {
-        this.adapter = new SearchViewAdapter(act.getSupportFragmentManager());
     }
 
     private void centerOnPlace(int i) {
         ItemFragment srf = currentCollection.get(i);
         Feature feature = srf.getFeature();
         Logger.d("feature: " + feature.toString());
-        String indicatorText = String.format(Locale.getDefault(), PAGINATE_TEMPLATE, i + 1, currentCollection.size());
+        String indicatorText = String.format(Locale.getDefault(), PAGINATE_TEMPLATE, i + 1,
+                currentCollection.size());
         indicator.setText(indicatorText);
         mapFragment.centerOn(feature);
     }
@@ -132,12 +125,10 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     public void clearAll() {
-        Logger.d(String.format(
-                Locale.getDefault(), "clearing all items: %d", currentCollection.size()));
+        Logger.d(String.format(Locale.US, "clearing all items: %d", currentCollection.size()));
         ItemizedIconLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
         poiLayer.removeAllItems();
         pager.setCurrentItem(0);
-        adapter.clearFragments();
         currentCollection.clear();
         features.clear();
     }
@@ -151,11 +142,6 @@ public class PagerResultsFragment extends BaseFragment {
         itemFragment.setAct(act);
         currentCollection.add(itemFragment);
         features.add(feature);
-        adapter.addFragment(itemFragment);
-    }
-
-    public void notifyNewData() {
-        adapter.notifyDataSetChanged();
     }
 
     public void setSearchResults(JSONArray jsonArray) {
@@ -217,9 +203,10 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     private void displayResults(int length, int currentPos) {
-        notifyNewData();
-        String initialIndicatorText = String.format(Locale.getDefault(), PAGINATE_TEMPLATE, 1, length);
-        indicator.setText(initialIndicatorText);
+        SearchViewAdapter adapter = new SearchViewAdapter(getFragmentManager(), currentCollection);
+        pager.setAdapter(adapter);
+        String indicatorText = String.format(Locale.getDefault(), PAGINATE_TEMPLATE, 1, length);
+        indicator.setText(indicatorText);
         centerOnPlace(currentPos);
         mapFragment.updateMap();
     }

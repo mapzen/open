@@ -57,7 +57,9 @@ public class ListResultsFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        PagerResultsFragment pagerResultsFragment = act.getPagerResultsFragment();
+        PagerResultsFragment pagerResultsFragment = (PagerResultsFragment)
+                act.getSupportFragmentManager().findFragmentByTag(PagerResultsFragment.TAG);
+
         pagerResultsFragment.setCurrentItem(position);
         act.getSearchView().getSuggestionsAdapter().swapCursor(null);
         act.onBackPressed();

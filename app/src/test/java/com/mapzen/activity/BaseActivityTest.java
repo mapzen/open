@@ -10,6 +10,7 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.MapzenTestRunner;
 import com.mapzen.R;
 import com.mapzen.fragment.ListResultsFragment;
+import com.mapzen.fragment.PagerResultsFragment;
 import com.mapzen.shadows.ShadowLocationClient;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.TestBaseActivity;
@@ -126,5 +127,18 @@ public class BaseActivityTest {
         activity.executeSearchOnMap("query");
         menu.findItem(R.id.search).collapseActionView();
         assertThat(((TestBaseActivity) activity).isBackPressed()).isTrue();
+    }
+
+    @Test
+    public void executeSearchOnMap_shouldCreateNewPagerResultsFragmentEachTime() throws Exception {
+        activity.executeSearchOnMap("query1");
+        final PagerResultsFragment fragment1 = (PagerResultsFragment)
+                activity.getSupportFragmentManager().findFragmentByTag(PagerResultsFragment.TAG);
+
+        activity.executeSearchOnMap("query1");
+        final PagerResultsFragment fragment2 = (PagerResultsFragment)
+                activity.getSupportFragmentManager().findFragmentByTag(PagerResultsFragment.TAG);
+
+        assertThat(fragment1).isNotSameAs(fragment2);
     }
 }

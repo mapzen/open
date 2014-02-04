@@ -14,10 +14,6 @@ import com.mapzen.entity.Feature;
 public class ItemFragment extends BaseFragment {
     private Feature feature;
 
-    public void setFeature(Feature feature) {
-        this.feature = feature;
-    }
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search_item, container, false);
         Feature.ViewHolder holder;
@@ -52,6 +48,10 @@ public class ItemFragment extends BaseFragment {
 
         holder.setFromFeature(feature);
         return view;
+    }
+
+    public void setFeature(Feature feature) {
+        this.feature = feature;
     }
 
     public Feature getFeature() {
