@@ -23,6 +23,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.R;
+import com.mapzen.entity.Feature;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.util.DisplayHelper;
@@ -45,12 +46,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         ViewPager.OnPageChangeListener {
     public static final int WALKING_THRESH_HOLD = 10;
     private ArrayList<Instruction> instructions;
-    private GeoPoint from, destination;
+    private GeoPoint from;
     private ViewPager pager;
     private Button button;
     private RoutesAdapter adapter;
     private Route route;
     private LocationReceiver locationReceiver;
+    private Feature feature;
     public static final int ROUTE_ZOOM_LEVEL = 17;
 
     public void setInstructions(ArrayList<Instruction> instructions) {
@@ -64,6 +66,18 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         initLocationReceiver();
         act.hideActionBar();
         drawRoute();
+    }
+
+    public void setFeature(Feature feature) {
+        this.feature = feature;
+    }
+
+    public Feature getFeature() {
+        return feature;
+    }
+
+    public GeoPoint getDestinationPoint() {
+        return feature.getGeoPoint();
     }
 
     private Location getNextTurnTo(Instruction nextInstruction) {
@@ -153,10 +167,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         this.from = from;
     }
 
-    public void setDestination(GeoPoint destination) {
-        this.destination = destination;
-    }
-
     public void next() {
         pager.setCurrentItem(pager.getCurrentItem() + 1);
     }
@@ -180,7 +190,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.showProgressDialog();
         popSearchResultsStack();
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrlForCar(
-                app.getStoredZoomLevel(), from, destination), null,
+                app.getStoredZoomLevel(), from, getDestinationPoint()), null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

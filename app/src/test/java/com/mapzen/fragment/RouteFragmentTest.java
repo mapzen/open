@@ -13,6 +13,7 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
+import com.mapzen.entity.Feature;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.shadows.ShadowLocationClient;
 import com.mapzen.shadows.ShadowVolley;
@@ -58,9 +59,17 @@ public class RouteFragmentTest {
         app = Robolectric.getShadowApplication();
     }
 
+    private Feature getTestFeature() {
+        Feature feature = new Feature();
+        feature.setProperty(Feature.NAME, "Awesome Test Place");
+        feature.setLat(1.0);
+        feature.setLon(2.0);
+        return feature;
+    }
+
     private void initTestFragment() {
         fragment = new RouteFragment();
-        fragment.setDestination(new GeoPoint(1.0, 2.0));
+        fragment.setFeature(getTestFeature());
         fragment.setFrom(new GeoPoint(3.0, 4.0));
         fragment.setAct(act);
         fragment.setMapFragment(initMapFragment(act));
@@ -291,8 +300,17 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void setFeature_ShouldGenerateDestinationCorrdinates() throws Exception {
+    public void setFeature_shouldGenerateDestinationPoint() throws Exception {
+        Feature feature = new Feature();
+        fragment.setFeature(feature);
+        assertThat(fragment.getDestinationPoint()).isEqualTo(feature.getGeoPoint());
+    }
 
+    @Test
+    public void setDestination_shouldSetFeature() throws Exception {
+        Feature feature = getTestFeature();
+        fragment.setFeature(feature);
+        assertThat(fragment.getFeature()).isEqualTo(feature);
     }
 
     private View getInstructionView(int position) {

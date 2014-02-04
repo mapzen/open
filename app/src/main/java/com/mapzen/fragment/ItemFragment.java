@@ -28,7 +28,7 @@ public class ItemFragment extends BaseFragment {
                 public void onClick(View v) {
                     RouteFragment routeFragment = new RouteFragment();
                     routeFragment.setFrom(app.getLocationPoint());
-                    routeFragment.setDestination(feature.getGeoPoint());
+                    routeFragment.setFeature(feature);
                     routeFragment.setMapFragment(mapFragment);
                     routeFragment.setAct(act);
                     routeFragment.attachToActivity();
