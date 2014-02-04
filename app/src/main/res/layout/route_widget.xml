@@ -40,6 +40,14 @@
             android:layout_height="match_parent"
             android:textColor="@android:color/white"
             android:layout_margin="@dimen/default_margin"/>
+
+        <TextView
+            android:id="@+id/destination_distance"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@android:color/white"
+            android:layout_margin="@dimen/default_margin"/>
+
     </RelativeLayout>
 
 </RelativeLayout>

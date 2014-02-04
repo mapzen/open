@@ -54,6 +54,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private Route route;
     private LocationReceiver locationReceiver;
     private Feature feature;
+    private TextView distanceLeftView;
     public static final int ROUTE_ZOOM_LEVEL = 17;
 
     public void setInstructions(ArrayList<Instruction> instructions) {
@@ -144,6 +145,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager = (ViewPager) rootView.findViewById(R.id.routes);
         TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
         destinationName.setText(feature.getProperty(NAME));
+        distanceLeftView = (TextView) rootView.findViewById(R.id.destination_distance);
         pager.setAdapter(adapter);
         pager.setOnPageChangeListener(this);
         adapter.notifyDataSetChanged();
@@ -186,6 +188,21 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return pager.getCurrentItem();
     }
 
+    public void onRouteSuccess(JSONObject rawRoute) {
+        this.route = new Route(rawRoute);
+        if (route.foundRoute()) {
+            setInstructions(route.getRouteInstructions());
+            drawRoute();
+            distanceLeftView.setText(String.valueOf(route.getTotalDistance()));
+            act.dismissProgressDialog();
+            displayRoute();
+        } else {
+            Toast.makeText(act, act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
+            act.dismissProgressDialog();
+            act.showActionBar();
+        }
+    }
+
     public void attachToActivity() {
         act.hideActionBar();
         mapFragment.clearMarkers();
@@ -197,17 +214,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        setRouteFromResponse(response);
-                        if (route.foundRoute()) {
-                            setInstructions(route.getRouteInstructions());
-                            drawRoute();
-                            act.dismissProgressDialog();
-                            displayRoute();
-                        } else {
-                            Toast.makeText(act, act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
-                            act.dismissProgressDialog();
-                            act.showActionBar();
-                        }
+                        onRouteSuccess(response);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -234,8 +241,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    private void setRouteFromResponse(JSONObject response) {
-        this.route = new Route(response);
+    public Route getRoute() {
+        return route;
     }
 
     private void displayRoute() {

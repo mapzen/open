@@ -160,6 +160,7 @@ public class RouteFragmentTest {
 
     private void attachFragment() throws JSONException {
         ShadowVolley.clearMockRequestQueue();
+        fragment.onCreateView(act.getLayoutInflater(), null, null);
         fragment.attachToActivity();
         ShadowVolley.MockRequestQueue queue = ShadowVolley.getMockRequestQueue();
         JsonObjectRequest request = (JsonObjectRequest) queue.getRequests().get(0);
@@ -323,6 +324,17 @@ public class RouteFragmentTest {
         assertThat(view.getText()).isEqualTo(feature.getProperty(NAME));
     }
 
+    @Test
+    public void onCreateView_shouldHaveTotalDistance() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        act.showProgressDialog();
+        fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
+        View view = fragment.getView();
+        TextView textView = (TextView) view.findViewById(R.id.destination_distance);
+        int distance = fragment.getRoute().getTotalDistance();
+        assertThat(textView.getText()).isEqualTo(String.valueOf(distance));
+    }
+
     private View getInstructionView(int position) {
         ViewPager pager = (ViewPager) fragment.getView().findViewById(R.id.routes);
         ViewGroup group = new ViewGroup(act) {
@@ -333,5 +345,4 @@ public class RouteFragmentTest {
         };
         return (View) pager.getAdapter().instantiateItem(group, position);
     }
-
 }
