@@ -95,7 +95,7 @@
           <property name="max" value="120"/>
           <!-- ignore lines like "$File: //depot/... $" -->
           <property name="ignorePattern" value="\$File.*\$"/>
-          <property name="severity" value="info"/>
+          <property name="severity" value="error"/>
         </module>
         <module name="MethodLength"/>
         <module name="ParameterNumber"/>
