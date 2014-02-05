@@ -13,7 +13,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
-import com.mapzen.util.ApiHelper;
 
 import org.json.JSONObject;
 
@@ -49,7 +48,8 @@ public class ItemFragment extends BaseFragment {
                     mapFragment.clearMarkers();
                     mapFragment.updateMap();
                     JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrlForCar(
-                            app.getStoredZoomLevel(), app.getLocationPoint(), routeFragment.getDestinationPoint()), null,
+                            app.getStoredZoomLevel(), app.getLocationPoint(),
+                            routeFragment.getDestinationPoint()), null,
                             new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
@@ -83,7 +83,7 @@ public class ItemFragment extends BaseFragment {
     }
 
     public RouteFragment getRouteFragment() {
-       return routeFragment;
+        return routeFragment;
     }
 
     public void setFeature(Feature feature) {

@@ -10,8 +10,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
@@ -19,7 +17,6 @@ import com.mapzen.osrm.Instruction;
 import com.mapzen.shadows.ShadowLocationClient;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
-import com.mapzen.support.TestHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,7 +24,6 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.oscim.core.GeoPoint;
 import org.robolectric.Robolectric;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowLog;
@@ -35,7 +31,6 @@ import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.FragmentTestUtil;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
@@ -72,7 +67,6 @@ public class RouteFragmentTest {
     private void initTestFragment() {
         fragment = new RouteFragment();
         fragment.setFeature(getTestFeature());
-        fragment.setFrom(new GeoPoint(3.0, 4.0));
         fragment.setAct(act);
         fragment.setMapFragment(initMapFragment(act));
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();

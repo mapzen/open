@@ -1,25 +1,14 @@
 package com.mapzen.fragment;
 
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.mapzen.MapzenTestRunner;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
-import com.mapzen.entity.Feature;
 import com.mapzen.shadows.ShadowVolley;
-import com.mapzen.util.TestHelper;
-
-import static com.mapzen.entity.Feature.NAME;
-import static com.mapzen.util.TestHelper.MOCK_ROUTE_JSON;
-import static com.mapzen.util.TestHelper.getTestFeature;
-import static com.mapzen.util.TestHelper.initBaseActivity;
-import static com.mapzen.util.TestHelper.initMapFragment;
-import static org.fest.assertions.api.ANDROID.assertThat;
-import static org.fest.assertions.api.Assertions.assertThat;
+import com.mapzen.support.MapzenTestRunner;
 
 import org.json.JSONObject;
 import org.junit.Before;
@@ -29,6 +18,13 @@ import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.FragmentTestUtil;
 
 import java.util.List;
+
+import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
+import static com.mapzen.support.TestHelper.getTestFeature;
+import static com.mapzen.support.TestHelper.initBaseActivity;
+import static com.mapzen.support.TestHelper.initMapFragment;
+import static org.fest.assertions.api.ANDROID.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 @RunWith(MapzenTestRunner.class)
 public class ItemFragmentTest {
@@ -90,7 +86,6 @@ public class ItemFragmentTest {
         assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(act.getString(R.string.generic_server_error));
         assertThat(ShadowToast.getLatestToast()).hasDuration(Toast.LENGTH_LONG);
     }
-
 
 
     @Test

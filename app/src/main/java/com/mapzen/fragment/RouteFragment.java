@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -19,9 +18,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
 import com.mapzen.osrm.Instruction;
@@ -39,15 +35,12 @@ import java.util.List;
 
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.activity.BaseActivity.ROUTE_STACK;
-import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
 import static com.mapzen.entity.Feature.NAME;
-import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
         ViewPager.OnPageChangeListener {
     public static final int WALKING_THRESH_HOLD = 10;
     private ArrayList<Instruction> instructions;
-    private GeoPoint from;
     private ViewPager pager;
     private Button button;
     private RoutesAdapter adapter;
@@ -171,10 +164,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         clearRoute();
     }
 
-    public void setFrom(GeoPoint from) {
-        this.from = from;
-    }
-
     public void next() {
         pager.setCurrentItem(pager.getCurrentItem() + 1);
     }
@@ -205,11 +194,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public void attachToActivity() {
-    }
-
-    private void popSearchResultsStack() {
-        act.getSupportFragmentManager()
-                .popBackStack(SEARCH_RESULTS_STACK, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
     private void drawRoute() {
