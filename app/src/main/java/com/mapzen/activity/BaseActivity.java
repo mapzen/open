@@ -26,10 +26,12 @@ import com.mapzen.entity.Feature;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.fragment.PagerResultsFragment;
+import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
 import org.oscim.android.MapActivity;
+import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.Map;
 
 import static com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
@@ -145,6 +147,18 @@ public class BaseActivity extends MapActivity {
         mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
         mapFragment.setAct(this);
         mapFragment.setMap(getMap());
+        mapFragment.setOnPoiClickListener(new OnPoiClickListener() {
+            @Override
+            public void onPoiClick(int index, MarkerItem item) {
+                final PagerResultsFragment pagerResultsFragment = getPagerResultsFragment();
+                pagerResultsFragment.setCurrentItem(index);
+            }
+        });
+    }
+
+    private PagerResultsFragment getPagerResultsFragment() {
+        return (PagerResultsFragment) getSupportFragmentManager()
+                .findFragmentByTag(PagerResultsFragment.TAG);
     }
 
     public MapFragment getMapFragment() {
@@ -166,8 +180,7 @@ public class BaseActivity extends MapActivity {
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                final PagerResultsFragment pagerResultsFragment = (PagerResultsFragment)
-                        getSupportFragmentManager().findFragmentByTag(PagerResultsFragment.TAG);
+                final PagerResultsFragment pagerResultsFragment = getPagerResultsFragment();
                 final ListResultsFragment listResultsFragment = (ListResultsFragment)
                         getSupportFragmentManager().findFragmentByTag(ListResultsFragment.TAG);
                 if (pagerResultsFragment != null && pagerResultsFragment.isAdded()
@@ -264,8 +277,7 @@ public class BaseActivity extends MapActivity {
     }
 
     public void showPlace(Feature feature, boolean clearSearch) {
-        final PagerResultsFragment pagerResultsFragment = (PagerResultsFragment)
-                getSupportFragmentManager().findFragmentByTag(PagerResultsFragment.TAG);
+        final PagerResultsFragment pagerResultsFragment = getPagerResultsFragment();
 
         pagerResultsFragment.flipTo(feature);
         if (clearSearch) {

@@ -3,8 +3,8 @@ package com.mapzen.fragment;
 import android.view.MenuItem;
 
 import com.mapzen.MapzenApplication;
-import com.mapzen.MapzenTestRunner;
 import com.mapzen.entity.Feature;
+import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestActionBar;
 import com.mapzen.support.TestBaseActivity;
 
@@ -17,7 +17,7 @@ import org.robolectric.tester.android.view.TestMenuItem;
 
 import java.util.ArrayList;
 
-import static com.mapzen.util.TestHelper.initBaseActivity;
+import static com.mapzen.support.TestHelper.initBaseActivity;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.util.FragmentTestUtil.startFragment;

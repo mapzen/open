@@ -11,13 +11,13 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.mapzen.MapzenTestRunner;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.shadows.ShadowLocationClient;
 import com.mapzen.shadows.ShadowVolley;
-import com.mapzen.util.TestHelper;
+import com.mapzen.support.MapzenTestRunner;
+import com.mapzen.support.TestHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,8 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
-import static com.mapzen.util.TestHelper.initBaseActivity;
-import static com.mapzen.util.TestHelper.initMapFragment;
+import static com.mapzen.support.TestHelper.initBaseActivity;
+import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 

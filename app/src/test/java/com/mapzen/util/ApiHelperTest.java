@@ -1,6 +1,6 @@
 package com.mapzen.util;
 
-import com.mapzen.MapzenTestRunner;
+import com.mapzen.support.MapzenTestRunner;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
