@@ -294,7 +294,8 @@ public class RouteFragmentTest {
         instructions.add(getTestInstruction(0, 0));
         fragment.setInstructions(instructions);
         attachFragment();
-        int expectedDistance = fragment.getRoute().getTotalDistance() - firstInstruction.getDistance();
+        int expectedDistance = fragment.getRoute().getTotalDistance()
+                - firstInstruction.getDistance();
         fragment.setInstructions(instructions);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
         TextView textView = (TextView) view.findViewById(R.id.destination_distance);

@@ -106,10 +106,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                         "threshold: " + String.valueOf(WALKING_THRESH_HOLD));
             } else {
                 if (location == null) {
-                    Logger.d("RouteFragment::onLocationChangeLocation: **next turn** is null screw it");
+                    Logger.d("RouteFragment::onLocationChangeLocation: " +
+                            "**next turn** is null screw it");
                 }
                 if (nextTurn == null) {
-                    Logger.d("RouteFragment::onLocationChangeLocation: **location** is null screw it");
+                    Logger.d("RouteFragment::onLocationChangeLocation: " +
+                            "**location** is null screw it");
                 }
             }
         }
@@ -256,7 +258,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         private RouteFragment parent;
         private Context context;
 
-        public RoutesAdapter(Context context, RouteFragment parent, List<Instruction> instructions) {
+        public RoutesAdapter(Context context, RouteFragment parent,
+                List<Instruction> instructions) {
             this.context = context;
             this.instructions = instructions;
             this.parent = parent;

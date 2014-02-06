@@ -83,7 +83,8 @@ public class ItemFragmentTest {
         List<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
         Request<JSONObject> request = requestSet.iterator().next();
         request.deliverError(null);
-        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(act.getString(R.string.generic_server_error));
+        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(
+                act.getString(R.string.generic_server_error));
         assertThat(ShadowToast.getLatestToast()).hasDuration(Toast.LENGTH_LONG);
     }
 

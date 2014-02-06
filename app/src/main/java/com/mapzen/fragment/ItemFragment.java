@@ -31,7 +31,8 @@ public class ItemFragment extends BaseFragment {
         routeFragment.setAct(act);
     }
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search_item, container, false);
         Feature.ViewHolder holder;
         if (view != null) {
