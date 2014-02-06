@@ -48,15 +48,30 @@ public class BaseActivity extends MapActivity {
     private MapFragment mapFragment;
     private MapzenProgressDialogFragment progressDialogFragment;
     private LocationClient locationClient;
+    private boolean updateMapLocation = true;
     private LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            mapFragment.setUserLocation(location);
+            if (updateMapLocation) {
+                mapFragment.setUserLocation(location);
+            }
             Intent toBroadcast = new Intent(COM_MAPZEN_UPDATES_LOCATION);
             toBroadcast.putExtra("location", location);
             sendBroadcast(toBroadcast);
         }
     };
+
+    public void deactivateMapLocationUpdates() {
+        updateMapLocation = false;
+    }
+
+    public void activateMapLocationUpdates() {
+        updateMapLocation = true;
+    }
+
+    public LocationListener getLocationListener() {
+        return locationListener;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

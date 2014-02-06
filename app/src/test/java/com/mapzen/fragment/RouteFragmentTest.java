@@ -139,24 +139,6 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onLocationChange_shouldAdvanceToNextRelevantTurn() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(6, 6));
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-
-        assertThat(fragment.getCurrentItem()).isEqualTo(0);
-        fragment.onLocationChanged(getTestLocation(6, 6));
-        assertThat(fragment.getCurrentItem()).isEqualTo(6);
-    }
-
-    @Test
     public void shouldHaveNextArrow() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
@@ -291,7 +273,7 @@ public class RouteFragmentTest {
         String expectedFormattedDistance = DistanceFormatter.format(expectedDistance, true);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
         DistanceView textView = (DistanceView) view.findViewById(R.id.destination_distance);
-        fragment.next();
+        fragment.goToNextInstruction();
         getInstructionView(1).findViewById(R.id.route_previous).performClick();
         assertThat(textView.getText()).isEqualTo(expectedFormattedDistance);
     }
@@ -308,7 +290,7 @@ public class RouteFragmentTest {
         String expectedFormattedDistance = DistanceFormatter.format(expectedDistance, true);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
         DistanceView textView = (DistanceView) view.findViewById(R.id.destination_distance);
-        fragment.next();
+        fragment.goToNextInstruction();
         fragment.onPageSelected(0);
         assertThat(textView.getText()).isEqualTo(expectedFormattedDistance);
     }
@@ -326,6 +308,7 @@ public class RouteFragmentTest {
 
     private void initTestFragment() {
         fragment = new RouteFragment();
+        fragment.setLocationPassThrough(true);
         fragment.setFeature(getTestFeature());
         fragment.setAct(act);
         fragment.setMapFragment(initMapFragment(act));
