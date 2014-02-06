@@ -152,7 +152,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void showDirectionListFragment() {
         final Fragment fragment = DirectionListFragment.newInstance(instructions, this);
-        getActivity().getSupportFragmentManager().beginTransaction()
+        act.getSupportFragmentManager().beginTransaction()
                 .add(R.id.full_list, fragment, DirectionListFragment.TAG)
                 .addToBackStack(null)
                 .commit();

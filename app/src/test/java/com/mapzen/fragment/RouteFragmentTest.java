@@ -82,7 +82,6 @@ public class RouteFragmentTest {
 
     @Test
     public void shouldHideActionBar() throws Exception {
-        fragment.attachToActivity();
         assertThat(act.getActionBar()).isNotShowing();
     }
 
@@ -117,12 +116,10 @@ public class RouteFragmentTest {
 
     @Test
     public void shouldShowDirectionListFragment() throws Exception {
-        /* TODO figure out why borken
         attachFragment();
         View view = fragment.getView();
         view.findViewById(R.id.view_steps).performClick();
         assertThat(act.getSupportFragmentManager()).hasFragmentWithTag(DirectionListFragment.TAG);
-        */
     }
 
     private void attachFragment() throws JSONException {
