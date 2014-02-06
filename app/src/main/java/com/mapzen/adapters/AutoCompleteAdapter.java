@@ -118,7 +118,8 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         if (!newText.isEmpty()) {
             Logger.d("search: autocomplete starts");
             JsonObjectRequest jsonObjectRequest = Feature.suggest(newText,
-                    getAutoCompleteSuccessResponseListener(), getAutoCompleteErrorResponseListener());
+                    getAutoCompleteSuccessResponseListener(),
+                    getAutoCompleteErrorResponseListener());
             app.enqueueApiRequest(jsonObjectRequest);
             Logger.d("search: autocomplete request enqueued");
         }

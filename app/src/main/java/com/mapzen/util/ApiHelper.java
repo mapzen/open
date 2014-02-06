@@ -53,7 +53,8 @@ public abstract class ApiHelper {
         return getRouteUrl(ROUTE_CAR_PATH, zoomLevel, from, destination);
     }
 
-    public static String getRouteUrl(String type, double zoomLevel, GeoPoint from, GeoPoint destination) {
+    public static String getRouteUrl(String type, double zoomLevel, GeoPoint from,
+            GeoPoint destination) {
         int zoom = (int) zoomLevel;
         Uri.Builder url = new Uri.Builder();
         url.scheme(HTTP_SCHEMA).authority(ROUTE_URL).path(type);

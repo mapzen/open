@@ -138,7 +138,8 @@ public class MapFragment extends BaseFragment {
         map.setTheme(InternalRenderTheme.OSMARENDER);
         map.bind(new Map.UpdateListener() {
             @Override
-            public void onMapUpdate(MapPosition mapPosition, boolean positionChanged, boolean clear) {
+            public void onMapUpdate(MapPosition mapPosition, boolean positionChanged,
+                    boolean clear) {
                 if (positionChanged) {
                     followMe = false;
                 }
@@ -204,7 +205,8 @@ public class MapFragment extends BaseFragment {
             return null;
         }
         MarkerItem markerItem = new MarkerItem("ME", "Current Location", getUserLocationPoint());
-        MarkerSymbol symbol = new MarkerSymbol(getMyLocationSymbol(), MarkerItem.HotspotPlace.BOTTOM_CENTER);
+        MarkerSymbol symbol = new MarkerSymbol(getMyLocationSymbol(),
+                MarkerItem.HotspotPlace.BOTTOM_CENTER);
         markerItem.setMarker(symbol);
         return markerItem;
     }

@@ -19,7 +19,6 @@
 
     <FrameLayout
         android:id="@+id/routes_container"
-        android:background="@android:color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

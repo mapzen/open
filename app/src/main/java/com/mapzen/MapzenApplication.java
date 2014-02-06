@@ -59,12 +59,11 @@ public class MapzenApplication extends Application {
 
     public MapPosition getLocationPosition() {
         if (location != null) {
-            mapPosition =
-                    new MapPosition(location.getLatitude(), location.getLongitude(),
+            mapPosition = new MapPosition(location.getLatitude(), location.getLongitude(),
                             Math.pow(2, getStoredZoomLevel()));
         } else {
-            mapPosition =
-                    new MapPosition(DEFAULT_LATITUDE, DEFAULT_LONGITUDE, Math.pow(2, getStoredZoomLevel()));
+            mapPosition = new MapPosition(DEFAULT_LATITUDE, DEFAULT_LONGITUDE,
+                            Math.pow(2, getStoredZoomLevel()));
         }
         return mapPosition;
     }

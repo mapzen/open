@@ -4,6 +4,7 @@ import android.support.v4.app.FragmentManager;
 
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
+import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
 
 import org.apache.commons.io.FileUtils;
@@ -12,9 +13,13 @@ import org.robolectric.tester.android.view.TestMenu;
 
 import java.io.File;
 
+import static com.mapzen.entity.Feature.NAME;
 import static org.robolectric.Robolectric.buildActivity;
 
 public final class TestHelper {
+
+    public static final String MOCK_ROUTE_JSON = TestHelper.getFixture("basic_route");
+
     private TestHelper() {
     }
 
@@ -36,6 +41,14 @@ public final class TestHelper {
         mapFragment.setMap(new TestMap());
         mapFragment.onStart();
         return mapFragment;
+    }
+
+    public static Feature getTestFeature() {
+        Feature feature = new Feature();
+        feature.setLat(1.0);
+        feature.setLon(1.0);
+        feature.setProperty(NAME, "test feature");
+        return feature;
     }
 
     public static String getFixture(String name) {

@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -19,10 +18,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.R;
+import com.mapzen.activity.BaseActivity;
+import com.mapzen.entity.Feature;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.util.DisplayHelper;
@@ -38,20 +36,29 @@ import java.util.List;
 
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.activity.BaseActivity.ROUTE_STACK;
-import static com.mapzen.activity.BaseActivity.SEARCH_RESULTS_STACK;
-import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
+import static com.mapzen.entity.Feature.NAME;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
         ViewPager.OnPageChangeListener {
+    public static final String TAG = RouteFragment.class.getSimpleName();
     public static final int WALKING_THRESH_HOLD = 10;
     private ArrayList<Instruction> instructions;
-    private GeoPoint from, destination;
     private ViewPager pager;
     private Button button;
     private RoutesAdapter adapter;
     private Route route;
     private LocationReceiver locationReceiver;
+    private Feature feature;
+    private TextView distanceLeftView;
     public static final int ROUTE_ZOOM_LEVEL = 17;
+
+    public static RouteFragment newInstance(BaseActivity act, Feature feature) {
+        final RouteFragment fragment = new RouteFragment();
+        fragment.setAct(act);
+        fragment.setMapFragment(act.getMapFragment());
+        fragment.setFeature(feature);
+        return fragment;
+    }
 
     public void setInstructions(ArrayList<Instruction> instructions) {
         Logger.d("instructions: " + instructions.toString());
@@ -64,6 +71,18 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         initLocationReceiver();
         act.hideActionBar();
         drawRoute();
+    }
+
+    public void setFeature(Feature feature) {
+        this.feature = feature;
+    }
+
+    public Feature getFeature() {
+        return feature;
+    }
+
+    public GeoPoint getDestinationPoint() {
+        return feature.getGeoPoint();
     }
 
     private Location getNextTurnTo(Instruction nextInstruction) {
@@ -82,7 +101,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 if (distanceToNextTurn > WALKING_THRESH_HOLD) {
                     Logger.d("RouteFragment::onLocationChangeLocation: " +
                             "outside defined radius");
-                    Toast.makeText(act, "outside", Toast.LENGTH_SHORT).show();
                 } else {
                     Logger.d("RouteFragment::onLocationChangeLocation: " +
                             "inside defined radius advancing");
@@ -98,10 +116,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                         "threshold: " + String.valueOf(WALKING_THRESH_HOLD));
             } else {
                 if (location == null) {
-                    Logger.d("RouteFragment::onLocationChangeLocation: **next turn** is null screw it");
+                    Logger.d("RouteFragment::onLocationChangeLocation: " +
+                            "**next turn** is null screw it");
                 }
                 if (nextTurn == null) {
-                    Logger.d("RouteFragment::onLocationChangeLocation: **location** is null screw it");
+                    Logger.d("RouteFragment::onLocationChangeLocation: " +
+                            "**location** is null screw it");
                 }
             }
         }
@@ -127,6 +147,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         });
         adapter = new RoutesAdapter(act, this, instructions);
         pager = (ViewPager) rootView.findViewById(R.id.routes);
+        TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
+        destinationName.setText(feature.getProperty(NAME));
+        distanceLeftView = (TextView) rootView.findViewById(R.id.destination_distance);
+        if (route != null) {
+            distanceLeftView.setText(String.valueOf(route.getTotalDistance()));
+        }
         pager.setAdapter(adapter);
         pager.setOnPageChangeListener(this);
         adapter.notifyDataSetChanged();
@@ -136,7 +162,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void showDirectionListFragment() {
         final Fragment fragment = DirectionListFragment.newInstance(instructions, this);
-        getActivity().getSupportFragmentManager().beginTransaction()
+        act.getSupportFragmentManager().beginTransaction()
                 .add(R.id.full_list, fragment, DirectionListFragment.TAG)
                 .addToBackStack(null)
                 .commit();
@@ -149,15 +175,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         clearRoute();
     }
 
-    public void setFrom(GeoPoint from) {
-        this.from = from;
-    }
-
-    public void setDestination(GeoPoint destination) {
-        this.destination = destination;
-    }
-
     public void next() {
+        changeDistance(-instructions.get(pager.getCurrentItem()).getDistance());
         pager.setCurrentItem(pager.getCurrentItem() + 1);
     }
 
@@ -165,50 +184,32 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager.setCurrentItem(i);
     }
 
+    private void changeDistance(int difference) {
+        int newDistance = Integer.parseInt(distanceLeftView.getText().toString()) + difference;
+        distanceLeftView.setText(String.valueOf(newDistance));
+    }
+
     public void prev() {
-        pager.setCurrentItem(pager.getCurrentItem() - 1);
+        int nextItemIndex = pager.getCurrentItem() - 1;
+        pager.setCurrentItem(nextItemIndex);
+        changeDistance(instructions.get(nextItemIndex).getDistance());
     }
 
     public int getCurrentItem() {
         return pager.getCurrentItem();
     }
 
-    public void attachToActivity() {
-        act.hideActionBar();
-        mapFragment.clearMarkers();
-        mapFragment.updateMap();
-        act.showProgressDialog();
-        popSearchResultsStack();
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrlForCar(
-                app.getStoredZoomLevel(), from, destination), null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        setRouteFromResponse(response);
-                        if (route.foundRoute()) {
-                            setInstructions(route.getRouteInstructions());
-                            drawRoute();
-                            act.dismissProgressDialog();
-                            displayRoute();
-                        } else {
-                            Toast.makeText(act, act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
-                            act.dismissProgressDialog();
-                            act.showActionBar();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                onServerError(volleyError);
-            }
+    public void onRouteSuccess(JSONObject rawRoute) {
+        this.route = new Route(rawRoute);
+        if (route.foundRoute()) {
+            setInstructions(route.getRouteInstructions());
+            drawRoute();
+            displayRoute();
+        } else {
+            Toast.makeText(act, act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
+            act.dismissProgressDialog();
+            act.showActionBar();
         }
-        );
-        app.enqueueApiRequest(jsonObjectRequest);
-    }
-
-    private void popSearchResultsStack() {
-        act.getSupportFragmentManager()
-                .popBackStack(SEARCH_RESULTS_STACK, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
     private void drawRoute() {
@@ -221,14 +222,14 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    private void setRouteFromResponse(JSONObject response) {
-        this.route = new Route(response);
+    public Route getRoute() {
+        return route;
     }
 
     private void displayRoute() {
         act.getSupportFragmentManager().beginTransaction()
                 .addToBackStack(ROUTE_STACK)
-                .add(R.id.routes_container, this, "route")
+                .add(R.id.routes_container, this, RouteFragment.TAG)
                 .commit();
     }
 
@@ -264,7 +265,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         private RouteFragment parent;
         private Context context;
 
-        public RoutesAdapter(Context context, RouteFragment parent, List<Instruction> instructions) {
+        public RoutesAdapter(Context context, RouteFragment parent,
+                List<Instruction> instructions) {
             this.context = context;
             this.instructions = instructions;
             this.parent = parent;
