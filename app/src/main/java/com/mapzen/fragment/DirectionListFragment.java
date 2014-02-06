@@ -16,7 +16,6 @@ import com.mapzen.osrm.Instruction;
 import com.mapzen.util.DisplayHelper;
 
 import java.util.List;
-import java.util.Locale;
 
 public class DirectionListFragment extends ListFragment {
     public static final String TAG = DirectionListFragment.class.getSimpleName();
@@ -95,7 +94,7 @@ public class DirectionListFragment extends ListFragment {
                 icon.setImageResource(DisplayHelper.getRouteDrawable(context,
                         current.getTurnInstruction(), DisplayHelper.IconStyle.BLACK));
                 simpleInstruction.setText(current.getSimpleInstruction());
-                distance.setText(current.getShortFormatDistance(Locale.US));
+                distance.setText(current.getFormattedDistance());
             }
 
             return view;
