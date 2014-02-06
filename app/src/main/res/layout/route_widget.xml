@@ -10,7 +10,7 @@
         android:keepScreenOn="true"
         android:background="@android:color/black"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/route_header_hight"/>
+        android:layout_height="@dimen/route_header_height"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -32,7 +32,7 @@
         android:background="@android:color/black"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/route_footer_hight">
+        android:layout_height="@dimen/route_footer_height">
 
         <TextView
             android:id="@+id/destination_name"
