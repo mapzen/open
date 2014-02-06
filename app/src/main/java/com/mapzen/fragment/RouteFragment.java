@@ -202,9 +202,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    public void attachToActivity() {
-    }
-
     private void drawRoute() {
         PathLayer layer = mapFragment.getPathLayer();
         layer.clearPath();
