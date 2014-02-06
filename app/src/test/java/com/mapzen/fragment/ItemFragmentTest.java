@@ -55,7 +55,7 @@ public class ItemFragmentTest {
     public void shouldNotStartRouteFragment() throws Exception {
         ImageButton go = (ImageButton) itemFragment.getView().findViewById(R.id.btn_route_go);
         go.performClick();
-        assertThat(itemFragment.getRouteFragment()).isNotAdded();
+        assertThat(act.getSupportFragmentManager()).doesNotHaveFragmentWithTag(RouteFragment.TAG);
     }
 
     @Test
@@ -96,6 +96,6 @@ public class ItemFragmentTest {
         ShadowVolley.MockRequestQueue queue = ShadowVolley.getMockRequestQueue();
         JsonObjectRequest request = (JsonObjectRequest) queue.getRequests().get(0);
         queue.deliverResponse(request, new JSONObject(MOCK_ROUTE_JSON));
-        assertThat(itemFragment.getRouteFragment()).isAdded();
+        assertThat(act.getSupportFragmentManager()).hasFragmentWithTag(RouteFragment.TAG);
     }
 }

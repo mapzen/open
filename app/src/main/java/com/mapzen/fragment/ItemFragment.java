@@ -20,15 +20,10 @@ import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
 
 public class ItemFragment extends BaseFragment {
     private Feature feature;
-    private RouteFragment routeFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        routeFragment = new RouteFragment();
-        routeFragment.setFeature(feature);
-        routeFragment.setMapFragment(mapFragment);
-        routeFragment.setAct(act);
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,6 +39,7 @@ public class ItemFragment extends BaseFragment {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    final RouteFragment routeFragment = RouteFragment.newInstance(act, feature);
                     act.hideActionBar();
                     act.showProgressDialog();
                     mapFragment.clearMarkers();
@@ -81,10 +77,6 @@ public class ItemFragment extends BaseFragment {
 
         holder.setFromFeature(feature);
         return view;
-    }
-
-    public RouteFragment getRouteFragment() {
-        return routeFragment;
     }
 
     public void setFeature(Feature feature) {

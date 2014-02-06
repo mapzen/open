@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mapzen.R;
+import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
@@ -39,6 +40,7 @@ import static com.mapzen.entity.Feature.NAME;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
         ViewPager.OnPageChangeListener {
+    public static final String TAG = RouteFragment.class.getSimpleName();
     public static final int WALKING_THRESH_HOLD = 10;
     private ArrayList<Instruction> instructions;
     private ViewPager pager;
@@ -49,6 +51,14 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private Feature feature;
     private TextView distanceLeftView;
     public static final int ROUTE_ZOOM_LEVEL = 17;
+
+    public static RouteFragment newInstance(BaseActivity act, Feature feature) {
+        final RouteFragment fragment = new RouteFragment();
+        fragment.setAct(act);
+        fragment.setMapFragment(act.getMapFragment());
+        fragment.setFeature(feature);
+        return fragment;
+    }
 
     public void setInstructions(ArrayList<Instruction> instructions) {
         Logger.d("instructions: " + instructions.toString());
@@ -219,7 +229,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private void displayRoute() {
         act.getSupportFragmentManager().beginTransaction()
                 .addToBackStack(ROUTE_STACK)
-                .add(R.id.routes_container, this, "route")
+                .add(R.id.routes_container, this, RouteFragment.TAG)
                 .commit();
     }
 
