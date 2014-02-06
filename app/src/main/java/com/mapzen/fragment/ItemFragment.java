@@ -21,11 +21,6 @@ import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
 public class ItemFragment extends BaseFragment {
     private Feature feature;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search_item, container, false);
