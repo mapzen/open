@@ -92,7 +92,7 @@
         <!-- See http://checkstyle.sf.net/config_sizes.html -->
         <module name="LineLength">
           <!-- what is a good max value? -->
-          <property name="max" value="120"/>
+          <property name="max" value="100"/>
           <!-- ignore lines like "$File: //depot/... $" -->
           <property name="ignorePattern" value="\$File.*\$"/>
           <property name="severity" value="error"/>
