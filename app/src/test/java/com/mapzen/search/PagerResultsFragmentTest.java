@@ -1,6 +1,5 @@
-package com.mapzen.fragment;
+package com.mapzen.search;
 
-import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -9,6 +8,7 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
+import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.util.MapzenProgressDialogFragment;
@@ -56,6 +56,21 @@ public class PagerResultsFragmentTest {
     }
 
     @Test
+    public void shouldInjectViewPager() throws Exception {
+        assertThat(fragment.pager).isNotNull();
+    }
+
+    @Test
+    public void shouldInjectPaginationIndicator() throws Exception {
+        assertThat(fragment.indicator).isNotNull();
+    }
+
+    @Test
+    public void shouldInjectViewAllButton() throws Exception {
+        assertThat(fragment.viewAll).isNotNull();
+    }
+
+    @Test
     public void executeSearchOnMap_shouldCancelOutstandingAutoCompleteRequests() throws Exception {
         app.enqueueApiRequest(Feature.suggest("Empire", null, null));
         app.enqueueApiRequest(Feature.suggest("Empire State", null, null));
@@ -94,9 +109,23 @@ public class PagerResultsFragmentTest {
 
     @Test
     public void viewAll_shouldAddListResultsFragment() throws Exception {
-        Button viewAllButton = (Button) fragment.getView().findViewById(R.id.view_all);
-        viewAllButton.performClick();
+        fragment.viewAll.performClick();
         assertThat(act.getSupportFragmentManager()).hasFragmentWithTag(ListResultsFragment.TAG);
+    }
+
+    @Test
+    public void displayResults_shouldShowMultiResultHeaderForMultipleResults() throws Exception {
+        fragment.add(new Feature());
+        fragment.add(new Feature());
+        fragment.displayResults(2, 0);
+        assertThat(fragment.multiResultHeader).isVisible();
+    }
+
+    @Test
+    public void displayResults_shouldHideMultiResultHeaderForSingleResult() throws Exception {
+        fragment.add(new Feature());
+        fragment.displayResults(1, 0);
+        assertThat(fragment.multiResultHeader).isGone();
     }
 
     private void assertRequest(Request request) {

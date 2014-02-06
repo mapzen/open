@@ -29,6 +29,7 @@ public final class TestHelper {
     }
 
     public static TestBaseActivity initBaseActivity(TestMenu menu) {
+        // TODO: Add start() and resume() to TestBaseActivity initialization.
         TestBaseActivity activity = buildActivity(TestBaseActivity.class).create().visible().get();
         activity.onCreateOptionsMenu(menu);
         activity.registerMapView(new MapView(activity));

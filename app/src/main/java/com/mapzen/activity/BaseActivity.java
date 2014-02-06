@@ -21,12 +21,12 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
-import com.mapzen.adapters.AutoCompleteAdapter;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.fragment.MapFragment;
-import com.mapzen.fragment.PagerResultsFragment;
+import com.mapzen.search.AutoCompleteAdapter;
 import com.mapzen.search.OnPoiClickListener;
+import com.mapzen.search.PagerResultsFragment;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
@@ -46,8 +46,6 @@ public class BaseActivity extends MapActivity {
     private MenuItem menuItem;
     private MapzenApplication app;
     private MapFragment mapFragment;
-    public static final String SEARCH_RESULTS_STACK = "search_results_stack";
-    public static final String ROUTE_STACK = "route_stack";
     private MapzenProgressDialogFragment progressDialogFragment;
     private LocationClient locationClient;
     private LocationListener locationListener = new LocationListener() {
@@ -263,7 +261,7 @@ public class BaseActivity extends MapActivity {
     private void setupAdapter(SearchView searchView) {
         if (autoCompleteAdapter == null) {
             autoCompleteAdapter = new AutoCompleteAdapter(getActionBar().getThemedContext(),
-                    this, app.getColumns());
+                    this, app.getColumns(), getSupportFragmentManager());
             autoCompleteAdapter.setSearchView(searchView);
             autoCompleteAdapter.setMapFragment(mapFragment);
         }

@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
-import static com.mapzen.activity.BaseActivity.ROUTE_STACK;
 import static com.mapzen.entity.Feature.NAME;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
@@ -232,7 +231,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void displayRoute() {
         act.getSupportFragmentManager().beginTransaction()
-                .addToBackStack(ROUTE_STACK)
+                .addToBackStack(null)
                 .add(R.id.routes_container, this, RouteFragment.TAG)
                 .commit();
     }

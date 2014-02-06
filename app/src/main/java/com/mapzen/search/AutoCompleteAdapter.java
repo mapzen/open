@@ -1,8 +1,9 @@
-package com.mapzen.adapters;
+package com.mapzen.search;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.MapzenApplication;
+import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
@@ -36,11 +38,14 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     private MapFragment mapFragment;
     private BaseActivity act;
     private MapzenApplication app;
+    private FragmentManager fragmentManager;
 
-    public AutoCompleteAdapter(Context context, BaseActivity act, String[] columns) {
+    public AutoCompleteAdapter(Context context, BaseActivity act, String[] columns,
+            FragmentManager fragmentManager) {
         super(context, new MatrixCursor(columns), 0);
         this.act = act;
         this.app = (MapzenApplication) act.getApplication();
+        this.fragmentManager = fragmentManager;
     }
 
     public void setSearchView(SearchView view) {
@@ -68,6 +73,13 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                 mapFragment.clearMarkers();
                 mapFragment.updateMap();
                 mapFragment.centerOn(feature);
+                PagerResultsFragment pagerResultsFragment = PagerResultsFragment.newInstance(act);
+                fragmentManager.beginTransaction()
+                        .replace(R.id.pager_results_container, pagerResultsFragment,
+                                PagerResultsFragment.TAG).commit();
+                fragmentManager.executePendingTransactions();
+                pagerResultsFragment.add(feature);
+                pagerResultsFragment.displayResults(1, 0);
             }
         });
         parent.setOnTouchListener(new View.OnTouchListener() {
@@ -162,4 +174,3 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         };
     }
 }
-
