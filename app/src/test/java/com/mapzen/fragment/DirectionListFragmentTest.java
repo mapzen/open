@@ -97,7 +97,7 @@ public class DirectionListFragmentTest {
 
         assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_route_bl_15));
         assertThat(instruction).hasText("Last Instruction");
-        assertThat(distance).hasText("15 mi");
+        assertThat(distance).isEmpty();
     }
 
     @Test
