@@ -131,6 +131,7 @@ public class RouteFragmentTest {
     private void attachFragment() throws JSONException {
         FragmentTestUtil.startFragment(fragment);
         fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
+        fragment.setInstructions(new ArrayList<Instruction>());
     }
 
     @Test
@@ -298,6 +299,39 @@ public class RouteFragmentTest {
         TextView textView = (TextView) view.findViewById(R.id.destination_distance);
         int distance = fragment.getRoute().getTotalDistance();
         assertThat(textView.getText()).isEqualTo(String.valueOf(distance));
+    }
+
+    @Test
+    public void shouldDecreaseDistanceOnAdvance() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction firstInstruction = getTestInstruction(0, 0);
+        firstInstruction.setDistance(5);
+        instructions.add(firstInstruction);
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        attachFragment();
+        int expectedDistance = fragment.getRoute().getTotalDistance() - firstInstruction.getDistance();
+        fragment.setInstructions(instructions);
+        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
+        TextView textView = (TextView) view.findViewById(R.id.destination_distance);
+        getInstructionView(0).findViewById(R.id.route_next).performClick();
+        assertThat(textView.getText()).isEqualTo(String.valueOf(expectedDistance));
+    }
+
+    @Test
+    public void shouldIncreaseDistanceOnRecress() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        attachFragment();
+        fragment.setInstructions(instructions);
+        int expectedDistance = fragment.getRoute().getTotalDistance();
+        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
+        TextView textView = (TextView) view.findViewById(R.id.destination_distance);
+        fragment.next();
+        getInstructionView(1).findViewById(R.id.route_previous).performClick();
+        assertThat(textView.getText()).isEqualTo(String.valueOf(expectedDistance));
     }
 
     private View getInstructionView(int position) {

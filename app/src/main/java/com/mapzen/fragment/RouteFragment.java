@@ -165,6 +165,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public void next() {
+        changeDistance(-instructions.get(pager.getCurrentItem()).getDistance());
         pager.setCurrentItem(pager.getCurrentItem() + 1);
     }
 
@@ -172,8 +173,15 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager.setCurrentItem(i);
     }
 
+    private void changeDistance(int difference) {
+        int newDistance = Integer.parseInt(distanceLeftView.getText().toString()) + difference;
+        distanceLeftView.setText(String.valueOf(newDistance));
+    }
+
     public void prev() {
-        pager.setCurrentItem(pager.getCurrentItem() - 1);
+        int nextItemIndex = pager.getCurrentItem() - 1;
+        pager.setCurrentItem(nextItemIndex);
+        changeDistance(instructions.get(nextItemIndex).getDistance());
     }
 
     public int getCurrentItem() {
