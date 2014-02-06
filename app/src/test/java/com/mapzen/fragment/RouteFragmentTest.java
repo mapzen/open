@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
 import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
+import static com.mapzen.support.TestHelper.getTestFeature;
 import static com.mapzen.support.TestHelper.initBaseActivity;
 import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
@@ -51,23 +52,6 @@ public class RouteFragmentTest {
         act = initBaseActivity();
         initTestFragment();
         app = Robolectric.getShadowApplication();
-    }
-
-    private Feature getTestFeature() {
-        Feature feature = new Feature();
-        feature.setProperty(NAME, "Awesome Test Place");
-        feature.setLat(1.0);
-        feature.setLon(2.0);
-        return feature;
-    }
-
-    private void initTestFragment() {
-        fragment = new RouteFragment();
-        fragment.setFeature(getTestFeature());
-        fragment.setAct(act);
-        fragment.setMapFragment(initMapFragment(act));
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        fragment.setInstructions(instructions);
     }
 
     @Test
@@ -120,36 +104,6 @@ public class RouteFragmentTest {
         View view = fragment.getView();
         view.findViewById(R.id.view_steps).performClick();
         assertThat(act.getSupportFragmentManager()).hasFragmentWithTag(DirectionListFragment.TAG);
-    }
-
-    private void attachFragment() throws JSONException {
-        FragmentTestUtil.startFragment(fragment);
-        fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
-        fragment.setInstructions(new ArrayList<Instruction>());
-    }
-
-    private Instruction getTestInstruction(double lat, double lng) throws Exception {
-        String raw = "        [\n" +
-                "            \"10\",\n" + // turn instruction
-                "            \"19th Street\",\n" + // way
-                "            160,\n" + // length in meters
-                "            0,\n" + // position?
-                "            0,\n" + // time in seconds
-                "            \"160m\",\n" + // length with unit
-                "            \"SE\",\n" + //earth direction
-                "            128\n" + // azimuth
-                "        ]\n";
-        Instruction instruction = new Instruction(new JSONArray(raw));
-        double[] point = {lat, lng};
-        instruction.setPoint(point);
-        return instruction;
-    }
-
-    private Location getTestLocation(double lat, double lng) {
-        Location testLocation = new Location("testing");
-        testLocation.setLatitude(lat);
-        testLocation.setLongitude(lng);
-        return testLocation;
     }
 
     @Test
@@ -325,5 +279,44 @@ public class RouteFragmentTest {
             }
         };
         return (View) pager.getAdapter().instantiateItem(group, position);
+    }
+
+    private void initTestFragment() {
+        fragment = new RouteFragment();
+        fragment.setFeature(getTestFeature());
+        fragment.setAct(act);
+        fragment.setMapFragment(initMapFragment(act));
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        fragment.setInstructions(instructions);
+    }
+
+    private void attachFragment() throws JSONException {
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
+        fragment.setInstructions(new ArrayList<Instruction>());
+    }
+
+    private Instruction getTestInstruction(double lat, double lng) throws Exception {
+        String raw = "        [\n" +
+                "            \"10\",\n" + // turn instruction
+                "            \"19th Street\",\n" + // way
+                "            160,\n" + // length in meters
+                "            0,\n" + // position?
+                "            0,\n" + // time in seconds
+                "            \"160m\",\n" + // length with unit
+                "            \"SE\",\n" + //earth direction
+                "            128\n" + // azimuth
+                "        ]\n";
+        Instruction instruction = new Instruction(new JSONArray(raw));
+        double[] point = {lat, lng};
+        instruction.setPoint(point);
+        return instruction;
+    }
+
+    private Location getTestLocation(double lat, double lng) {
+        Location testLocation = new Location("testing");
+        testLocation.setLatitude(lat);
+        testLocation.setLongitude(lng);
+        return testLocation;
     }
 }
