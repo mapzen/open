@@ -134,19 +134,6 @@ public class RouteFragmentTest {
         fragment.setInstructions(new ArrayList<Instruction>());
     }
 
-    @Test
-    public void onLocationChange_shouldToastShort() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-        ShadowVolley.clearMockRequestQueue();
-        ShadowLocationClient shadowLocationClient = Robolectric.shadowOf_(act.getLocationClient());
-        shadowLocationClient.clearAll();
-        fragment.onLocationChanged(getTestLocation(1, 1));
-        assertThat(ShadowToast.getLatestToast()).hasDuration(Toast.LENGTH_SHORT);
-    }
-
     private Instruction getTestInstruction(double lat, double lng) throws Exception {
         String raw = "        [\n" +
                 "            \"10\",\n" + // turn instruction

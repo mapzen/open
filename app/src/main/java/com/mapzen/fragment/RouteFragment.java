@@ -91,7 +91,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 if (distanceToNextTurn > WALKING_THRESH_HOLD) {
                     Logger.d("RouteFragment::onLocationChangeLocation: " +
                             "outside defined radius");
-                    Toast.makeText(act, "outside", Toast.LENGTH_SHORT).show();
                 } else {
                     Logger.d("RouteFragment::onLocationChangeLocation: " +
                             "inside defined radius advancing");
