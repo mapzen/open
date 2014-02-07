@@ -18,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mapzen.views.DistanceView;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
@@ -26,6 +25,7 @@ import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.util.DisplayHelper;
 import com.mapzen.util.Logger;
+import com.mapzen.views.DistanceView;
 
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
@@ -43,6 +43,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         ViewPager.OnPageChangeListener {
     public static final String TAG = RouteFragment.class.getSimpleName();
     public static final int WALKING_THRESH_HOLD = 10;
+    public static final int ROUTE_ZOOM_LEVEL = 17;
     private ArrayList<Instruction> instructions;
     private ViewPager pager;
     private Button button;
@@ -52,7 +53,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private Feature feature;
     private DistanceView distanceLeftView;
     private int previousPosition;
-    public static final int ROUTE_ZOOM_LEVEL = 17;
 
     public static RouteFragment newInstance(BaseActivity act, Feature feature) {
         final RouteFragment fragment = new RouteFragment();
@@ -75,12 +75,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         drawRoute();
     }
 
-    public void setFeature(Feature feature) {
-        this.feature = feature;
-    }
-
     public Feature getFeature() {
         return feature;
+    }
+
+    public void setFeature(Feature feature) {
+        this.feature = feature;
     }
 
     public GeoPoint getDestinationPoint() {
@@ -187,7 +187,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void changeDistance(int difference) {
-        if(!distanceLeftView.getText().toString().isEmpty()) {
+        if (!distanceLeftView.getText().toString().isEmpty()) {
             int newDistance = distanceLeftView.getDistance() + difference;
             distanceLeftView.setFormattedDistance(newDistance, true);
         }
@@ -253,7 +253,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @Override
     public void onPageSelected(int i) {
-        if(previousPosition > i) {
+        if (previousPosition > i) {
             changeDistance(instructions.get(i + 1).getDistance());
         } else if (previousPosition < i) {
             changeDistance(-instructions.get(previousPosition).getDistance());
@@ -267,6 +267,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @Override
     public void onPageScrollStateChanged(int i) {
+    }
+
+    private void initLocationReceiver() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(COM_MAPZEN_UPDATES_LOCATION);
+        locationReceiver = new LocationReceiver();
+        act.registerReceiver(locationReceiver, filter);
     }
 
     private static class RoutesAdapter extends PagerAdapter {
@@ -332,13 +339,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         public boolean isViewFromObject(View view, Object object) {
             return view == object;
         }
-    }
-
-    private void initLocationReceiver() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(COM_MAPZEN_UPDATES_LOCATION);
-        locationReceiver = new LocationReceiver();
-        act.registerReceiver(locationReceiver, filter);
     }
 
     private class LocationReceiver extends BroadcastReceiver {

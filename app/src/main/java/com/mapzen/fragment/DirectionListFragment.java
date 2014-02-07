@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.mapzen.R;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.util.DisplayHelper;
+import com.mapzen.views.DistanceView;
 
 import java.util.List;
 
@@ -83,7 +84,7 @@ public class DirectionListFragment extends ListFragment {
             final ImageView icon = (ImageView) view.findViewById(R.id.icon);
             final TextView simpleInstruction = (TextView)
                     view.findViewById(R.id.simple_instruction);
-            final TextView distance = (TextView) view.findViewById(R.id.distance);
+            final DistanceView distance = (DistanceView) view.findViewById(R.id.distance);
 
             if (position == 0) {
                 icon.setImageResource(R.drawable.ic_locate_active);
@@ -94,7 +95,7 @@ public class DirectionListFragment extends ListFragment {
                 icon.setImageResource(DisplayHelper.getRouteDrawable(context,
                         current.getTurnInstruction(), DisplayHelper.IconStyle.BLACK));
                 simpleInstruction.setText(current.getSimpleInstruction());
-                distance.setText(current.getFormattedDistance());
+                distance.setFormattedDistance(current.getDistance());
             }
 
             return view;
