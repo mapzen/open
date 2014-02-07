@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
@@ -25,6 +26,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowLog;
+import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.FragmentTestUtil;
 
 import java.util.ArrayList;
@@ -237,7 +239,7 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void shouldDecreaseDistanceOnAdvance() throws Exception {
+    public void shouldDecreaseDistanceOnAdvanceViaClick() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction firstInstruction = getTestInstruction(0, 0);
         firstInstruction.setDistance(5);
@@ -255,7 +257,25 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void shouldIncreaseDistanceOnRecress() throws Exception {
+    public void shouldDecreaseDistanceOnAdvanceViaSwipe() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction firstInstruction = getTestInstruction(0, 0);
+        firstInstruction.setDistance(5);
+        instructions.add(firstInstruction);
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        attachFragment();
+        int expectedDistance = fragment.getRoute().getTotalDistance()
+                - firstInstruction.getDistance();
+        fragment.setInstructions(instructions);
+        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
+        TextView textView = (TextView) view.findViewById(R.id.destination_distance);
+        fragment.onPageSelected(1);
+        assertThat(textView.getText()).isEqualTo(String.valueOf(expectedDistance));
+    }
+
+    @Test
+    public void shouldIncreaseDistanceOnRecressViaClick() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(0, 0));
@@ -267,6 +287,22 @@ public class RouteFragmentTest {
         TextView textView = (TextView) view.findViewById(R.id.destination_distance);
         fragment.next();
         getInstructionView(1).findViewById(R.id.route_previous).performClick();
+        assertThat(textView.getText()).isEqualTo(String.valueOf(expectedDistance));
+    }
+
+    @Test
+    public void shouldIncreaseDistanceOnRecressViaSwipe() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        attachFragment();
+        fragment.setInstructions(instructions);
+        int expectedDistance = fragment.getRoute().getTotalDistance();
+        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
+        TextView textView = (TextView) view.findViewById(R.id.destination_distance);
+        fragment.next();
+        fragment.onPageSelected(0);
         assertThat(textView.getText()).isEqualTo(String.valueOf(expectedDistance));
     }
 

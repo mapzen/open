@@ -50,6 +50,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private LocationReceiver locationReceiver;
     private Feature feature;
     private TextView distanceLeftView;
+    private int previousPosition;
     public static final int ROUTE_ZOOM_LEVEL = 17;
 
     public static RouteFragment newInstance(BaseActivity act, Feature feature) {
@@ -156,6 +157,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager.setAdapter(adapter);
         pager.setOnPageChangeListener(this);
         adapter.notifyDataSetChanged();
+        previousPosition = pager.getCurrentItem();
 
         return rootView;
     }
@@ -176,7 +178,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public void next() {
-        changeDistance(-instructions.get(pager.getCurrentItem()).getDistance());
         pager.setCurrentItem(pager.getCurrentItem() + 1);
     }
 
@@ -185,14 +186,15 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void changeDistance(int difference) {
-        int newDistance = Integer.parseInt(distanceLeftView.getText().toString()) + difference;
-        distanceLeftView.setText(String.valueOf(newDistance));
+        if(!distanceLeftView.getText().toString().isEmpty()) {
+            int newDistance = Integer.parseInt(distanceLeftView.getText().toString()) + difference;
+            distanceLeftView.setText(String.valueOf(newDistance));
+        }
     }
 
     public void prev() {
         int nextItemIndex = pager.getCurrentItem() - 1;
         pager.setCurrentItem(nextItemIndex);
-        changeDistance(instructions.get(nextItemIndex).getDistance());
     }
 
     public int getCurrentItem() {
@@ -250,6 +252,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @Override
     public void onPageSelected(int i) {
+        if(previousPosition > i) {
+            changeDistance(instructions.get(i + 1).getDistance());
+        } else if (previousPosition < i) {
+            changeDistance(-instructions.get(previousPosition).getDistance());
+        }
+        previousPosition = i;
         double[] point = instructions.get(i).getPoint();
         Map map = act.getMap();
         map.setMapPosition(point[0], point[1], Math.pow(2, ROUTE_ZOOM_LEVEL));
