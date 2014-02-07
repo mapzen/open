@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.mapzen.R;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.util.DisplayHelper;
-import com.mapzen.views.DistanceView;
+import com.mapzen.widget.DistanceView;
 
 import java.util.List;
 

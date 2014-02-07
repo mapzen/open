@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.mapzen.R;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.support.MapzenTestRunner;
-import com.mapzen.views.DistanceView;
+import com.mapzen.widget.DistanceView;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package com.mapzen.views;
+package com.mapzen.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;

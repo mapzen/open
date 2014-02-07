@@ -41,7 +41,7 @@
             android:textColor="@android:color/white"
             android:layout_margin="@dimen/default_margin"/>
 
-        <com.mapzen.views.DistanceView
+        <com.mapzen.widget.DistanceView
             android:id="@+id/destination_distance"
             android:layout_toRightOf="@id/destination_name"
             android:layout_width="wrap_content"

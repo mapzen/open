@@ -1,4 +1,4 @@
-package com.mapzen.views;
+package com.mapzen.widget;
 
 import com.mapzen.geo.DistanceFormatter;
 import com.mapzen.support.MapzenTestRunner;

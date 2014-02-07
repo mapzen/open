@@ -25,7 +25,7 @@ import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.util.DisplayHelper;
 import com.mapzen.util.Logger;
-import com.mapzen.views.DistanceView;
+import com.mapzen.widget.DistanceView;
 
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
