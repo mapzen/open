@@ -33,7 +33,7 @@ public class DirectionListFragmentTest {
         final ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(new TestInstruction("First Instruction", 1, 0.1));
         instructions.add(new TestInstruction("Second Instruction", 2, 2.345));
-        instructions.add(new TestInstruction("Last Instruction", 15, 15));
+        instructions.add(new TestInstruction("Last Instruction", 15, 0));
         listener = new TestListener();
         fragment = DirectionListFragment.newInstance(instructions, listener);
         startFragment(fragment);

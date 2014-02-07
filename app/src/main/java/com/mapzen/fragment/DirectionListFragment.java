@@ -94,9 +94,7 @@ public class DirectionListFragment extends ListFragment {
                 icon.setImageResource(DisplayHelper.getRouteDrawable(context,
                         current.getTurnInstruction(), DisplayHelper.IconStyle.BLACK));
                 simpleInstruction.setText(current.getSimpleInstruction());
-                if (current.getTurnInstruction() != 15) {
-                    distance.setText(current.getFormattedDistance());
-                }
+                distance.setText(current.getFormattedDistance());
             }
 
             return view;
