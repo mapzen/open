@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mapzen.views.DistanceView;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
@@ -49,7 +50,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private Route route;
     private LocationReceiver locationReceiver;
     private Feature feature;
-    private TextView distanceLeftView;
+    private DistanceView distanceLeftView;
     private int previousPosition;
     public static final int ROUTE_ZOOM_LEVEL = 17;
 
@@ -150,9 +151,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager = (ViewPager) rootView.findViewById(R.id.routes);
         TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
         destinationName.setText(feature.getProperty(NAME));
-        distanceLeftView = (TextView) rootView.findViewById(R.id.destination_distance);
+        distanceLeftView = (DistanceView) rootView.findViewById(R.id.destination_distance);
         if (route != null) {
-            distanceLeftView.setText(String.valueOf(route.getTotalDistance()));
+            distanceLeftView.setFormattedDistance(route.getTotalDistance(), true);
         }
         pager.setAdapter(adapter);
         pager.setOnPageChangeListener(this);
@@ -187,8 +188,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void changeDistance(int difference) {
         if(!distanceLeftView.getText().toString().isEmpty()) {
-            int newDistance = Integer.parseInt(distanceLeftView.getText().toString()) + difference;
-            distanceLeftView.setText(String.valueOf(newDistance));
+            int newDistance = distanceLeftView.getDistance() + difference;
+            distanceLeftView.setFormattedDistance(newDistance, true);
         }
     }
 

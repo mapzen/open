@@ -8,11 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.mapzen.views.DistanceView;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
+import com.mapzen.geo.DistanceFormatter;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
@@ -26,7 +27,6 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowLog;
-import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.FragmentTestUtil;
 
 import java.util.ArrayList;
@@ -233,9 +233,10 @@ public class RouteFragmentTest {
         attachFragment();
         act.showProgressDialog();
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        TextView textView = (TextView) view.findViewById(R.id.destination_distance);
+        DistanceView textView = (DistanceView) view.findViewById(R.id.destination_distance);
         int distance = fragment.getRoute().getTotalDistance();
-        assertThat(textView.getText()).isEqualTo(String.valueOf(distance));
+        String expectedFormattedDistance = DistanceFormatter.format(distance, true);
+        assertThat(textView.getText()).isEqualTo(expectedFormattedDistance);
     }
 
     @Test
@@ -249,11 +250,12 @@ public class RouteFragmentTest {
         attachFragment();
         int expectedDistance = fragment.getRoute().getTotalDistance()
                 - firstInstruction.getDistance();
+        String expectedFormattedDistance = DistanceFormatter.format(expectedDistance, true);
         fragment.setInstructions(instructions);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        TextView textView = (TextView) view.findViewById(R.id.destination_distance);
+        DistanceView textView = (DistanceView) view.findViewById(R.id.destination_distance);
         getInstructionView(0).findViewById(R.id.route_next).performClick();
-        assertThat(textView.getText()).isEqualTo(String.valueOf(expectedDistance));
+        assertThat(textView.getText()).isEqualTo(expectedFormattedDistance);
     }
 
     @Test
@@ -267,11 +269,12 @@ public class RouteFragmentTest {
         attachFragment();
         int expectedDistance = fragment.getRoute().getTotalDistance()
                 - firstInstruction.getDistance();
+        String expectedFormattedDistance = DistanceFormatter.format(expectedDistance, true);
         fragment.setInstructions(instructions);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        TextView textView = (TextView) view.findViewById(R.id.destination_distance);
+        DistanceView textView = (DistanceView) view.findViewById(R.id.destination_distance);
         fragment.onPageSelected(1);
-        assertThat(textView.getText()).isEqualTo(String.valueOf(expectedDistance));
+        assertThat(textView.getText()).isEqualTo(expectedFormattedDistance);
     }
 
     @Test
@@ -283,11 +286,12 @@ public class RouteFragmentTest {
         attachFragment();
         fragment.setInstructions(instructions);
         int expectedDistance = fragment.getRoute().getTotalDistance();
+        String expectedFormattedDistance = DistanceFormatter.format(expectedDistance, true);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        TextView textView = (TextView) view.findViewById(R.id.destination_distance);
+        DistanceView textView = (DistanceView) view.findViewById(R.id.destination_distance);
         fragment.next();
         getInstructionView(1).findViewById(R.id.route_previous).performClick();
-        assertThat(textView.getText()).isEqualTo(String.valueOf(expectedDistance));
+        assertThat(textView.getText()).isEqualTo(expectedFormattedDistance);
     }
 
     @Test
@@ -299,11 +303,12 @@ public class RouteFragmentTest {
         attachFragment();
         fragment.setInstructions(instructions);
         int expectedDistance = fragment.getRoute().getTotalDistance();
+        String expectedFormattedDistance = DistanceFormatter.format(expectedDistance, true);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        TextView textView = (TextView) view.findViewById(R.id.destination_distance);
+        DistanceView textView = (DistanceView) view.findViewById(R.id.destination_distance);
         fragment.next();
         fragment.onPageSelected(0);
-        assertThat(textView.getText()).isEqualTo(String.valueOf(expectedDistance));
+        assertThat(textView.getText()).isEqualTo(expectedFormattedDistance);
     }
 
     private View getInstructionView(int position) {
