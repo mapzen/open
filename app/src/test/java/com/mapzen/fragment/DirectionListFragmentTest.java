@@ -33,7 +33,7 @@ public class DirectionListFragmentTest {
         final ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(new TestInstruction("First Instruction", 1, 0.1));
         instructions.add(new TestInstruction("Second Instruction", 2, 2.345));
-        instructions.add(new TestInstruction("Last Instruction", 15, 15));
+        instructions.add(new TestInstruction("Last Instruction", 15, 0));
         listener = new TestListener();
         fragment = DirectionListFragment.newInstance(instructions, listener);
         startFragment(fragment);
@@ -72,7 +72,7 @@ public class DirectionListFragmentTest {
 
         assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_route_bl_1));
         assertThat(instruction).hasText("First Instruction");
-        assertThat(distance).hasText("528 ft");
+        assertThat(distance).hasText("0.1 mi");
     }
 
     @Test
@@ -84,7 +84,7 @@ public class DirectionListFragmentTest {
 
         assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_route_bl_2));
         assertThat(instruction).hasText("Second Instruction");
-        assertThat(distance).hasText("2.35 mi");
+        assertThat(distance).hasText("2.3 mi");
     }
 
     @Test
@@ -97,7 +97,7 @@ public class DirectionListFragmentTest {
 
         assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_route_bl_15));
         assertThat(instruction).hasText("Last Instruction");
-        assertThat(distance).hasText("15 mi");
+        assertThat(distance).isEmpty();
     }
 
     @Test
@@ -111,13 +111,12 @@ public class DirectionListFragmentTest {
     class TestInstruction extends Instruction {
         private String simpleInstruction;
         private int turnInstruction;
-        private double distanceInMiles;
 
         public TestInstruction(String simpleInstruction, int turnInstruction,
                 double distanceInMiles) throws Exception {
             this.simpleInstruction = simpleInstruction;
             this.turnInstruction = turnInstruction;
-            this.distanceInMiles = distanceInMiles;
+            setDistance((int) Math.round(distanceInMiles * METERS_IN_MILE));
         }
 
         @Override
@@ -128,11 +127,6 @@ public class DirectionListFragmentTest {
         @Override
         public int getTurnInstruction() {
             return turnInstruction;
-        }
-
-        @Override
-        public double getDistanceInMiles() {
-            return distanceInMiles;
         }
     }
 
