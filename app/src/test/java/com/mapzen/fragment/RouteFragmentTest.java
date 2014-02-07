@@ -278,7 +278,7 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void shouldIncreaseDistanceOnRecressViaClick() throws Exception {
+    public void shouldIncreaseDistanceOnRegressViaClick() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(0, 0));
@@ -295,7 +295,7 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void shouldIncreaseDistanceOnRecressViaSwipe() throws Exception {
+    public void shouldIncreaseDistanceOnRegressViaSwipe() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(0, 0));
