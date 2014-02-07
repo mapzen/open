@@ -80,4 +80,12 @@ public class MapFragmentTest {
             return item;
         }
     }
+
+    @Test
+    public void onPause_shouldEmptyMeMarkers() throws Exception {
+        ItemizedIconLayer<MarkerItem> meMarkerLayer = mapFragment.getMeMarkerLayer();
+        meMarkerLayer.addItem(new MarkerItem("Title", "Description", new GeoPoint(0, 0)));
+        mapFragment.onPause();
+        assertThat(meMarkerLayer.size()).isEqualTo(0);
+    }
 }
