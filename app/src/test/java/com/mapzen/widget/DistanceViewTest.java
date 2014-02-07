@@ -21,25 +21,27 @@ public class DistanceViewTest {
 
     @Test
     public void getDistance_shouldBeUnformatted() throws Exception {
-        view.setFormattedDistance(100);
+        view.setDistance(100);
         assertThat(view.getDistance()).isEqualTo(100);
     }
 
     @Test
     public void setFormattedDistance_shouldBeFormattedDefault() throws Exception {
-        view.setFormattedDistance(100);
+        view.setDistance(100);
         assertThat(view.getText()).isEqualTo(DistanceFormatter.format(100));
     }
 
     @Test
     public void setFormattedDistance_shouldBeFormattedRealTime() throws Exception {
-        view.setFormattedDistance(100, true);
+        view.setRealTime(true);
+        view.setDistance(100);
         assertThat(view.getText()).isEqualTo(DistanceFormatter.format(100, true));
     }
 
     @Test
     public void setFormattedDistance_shouldBeFormattedWithOutRealTime() throws Exception {
-        view.setFormattedDistance(100, false);
+        view.setRealTime(false);
+        view.setDistance(100);
         assertThat(view.getText()).isEqualTo(DistanceFormatter.format(100, false));
     }
 }

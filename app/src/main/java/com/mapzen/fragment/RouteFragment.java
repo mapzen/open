@@ -152,8 +152,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
         destinationName.setText(feature.getProperty(NAME));
         distanceLeftView = (DistanceView) rootView.findViewById(R.id.destination_distance);
+        distanceLeftView.setRealTime(true);
         if (route != null) {
-            distanceLeftView.setFormattedDistance(route.getTotalDistance(), true);
+            distanceLeftView.setDistance(route.getTotalDistance());
         }
         pager.setAdapter(adapter);
         pager.setOnPageChangeListener(this);
@@ -189,7 +190,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private void changeDistance(int difference) {
         if (!distanceLeftView.getText().toString().isEmpty()) {
             int newDistance = distanceLeftView.getDistance() + difference;
-            distanceLeftView.setFormattedDistance(newDistance, true);
+            distanceLeftView.setDistance(newDistance);
         }
     }
 

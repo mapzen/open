@@ -8,6 +8,7 @@ import com.mapzen.geo.DistanceFormatter;
 
 public class DistanceView extends TextView {
     private int distance;
+    private boolean realTime = false;
 
     public DistanceView(Context context) {
         super(context);
@@ -25,13 +26,13 @@ public class DistanceView extends TextView {
         return distance;
     }
 
-    public void setFormattedDistance(int distance, boolean realTime) {
+    public void setRealTime(boolean realTime) {
+        this.realTime = realTime;
+    }
+
+    public void setDistance(int distance) {
         this.distance = distance;
         setText(DistanceFormatter.format(distance, realTime));
     }
 
-    public void setFormattedDistance(int distance) {
-        this.distance = distance;
-        setText(DistanceFormatter.format(distance, false));
-    }
 }
