@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.mapzen.R;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.support.MapzenTestRunner;
+import com.mapzen.widget.DistanceView;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -56,7 +57,7 @@ public class DirectionListFragmentTest {
         View view = listView.getAdapter().getView(0, null, null);
         ImageView icon = (ImageView) view.findViewById(R.id.icon);
         TextView instruction = (TextView) view.findViewById(R.id.simple_instruction);
-        TextView distance = (TextView) view.findViewById(R.id.distance);
+        DistanceView distance = (DistanceView) view.findViewById(R.id.distance);
 
         assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_locate_active));
         assertThat(instruction).hasText("Current Location");
@@ -68,7 +69,7 @@ public class DirectionListFragmentTest {
         View view = listView.getAdapter().getView(1, null, null);
         ImageView icon = (ImageView) view.findViewById(R.id.icon);
         TextView instruction = (TextView) view.findViewById(R.id.simple_instruction);
-        TextView distance = (TextView) view.findViewById(R.id.distance);
+        DistanceView distance = (DistanceView) view.findViewById(R.id.distance);
 
         assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_route_bl_1));
         assertThat(instruction).hasText("First Instruction");
@@ -80,7 +81,7 @@ public class DirectionListFragmentTest {
         View view = listView.getAdapter().getView(2, null, null);
         ImageView icon = (ImageView) view.findViewById(R.id.icon);
         TextView instruction = (TextView) view.findViewById(R.id.simple_instruction);
-        TextView distance = (TextView) view.findViewById(R.id.distance);
+        DistanceView distance = (DistanceView) view.findViewById(R.id.distance);
 
         assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_route_bl_2));
         assertThat(instruction).hasText("Second Instruction");
@@ -93,7 +94,7 @@ public class DirectionListFragmentTest {
         View view = listView.getAdapter().getView(indexOfLastItem, null, null);
         ImageView icon = (ImageView) view.findViewById(R.id.icon);
         TextView instruction = (TextView) view.findViewById(R.id.simple_instruction);
-        TextView distance = (TextView) view.findViewById(R.id.distance);
+        DistanceView distance = (DistanceView) view.findViewById(R.id.distance);
 
         assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_route_bl_15));
         assertThat(instruction).hasText("Last Instruction");

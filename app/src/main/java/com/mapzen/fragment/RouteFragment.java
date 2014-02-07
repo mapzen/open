@@ -25,6 +25,7 @@ import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.util.DisplayHelper;
 import com.mapzen.util.Logger;
+import com.mapzen.widget.DistanceView;
 
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
@@ -42,6 +43,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         ViewPager.OnPageChangeListener {
     public static final String TAG = RouteFragment.class.getSimpleName();
     public static final int WALKING_THRESH_HOLD = 10;
+    public static final int ROUTE_ZOOM_LEVEL = 17;
     private ArrayList<Instruction> instructions;
     private ViewPager pager;
     private Button button;
@@ -49,8 +51,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private Route route;
     private LocationReceiver locationReceiver;
     private Feature feature;
-    private TextView distanceLeftView;
-    public static final int ROUTE_ZOOM_LEVEL = 17;
+    private DistanceView distanceLeftView;
+    private int previousPosition;
 
     public static RouteFragment newInstance(BaseActivity act, Feature feature) {
         final RouteFragment fragment = new RouteFragment();
@@ -73,12 +75,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         drawRoute();
     }
 
-    public void setFeature(Feature feature) {
-        this.feature = feature;
-    }
-
     public Feature getFeature() {
         return feature;
+    }
+
+    public void setFeature(Feature feature) {
+        this.feature = feature;
     }
 
     public GeoPoint getDestinationPoint() {
@@ -149,13 +151,15 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager = (ViewPager) rootView.findViewById(R.id.routes);
         TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
         destinationName.setText(feature.getProperty(NAME));
-        distanceLeftView = (TextView) rootView.findViewById(R.id.destination_distance);
+        distanceLeftView = (DistanceView) rootView.findViewById(R.id.destination_distance);
+        distanceLeftView.setRealTime(true);
         if (route != null) {
-            distanceLeftView.setText(String.valueOf(route.getTotalDistance()));
+            distanceLeftView.setDistance(route.getTotalDistance());
         }
         pager.setAdapter(adapter);
         pager.setOnPageChangeListener(this);
         adapter.notifyDataSetChanged();
+        previousPosition = pager.getCurrentItem();
 
         return rootView;
     }
@@ -176,7 +180,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public void next() {
-        changeDistance(-instructions.get(pager.getCurrentItem()).getDistance());
         pager.setCurrentItem(pager.getCurrentItem() + 1);
     }
 
@@ -185,14 +188,15 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void changeDistance(int difference) {
-        int newDistance = Integer.parseInt(distanceLeftView.getText().toString()) + difference;
-        distanceLeftView.setText(String.valueOf(newDistance));
+        if (!distanceLeftView.getText().toString().isEmpty()) {
+            int newDistance = distanceLeftView.getDistance() + difference;
+            distanceLeftView.setDistance(newDistance);
+        }
     }
 
     public void prev() {
         int nextItemIndex = pager.getCurrentItem() - 1;
         pager.setCurrentItem(nextItemIndex);
-        changeDistance(instructions.get(nextItemIndex).getDistance());
     }
 
     public int getCurrentItem() {
@@ -250,6 +254,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @Override
     public void onPageSelected(int i) {
+        if (previousPosition > i) {
+            changeDistance(instructions.get(i + 1).getDistance());
+        } else if (previousPosition < i) {
+            changeDistance(-instructions.get(previousPosition).getDistance());
+        }
+        previousPosition = i;
         double[] point = instructions.get(i).getPoint();
         Map map = act.getMap();
         map.setMapPosition(point[0], point[1], Math.pow(2, ROUTE_ZOOM_LEVEL));
@@ -258,6 +268,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @Override
     public void onPageScrollStateChanged(int i) {
+    }
+
+    private void initLocationReceiver() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(COM_MAPZEN_UPDATES_LOCATION);
+        locationReceiver = new LocationReceiver();
+        act.registerReceiver(locationReceiver, filter);
     }
 
     private static class RoutesAdapter extends PagerAdapter {
@@ -323,13 +340,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         public boolean isViewFromObject(View view, Object object) {
             return view == object;
         }
-    }
-
-    private void initLocationReceiver() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(COM_MAPZEN_UPDATES_LOCATION);
-        locationReceiver = new LocationReceiver();
-        act.registerReceiver(locationReceiver, filter);
     }
 
     private class LocationReceiver extends BroadcastReceiver {

@@ -9,9 +9,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.mapzen.widget.DistanceView;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
+import com.mapzen.geo.DistanceFormatter;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
@@ -231,13 +233,14 @@ public class RouteFragmentTest {
         attachFragment();
         act.showProgressDialog();
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        TextView textView = (TextView) view.findViewById(R.id.destination_distance);
+        DistanceView textView = (DistanceView) view.findViewById(R.id.destination_distance);
         int distance = fragment.getRoute().getTotalDistance();
-        assertThat(textView.getText()).isEqualTo(String.valueOf(distance));
+        String expectedFormattedDistance = DistanceFormatter.format(distance, true);
+        assertThat(textView.getText()).isEqualTo(expectedFormattedDistance);
     }
 
     @Test
-    public void shouldDecreaseDistanceOnAdvance() throws Exception {
+    public void shouldDecreaseDistanceOnAdvanceViaClick() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction firstInstruction = getTestInstruction(0, 0);
         firstInstruction.setDistance(5);
@@ -247,15 +250,35 @@ public class RouteFragmentTest {
         attachFragment();
         int expectedDistance = fragment.getRoute().getTotalDistance()
                 - firstInstruction.getDistance();
+        String expectedFormattedDistance = DistanceFormatter.format(expectedDistance, true);
         fragment.setInstructions(instructions);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        TextView textView = (TextView) view.findViewById(R.id.destination_distance);
+        DistanceView textView = (DistanceView) view.findViewById(R.id.destination_distance);
         getInstructionView(0).findViewById(R.id.route_next).performClick();
-        assertThat(textView.getText()).isEqualTo(String.valueOf(expectedDistance));
+        assertThat(textView.getText()).isEqualTo(expectedFormattedDistance);
     }
 
     @Test
-    public void shouldIncreaseDistanceOnRecress() throws Exception {
+    public void shouldDecreaseDistanceOnAdvanceViaSwipe() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction firstInstruction = getTestInstruction(0, 0);
+        firstInstruction.setDistance(5);
+        instructions.add(firstInstruction);
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        attachFragment();
+        int expectedDistance = fragment.getRoute().getTotalDistance()
+                - firstInstruction.getDistance();
+        String expectedFormattedDistance = DistanceFormatter.format(expectedDistance, true);
+        fragment.setInstructions(instructions);
+        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
+        DistanceView textView = (DistanceView) view.findViewById(R.id.destination_distance);
+        fragment.onPageSelected(1);
+        assertThat(textView.getText()).isEqualTo(expectedFormattedDistance);
+    }
+
+    @Test
+    public void shouldIncreaseDistanceOnRegressViaClick() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(0, 0));
@@ -263,11 +286,29 @@ public class RouteFragmentTest {
         attachFragment();
         fragment.setInstructions(instructions);
         int expectedDistance = fragment.getRoute().getTotalDistance();
+        String expectedFormattedDistance = DistanceFormatter.format(expectedDistance, true);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        TextView textView = (TextView) view.findViewById(R.id.destination_distance);
+        DistanceView textView = (DistanceView) view.findViewById(R.id.destination_distance);
         fragment.next();
         getInstructionView(1).findViewById(R.id.route_previous).performClick();
-        assertThat(textView.getText()).isEqualTo(String.valueOf(expectedDistance));
+        assertThat(textView.getText()).isEqualTo(expectedFormattedDistance);
+    }
+
+    @Test
+    public void shouldIncreaseDistanceOnRegressViaSwipe() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        attachFragment();
+        fragment.setInstructions(instructions);
+        int expectedDistance = fragment.getRoute().getTotalDistance();
+        String expectedFormattedDistance = DistanceFormatter.format(expectedDistance, true);
+        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
+        DistanceView textView = (DistanceView) view.findViewById(R.id.destination_distance);
+        fragment.next();
+        fragment.onPageSelected(0);
+        assertThat(textView.getText()).isEqualTo(expectedFormattedDistance);
     }
 
     private View getInstructionView(int position) {
