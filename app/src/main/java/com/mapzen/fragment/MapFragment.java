@@ -61,6 +61,12 @@ public class MapFragment extends BaseFragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        meMarkerLayer.removeAllItems();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_map,
@@ -169,6 +175,10 @@ public class MapFragment extends BaseFragment {
 
     public ItemizedIconLayer getPoiLayer() {
         return poiMarkersLayer;
+    }
+
+    public ItemizedIconLayer<MarkerItem> getMeMarkerLayer() {
+        return meMarkerLayer;
     }
 
     public PathLayer getPathLayer() {
