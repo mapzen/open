@@ -126,8 +126,8 @@ public class MapFragment extends BaseFragment {
 
     private void setupMap(View view) {
         baseLayer = map.setBaseMap(getTileBase());
-        map.getLayers().add(new BuildingLayer(map, baseLayer.getTileLayer()));
-        map.getLayers().add(new LabelLayer(map, baseLayer.getTileLayer()));
+        map.getLayers().add(new BuildingLayer(map, baseLayer));
+        map.getLayers().add(new LabelLayer(map, baseLayer));
 
         poiMarkersLayer = buildPoiMarkersLayer();
         map.getLayers().add(poiMarkersLayer);
