@@ -17,7 +17,6 @@ buildscript {
         classpath 'com.squareup.gradle:gradle-android-test-plugin:0.9.1-SNAPSHOT'
         classpath 'com.github.nrudenko:gradle-android-cq-plugin:0.1+'
         classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.+'
-        classpath 'org.oscim:vtm:0.1-SNAPSHOT'
     }
 }
 
@@ -50,7 +49,7 @@ android {
 
     defaultConfig {
         minSdkVersion 17
-        targetSdkVersion 18
+        targetSdkVersion 19
     }
     // tell Android studio that the instrumentTest source set is located in the unit test source set
     sourceSets {
@@ -73,10 +72,10 @@ sourceSets {
 dependencies {
     compile 'com.android.support:support-v4:+'
     compile 'com.crashlytics.android:crashlytics:1.+'
-    compile 'org.oscim:vtm:0.1-SNAPSHOT'
+    compile 'org.oscim:vtm:0.5.9-SNAPSHOT'
+    compile 'org.oscim:vtm-android:0.5.9-SNAPSHOT@aar'
     compile 'com.google.android.gms:play-services:4.0.30'
     compile fileTree(dir: 'libs', include: '*.jar')
-    compile project(':vtm-android')
     compile project(':geojson')
     compile project(':volley')
 

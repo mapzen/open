@@ -1,8 +1,5 @@
 rootProject.name = 'mapzen'
-include ':vtm-android'
 include ':volley'
 include ':geojson'
 include ':app'
-include 'vtm-android-example'
-include 'vtm-ext-libs'
 
