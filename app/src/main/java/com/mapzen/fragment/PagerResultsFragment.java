@@ -23,7 +23,7 @@ import com.mapzen.util.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.oscim.layers.marker.ItemizedIconLayer;
+import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 
 import java.util.ArrayList;
@@ -134,7 +134,7 @@ public class PagerResultsFragment extends BaseFragment {
 
     public void clearAll() {
         Logger.d(String.format(Locale.US, "clearing all items: %d", currentCollection.size()));
-        ItemizedIconLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
+        ItemizedLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
         poiLayer.removeAllItems();
         pager.setCurrentItem(0);
         currentCollection.clear();
@@ -220,7 +220,7 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     private void addMarker(Feature feature) {
-        ItemizedIconLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
+        ItemizedLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
         MarkerItem m = feature.getMarker();
         m.setMarker(mapFragment.getDefaultMarkerSymbol());
         m.setMarkerHotspot(MarkerItem.HotspotPlace.CENTER);

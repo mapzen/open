@@ -37,7 +37,7 @@ public class Feature extends GeoFeature implements Parcelable {
     public static JsonObjectRequest search(Map map, String query, Response.Listener successListener,
             Response.ErrorListener errorListener) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getUrlForSearch(query,
-                map.getViewport().getViewBox()), null, successListener, errorListener);
+                map.viewport().getBBox()), null, successListener, errorListener);
         return jsonObjectRequest;
     }
 

@@ -18,7 +18,7 @@ import org.oscim.backend.canvas.Color;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 import org.oscim.layers.PathLayer;
-import org.oscim.layers.marker.ItemizedIconLayer;
+import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.marker.MarkerSymbol;
 import org.oscim.layers.tile.vector.BuildingLayer;
@@ -32,7 +32,7 @@ import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import static org.oscim.layers.marker.ItemizedIconLayer.OnItemGestureListener;
+import static org.oscim.layers.marker.ItemizedLayer.OnItemGestureListener;
 
 public class MapFragment extends BaseFragment {
     public static final int DEFAULT_ZOOMLEVEL = 17;
@@ -40,9 +40,9 @@ public class MapFragment extends BaseFragment {
     public static final int DURATION = 800;
     private VectorTileLayer baseLayer;
     private Button myPosition;
-    private ItemizedIconLayer<MarkerItem> meMarkerLayer;
-    private ItemizedIconLayer<MarkerItem> poiMarkersLayer;
-    private ItemizedIconLayer<MarkerItem> highlightLayer;
+    private ItemizedLayer<MarkerItem> meMarkerLayer;
+    private ItemizedLayer<MarkerItem> poiMarkersLayer;
+    private ItemizedLayer<MarkerItem> highlightLayer;
     private PathLayer pathLayer;
     private ArrayList<MarkerItem> meMarkers = new ArrayList<MarkerItem>(1);
     private Location userLocation;
@@ -82,7 +82,7 @@ public class MapFragment extends BaseFragment {
         highlightLayer.removeAllItems();
         highlightLayer.addItem(feature.getMarker());
         GeoPoint geoPoint = feature.getGeoPoint();
-        map.getAnimator().animateTo(DURATION, geoPoint, zoom, false);
+        map.animator().animateTo(DURATION, geoPoint, zoom, false);
     }
 
     private TileSource getTileBase() {
@@ -92,8 +92,8 @@ public class MapFragment extends BaseFragment {
         return tileSource;
     }
 
-    private ItemizedIconLayer<MarkerItem> buildPoiMarkersLayer() {
-        return new ItemizedIconLayer<MarkerItem>(map, new ArrayList<MarkerItem>(),
+    private ItemizedLayer<MarkerItem> buildPoiMarkersLayer() {
+        return new ItemizedLayer<MarkerItem>(map, new ArrayList<MarkerItem>(),
                 getDefaultMarkerSymbol(), new OnItemGestureListener<MarkerItem>() {
             @Override
             public boolean onItemSingleTapUp(int index, MarkerItem item) {
@@ -111,8 +111,8 @@ public class MapFragment extends BaseFragment {
         });
     }
 
-    private ItemizedIconLayer<MarkerItem> buildHighlightLayer() {
-        return new ItemizedIconLayer<MarkerItem>(
+    private ItemizedLayer<MarkerItem> buildHighlightLayer() {
+        return new ItemizedLayer<MarkerItem>(
                 map, new ArrayList<MarkerItem>(), getHighlightMarkerSymbol(), null);
     }
 
@@ -120,26 +120,26 @@ public class MapFragment extends BaseFragment {
         return new PathLayer(map, Color.MAGENTA, ROUTE_LINE_WIDTH);
     }
 
-    private ItemizedIconLayer<MarkerItem> buildMyPositionLayer() {
-        return new ItemizedIconLayer<MarkerItem>(map, meMarkers, getDefaultMarkerSymbol(), null);
+    private ItemizedLayer<MarkerItem> buildMyPositionLayer() {
+        return new ItemizedLayer<MarkerItem>(map, meMarkers, getDefaultMarkerSymbol(), null);
     }
 
     private void setupMap(View view) {
         baseLayer = map.setBaseMap(getTileBase());
-        map.getLayers().add(new BuildingLayer(map, baseLayer));
-        map.getLayers().add(new LabelLayer(map, baseLayer));
+        map.layers().add(new BuildingLayer(map, baseLayer));
+        map.layers().add(new LabelLayer(map, baseLayer));
 
         poiMarkersLayer = buildPoiMarkersLayer();
-        map.getLayers().add(poiMarkersLayer);
+        map.layers().add(poiMarkersLayer);
 
         highlightLayer = buildHighlightLayer();
-        map.getLayers().add(highlightLayer);
+        map.layers().add(highlightLayer);
 
         pathLayer = buildPathLayer();
-        map.getLayers().add(pathLayer);
+        map.layers().add(pathLayer);
 
         meMarkerLayer = buildMyPositionLayer();
-        map.getLayers().add(meMarkerLayer);
+        map.layers().add(meMarkerLayer);
 
         map.setTheme(InternalRenderTheme.OSMARENDER);
         map.bind(new Map.UpdateListener() {
@@ -173,11 +173,11 @@ public class MapFragment extends BaseFragment {
         }
     }
 
-    public ItemizedIconLayer getPoiLayer() {
+    public ItemizedLayer getPoiLayer() {
         return poiMarkersLayer;
     }
 
-    public ItemizedIconLayer<MarkerItem> getMeMarkerLayer() {
+    public ItemizedLayer<MarkerItem> getMeMarkerLayer() {
         return meMarkerLayer;
     }
 

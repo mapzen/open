@@ -263,7 +263,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         double[] point = instructions.get(i).getPoint();
         Map map = act.getMap();
         map.setMapPosition(point[0], point[1], Math.pow(2, ROUTE_ZOOM_LEVEL));
-        map.getViewport().setRotation(instructions.get(i).getBearing());
+        map.viewport().setRotation(instructions.get(i).getBearing());
     }
 
     @Override
