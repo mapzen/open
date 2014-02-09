@@ -94,10 +94,7 @@ public class MapFragment extends BaseFragment {
     }
 
     private TileSource getTileBase() {
-        TileSource tileSource = new OSciMap4TileSource();
-        tileSource.setOption(
-                getString(R.string.tiles_source_url_key), getString(R.string.tiles_source_url));
-        return tileSource;
+        return new OSciMap4TileSource(getString(R.string.tiles_source_url));
     }
 
     private ItemizedLayer<MarkerItem> buildPoiMarkersLayer() {
