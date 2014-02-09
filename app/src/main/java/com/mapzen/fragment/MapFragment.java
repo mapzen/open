@@ -42,7 +42,7 @@ public class MapFragment extends BaseFragment {
     private Button myPosition;
     private ItemizedLayer<MarkerItem> meMarkerLayer;
     private ItemizedLayer<MarkerItem> poiMarkersLayer;
-    private ItemizedLayer<MarkerItem> highlightLayer;
+    private MarkerSymbol highlightMarker;
     private PathLayer pathLayer;
     private ArrayList<MarkerItem> meMarkers = new ArrayList<MarkerItem>(1);
     private Location userLocation;
@@ -79,8 +79,16 @@ public class MapFragment extends BaseFragment {
     }
 
     public void centerOn(Feature feature, double zoom) {
-        highlightLayer.removeAllItems();
-        highlightLayer.addItem(feature.getMarker());
+        MarkerItem focused = poiMarkersLayer.getFocus();
+        if (focused != null)
+            focused.setMarker(null);
+
+        focused = poiMarkersLayer.getByUid(feature);
+
+        if (focused != null){
+            focused.setMarker(highlightMarker);
+            poiMarkersLayer.setFocus(focused);
+        }
         GeoPoint geoPoint = feature.getGeoPoint();
         map.animator().animateTo(DURATION, geoPoint, zoom, false);
     }
@@ -111,11 +119,6 @@ public class MapFragment extends BaseFragment {
         });
     }
 
-    private ItemizedLayer<MarkerItem> buildHighlightLayer() {
-        return new ItemizedLayer<MarkerItem>(
-                map, new ArrayList<MarkerItem>(), getHighlightMarkerSymbol(), null);
-    }
-
     private PathLayer buildPathLayer() {
         return new PathLayer(map, Color.MAGENTA, ROUTE_LINE_WIDTH);
     }
@@ -129,11 +132,9 @@ public class MapFragment extends BaseFragment {
         map.layers().add(new BuildingLayer(map, baseLayer));
         map.layers().add(new LabelLayer(map, baseLayer));
 
+        highlightMarker = getHighlightMarkerSymbol();
         poiMarkersLayer = buildPoiMarkersLayer();
         map.layers().add(poiMarkersLayer);
-
-        highlightLayer = buildHighlightLayer();
-        map.layers().add(highlightLayer);
 
         pathLayer = buildPathLayer();
         map.layers().add(pathLayer);
@@ -167,13 +168,9 @@ public class MapFragment extends BaseFragment {
         if (poiMarkersLayer != null) {
             poiMarkersLayer.removeAllItems();
         }
-
-        if (highlightLayer != null) {
-            highlightLayer.removeAllItems();
-        }
     }
 
-    public ItemizedLayer getPoiLayer() {
+    public ItemizedLayer<MarkerItem> getPoiLayer() {
         return poiMarkersLayer;
     }
 
