@@ -220,10 +220,6 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     private void addMarker(Feature feature) {
-        ItemizedLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
-        MarkerItem m = feature.getMarker();
-        m.setMarker(mapFragment.getDefaultMarkerSymbol());
-        m.setMarkerHotspot(MarkerItem.HotspotPlace.CENTER);
-        poiLayer.addItem(feature.getMarker());
+        mapFragment.getPoiLayer().addItem(feature.getMarker());
     }
 }
