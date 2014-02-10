@@ -21,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
+import org.robolectric.annotation.Config;
 import org.robolectric.tester.android.view.TestMenu;
 
 import static com.mapzen.support.TestHelper.initBaseActivity;
@@ -30,6 +31,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.util.FragmentTestUtil.startFragment;
 
+@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class BaseActivityTest {
     private BaseActivity activity;

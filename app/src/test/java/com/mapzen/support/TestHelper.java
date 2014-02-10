@@ -8,6 +8,7 @@ import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
 
 import org.apache.commons.io.FileUtils;
+import org.oscim.android.MapView;
 import org.oscim.map.TestMap;
 import org.robolectric.tester.android.view.TestMenu;
 
@@ -30,7 +31,7 @@ public final class TestHelper {
     public static TestBaseActivity initBaseActivity(TestMenu menu) {
         TestBaseActivity activity = buildActivity(TestBaseActivity.class).create().visible().get();
         activity.onCreateOptionsMenu(menu);
-        activity.registerMapView(new TestMap());
+        activity.registerMapView(new MapView(activity));
         return activity;
     }
 

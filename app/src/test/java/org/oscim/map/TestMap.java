@@ -30,7 +30,7 @@ public class TestMap extends Map {
     }
 
     @Override
-    public Viewport getViewport() {
+    public Viewport viewport() {
         return new Viewport(this);
     }
 }

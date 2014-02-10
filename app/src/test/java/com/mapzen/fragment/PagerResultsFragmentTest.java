@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.util.FragmentTestUtil;
@@ -30,6 +31,7 @@ import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
 
+@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class PagerResultsFragmentTest {
     private PagerResultsFragment fragment;
