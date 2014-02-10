@@ -8,6 +8,9 @@ import org.oscim.android.MapView;
 import org.oscim.android.canvas.AndroidGraphics;
 import org.oscim.backend.AssetAdapter;
 import org.oscim.backend.CanvasAdapter;
+import org.oscim.map.Map;
+import org.oscim.map.TestMap;
+import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 import org.robolectric.shadows.ShadowView;
 
@@ -20,5 +23,10 @@ public class ShadowMapView extends ShadowView {
     public void __constructor__(Context context, AttributeSet attributeSet) {
         CanvasAdapter.g = AndroidGraphics.INSTANCE;
         AssetAdapter.g = new AndroidAssetAdapter(context);
+    }
+
+    @Implementation
+    public Map getMap() {
+        return new TestMap();
     }
 }

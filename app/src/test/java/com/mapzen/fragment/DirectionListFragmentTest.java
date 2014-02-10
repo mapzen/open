@@ -14,6 +14,7 @@ import com.mapzen.widget.DistanceView;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 
@@ -22,6 +23,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.util.FragmentTestUtil.startFragment;
 
+@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class DirectionListFragmentTest {
     private DirectionListFragment fragment;

@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.oscim.core.BoundingBox;
 import org.oscim.core.GeoPoint;
+import org.robolectric.annotation.Config;
 
 import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
 import static com.mapzen.util.ApiHelper.getRouteUrlForFoot;
@@ -13,6 +14,7 @@ import static com.mapzen.util.ApiHelper.getUrlForSearch;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class ApiHelperTest {
     @Test

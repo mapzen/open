@@ -80,12 +80,13 @@ public class MapFragment extends BaseFragment {
 
     public void centerOn(Feature feature, double zoom) {
         MarkerItem focused = poiMarkersLayer.getFocus();
-        if (focused != null)
+        if (focused != null) {
             focused.setMarker(null);
+        }
 
         focused = poiMarkersLayer.getByUid(feature);
 
-        if (focused != null){
+        if (focused != null) {
             focused.setMarker(highlightMarker);
             poiMarkersLayer.setFocus(focused);
         }

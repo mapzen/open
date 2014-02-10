@@ -12,9 +12,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.oscim.core.GeoPoint;
 import org.oscim.event.Gesture;
-import org.oscim.layers.marker.ItemizedIconLayer;
+import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.TestMap;
+import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLog;
 import org.robolectric.shadows.ShadowToast;
 
@@ -23,6 +24,7 @@ import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.util.FragmentTestUtil.startFragment;
 
+@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class MapFragmentTest {
     private MapFragment mapFragment;
@@ -46,7 +48,7 @@ public class MapFragmentTest {
 
     @Test
     public void onItemSingleTapUp_shouldToastMarkerItemTitle() throws Exception {
-        ItemizedIconLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
+        ItemizedLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
         poiLayer.addItem(new MarkerItem("Title", "Description", new GeoPoint(0, 0)));
         poiLayer.onGesture(Gesture.TAP, new FakeMotionEvent(0, 0));
         Assertions.assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo("Title");
@@ -55,7 +57,7 @@ public class MapFragmentTest {
 
     @Test
     public void onItemSingleTapUp_shouldNotifyListener() throws Exception {
-        ItemizedIconLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
+        ItemizedLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
         poiLayer.addItem(new MarkerItem("Title", "Description", new GeoPoint(0, 0)));
         poiLayer.onGesture(Gesture.TAP, new FakeMotionEvent(0, 0));
         assertThat(listener.getIndex()).isEqualTo(0);
@@ -83,7 +85,7 @@ public class MapFragmentTest {
 
     @Test
     public void onPause_shouldEmptyMeMarkers() throws Exception {
-        ItemizedIconLayer<MarkerItem> meMarkerLayer = mapFragment.getMeMarkerLayer();
+        ItemizedLayer<MarkerItem> meMarkerLayer = mapFragment.getMeMarkerLayer();
         meMarkerLayer.addItem(new MarkerItem("Title", "Description", new GeoPoint(0, 0)));
         mapFragment.onPause();
         assertThat(meMarkerLayer.size()).isEqualTo(0);

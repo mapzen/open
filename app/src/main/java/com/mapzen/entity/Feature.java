@@ -48,7 +48,8 @@ public class Feature extends GeoFeature implements Parcelable {
 
     public MarkerItem getMarker() {
         GeoPoint geoPoint = new GeoPoint(getLat(), getLon());
-        MarkerItem markerItem = new MarkerItem(this, getProperty(NAME), "Current Location", geoPoint);
+        MarkerItem markerItem = new MarkerItem(this, getProperty(NAME),
+                "Current Location", geoPoint);
         return markerItem;
     }
 
