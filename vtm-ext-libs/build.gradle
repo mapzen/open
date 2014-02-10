@@ -1,7 +1,0 @@
-apply plugin: 'java'
-sourceSets {
-    main.java.srcDirs = []
-    main.resources.srcDirs = []
-    test.java.srcDirs = ['tests/java']
-    test.resources.srcDirs = ['tests/resources']
-}

@@ -1,9 +1,0 @@
-Until there is a less painful way to resolve 
-JAVA dependencies this repo should do the job.
-
-This repository should be checked out into 'vtm'
-repository, then copy native android libs like:
-
-cp -r vtm-android ../vtm-android/libs
-cp -r vtm-gdx-android ../vtm-gdx-android/libs
-

@@ -18,7 +18,7 @@ import org.oscim.backend.canvas.Color;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 import org.oscim.layers.PathLayer;
-import org.oscim.layers.marker.ItemizedIconLayer;
+import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.marker.MarkerSymbol;
 import org.oscim.layers.tile.vector.BuildingLayer;
@@ -32,7 +32,7 @@ import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import static org.oscim.layers.marker.ItemizedIconLayer.OnItemGestureListener;
+import static org.oscim.layers.marker.ItemizedLayer.OnItemGestureListener;
 
 public class MapFragment extends BaseFragment {
     public static final int DEFAULT_ZOOMLEVEL = 17;
@@ -40,9 +40,9 @@ public class MapFragment extends BaseFragment {
     public static final int DURATION = 800;
     private VectorTileLayer baseLayer;
     private Button myPosition;
-    private ItemizedIconLayer<MarkerItem> meMarkerLayer;
-    private ItemizedIconLayer<MarkerItem> poiMarkersLayer;
-    private ItemizedIconLayer<MarkerItem> highlightLayer;
+    private ItemizedLayer<MarkerItem> meMarkerLayer;
+    private ItemizedLayer<MarkerItem> poiMarkersLayer;
+    private MarkerSymbol highlightMarker;
     private PathLayer pathLayer;
     private ArrayList<MarkerItem> meMarkers = new ArrayList<MarkerItem>(1);
     private Location userLocation;
@@ -79,21 +79,26 @@ public class MapFragment extends BaseFragment {
     }
 
     public void centerOn(Feature feature, double zoom) {
-        highlightLayer.removeAllItems();
-        highlightLayer.addItem(feature.getMarker());
+        MarkerItem focused = poiMarkersLayer.getFocus();
+        if (focused != null)
+            focused.setMarker(null);
+
+        focused = poiMarkersLayer.getByUid(feature);
+
+        if (focused != null){
+            focused.setMarker(highlightMarker);
+            poiMarkersLayer.setFocus(focused);
+        }
         GeoPoint geoPoint = feature.getGeoPoint();
-        map.getAnimator().animateTo(DURATION, geoPoint, zoom, false);
+        map.animator().animateTo(DURATION, geoPoint, zoom, false);
     }
 
     private TileSource getTileBase() {
-        TileSource tileSource = new OSciMap4TileSource();
-        tileSource.setOption(
-                getString(R.string.tiles_source_url_key), getString(R.string.tiles_source_url));
-        return tileSource;
+        return new OSciMap4TileSource(getString(R.string.tiles_source_url));
     }
 
-    private ItemizedIconLayer<MarkerItem> buildPoiMarkersLayer() {
-        return new ItemizedIconLayer<MarkerItem>(map, new ArrayList<MarkerItem>(),
+    private ItemizedLayer<MarkerItem> buildPoiMarkersLayer() {
+        return new ItemizedLayer<MarkerItem>(map, new ArrayList<MarkerItem>(),
                 getDefaultMarkerSymbol(), new OnItemGestureListener<MarkerItem>() {
             @Override
             public boolean onItemSingleTapUp(int index, MarkerItem item) {
@@ -111,35 +116,28 @@ public class MapFragment extends BaseFragment {
         });
     }
 
-    private ItemizedIconLayer<MarkerItem> buildHighlightLayer() {
-        return new ItemizedIconLayer<MarkerItem>(
-                map, new ArrayList<MarkerItem>(), getHighlightMarkerSymbol(), null);
-    }
-
     private PathLayer buildPathLayer() {
         return new PathLayer(map, Color.MAGENTA, ROUTE_LINE_WIDTH);
     }
 
-    private ItemizedIconLayer<MarkerItem> buildMyPositionLayer() {
-        return new ItemizedIconLayer<MarkerItem>(map, meMarkers, getDefaultMarkerSymbol(), null);
+    private ItemizedLayer<MarkerItem> buildMyPositionLayer() {
+        return new ItemizedLayer<MarkerItem>(map, meMarkers, getDefaultMarkerSymbol(), null);
     }
 
     private void setupMap(View view) {
         baseLayer = map.setBaseMap(getTileBase());
-        map.getLayers().add(new BuildingLayer(map, baseLayer.getTileLayer()));
-        map.getLayers().add(new LabelLayer(map, baseLayer.getTileLayer()));
+        map.layers().add(new BuildingLayer(map, baseLayer));
+        map.layers().add(new LabelLayer(map, baseLayer));
 
+        highlightMarker = getHighlightMarkerSymbol();
         poiMarkersLayer = buildPoiMarkersLayer();
-        map.getLayers().add(poiMarkersLayer);
-
-        highlightLayer = buildHighlightLayer();
-        map.getLayers().add(highlightLayer);
+        map.layers().add(poiMarkersLayer);
 
         pathLayer = buildPathLayer();
-        map.getLayers().add(pathLayer);
+        map.layers().add(pathLayer);
 
         meMarkerLayer = buildMyPositionLayer();
-        map.getLayers().add(meMarkerLayer);
+        map.layers().add(meMarkerLayer);
 
         map.setTheme(InternalRenderTheme.OSMARENDER);
         map.bind(new Map.UpdateListener() {
@@ -167,17 +165,13 @@ public class MapFragment extends BaseFragment {
         if (poiMarkersLayer != null) {
             poiMarkersLayer.removeAllItems();
         }
-
-        if (highlightLayer != null) {
-            highlightLayer.removeAllItems();
-        }
     }
 
-    public ItemizedIconLayer getPoiLayer() {
+    public ItemizedLayer<MarkerItem> getPoiLayer() {
         return poiMarkersLayer;
     }
 
-    public ItemizedIconLayer<MarkerItem> getMeMarkerLayer() {
+    public ItemizedLayer<MarkerItem> getMeMarkerLayer() {
         return meMarkerLayer;
     }
 
