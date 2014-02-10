@@ -31,6 +31,7 @@ $ ./gradlew clean installDebug
 ## Contributions
 We appreciate pull requests. Please run 
 <pre><code>$ ./gradlew</pre></code>
+twice (the very first run might fail due to an error we have not yet figured out) 
 and make sure it runs cleanly as it runs all of our tests and code quality tools 
 we have configured. If you cannot make it run cleanly please let us know in the
 comments of your pull requests and we will help.
