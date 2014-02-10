@@ -131,12 +131,12 @@ public class BaseActivity extends MapActivity {
 
     private OnConnectionFailedListener onConnectionFailedListener =
             new OnConnectionFailedListener() {
-        @Override
-        public void onConnectionFailed(ConnectionResult connectionResult) {
-            Toast.makeText(getApplicationContext(),
-                    PLAY_SERVICE_FAIL_MESSAGE, Toast.LENGTH_LONG).show();
-        }
-    };
+                @Override
+                public void onConnectionFailed(ConnectionResult connectionResult) {
+                    Toast.makeText(getApplicationContext(),
+                            PLAY_SERVICE_FAIL_MESSAGE, Toast.LENGTH_LONG).show();
+                }
+            };
 
     private void initLocationClient() {
         Logger.d("Location: initializing");
@@ -187,7 +187,8 @@ public class BaseActivity extends MapActivity {
                         getSupportFragmentManager().findFragmentByTag(ListResultsFragment.TAG);
                 if (pagerResultsFragment != null && pagerResultsFragment.isAdded()
                         && listResultsFragment == null) {
-                    onBackPressed();
+                    getSupportFragmentManager().beginTransaction().remove(pagerResultsFragment)
+                            .commit();
                 }
                 return true;
             }
@@ -312,14 +313,10 @@ public class BaseActivity extends MapActivity {
 
     public boolean executeSearchOnMap(String query) {
         PagerResultsFragment pagerResultsFragment = PagerResultsFragment.newInstance(this);
-
-        if (!pagerResultsFragment.isAdded()) {
-            getSupportFragmentManager().beginTransaction()
-                    .addToBackStack(null)
-                    .add(R.id.pager_results_container, pagerResultsFragment,
-                            PagerResultsFragment.TAG)
-                    .commit();
-        }
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.pager_results_container, pagerResultsFragment,
+                        PagerResultsFragment.TAG)
+                .commit();
 
         return pagerResultsFragment.executeSearchOnMap(getSearchView(), query);
     }

@@ -13,7 +13,6 @@ import com.mapzen.fragment.PagerResultsFragment;
 import com.mapzen.shadows.ShadowLocationClient;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
-import com.mapzen.support.TestBaseActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -129,20 +128,37 @@ public class BaseActivityTest {
     public void onMenuItemActionCollapse_shouldPopPagerResultsFragment() throws Exception {
         activity.executeSearchOnMap("query");
         menu.findItem(R.id.search).collapseActionView();
-        assertThat(((TestBaseActivity) activity).isBackPressed()).isTrue();
+        assertThat(activity.getSupportFragmentManager())
+                .doesNotHaveFragmentWithTag(PagerResultsFragment.TAG);
     }
 
     @Test
-    public void executeSearchOnMap_shouldCreateNewPagerResultsFragmentEachTime() throws Exception {
+    public void executeSearchOnMap_shouldCreateNewPagerResultsFragment() throws Exception {
         activity.executeSearchOnMap("query1");
         final PagerResultsFragment fragment1 = (PagerResultsFragment)
                 activity.getSupportFragmentManager().findFragmentByTag(PagerResultsFragment.TAG);
 
-        activity.executeSearchOnMap("query1");
+        activity.executeSearchOnMap("query2");
         final PagerResultsFragment fragment2 = (PagerResultsFragment)
                 activity.getSupportFragmentManager().findFragmentByTag(PagerResultsFragment.TAG);
 
         assertThat(fragment1).isNotSameAs(fragment2);
+    }
+
+    @Test
+    public void executeSearchOnMap_shouldReplaceExistingFragment() throws Exception {
+        activity.executeSearchOnMap("query1");
+        final PagerResultsFragment fragment1 = (PagerResultsFragment)
+                activity.getSupportFragmentManager().findFragmentByTag(PagerResultsFragment.TAG);
+
+        activity.executeSearchOnMap("query2");
+        final PagerResultsFragment fragment2 = (PagerResultsFragment)
+                activity.getSupportFragmentManager().findFragmentByTag(PagerResultsFragment.TAG);
+
+        assertThat(activity.getSupportFragmentManager().findFragmentByTag(PagerResultsFragment.TAG))
+                .isNotSameAs(fragment1);
+        assertThat(activity.getSupportFragmentManager().findFragmentByTag(PagerResultsFragment.TAG))
+                .isSameAs(fragment2);
     }
 
     @Test
