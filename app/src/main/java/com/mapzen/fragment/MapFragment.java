@@ -103,7 +103,6 @@ public class MapFragment extends BaseFragment {
                 getDefaultMarkerSymbol(), new OnItemGestureListener<MarkerItem>() {
             @Override
             public boolean onItemSingleTapUp(int index, MarkerItem item) {
-                Toast.makeText(act, item.getTitle(), Toast.LENGTH_SHORT).show();
                 if (onPoiClickListener != null) {
                     onPoiClickListener.onPoiClick(index, item);
                 }

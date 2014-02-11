@@ -47,15 +47,6 @@ public class MapFragmentTest {
     }
 
     @Test
-    public void onItemSingleTapUp_shouldToastMarkerItemTitle() throws Exception {
-        ItemizedLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
-        poiLayer.addItem(new MarkerItem("Title", "Description", new GeoPoint(0, 0)));
-        poiLayer.onGesture(Gesture.TAP, new FakeMotionEvent(0, 0));
-        Assertions.assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo("Title");
-        assertThat(ShadowToast.getLatestToast()).hasDuration(Toast.LENGTH_SHORT);
-    }
-
-    @Test
     public void onItemSingleTapUp_shouldNotifyListener() throws Exception {
         ItemizedLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
         poiLayer.addItem(new MarkerItem("Title", "Description", new GeoPoint(0, 0)));
