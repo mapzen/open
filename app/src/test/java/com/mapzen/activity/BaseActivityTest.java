@@ -9,7 +9,7 @@ import android.widget.SearchView;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.fragment.ListResultsFragment;
-import com.mapzen.fragment.PagerResultsFragment;
+import com.mapzen.search.PagerResultsFragment;
 import com.mapzen.shadows.ShadowLocationClient;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;

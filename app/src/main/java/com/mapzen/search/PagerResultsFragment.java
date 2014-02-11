@@ -1,4 +1,4 @@
-package com.mapzen.fragment;
+package com.mapzen.search;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,6 +18,10 @@ import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.SearchViewAdapter;
 import com.mapzen.entity.Feature;
+import com.mapzen.fragment.BaseFragment;
+import com.mapzen.fragment.ItemFragment;
+import com.mapzen.fragment.ListResultsFragment;
+import com.mapzen.fragment.MapFragment;
 import com.mapzen.util.Logger;
 
 import org.json.JSONArray;
@@ -30,13 +34,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+
 public class PagerResultsFragment extends BaseFragment {
     public static final String TAG = PagerResultsFragment.class.getSimpleName();
     private List<ItemFragment> currentCollection = new ArrayList<ItemFragment>();
-    private TextView indicator;
-    private ViewPager pager;
     private ArrayList<Feature> features = new ArrayList<Feature>();
     private static final String PAGINATE_TEMPLATE = "%2d of %2d RESULTS";
+
+    @InjectView(R.id.multi_result_header)
+    View multiResultHeader;
+
+    @InjectView(R.id.pagination)
+    TextView indicator;
+
+    @InjectView(R.id.view_all)
+    Button viewAll;
+
+    @InjectView(R.id.results)
+    ViewPager pager;
 
     public static PagerResultsFragment newInstance(BaseActivity act) {
         PagerResultsFragment pagerResultsFragment = new PagerResultsFragment();
@@ -50,9 +68,8 @@ public class PagerResultsFragment extends BaseFragment {
             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search_results,
                 container, false);
-        indicator = (TextView) view.findViewById(R.id.pagination);
-        setViewAll((Button) view.findViewById(R.id.view_all));
-        setPager((ViewPager) view.findViewById(R.id.results));
+        ButterKnife.inject(this, view);
+        initOnPageChangeListener();
         return view;
     }
 
@@ -60,19 +77,17 @@ public class PagerResultsFragment extends BaseFragment {
     public void onDestroy() {
         super.onDestroy();
         clearMap();
+        ButterKnife.reset(this);
     }
 
-    private void setViewAll(Button viewAll) {
-        viewAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final Fragment fragment = ListResultsFragment.newInstance(act, features);
-                act.getSupportFragmentManager().beginTransaction()
-                        .add(R.id.full_list, fragment, ListResultsFragment.TAG)
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
+    @OnClick(R.id.view_all)
+    @SuppressWarnings("unused")
+    public void onClickViewAll() {
+        final Fragment fragment = ListResultsFragment.newInstance(act, features);
+        act.getSupportFragmentManager().beginTransaction()
+                .add(R.id.full_list, fragment, ListResultsFragment.TAG)
+                .addToBackStack(null)
+                .commit();
     }
 
     public void setCurrentItem(int position) {
@@ -83,9 +98,7 @@ public class PagerResultsFragment extends BaseFragment {
         return pager.getCurrentItem();
     }
 
-    private void setPager(ViewPager pager) {
-        this.pager = pager;
-
+    private void initOnPageChangeListener() {
         this.pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i2) {
@@ -210,13 +223,22 @@ public class PagerResultsFragment extends BaseFragment {
         };
     }
 
-    private void displayResults(int length, int currentPos) {
+    public void displayResults(int length, int currentPos) {
         SearchViewAdapter adapter = new SearchViewAdapter(getFragmentManager(), currentCollection);
         pager.setAdapter(adapter);
         String indicatorText = String.format(Locale.getDefault(), PAGINATE_TEMPLATE, 1, length);
         indicator.setText(indicatorText);
         centerOnPlace(currentPos);
         mapFragment.updateMap();
+        setMultiResultHeaderVisibility(length);
+    }
+
+    private void setMultiResultHeaderVisibility(int length) {
+        if (length == 1) {
+            multiResultHeader.setVisibility(View.GONE);
+        } else {
+            multiResultHeader.setVisibility(View.VISIBLE);
+        }
     }
 
     private void addMarker(Feature feature) {

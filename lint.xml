@@ -8,5 +8,6 @@
     <issue id="TypographyDashes" severity="ignore">
 	<ignore path="app/src/main/res/values/com_crashlytics_export_strings.xml" />
     </issue>
+    <issue id="InvalidPackage" severity="ignore" />
 </lint>
 

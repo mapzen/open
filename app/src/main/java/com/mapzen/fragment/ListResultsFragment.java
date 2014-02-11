@@ -14,6 +14,7 @@ import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.PlaceArrayAdapter;
 import com.mapzen.entity.Feature;
+import com.mapzen.search.PagerResultsFragment;
 
 import java.util.ArrayList;
 
