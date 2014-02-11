@@ -45,8 +45,8 @@ public class ItemFragment extends BaseFragment {
                             new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
-                                    act.dismissProgressDialog();
                                     routeFragment.onRouteSuccess(response);
+                                    act.dismissProgressDialog();
                                 }
                             }, new Response.ErrorListener() {
                         @Override
