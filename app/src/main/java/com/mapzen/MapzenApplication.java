@@ -57,6 +57,10 @@ public class MapzenApplication extends Application {
         this.location = location;
     }
 
+    public Location getLocation() {
+        return location;
+    }
+
     public MapPosition getLocationPosition() {
         if (location != null) {
             mapPosition = new MapPosition(location.getLatitude(), location.getLongitude(),

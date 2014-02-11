@@ -55,6 +55,7 @@ public class BaseActivity extends MapActivity {
             if (updateMapLocation) {
                 mapFragment.setUserLocation(location);
             }
+            app.setLocation(location);
             Intent toBroadcast = new Intent(COM_MAPZEN_UPDATES_LOCATION);
             toBroadcast.putExtra("location", location);
             sendBroadcast(toBroadcast);
