@@ -1,12 +1,9 @@
 package com.mapzen.fragment;
 
-import android.widget.Toast;
-
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.support.FakeMotionEvent;
 import com.mapzen.support.MapzenTestRunner;
 
-import org.fest.assertions.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +14,6 @@ import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.TestMap;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLog;
-import org.robolectric.shadows.ShadowToast;
 
 import static com.mapzen.support.TestHelper.initBaseActivity;
 import static org.fest.assertions.api.ANDROID.assertThat;
