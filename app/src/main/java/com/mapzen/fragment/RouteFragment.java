@@ -261,6 +261,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             setInstructions(route.getRouteInstructions());
             drawRoute();
             displayRoute();
+            setMapPerspectiveForInstruction(instructions.get(0));
         } else {
             Toast.makeText(act, act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
             act.dismissProgressDialog();
@@ -312,14 +313,19 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             changeDistance(-instructions.get(previousPosition).getDistance());
         }
         previousPosition = i;
-        double[] point = instructions.get(i).getPoint();
-        Map map = act.getMap();
-        map.setMapPosition(point[0], point[1], Math.pow(2, ROUTE_ZOOM_LEVEL));
-        map.viewport().setRotation(instructions.get(i).getBearing());
+        setMapPerspectiveForInstruction(instructions.get(i));
     }
 
     @Override
     public void onPageScrollStateChanged(int i) {
+    }
+
+    public void setMapPerspectiveForInstruction(Instruction instruction) {
+        Map map = act.getMap();
+        double[] point = instruction.getPoint();
+        map.setMapPosition(point[0], point[1], Math.pow(2, ROUTE_ZOOM_LEVEL));
+        map.viewport().setRotation(instruction.getBearing());
+        map.updateMap(true);
     }
 
     private void initLocationReceiver() {

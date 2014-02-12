@@ -1,6 +1,16 @@
 package org.oscim.map;
 
+import org.oscim.core.MapPosition;
+
 public class TestMap extends Map {
+    private TestViewport viewport;
+    private MapPosition mapPosition;
+
+    public TestMap() {
+        super();
+        this.viewport = new TestViewport(this);
+    }
+
     @Override
     public void updateMap(boolean forceRedraw) {
     }
@@ -30,7 +40,18 @@ public class TestMap extends Map {
     }
 
     @Override
-    public Viewport viewport() {
-        return new Viewport(this);
+    public void setMapPosition(double latitude, double longitude, double scale) {
+        super.setMapPosition(latitude, longitude, scale);
+        mapPosition = new MapPosition(latitude, longitude, scale);
+    }
+
+    @Override
+    public MapPosition getMapPosition() {
+        return mapPosition;
+    }
+
+    @Override
+    public TestViewport viewport() {
+        return viewport;
     }
 }
