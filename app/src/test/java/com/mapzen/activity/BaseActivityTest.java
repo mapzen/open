@@ -1,6 +1,7 @@
 package com.mapzen.activity;
 
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.view.Menu;
@@ -179,5 +180,16 @@ public class BaseActivityTest {
         pagerResultsFragment.setCurrentItem(0);
         activity.getMapFragment().getOnPoiClickListener().onPoiClick(1, null);
         assertThat(pagerResultsFragment.getCurrentItem()).isEqualTo(1);
+    }
+
+    @Test
+    public void deactivateMapLocationUpdates_shouldBlockLocationUpdates() throws Exception {
+        Location location = new Location("expected");
+        Location newLocation = new Location("new expected");
+        activity.getMapFragment().setUserLocation(location);
+        activity.getLocationListener().onLocationChanged(location);
+        activity.deactivateMapLocationUpdates();
+        activity.getLocationListener().onLocationChanged(newLocation);
+        assertThat(activity.getMapFragment().getUserLocation()).isNotEqualTo(newLocation);
     }
 }

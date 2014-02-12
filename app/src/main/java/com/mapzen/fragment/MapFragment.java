@@ -197,6 +197,10 @@ public class MapFragment extends BaseFragment {
         }
     }
 
+    public Location getUserLocation() {
+        return userLocation;
+    }
+
     private GeoPoint getUserLocationPoint() {
         if (userLocation != null) {
             return new GeoPoint(userLocation.getLatitude(), userLocation.getLongitude());

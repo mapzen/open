@@ -41,7 +41,8 @@ import static com.mapzen.entity.Feature.NAME;
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
         ViewPager.OnPageChangeListener {
     public static final String TAG = RouteFragment.class.getSimpleName();
-    public static final int WALKING_THRESH_HOLD = 10;
+    public static final int WALKING_ADVANCE_THRESHOLD = 15;
+    public static final int WALKING_LOST_THRESHOLD = 70;
     public static final int ROUTE_ZOOM_LEVEL = 17;
     private ArrayList<Instruction> instructions;
     private ViewPager pager;
@@ -52,6 +53,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private Feature feature;
     private DistanceView distanceLeftView;
     private int previousPosition;
+    private boolean locationPassThrough = false;
+    private boolean hasFoundPath = false;
 
     public static RouteFragment newInstance(BaseActivity act, Feature feature) {
         final RouteFragment fragment = new RouteFragment();
@@ -61,17 +64,34 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return fragment;
     }
 
-    public void setInstructions(ArrayList<Instruction> instructions) {
-        Logger.d("instructions: " + instructions.toString());
-        this.instructions = instructions;
-    }
-
     @Override
     public void onResume() {
         super.onResume();
         initLocationReceiver();
         act.hideActionBar();
+        act.deactivateMapLocationUpdates();
         drawRoute();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        act.unregisterReceiver(locationReceiver);
+        act.activateMapLocationUpdates();
+        clearRoute();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        act.showActionBar();
+        clearRoute();
+    }
+
+
+    public void setInstructions(ArrayList<Instruction> instructions) {
+        Logger.d("instructions: " + instructions.toString());
+        this.instructions = instructions;
     }
 
     public Feature getFeature() {
@@ -93,46 +113,90 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return nextTurn;
     }
 
-    public void onLocationChanged(Location location) {
-        Logger.d("RouteFragment::onLocationChangeLocation" + instructions.toString());
-        for (Instruction instruction : instructions) {
-            Location nextTurn = getNextTurnTo(instruction);
-            if (location != null && nextTurn != null) {
-                int distanceToNextTurn = (int) Math.floor(location.distanceTo(nextTurn));
-                if (distanceToNextTurn > WALKING_THRESH_HOLD) {
-                    Logger.d("RouteFragment::onLocationChangeLocation: " +
-                            "outside defined radius");
-                } else {
-                    Logger.d("RouteFragment::onLocationChangeLocation: " +
-                            "inside defined radius advancing");
-                    advanceTo(instructions.indexOf(instruction));
-                }
-                Logger.d("RouteFragment::onLocationChangeLocation: " +
-                        "new current location: " + location.toString());
-                Logger.d("RouteFragment::onLocationChangeLocation: " +
-                        "next turn: " + nextTurn.toString());
-                Logger.d("RouteFragment::onLocationChangeLocation: " +
-                        "distance to next turn: " + String.valueOf(distanceToNextTurn));
-                Logger.d("RouteFragment::onLocationChangeLocation: " +
-                        "threshold: " + String.valueOf(WALKING_THRESH_HOLD));
-            } else {
-                if (location == null) {
-                    Logger.d("RouteFragment::onLocationChangeLocation: " +
-                            "**next turn** is null screw it");
-                }
-                if (nextTurn == null) {
-                    Logger.d("RouteFragment::onLocationChangeLocation: " +
-                            "**location** is null screw it");
-                }
-            }
-        }
+    public void setLocationPassThrough(boolean locationPassThrough) {
+        this.locationPassThrough = locationPassThrough;
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        act.unregisterReceiver(locationReceiver);
-        clearRoute();
+    private Location snapTo(Location location) {
+        if (!locationPassThrough) {
+            Instruction instruction = instructions.get(getCurrentItem());
+            double[] locationPoint = {location.getLatitude(), location.getLongitude()};
+            Logger.d("RouteFragment::onLocationChange: current location: "
+                    + String.valueOf(location.getLatitude()) + " ,"
+                    + String.valueOf(location.getLongitude()));
+            Logger.d("RouteFragment::onLocationChange: reference location: "
+                    + instruction.toString());
+            double[] onRoadPoint;
+            onRoadPoint = instruction.snapTo(locationPoint, -90);
+            if (onRoadPoint == null) {
+                onRoadPoint = instruction.snapTo(locationPoint, 90);
+            }
+            Location correctedLocation = new Location("Corrected");
+            correctedLocation.setLatitude(onRoadPoint[0]);
+            correctedLocation.setLongitude(onRoadPoint[1]);
+            return correctedLocation;
+        }
+        return location;
+    }
+
+    private Location getStartLocation() {
+        Location beginning = new Location("begin point");
+        beginning.setLatitude(route.getStartCoordinates()[0]);
+        beginning.setLongitude(route.getStartCoordinates()[1]);
+        return beginning;
+    }
+
+
+    public void onLocationChanged(Location location) {
+        Location correctedLocation = snapTo(location);
+        if (correctedLocation != null) {
+            mapFragment.setUserLocation(correctedLocation);
+            hasFoundPath = true;
+            Logger.d("RouteFragment::onLocationChange: Corrected: " + correctedLocation.toString());
+        } else {
+            Logger.d("RouteFragment::onLocationChange: ambigous location");
+        }
+
+        if (WALKING_LOST_THRESHOLD < location.distanceTo(correctedLocation) &&
+                location.getAccuracy() < WALKING_ADVANCE_THRESHOLD) {
+            // execute reroute query and reset the path
+            Logger.d("RouteFragment::onLocationChange: probably off course");
+        }
+
+        if (!hasFoundPath && getStartLocation().distanceTo(location) > WALKING_ADVANCE_THRESHOLD) {
+            Logger.d("RouteFragment::onLocationChange: hasn't hit first location and is"
+                    + "probably off course");
+        }
+
+        Location nextTurn = getNextTurnTo(instructions.get(pager.getCurrentItem() + 1));
+        if (correctedLocation != null && nextTurn != null) {
+            int distanceToNextTurn = (int) Math.floor(correctedLocation.distanceTo(nextTurn));
+            if (distanceToNextTurn > WALKING_ADVANCE_THRESHOLD) {
+                Logger.d("RouteFragment::onLocationChangeLocation: " +
+                        "outside defined radius");
+            } else {
+                Logger.d("RouteFragment::onLocationChangeLocation: " +
+                        "inside defined radius advancing");
+                goToNextInstruction();
+            }
+            Logger.d("RouteFragment::onLocationChangeLocation: " +
+                    "new current location: " + location.toString());
+            Logger.d("RouteFragment::onLocationChangeLocation: " +
+                    "next turn: " + nextTurn.toString());
+            Logger.d("RouteFragment::onLocationChangeLocation: " +
+                    "distance to next turn: " + String.valueOf(distanceToNextTurn));
+            Logger.d("RouteFragment::onLocationChangeLocation: " +
+                    "threshold: " + String.valueOf(WALKING_ADVANCE_THRESHOLD));
+        } else {
+            if (correctedLocation == null) {
+                Logger.d("RouteFragment::onLocationChangeLocation: " +
+                        "**next turn** is null screw it");
+            }
+            if (nextTurn == null) {
+                Logger.d("RouteFragment::onLocationChangeLocation: " +
+                        "**location** is null screw it");
+            }
+        }
     }
 
     @Override
@@ -171,19 +235,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 .commit();
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        act.showActionBar();
-        clearRoute();
-    }
-
-    public void next() {
+    public void goToNextInstruction() {
         pager.setCurrentItem(pager.getCurrentItem() + 1);
-    }
-
-    public void advanceTo(int i) {
-        pager.setCurrentItem(i);
     }
 
     private void changeDistance(int difference) {
@@ -193,7 +246,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    public void prev() {
+    public void goToPrevInstruction() {
         int nextItemIndex = pager.getCurrentItem() - 1;
         pager.setCurrentItem(nextItemIndex);
     }
@@ -311,7 +364,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 next.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        parent.next();
+                        parent.goToNextInstruction();
                     }
                 });
             }
@@ -322,7 +375,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 prev.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        parent.prev();
+                        parent.goToPrevInstruction();
                     }
                 });
             }
