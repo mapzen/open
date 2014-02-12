@@ -144,12 +144,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (WALKING_LOST_THRESHOLD < location.distanceTo(correctedLocation) &&
                 location.getAccuracy() < WALKING_ADVANCE_THRESHOLD) {
             // execute reroute query and reset the path
-            Toast.makeText(getActivity(), "LOST?", Toast.LENGTH_LONG).show();
             Logger.d("RouteFragment::onLocationChange: probably off course");
         }
 
         if (!hasFoundPath && getStartLocation().distanceTo(location) > WALKING_ADVANCE_THRESHOLD) {
-            Toast.makeText(getActivity(), "LOST?", Toast.LENGTH_LONG).show();
             Logger.d("RouteFragment::onLocationChange: hasn't hit first location and is"
                     + "probably off course");
         }
