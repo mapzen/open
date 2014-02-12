@@ -296,7 +296,7 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onResume_shouldDeactivateActivitesMapUpdates() throws Exception {
+    public void onResume_shouldDeactivateActivitiesMapUpdates() throws Exception {
         attachFragment();
         Location bogusLocation = getTestLocation(23.0, 23.0);
         act.getLocationListener().onLocationChanged(bogusLocation);
@@ -304,7 +304,7 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onPause_shouldActivateActivitesMapUpdates() throws Exception {
+    public void onPause_shouldActivateActivitiesMapUpdates() throws Exception {
         attachFragment();
         fragment.onPause();
         Location expectedLocation = getTestLocation(23.0, 23.0);

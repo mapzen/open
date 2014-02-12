@@ -81,6 +81,14 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         clearRoute();
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        act.showActionBar();
+        clearRoute();
+    }
+
+
     public void setInstructions(ArrayList<Instruction> instructions) {
         Logger.d("instructions: " + instructions.toString());
         this.instructions = instructions;
@@ -225,14 +233,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 .add(R.id.full_list, fragment, DirectionListFragment.TAG)
                 .addToBackStack(null)
                 .commit();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        act.showActionBar();
-        //act.activateMapLocationUpdates();
-        clearRoute();
     }
 
     public void goToNextInstruction() {
