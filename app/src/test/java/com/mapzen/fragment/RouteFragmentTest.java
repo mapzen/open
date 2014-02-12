@@ -19,7 +19,6 @@ import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.widget.DistanceView;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -112,6 +111,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldAdvance() throws Exception {
+        fragment.setLocationPassThrough(true);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(1, 1));
@@ -295,6 +295,23 @@ public class RouteFragmentTest {
         assertThat(textView.getText()).isEqualTo(expectedFormattedDistance);
     }
 
+    @Test
+    public void onResume_shouldDeactivateActivitesMapUpdates() throws Exception {
+        attachFragment();
+        Location bogusLocation = getTestLocation(23.0, 23.0);
+        act.getLocationListener().onLocationChanged(bogusLocation);
+        assertThat(act.getMapFragment().getUserLocation()).isNotEqualTo(bogusLocation);
+    }
+
+    @Test
+    public void onPause_shouldActivateActivitesMapUpdates() throws Exception {
+        attachFragment();
+        fragment.onPause();
+        Location expectedLocation = getTestLocation(23.0, 23.0);
+        act.getLocationListener().onLocationChanged(expectedLocation);
+        assertThat(act.getMapFragment().getUserLocation()).isEqualTo(expectedLocation);
+    }
+
     private View getInstructionView(int position) {
         ViewPager pager = (ViewPager) fragment.getView().findViewById(R.id.routes);
         ViewGroup group = new ViewGroup(act) {
@@ -308,7 +325,6 @@ public class RouteFragmentTest {
 
     private void initTestFragment() {
         fragment = new RouteFragment();
-        fragment.setLocationPassThrough(true);
         fragment.setFeature(getTestFeature());
         fragment.setAct(act);
         fragment.setMapFragment(initMapFragment(act));
@@ -316,10 +332,13 @@ public class RouteFragmentTest {
         fragment.setInstructions(instructions);
     }
 
-    private void attachFragment() throws JSONException {
+    private void attachFragment() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
-        fragment.setInstructions(new ArrayList<Instruction>());
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
     }
 
     private Instruction getTestInstruction(double lat, double lng) throws Exception {

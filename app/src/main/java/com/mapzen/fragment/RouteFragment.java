@@ -64,11 +64,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return fragment;
     }
 
-    public void setInstructions(ArrayList<Instruction> instructions) {
-        Logger.d("instructions: " + instructions.toString());
-        this.instructions = instructions;
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -76,6 +71,19 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.hideActionBar();
         act.deactivateMapLocationUpdates();
         drawRoute();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        act.unregisterReceiver(locationReceiver);
+        act.activateMapLocationUpdates();
+        clearRoute();
+    }
+
+    public void setInstructions(ArrayList<Instruction> instructions) {
+        Logger.d("instructions: " + instructions.toString());
+        this.instructions = instructions;
     }
 
     public Feature getFeature() {
@@ -184,13 +192,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        act.unregisterReceiver(locationReceiver);
-        clearRoute();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.route_widget, container, false);
@@ -230,7 +231,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void onDetach() {
         super.onDetach();
         act.showActionBar();
-        act.activateMapLocationUpdates();
+        //act.activateMapLocationUpdates();
         clearRoute();
     }
 
