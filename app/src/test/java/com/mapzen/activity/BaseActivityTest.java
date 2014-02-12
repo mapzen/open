@@ -192,4 +192,12 @@ public class BaseActivityTest {
         activity.getLocationListener().onLocationChanged(newLocation);
         assertThat(activity.getMapFragment().getUserLocation()).isNotEqualTo(newLocation);
     }
+
+    @Test
+    public void onLocationChange_shouldUpdateApplicationsStoredLocation() throws Exception {
+        Location expected = new Location("expected");
+        activity.getLocationListener().onLocationChanged(expected);
+        Location actual = ((MapzenApplication) activity.getApplication()).getLocation();
+        assertThat(actual).isEqualTo(expected);
+    }
 }
