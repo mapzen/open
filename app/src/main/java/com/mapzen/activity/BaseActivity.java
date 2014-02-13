@@ -3,6 +3,7 @@ package com.mapzen.activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import com.mapzen.fragment.MapFragment;
 import com.mapzen.search.AutoCompleteAdapter;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.search.PagerResultsFragment;
+import com.mapzen.util.LocationDatabaseHelper;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
@@ -61,6 +63,9 @@ public class BaseActivity extends MapActivity {
             sendBroadcast(toBroadcast);
         }
     };
+    private SQLiteDatabase db;
+    protected LocationDatabaseHelper dbHelper;
+    private boolean debuggable = false;
 
     public void deactivateMapLocationUpdates() {
         updateMapLocation = false;
@@ -83,18 +88,29 @@ public class BaseActivity extends MapActivity {
         initMapFragment();
         initLocationClient();
         progressDialogFragment = new MapzenProgressDialogFragment();
+        dbHelper = new LocationDatabaseHelper(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         locationClient.disconnect();
+        db.close();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         locationClient.connect();
+        db = dbHelper.getWritableDatabase();
+    }
+
+    public SQLiteDatabase getDb() {
+        return db;
+    }
+
+    public boolean isInDebugMode() {
+        return debuggable;
     }
 
     @Override
@@ -105,9 +121,18 @@ public class BaseActivity extends MapActivity {
             if (fragment != null) {
                 return fragment.onOptionsItemSelected(item);
             }
+        } else if (item.getItemId() == R.id.debug_toggle) {
+            debuggable = !debuggable;
+            notifyDebugMode();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void notifyDebugMode() {
+        String msg = "debug mode: "
+            + (debuggable ? "on" : "off");
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 
     public void showProgressDialog() {

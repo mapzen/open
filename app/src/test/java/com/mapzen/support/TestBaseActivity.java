@@ -1,6 +1,8 @@
 package com.mapzen.support;
 
 import android.app.ActionBar;
+import android.database.sqlite.SQLiteDatabase;
+import android.view.Menu;
 
 import com.mapzen.activity.BaseActivity;
 
@@ -12,6 +14,7 @@ public class TestBaseActivity extends BaseActivity {
     private boolean backPressed = false;
     private boolean optionsMenuInvalidated = false;
     private Map map = new TestMap();
+    private Menu menu;
 
     @Override
     public ActionBar getActionBar() {
@@ -41,5 +44,19 @@ public class TestBaseActivity extends BaseActivity {
     @Override
     public Map getMap() {
         return map;
+    }
+
+    public SQLiteDatabase getReadableDb() {
+        return dbHelper.getReadableDatabase();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    public Menu getOptionsMenu() {
+        return menu;
     }
 }

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,6 +25,7 @@ import com.mapzen.entity.Feature;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.util.DisplayHelper;
+import com.mapzen.util.LocationDatabaseHelper;
 import com.mapzen.util.Logger;
 import com.mapzen.widget.DistanceView;
 
@@ -149,6 +151,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     public void onLocationChanged(Location location) {
         Location correctedLocation = snapTo(location);
+        if (act.isInDebugMode()) {
+            storeLocationInfo(location, correctedLocation);
+        }
         if (correctedLocation != null) {
             mapFragment.setUserLocation(correctedLocation);
             hasFoundPath = true;
@@ -324,7 +329,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         Map map = act.getMap();
         double[] point = instruction.getPoint();
         map.setMapPosition(point[0], point[1], Math.pow(2, ROUTE_ZOOM_LEVEL));
-        map.viewport().setRotation(instruction.getBearing());
+        map.viewport().setRotation(instruction.getRotationBearing());
         map.updateMap(true);
     }
 
@@ -408,4 +413,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             onLocationChanged(location);
         }
     }
+
+    private void storeLocationInfo(Location location, Location correctedLocation) {
+        SQLiteDatabase db = act.getDb();
+        db.execSQL(LocationDatabaseHelper.insertSQLForLocationCorrection(location,
+                correctedLocation, instructions.get(pager.getCurrentItem())));
+    }
+
 }
