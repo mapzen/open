@@ -158,7 +158,7 @@ public class MapFragment extends BaseFragment {
     }
 
     public Map getMap() {
-        return map;
+        return act.getMap();
     }
 
     public void clearMarkers() {

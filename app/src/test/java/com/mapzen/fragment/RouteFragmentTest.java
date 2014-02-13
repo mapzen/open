@@ -23,6 +23,7 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.oscim.map.TestMap;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
@@ -312,6 +313,28 @@ public class RouteFragmentTest {
         assertThat(act.getMapFragment().getUserLocation()).isEqualTo(expectedLocation);
     }
 
+    public void setMapPerspectiveForInstruction_shouldAlignBearing() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction instruction = getTestInstruction(0, 0);
+        instructions.add(instruction);
+        attachFragmentWith(instructions);
+        fragment.setMapPerspectiveForInstruction(instruction);
+        TestMap map = (TestMap) act.getMapFragment().getMap();
+        assertThat(map.viewport().getRotation()).isEqualTo(instruction.getBearing());
+    }
+
+    @Test
+    public void setMapPerspectiveForInstruction_shouldSetMapPosition() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction instruction = getTestInstruction(40.0, 100.0);
+        instructions.add(instruction);
+        attachFragmentWith(instructions);
+        fragment.setMapPerspectiveForInstruction(instruction);
+        TestMap map = (TestMap) act.getMap();
+        assertThat(Math.round(map.getMapPosition().getLatitude())).isEqualTo(40);
+        assertThat(Math.round(map.getMapPosition().getLongitude())).isEqualTo(100);
+    }
+
     private View getInstructionView(int position) {
         ViewPager pager = (ViewPager) fragment.getView().findViewById(R.id.routes);
         ViewGroup group = new ViewGroup(act) {
@@ -338,6 +361,11 @@ public class RouteFragmentTest {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+    }
+
+    private void attachFragmentWith(ArrayList<Instruction> instructions) throws Exception {
+        attachFragment();
         fragment.setInstructions(instructions);
     }
 
