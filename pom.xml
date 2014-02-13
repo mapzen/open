@@ -21,6 +21,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>android</groupId>
             <artifactId>android</artifactId>
             <version>4.4.2_r2</version>
@@ -63,12 +69,6 @@
             <artifactId>vtm-android</artifactId>
             <version>0.5.9-SNAPSHOT</version>
             <type>aar</type>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.robolectric</groupId>
