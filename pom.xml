@@ -12,10 +12,6 @@
     <name>Mapzen Parent</name>
 
     <modules>
-        <module>volley</module>
-        <module>geojson</module>
-        <module>vtm</module>
-        <module>vtm-android</module>
         <module>app</module>
     </modules>
 
