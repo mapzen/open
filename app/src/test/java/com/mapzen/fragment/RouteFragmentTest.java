@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.support.v4.view.ViewPager;
-import android.test.suitebuilder.TestMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +31,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowLog;
-import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.util.FragmentTestUtil;
 
 import java.util.ArrayList;
@@ -155,7 +153,7 @@ public class RouteFragmentTest {
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIIONS,
-                new String[] {LocationDatabaseHelper.COLUMN_LAT, LocationDatabaseHelper.COLUMN_LNG},
+                new String[]{LocationDatabaseHelper.COLUMN_LAT, LocationDatabaseHelper.COLUMN_LNG},
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
         cursor.moveToNext();
@@ -174,7 +172,7 @@ public class RouteFragmentTest {
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIIONS,
-                new String[] {LocationDatabaseHelper.COLUMN_CORRECTED_LAT,
+                new String[]{LocationDatabaseHelper.COLUMN_CORRECTED_LAT,
                         LocationDatabaseHelper.COLUMN_CORRECTED_LNG},
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
@@ -194,7 +192,7 @@ public class RouteFragmentTest {
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIIONS,
-                new String[] {LocationDatabaseHelper.COLUMN_INSTRUCTION_LAT,
+                new String[]{LocationDatabaseHelper.COLUMN_INSTRUCTION_LAT,
                         LocationDatabaseHelper.COLUMN_INSTRUCTION_LNG},
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
@@ -214,7 +212,7 @@ public class RouteFragmentTest {
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIIONS,
-                new String[] {LocationDatabaseHelper.COLUMN_INSTRUCTION_BEARING},
+                new String[]{LocationDatabaseHelper.COLUMN_INSTRUCTION_BEARING},
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
         cursor.moveToNext();
@@ -231,7 +229,7 @@ public class RouteFragmentTest {
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIIONS,
-                new String[] {LocationDatabaseHelper.COLUMN_INSTRUCTION_BEARING},
+                new String[]{LocationDatabaseHelper.COLUMN_INSTRUCTION_BEARING},
                 null, null, null, null, null);
         assertThat(cursor).hasCount(0);
     }
