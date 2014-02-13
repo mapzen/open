@@ -1,6 +1,7 @@
 package com.mapzen.support;
 
 import android.app.ActionBar;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.mapzen.activity.BaseActivity;
 
@@ -41,5 +42,9 @@ public class TestBaseActivity extends BaseActivity {
     @Override
     public Map getMap() {
         return map;
+    }
+
+    public SQLiteDatabase getReadableDb() {
+        return dbHelper.getReadableDatabase();
     }
 }

@@ -111,11 +111,23 @@ public class BaseActivityTest {
     }
 
     @Test
+    public void onPause_shouldCloseDB() throws Exception {
+        activity.onPause();
+        assertThat(activity.getDb()).isNotOpen();
+    }
+
+    @Test
     public void onResume_shouldReConnectLocationClient() throws Exception {
         shadowLocationClient.disconnect();
         activity.onResume();
         assertThat(shadowLocationClient.isConnected()).isTrue();
     }
+
+    @Test
+    public void onResume_shouldGetWritableLocationDatabase() throws Exception {
+        assertThat(activity.getDb()).isOpen();
+    }
+
 
     @Test
     public void onPrepareOptionsMenu_shouldHideSearchWhenResultsVisible() throws Exception {
