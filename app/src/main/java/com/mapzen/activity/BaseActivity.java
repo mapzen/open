@@ -65,6 +65,7 @@ public class BaseActivity extends MapActivity {
     };
     private SQLiteDatabase db;
     protected LocationDatabaseHelper dbHelper;
+    private boolean debuggable = false;
 
     public void deactivateMapLocationUpdates() {
         updateMapLocation = false;
@@ -108,6 +109,10 @@ public class BaseActivity extends MapActivity {
         return db;
     }
 
+    public boolean isInDebugMode() {
+        return debuggable;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
@@ -116,9 +121,18 @@ public class BaseActivity extends MapActivity {
             if (fragment != null) {
                 return fragment.onOptionsItemSelected(item);
             }
+        } else if (item.getItemId() == R.id.debug_toggle) {
+            debuggable = !debuggable;
+            notifyDebugMode();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void notifyDebugMode() {
+        String msg = "debug mode: "
+            + (debuggable ? "on" : "off");
+        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 
     public void showProgressDialog() {
