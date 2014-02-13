@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.support.v4.view.ViewPager;
+import android.test.suitebuilder.TestMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowLog;
+import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.util.FragmentTestUtil;
 
 import java.util.ArrayList;
@@ -144,6 +146,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreOriginalLocationRecordInDatabase() throws Exception {
+        act.onOptionsItemSelected(act.getOptionsMenu().findItem(R.id.debug_toggle));
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(0, 0));
@@ -162,6 +165,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreCorrectedLocationRecordInDatabase() throws Exception {
+        act.onOptionsItemSelected(act.getOptionsMenu().findItem(R.id.debug_toggle));
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(0, 0));
@@ -181,6 +185,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreInstructionPointsRecordInDatabase() throws Exception {
+        act.onOptionsItemSelected(act.getOptionsMenu().findItem(R.id.debug_toggle));
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(99.0, 89.0));
         instructions.add(getTestInstruction(0, 0));
@@ -200,6 +205,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreInstructionBearingRecordInDatabase() throws Exception {
+        act.onOptionsItemSelected(act.getOptionsMenu().findItem(R.id.debug_toggle));
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(99.0, 89.0));
         instructions.add(getTestInstruction(0, 0));
@@ -213,6 +219,21 @@ public class RouteFragmentTest {
         assertThat(cursor).hasCount(1);
         cursor.moveToNext();
         assertThat(cursor.getInt(0)).isEqualTo(instructions.get(0).getBearing());
+    }
+
+    @Test
+    public void onLocationChange_shouldNotStoreDatabaseRecord() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(99.0, 89.0));
+        instructions.add(getTestInstruction(0, 0));
+        attachFragmentWith(instructions);
+        Location testLocation = getTestLocation(20.0, 30.0);
+        fragment.onLocationChanged(testLocation);
+        SQLiteDatabase db = act.getReadableDb();
+        Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIIONS,
+                new String[] {LocationDatabaseHelper.COLUMN_INSTRUCTION_BEARING},
+                null, null, null, null, null);
+        assertThat(cursor).hasCount(0);
     }
 
     @Test
