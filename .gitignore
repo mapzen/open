@@ -8,3 +8,6 @@ target
 *.iml
 .idea
 com_crashlytics_export_strings.xml
+app/gen-external-apklibs/
+out/
+
