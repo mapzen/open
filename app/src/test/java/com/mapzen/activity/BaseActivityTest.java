@@ -9,6 +9,7 @@ import android.widget.SearchView;
 
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
+import com.mapzen.entity.Feature;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.search.PagerResultsFragment;
 import com.mapzen.shadows.ShadowLocationClient;
@@ -23,6 +24,8 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.tester.android.view.TestMenu;
+
+import java.util.ArrayList;
 
 import static com.mapzen.support.TestHelper.initBaseActivity;
 import static com.mapzen.support.TestHelper.initMapFragment;
@@ -116,7 +119,9 @@ public class BaseActivityTest {
 
     @Test
     public void onPrepareOptionsMenu_shouldHideSearchWhenResultsVisible() throws Exception {
-        Fragment fragment = ListResultsFragment.newInstance(activity, null);
+        ArrayList<Feature> features = new ArrayList<Feature>();
+        features.add(new Feature());
+        Fragment fragment = ListResultsFragment.newInstance(activity, features);
         activity.getSupportFragmentManager().beginTransaction()
                 .add(fragment, ListResultsFragment.TAG)
                 .commit();
@@ -199,5 +204,18 @@ public class BaseActivityTest {
         activity.getLocationListener().onLocationChanged(expected);
         Location actual = ((MapzenApplication) activity.getApplication()).getLocation();
         assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void shouldHaveSuggestionsAdapter() throws Exception {
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        assertThat(searchView.getSuggestionsAdapter()).isNotNull();
+    }
+
+    @Test
+    public void executeSearchOnMap_shouldRemoveSuggestionsAdapter() throws Exception {
+        activity.executeSearchOnMap("query");
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        assertThat(searchView.getSuggestionsAdapter()).isNull();
     }
 }

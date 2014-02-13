@@ -274,7 +274,7 @@ public class BaseActivity extends MapActivity {
         return menuItem;
     }
 
-    private void setupAdapter(SearchView searchView) {
+    public void setupAdapter(SearchView searchView) {
         if (autoCompleteAdapter == null) {
             autoCompleteAdapter = new AutoCompleteAdapter(getActionBar().getThemedContext(),
                     this, app.getColumns(), getSupportFragmentManager());
@@ -326,6 +326,9 @@ public class BaseActivity extends MapActivity {
     }
 
     public boolean executeSearchOnMap(String query) {
+        final SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setSuggestionsAdapter(null);
+
         PagerResultsFragment pagerResultsFragment = PagerResultsFragment.newInstance(this);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.pager_results_container, pagerResultsFragment,

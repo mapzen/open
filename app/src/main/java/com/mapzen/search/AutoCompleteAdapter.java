@@ -119,6 +119,8 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
 
     @Override
     public boolean onQueryTextChange(String newText) {
+        act.setupAdapter(searchView);
+
         Logger.d("onQueryTextChange: text" + newText);
         if (newText.length() < AUTOCOMPLETE_THRESHOLD) {
             Logger.d("search: newText shorter than 3 "

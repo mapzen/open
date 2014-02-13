@@ -4,6 +4,9 @@ import android.app.ActionBar;
 
 import com.mapzen.activity.BaseActivity;
 
+import org.oscim.map.Map;
+import org.oscim.map.TestMap;
+
 public class TestBaseActivity extends BaseActivity {
     private ActionBar actionBar = new TestActionBar();
     private boolean backPressed = false;
@@ -32,5 +35,10 @@ public class TestBaseActivity extends BaseActivity {
 
     public boolean isOptionsMenuInvalidated() {
         return optionsMenuInvalidated;
+    }
+
+    @Override
+    public Map getMap() {
+        return new TestMap();
     }
 }
