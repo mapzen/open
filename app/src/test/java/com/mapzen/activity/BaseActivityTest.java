@@ -205,4 +205,17 @@ public class BaseActivityTest {
         Location actual = ((MapzenApplication) activity.getApplication()).getLocation();
         assertThat(actual).isEqualTo(expected);
     }
+
+    @Test
+    public void shouldHaveSuggestionsAdapter() throws Exception {
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        assertThat(searchView.getSuggestionsAdapter()).isNotNull();
+    }
+
+    @Test
+    public void executeSearchOnMap_shouldRemoveSuggestionsAdapter() throws Exception {
+        activity.executeSearchOnMap("query");
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        assertThat(searchView.getSuggestionsAdapter()).isNull();
+    }
 }

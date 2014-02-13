@@ -3,7 +3,6 @@ package com.mapzen.search;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.SearchView;
 
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
@@ -46,7 +45,7 @@ public class AutoCompleteAdapterTest {
         baseActivity = TestHelper.initBaseActivity();
         adapter = new AutoCompleteAdapter(baseActivity.getActionBar().getThemedContext(),
                 baseActivity, ((MapzenApplication) application).getColumns(), fragmentManager);
-        adapter.setSearchView(new SearchView(application));
+        adapter.setSearchView(baseActivity.getSearchView());
         adapter.setMapFragment(initMapFragment(baseActivity));
         view = adapter.newView(baseActivity, new TestCursor(), new FrameLayout(baseActivity));
         feature = getTestFeature();
@@ -88,5 +87,12 @@ public class AutoCompleteAdapterTest {
                 pagerResultsFragment.pager.getAdapter();
         ItemFragment itemFragment = (ItemFragment) searchViewAdapter.getItem(0);
         assertThat(itemFragment.getFeature()).isSameAs(feature);
+    }
+
+    @Test
+    public void onQueryTextChange_shouldAttachAdapterIfNull() throws Exception {
+        baseActivity.executeSearchOnMap("query");
+        adapter.onQueryTextChange("new query");
+        assertThat(baseActivity.getSearchView().getSuggestionsAdapter()).isNotNull();
     }
 }
