@@ -330,7 +330,7 @@ public class RouteFragmentTest {
         instructions.add(instruction);
         attachFragmentWith(instructions);
         fragment.setMapPerspectiveForInstruction(instruction);
-        TestMap map = (TestMap) act.getMapFragment().getMap();
+        TestMap map = (TestMap) act.getMap();
         assertThat(Math.round(map.getMapPosition().getLatitude())).isEqualTo(40);
         assertThat(Math.round(map.getMapPosition().getLongitude())).isEqualTo(100);
     }
