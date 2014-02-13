@@ -130,7 +130,6 @@ public class BaseActivityTest {
         assertThat(activity.getDb()).isOpen();
     }
 
-
     @Test
     public void onPrepareOptionsMenu_shouldHideSearchWhenResultsVisible() throws Exception {
         ArrayList<Feature> features = new ArrayList<Feature>();
