@@ -151,9 +151,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     public void onLocationChanged(Location location) {
         Location correctedLocation = snapTo(location);
-        SQLiteDatabase db = act.getDb();
-        db.execSQL(LocationDatabaseHelper.insertSQLForLocationCorrection(location,
-                correctedLocation, instructions.get(pager.getCurrentItem())));
+        if (act.isInDebugMode()) {
+            storeLocationInfo(location, correctedLocation);
+        }
         if (correctedLocation != null) {
             mapFragment.setUserLocation(correctedLocation);
             hasFoundPath = true;
@@ -413,4 +413,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             onLocationChanged(location);
         }
     }
+
+    private void storeLocationInfo(Location location, Location correctedLocation) {
+        SQLiteDatabase db = act.getDb();
+        db.execSQL(LocationDatabaseHelper.insertSQLForLocationCorrection(location,
+                correctedLocation, instructions.get(pager.getCurrentItem())));
+    }
+
 }
