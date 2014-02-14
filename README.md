@@ -6,33 +6,51 @@ Start where you are
 
 The following dependencies must be installed locally prior to building/running the project.
 
-### Install VTM
+### Install Android SDK, Support Library, and Google Play Services
 
-Compile and install the VectorTileMap dependency in the local .m2 repository.
+<pre><code>$ git clone https://github.com/mapzen/maven-android-sdk-deployer.git
+$ cd maven-android-sdk-deployer
+$ mvn install -P 4.4
+$ mvn install -fextras/compatibility-v4/pom.xml
+$ mvn install -fextras/google-play-services/pom.xml
+</pre></code>
+
+See [Maven Android SDK Deployer](https://github.com/mosabua/maven-android-sdk-deployer) project for more information.
+
+### Install GeoJson
+<pre><code>$ git clone https://github.com/mapzen/simple-geojson.git geojson
+$ cd geojson && ./gradlew clean install
+</pre></code>
+
+### Install VectorTileMap Library
 
 <pre><code>$ git clone --recursive https://github.com/opensciencemap/vtm.git
 $ echo "ndk.dir=/path/to/ndk" >> vtm-android/local.properties
 $ cd vtm && ./gradlew clean install
 </pre></code>
 
-## Build project
+### Install VectorTileMap Native Libs
 
-Clone project and import `build.gradle` in project root into Android Studio.
+<pre><code>$ git clone https://github.com/mapzen/vtm-native-libs.git
+$ cd vtm-native-libs && ./install-dependencies.sh
+</pre></code>
 
--or-
+### Install Robolectric
 
-Build via command line using the Gradle wrapper.
+<pre><code>$ git clone https://github.com/mapzen/robolectric.git
+$ cd robolectric && mvn clean install
+</pre></code>
 
-<pre><code>$ git clone --recursive https://github.com:mapzen/android.git mapzen
-$ cd mapzen
-$ ./gradlew clean installDebug
+## Build Mapzen Application
+
+<pre><code>$ git clone https://github.com/mapzen/android.git mapzen-android
+$ cd mapzen-android
+$ mvn clean install
+$ mvn android:deploy android:run
 </pre></code>
 
 ## Contributions
-We appreciate pull requests. Please run 
-<pre><code>$ ./gradlew</pre></code>
-twice (the very first run might fail due to an error we have not yet figured out) 
+We appreciate pull requests. Please run <code>$ mvn clean verify</code>
 and make sure it runs cleanly as it runs all of our tests and code quality tools 
 we have configured. If you cannot make it run cleanly please let us know in the
-comments of your pull requests and we will help.
-
+comments of your pull requests and we will help. Thanks!
