@@ -48,9 +48,4 @@ public class TestBaseActivity extends BaseActivity {
     public SQLiteDatabase getReadableDb() {
         return dbHelper.getReadableDatabase();
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-    }
 }
