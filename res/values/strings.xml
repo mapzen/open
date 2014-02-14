@@ -4,6 +4,7 @@
     <string name="application_name">Mapzen</string>
     <string name="results_title">Results</string>
     <string name="search_title">find stuff</string>
+    <string name="debug_toggle_title">debug</string>
     <string name="tiles_source_url_key">url</string>
     <string name="tiles_source_url">http://opensciencemap.org/tiles/vtm</string>
     <string name="generic_server_down">Server is down</string>

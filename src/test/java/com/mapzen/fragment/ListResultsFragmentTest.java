@@ -18,7 +18,7 @@ import org.robolectric.tester.android.view.TestMenuItem;
 
 import java.util.ArrayList;
 
-import static com.mapzen.support.TestHelper.initBaseActivity;
+import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.util.FragmentTestUtil.startFragment;
@@ -33,7 +33,7 @@ public class ListResultsFragmentTest {
     @Before
     public void setUp() throws Exception {
         menu = new TestMenu();
-        act = initBaseActivity(menu);
+        act = initBaseActivityWithMenu(menu);
         Feature feature = new Feature();
         ArrayList<Feature> list = new ArrayList<Feature>();
         list.add(feature);

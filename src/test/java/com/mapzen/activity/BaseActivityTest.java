@@ -5,6 +5,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.SearchView;
 
 import com.mapzen.MapzenApplication;
@@ -23,11 +24,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
 
 import java.util.ArrayList;
 
-import static com.mapzen.support.TestHelper.initBaseActivity;
+import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -45,7 +47,7 @@ public class BaseActivityTest {
     public void setUp() throws Exception {
         ShadowVolley.clearMockRequestQueue();
         menu = new TestMenu();
-        activity = initBaseActivity(menu);
+        activity = initBaseActivityWithMenu(menu);
         shadowLocationClient = Robolectric.shadowOf_(activity.getLocationClient());
         initMapFragment(activity);
     }
@@ -111,10 +113,21 @@ public class BaseActivityTest {
     }
 
     @Test
+    public void onPause_shouldCloseDB() throws Exception {
+        activity.onPause();
+        assertThat(activity.getDb()).isNotOpen();
+    }
+
+    @Test
     public void onResume_shouldReConnectLocationClient() throws Exception {
         shadowLocationClient.disconnect();
         activity.onResume();
         assertThat(shadowLocationClient.isConnected()).isTrue();
+    }
+
+    @Test
+    public void onResume_shouldGetWritableLocationDatabase() throws Exception {
+        assertThat(activity.getDb()).isOpen();
     }
 
     @Test
@@ -138,6 +151,24 @@ public class BaseActivityTest {
         menu.findItem(R.id.search).collapseActionView();
         assertThat(activity.getSupportFragmentManager())
                 .doesNotHaveFragmentWithTag(PagerResultsFragment.TAG);
+    }
+
+    @Test
+    public void onOptionsItemSelected_shouldToggleDebugMode() throws Exception {
+        MenuItem menuItem = menu.findItem(R.id.debug_toggle);
+        activity.onOptionsItemSelected(menuItem);
+        assertThat(activity.isInDebugMode()).isTrue();
+        activity.onOptionsItemSelected(menuItem);
+        assertThat(activity.isInDebugMode()).isFalse();
+    }
+
+    @Test
+    public void onOptionsItemSelected_shouldToastDebugModeIndication() throws Exception {
+        MenuItem menuItem = menu.findItem(R.id.debug_toggle);
+        activity.onOptionsItemSelected(menuItem);
+        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo("debug mode: on");
+        activity.onOptionsItemSelected(menuItem);
+        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo("debug mode: off");
     }
 
     @Test

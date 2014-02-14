@@ -1,21 +1,25 @@
 package com.mapzen.fragment;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.mapzen.R;
-import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
 import com.mapzen.geo.DistanceFormatter;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
+import com.mapzen.support.TestBaseActivity;
+import com.mapzen.util.LocationDatabaseHelper;
 import com.mapzen.widget.DistanceView;
 
 import org.json.JSONArray;
@@ -28,16 +32,14 @@ import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowLog;
+import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.util.FragmentTestUtil;
 
 import java.util.ArrayList;
 
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
-import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
-import static com.mapzen.support.TestHelper.getTestFeature;
-import static com.mapzen.support.TestHelper.initBaseActivity;
-import static com.mapzen.support.TestHelper.initMapFragment;
+import static com.mapzen.support.TestHelper.*;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -45,15 +47,17 @@ import static org.fest.assertions.api.Assertions.assertThat;
 @RunWith(MapzenTestRunner.class)
 public class RouteFragmentTest {
 
-    private BaseActivity act;
+    private TestBaseActivity act;
     private RouteFragment fragment;
     private ShadowApplication app;
+    private TestMenu menu;
 
     @Before
     public void setUp() throws Exception {
         ShadowLog.stream = System.out;
         ShadowVolley.clearMockRequestQueue();
-        act = initBaseActivity();
+        menu = new TestMenu();
+        act = initBaseActivityWithMenu(menu);
         initTestFragment();
         app = Robolectric.getShadowApplication();
     }
@@ -137,6 +141,98 @@ public class RouteFragmentTest {
         assertThat(fragment.getCurrentItem()).isEqualTo(0);
         fragment.onLocationChanged(getTestLocation(1, 0));
         assertThat(fragment.getCurrentItem()).isEqualTo(0);
+    }
+
+    @Test
+    public void onLocationChange_shouldStoreOriginalLocationRecordInDatabase() throws Exception {
+        act.onOptionsItemSelected(menu.findItem(R.id.debug_toggle));
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        attachFragmentWith(instructions);
+        Location testLocation = getTestLocation(20.0, 30.0);
+        fragment.onLocationChanged(testLocation);
+        SQLiteDatabase db = act.getReadableDb();
+        Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIONS,
+                new String[]{LocationDatabaseHelper.COLUMN_LAT, LocationDatabaseHelper.COLUMN_LNG},
+                null, null, null, null, null);
+        assertThat(cursor).hasCount(1);
+        cursor.moveToNext();
+        assertThat(cursor.getString(0)).isEqualTo("20.0");
+        assertThat(cursor.getString(1)).isEqualTo("30.0");
+    }
+
+    @Test
+    public void onLocationChange_shouldStoreCorrectedLocationRecordInDatabase() throws Exception {
+        act.onOptionsItemSelected(menu.findItem(R.id.debug_toggle));
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        attachFragmentWith(instructions);
+        Location testLocation = getTestLocation(20.0, 30.0);
+        fragment.onLocationChanged(testLocation);
+        SQLiteDatabase db = act.getReadableDb();
+        Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIONS,
+                new String[]{LocationDatabaseHelper.COLUMN_CORRECTED_LAT,
+                        LocationDatabaseHelper.COLUMN_CORRECTED_LNG},
+                null, null, null, null, null);
+        assertThat(cursor).hasCount(1);
+        cursor.moveToNext();
+        assertThat(cursor.getString(0)).isNotNull();
+        assertThat(cursor.getString(1)).isNotNull();
+    }
+
+    @Test
+    public void onLocationChange_shouldStoreInstructionPointsRecordInDatabase() throws Exception {
+        act.onOptionsItemSelected(menu.findItem(R.id.debug_toggle));
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(99.0, 89.0));
+        instructions.add(getTestInstruction(0, 0));
+        attachFragmentWith(instructions);
+        Location testLocation = getTestLocation(20.0, 30.0);
+        fragment.onLocationChanged(testLocation);
+        SQLiteDatabase db = act.getReadableDb();
+        Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIONS,
+                new String[]{LocationDatabaseHelper.COLUMN_INSTRUCTION_LAT,
+                        LocationDatabaseHelper.COLUMN_INSTRUCTION_LNG},
+                null, null, null, null, null);
+        assertThat(cursor).hasCount(1);
+        cursor.moveToNext();
+        assertThat(cursor.getString(0)).isEqualTo("99.0");
+        assertThat(cursor.getString(1)).isEqualTo("89.0");
+    }
+
+    @Test
+    public void onLocationChange_shouldStoreInstructionBearingRecordInDatabase() throws Exception {
+        act.onOptionsItemSelected(menu.findItem(R.id.debug_toggle));
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(99.0, 89.0));
+        instructions.add(getTestInstruction(0, 0));
+        attachFragmentWith(instructions);
+        Location testLocation = getTestLocation(20.0, 30.0);
+        fragment.onLocationChanged(testLocation);
+        SQLiteDatabase db = act.getReadableDb();
+        Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIONS,
+                new String[]{LocationDatabaseHelper.COLUMN_INSTRUCTION_BEARING},
+                null, null, null, null, null);
+        assertThat(cursor).hasCount(1);
+        cursor.moveToNext();
+        assertThat(cursor.getInt(0)).isEqualTo(instructions.get(0).getBearing());
+    }
+
+    @Test
+    public void onLocationChange_shouldNotStoreDatabaseRecord() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(99.0, 89.0));
+        instructions.add(getTestInstruction(0, 0));
+        attachFragmentWith(instructions);
+        Location testLocation = getTestLocation(20.0, 30.0);
+        fragment.onLocationChanged(testLocation);
+        SQLiteDatabase db = act.getReadableDb();
+        Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIONS,
+                new String[]{LocationDatabaseHelper.COLUMN_INSTRUCTION_BEARING},
+                null, null, null, null, null);
+        assertThat(cursor).hasCount(0);
     }
 
     @Test
@@ -320,7 +416,7 @@ public class RouteFragmentTest {
         attachFragmentWith(instructions);
         fragment.setMapPerspectiveForInstruction(instruction);
         TestMap map = (TestMap) act.getMapFragment().getMap();
-        assertThat(map.viewport().getRotation()).isEqualTo(instruction.getBearing());
+        assertThat(map.viewport().getRotation()).isEqualTo(instruction.getRotationBearing());
     }
 
     @Test
