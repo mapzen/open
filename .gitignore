@@ -1,10 +1,20 @@
-.gradle
-.DS_Store
-*build/
-/local.properties
-.idea/workspace.xml
-.idea/uiDesigner.xml
-target
+# Maven
+target/
+pom.xml.*
+release.properties
+gen-external-apklibs/
+
+# IntelliJ
+out/
+.idea/
 *.iml
-.idea
+classes
+
+# Mac
+.DS_Store
+
+# Misc
+tmp/
+*.*~
+*.apk
 com_crashlytics_export_strings.xml
