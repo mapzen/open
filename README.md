@@ -10,7 +10,8 @@ The following dependencies must be installed locally prior to building/running t
 
 <pre><code>$ git clone https://github.com/mapzen/maven-android-sdk-deployer.git
 $ cd maven-android-sdk-deployer
-$ mvn install -P 4.4
+$ mvn install -P 4.4 # Used for building production application
+$ mvn install -P 4.3 # Used for unit tests (Robolectric)
 $ mvn install -fextras/compatibility-v4/pom.xml
 $ mvn install -fextras/google-play-services/pom.xml
 </pre></code>
