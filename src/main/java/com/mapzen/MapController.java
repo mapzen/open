@@ -48,6 +48,10 @@ public class MapController {
         return mapPosition;
     }
 
+    public void setMapPosition(MapPosition mapPosition) {
+        this.mapPosition = mapPosition;
+    }
+
     public double getZoomLevel() {
         return mapPosition.zoomLevel;
     }

@@ -100,4 +100,11 @@ public class MapControllerTest {
         controller.setZoomLevel(5);
         assertThat(controller.getZoomLevel()).isNotNull();
     }
+
+    @Test
+    public void setMapPosition_shouldStoreMapPosition() throws Exception {
+        MapPosition expected = new MapPosition(34.0, 34.0, 3.0);
+        controller.setMapPosition(expected);
+        assertThat(controller.getMapPosition()).isEqualTo(expected);
+    }
 }
