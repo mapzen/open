@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.Menu;
 
+import com.google.android.gms.common.GooglePlayServicesClient;
 import com.mapzen.activity.BaseActivity;
 
 import org.oscim.map.Map;
@@ -47,5 +48,9 @@ public class TestBaseActivity extends BaseActivity {
 
     public SQLiteDatabase getReadableDb() {
         return dbHelper.getReadableDatabase();
+    }
+
+    public GooglePlayServicesClient.ConnectionCallbacks getConnectionCallback() {
+        return connectionCallback;
     }
 }

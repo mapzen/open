@@ -19,6 +19,7 @@ public class ShadowLocationClient {
     private boolean connected = false;
     private boolean updatesRequested = false;
     private LocationListener locationListener;
+    private Location location;
 
     public void __constructor__(Context context,
             ConnectionCallbacks connectionCallbacks,
@@ -57,7 +58,11 @@ public class ShadowLocationClient {
 
     @Implementation
     public Location getLastLocation() {
-        return new Location("fused");
+        return location;
+    }
+
+    public void setLastLocation(Location location) {
+        this.location = location;
     }
 
     @Implementation

@@ -3,11 +3,14 @@ package com.mapzen.activity;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
 
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
@@ -16,6 +19,7 @@ import com.mapzen.search.PagerResultsFragment;
 import com.mapzen.shadows.ShadowLocationClient;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
+import com.mapzen.support.TestBaseActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -230,10 +234,21 @@ public class BaseActivityTest {
     }
 
     @Test
-    public void onLocationChange_shouldUpdateApplicationsStoredLocation() throws Exception {
+    public void onLocationChange_shouldUpdateMapController() throws Exception {
         Location expected = new Location("expected");
         activity.getLocationListener().onLocationChanged(expected);
-        Location actual = ((MapzenApplication) activity.getApplication()).getLocation();
+        Location actual = MapController.getInstance(activity).getLocation();
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void onConnect_shouldUpdateMapController() throws Exception {
+        Location expected = new Location("expected");
+        shadowLocationClient.setLastLocation(expected);
+        GooglePlayServicesClient.ConnectionCallbacks callbacks =
+                ((TestBaseActivity) activity).getConnectionCallback();
+        callbacks.onConnected(new Bundle());
+        Location actual = MapController.getInstance(activity).getLocation();
         assertThat(actual).isEqualTo(expected);
     }
 

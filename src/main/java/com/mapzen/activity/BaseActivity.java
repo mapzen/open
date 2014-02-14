@@ -20,6 +20,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
@@ -57,7 +58,7 @@ public class BaseActivity extends MapActivity {
             if (updateMapLocation) {
                 mapFragment.setUserLocation(location);
             }
-            app.setLocation(location);
+            mapController.setLocation(location);
             Intent toBroadcast = new Intent(COM_MAPZEN_UPDATES_LOCATION);
             toBroadcast.putExtra("location", location);
             sendBroadcast(toBroadcast);
@@ -66,6 +67,7 @@ public class BaseActivity extends MapActivity {
     private SQLiteDatabase db;
     protected LocationDatabaseHelper dbHelper;
     private boolean debuggable = false;
+    private MapController mapController;
 
     public void deactivateMapLocationUpdates() {
         updateMapLocation = false;
@@ -89,6 +91,7 @@ public class BaseActivity extends MapActivity {
         initLocationClient();
         progressDialogFragment = new MapzenProgressDialogFragment();
         dbHelper = new LocationDatabaseHelper(this);
+        mapController = MapController.getInstance(this);
     }
 
     @Override
@@ -131,7 +134,7 @@ public class BaseActivity extends MapActivity {
 
     private void notifyDebugMode() {
         String msg = "debug mode: "
-            + (debuggable ? "on" : "off");
+                + (debuggable ? "on" : "off");
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 
@@ -149,12 +152,12 @@ public class BaseActivity extends MapActivity {
         return progressDialogFragment;
     }
 
-    private ConnectionCallbacks connectionCallback = new ConnectionCallbacks() {
+    protected ConnectionCallbacks connectionCallback = new ConnectionCallbacks() {
         @Override
         public void onConnected(Bundle bundle) {
             Location location = locationClient.getLastLocation();
             mapFragment.setUserLocation(location);
-            app.setLocation(location);
+            mapController.setLocation(location);
             Logger.d("Location: last location: " + location.toString());
             LocationRequest locationRequest = LocationRequest.create();
             locationRequest.setInterval(LOCATION_INTERVAL);

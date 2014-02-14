@@ -1,7 +1,6 @@
 package com.mapzen;
 
 import android.app.Application;
-import android.location.Location;
 import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -9,7 +8,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
-import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 
 import static android.provider.BaseColumns._ID;
@@ -28,7 +26,6 @@ public class MapzenApplication extends Application {
     public static final String LOG_TAG = "Mapzen: ";
     private String currentSearchTerm = "";
     private RequestQueue queue;
-    private Location location;
 
     @Override
     public void onCreate() {
@@ -47,29 +44,6 @@ public class MapzenApplication extends Application {
 
     public double getStoredZoomLevel() {
         return mapPosition.zoomLevel;
-    }
-
-    public GeoPoint getLocationPoint() {
-        return getLocationPosition().getGeoPoint();
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public MapPosition getLocationPosition() {
-        if (location != null) {
-            mapPosition = new MapPosition(location.getLatitude(), location.getLongitude(),
-                            Math.pow(2, getStoredZoomLevel()));
-        } else {
-            mapPosition = new MapPosition(DEFAULT_LATITUDE, DEFAULT_LONGITUDE,
-                            Math.pow(2, getStoredZoomLevel()));
-        }
-        return mapPosition;
     }
 
     public String getCurrentSearchTerm() {

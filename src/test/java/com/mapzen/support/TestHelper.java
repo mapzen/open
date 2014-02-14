@@ -1,5 +1,6 @@
 package com.mapzen.support;
 
+import android.location.Location;
 import android.support.v4.app.FragmentManager;
 
 import com.mapzen.R;
@@ -46,8 +47,16 @@ public final class TestHelper {
         MapFragment mapFragment = (MapFragment) manager.findFragmentById(R.id.map_fragment);
         mapFragment.setAct(activity);
         mapFragment.setMap(new TestMap());
+        mapFragment.setUserLocation(getTestLocation());
         mapFragment.onStart();
         return mapFragment;
+    }
+
+    public static Location getTestLocation() {
+        Location location = new Location("test location");
+        location.setLatitude(1.0);
+        location.setLongitude(1.0);
+        return location;
     }
 
     public static Feature getTestFeature() {

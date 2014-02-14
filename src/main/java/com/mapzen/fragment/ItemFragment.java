@@ -40,7 +40,7 @@ public class ItemFragment extends BaseFragment {
                     mapFragment.clearMarkers();
                     mapFragment.updateMap();
                     JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrlForCar(
-                            app.getStoredZoomLevel(), app.getLocationPoint(),
+                            app.getStoredZoomLevel(), mapFragment.getUserLocationPoint(),
                             routeFragment.getDestinationPoint()), null,
                             new Response.Listener<JSONObject>() {
                                 @Override
