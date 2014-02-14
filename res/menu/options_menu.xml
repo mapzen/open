@@ -8,5 +8,5 @@
     <item android:id="@+id/debug_toggle"
           android:title="@string/debug_toggle_title"
           android:icon="@android:drawable/ic_menu_preferences"
-          android:showAsAction="collapseActionView|ifRoom" />
+          android:showAsAction="never" />
 </menu>

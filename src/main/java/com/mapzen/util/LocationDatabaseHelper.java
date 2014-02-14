@@ -23,9 +23,9 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TIME = "time";
     public static final String COLUMN_DUMP = "dump";
     public static final String DB_NAME = "locations.db";
-    public static final String TABLE_LOCATIIONS = "locations";
+    public static final String TABLE_LOCATIONS = "locations";
 
-    private final String sql = "create table " + TABLE_LOCATIIONS + " ("
+    private final String sql = "create table " + TABLE_LOCATIONS + " ("
             + "_id integer primary key autoincrement,"
             + COLUMN_PROVIDER + " text not null,"
             + COLUMN_LAT + " text not null,"
@@ -72,7 +72,7 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
 
         String insertSql = String.format(Locale.ENGLISH, "insert into %s " +
                 "(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ",
-                TABLE_LOCATIIONS, COLUMN_PROVIDER, COLUMN_LAT, COLUMN_LNG, COLUMN_DUMP, COLUMN_ALT,
+                TABLE_LOCATIONS, COLUMN_PROVIDER, COLUMN_LAT, COLUMN_LNG, COLUMN_DUMP, COLUMN_ALT,
                 COLUMN_ACC, COLUMN_TIME, COLUMN_CORRECTED_LAT, COLUMN_CORRECTED_LNG,
                 COLUMN_INSTRUCTION_LAT, COLUMN_INSTRUCTION_LNG, COLUMN_INSTRUCTION_BEARING);
         String valuesSql = String.format(Locale.ENGLISH, "values (\"%s\", \"%s\", \"%s\", " +

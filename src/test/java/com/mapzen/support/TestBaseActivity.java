@@ -55,8 +55,4 @@ public class TestBaseActivity extends BaseActivity {
         this.menu = menu;
         return super.onCreateOptionsMenu(menu);
     }
-
-    public Menu getOptionsMenu() {
-        return menu;
-    }
 }

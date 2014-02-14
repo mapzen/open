@@ -28,6 +28,10 @@ public final class TestHelper {
         return initBaseActivity(new TestMenu());
     }
 
+    public static TestBaseActivity initBaseActivityWithMenu(TestMenu menu) {
+        return initBaseActivity(menu);
+    }
+
     public static TestBaseActivity initBaseActivity(TestMenu menu) {
         // TODO: Add start() and resume() to TestBaseActivity initialization.
         TestBaseActivity activity = buildActivity(TestBaseActivity.class)
