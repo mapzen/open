@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.SearchViewAdapter;
@@ -106,7 +107,7 @@ public class PagerResultsFragment extends BaseFragment {
 
             @Override
             public void onPageSelected(int i) {
-                centerOnPlace(i, Math.pow(2, app.getStoredZoomLevel()));
+                centerOnPlace(i, Math.pow(2, MapController.getInstance(act).getZoomLevel()));
             }
 
             @Override

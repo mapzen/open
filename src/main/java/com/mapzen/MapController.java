@@ -13,7 +13,7 @@ public class MapController {
     private Map map;
     private MapzenApplication app;
     private Location location;
-    private MapPosition mapPosition = new MapPosition(1.0, 1.0, 1.0);
+    private MapPosition mapPosition = new MapPosition(1.0, 1.0, Math.pow(2, 15));
 
     public MapController(Context context) {
         this.app = (MapzenApplication) context.getApplicationContext();

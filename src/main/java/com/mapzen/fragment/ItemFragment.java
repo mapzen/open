@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
@@ -40,7 +41,7 @@ public class ItemFragment extends BaseFragment {
                     mapFragment.clearMarkers();
                     mapFragment.updateMap();
                     JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrlForCar(
-                            app.getStoredZoomLevel(), mapFragment.getUserLocationPoint(),
+                            MapController.getInstance(act).getZoomLevel(), mapFragment.getUserLocationPoint(),
                             routeFragment.getDestinationPoint()), null,
                             new Response.Listener<JSONObject>() {
                                 @Override

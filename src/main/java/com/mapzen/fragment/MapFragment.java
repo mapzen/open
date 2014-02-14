@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
 import com.mapzen.search.OnPoiClickListener;
@@ -146,7 +147,7 @@ public class MapFragment extends BaseFragment {
                 if (positionChanged) {
                     followMe = false;
                 }
-                app.storeMapPosition(mapPosition);
+                MapController.getInstance(act).setMapPosition(mapPosition);
             }
         });
         setupMyLocationBtn(view);
@@ -218,7 +219,7 @@ public class MapFragment extends BaseFragment {
         GeoPoint point = getUserLocationPoint();
         if (point != null) {
             return new MapPosition(point.getLatitude(), point.getLongitude(),
-                    Math.pow(2, app.getStoredZoomLevel()));
+                    Math.pow(2, MapController.getInstance(act).getZoomLevel()));
         }
         return null;
     }

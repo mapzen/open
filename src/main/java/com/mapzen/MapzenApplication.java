@@ -18,11 +18,6 @@ public class MapzenApplication extends Application {
     private final String[] columns = {
             _ID, PELIAS_TEXT
     };
-    public static final double DEFAULT_LATITUDE = 64.133333;
-    public static final double DEFAULT_LONGITUDE = -21.933333;
-    public static final int DEFAULT_ZOOMLEVEL = 15;
-    private static MapPosition mapPosition =
-            new MapPosition(DEFAULT_LATITUDE, DEFAULT_LONGITUDE, Math.pow(2, DEFAULT_ZOOMLEVEL));
     public static final String LOG_TAG = "Mapzen: ";
     private String currentSearchTerm = "";
     private RequestQueue queue;
@@ -35,15 +30,6 @@ public class MapzenApplication extends Application {
 
     public String[] getColumns() {
         return columns;
-    }
-
-
-    public void storeMapPosition(MapPosition pos) {
-        mapPosition = pos;
-    }
-
-    public double getStoredZoomLevel() {
-        return mapPosition.zoomLevel;
     }
 
     public String getCurrentSearchTerm() {
