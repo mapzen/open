@@ -14,7 +14,6 @@ public class TestBaseActivity extends BaseActivity {
     private boolean backPressed = false;
     private boolean optionsMenuInvalidated = false;
     private Map map = new TestMap();
-    private Menu menu;
 
     @Override
     public ActionBar getActionBar() {
@@ -52,7 +51,6 @@ public class TestBaseActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        this.menu = menu;
         return super.onCreateOptionsMenu(menu);
     }
 }
