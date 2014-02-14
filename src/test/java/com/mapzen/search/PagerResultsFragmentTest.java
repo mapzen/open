@@ -25,7 +25,7 @@ import org.robolectric.util.FragmentTestUtil;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.mapzen.support.TestHelper.initBaseActivity;
+import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -43,7 +43,7 @@ public class PagerResultsFragmentTest {
     public void setUp() throws Exception {
         ShadowVolley.clearMockRequestQueue();
         menu = new TestMenu();
-        act = initBaseActivity(menu);
+        act = initBaseActivityWithMenu(menu);
         initMapFragment(act);
         fragment = PagerResultsFragment.newInstance(act);
         FragmentTestUtil.startFragment(fragment);

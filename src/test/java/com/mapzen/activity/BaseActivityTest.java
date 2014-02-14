@@ -29,7 +29,7 @@ import org.robolectric.tester.android.view.TestMenu;
 
 import java.util.ArrayList;
 
-import static com.mapzen.support.TestHelper.initBaseActivity;
+import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -47,7 +47,7 @@ public class BaseActivityTest {
     public void setUp() throws Exception {
         ShadowVolley.clearMockRequestQueue();
         menu = new TestMenu();
-        activity = initBaseActivity(menu);
+        activity = initBaseActivityWithMenu(menu);
         shadowLocationClient = Robolectric.shadowOf_(activity.getLocationClient());
         initMapFragment(activity);
     }
