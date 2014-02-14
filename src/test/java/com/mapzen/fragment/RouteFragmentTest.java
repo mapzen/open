@@ -27,6 +27,7 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.oscim.core.GeoPoint;
 import org.oscim.map.TestMap;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
@@ -394,19 +395,24 @@ public class RouteFragmentTest {
 
     @Test
     public void onResume_shouldDeactivateActivitiesMapUpdates() throws Exception {
+        act.getLocationListener().onLocationChanged(getTestLocation(11.0, 11.0));
         attachFragment();
-        Location bogusLocation = getTestLocation(23.0, 23.0);
+        Location bogusLocation = getTestLocation(23.0, 63.0);
         act.getLocationListener().onLocationChanged(bogusLocation);
-        // TODO assertThat(act.getMapFragment().getUserLocation()).isNotEqualTo(bogusLocation);
+        GeoPoint point = act.getMapFragment().getMeMarker().geoPoint;
+        assertThat(Math.round(point.getLatitude())).isNotEqualTo(Math.round(23.0));
+        assertThat(Math.round(point.getLongitude())).isNotEqualTo(Math.round(63.0));
     }
 
     @Test
     public void onPause_shouldActivateActivitiesMapUpdates() throws Exception {
         attachFragment();
         fragment.onPause();
-        Location expectedLocation = getTestLocation(23.0, 23.0);
+        Location expectedLocation = getTestLocation(23.0, 63.0);
         act.getLocationListener().onLocationChanged(expectedLocation);
-        // TODO assertThat(act.getMapFragment().getUserLocation()).isEqualTo(expectedLocation);
+        GeoPoint point = act.getMapFragment().getMeMarker().geoPoint;
+        assertThat(Math.round(point.getLatitude())).isEqualTo(Math.round(23.0));
+        assertThat(Math.round(point.getLongitude())).isEqualTo(Math.round(63.0));
     }
 
     public void setMapPerspectiveForInstruction_shouldAlignBearing() throws Exception {

@@ -93,6 +93,13 @@ public class MapFragment extends BaseFragment {
         map.animator().animateTo(DURATION, geoPoint, zoom, false);
     }
 
+    public MarkerItem getMeMarker() {
+        if (meMarkerLayer.size() == 1) {
+            return meMarkers.get(0);
+        }
+        return null;
+    }
+
     private TileSource getTileBase() {
         return new OSciMap4TileSource(getString(R.string.tiles_source_url));
     }
