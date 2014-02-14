@@ -1,5 +1,0 @@
-rootProject.name = 'mapzen'
-include ':volley'
-include ':geojson'
-include ':app'
-
