@@ -47,7 +47,6 @@ public final class TestHelper {
         MapFragment mapFragment = (MapFragment) manager.findFragmentById(R.id.map_fragment);
         mapFragment.setAct(activity);
         mapFragment.setMap(new TestMap());
-        mapFragment.setUserLocation(getTestLocation());
         mapFragment.onStart();
         return mapFragment;
     }

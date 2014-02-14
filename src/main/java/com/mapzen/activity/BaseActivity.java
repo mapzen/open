@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
@@ -55,10 +54,10 @@ public class BaseActivity extends MapActivity {
     private LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            if (updateMapLocation) {
-                mapFragment.setUserLocation(location);
-            }
             mapController.setLocation(location);
+            if (updateMapLocation) {
+                mapFragment.findMe();
+            }
             Intent toBroadcast = new Intent(COM_MAPZEN_UPDATES_LOCATION);
             toBroadcast.putExtra("location", location);
             sendBroadcast(toBroadcast);
@@ -84,7 +83,6 @@ public class BaseActivity extends MapActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Crashlytics.start(this);
         app = (MapzenApplication) getApplication();
         setContentView(R.layout.base);
         initMapFragment();
@@ -156,7 +154,6 @@ public class BaseActivity extends MapActivity {
         @Override
         public void onConnected(Bundle bundle) {
             Location location = locationClient.getLastLocation();
-            mapFragment.setUserLocation(location);
             mapController.setLocation(location);
             Logger.d("Location: last location: " + location.toString());
             LocationRequest locationRequest = LocationRequest.create();

@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
@@ -155,7 +156,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             storeLocationInfo(location, correctedLocation);
         }
         if (correctedLocation != null) {
-            mapFragment.setUserLocation(correctedLocation);
+            MapController.getInstance(act).setLocation(correctedLocation);
             hasFoundPath = true;
             Logger.d("RouteFragment::onLocationChange: Corrected: " + correctedLocation.toString());
         } else {

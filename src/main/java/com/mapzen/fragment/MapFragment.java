@@ -46,7 +46,6 @@ public class MapFragment extends BaseFragment {
     private MarkerSymbol highlightMarker;
     private PathLayer pathLayer;
     private ArrayList<MarkerItem> meMarkers = new ArrayList<MarkerItem>(1);
-    private Location userLocation;
     // TODO find ways to track state without two variables
     private boolean followMe = true;
     private boolean initialRelocateHappened = false;
@@ -186,28 +185,12 @@ public class MapFragment extends BaseFragment {
         });
     }
 
-    public void setUserLocation(Location location) {
-        if (location != null) {
-            userLocation = location;
-            findMe();
-        }
-    }
-
-    public Location getUserLocation() {
-        return userLocation;
-    }
-
     public GeoPoint getUserLocationPoint() {
-        if (userLocation != null) {
-            return new GeoPoint(userLocation.getLatitude(), userLocation.getLongitude());
-        }
-        return null;
+        Location userLocation = MapController.getInstance(act).getLocation();
+        return new GeoPoint(userLocation.getLatitude(), userLocation.getLongitude());
     }
 
     private MarkerItem getUserLocationMarker() {
-        if (userLocation == null) {
-            return null;
-        }
         MarkerItem markerItem = new MarkerItem("ME", "Current Location", getUserLocationPoint());
         MarkerSymbol symbol = new MarkerSymbol(getMyLocationSymbol(),
                 MarkerItem.HotspotPlace.BOTTOM_CENTER);
@@ -217,25 +200,17 @@ public class MapFragment extends BaseFragment {
 
     private MapPosition getUserLocationPosition() {
         GeoPoint point = getUserLocationPoint();
-        if (point != null) {
-            return new MapPosition(point.getLatitude(), point.getLongitude(),
-                    Math.pow(2, MapController.getInstance(act).getZoomLevel()));
-        }
-        return null;
+        return new MapPosition(point.getLatitude(), point.getLongitude(),
+                Math.pow(2, MapController.getInstance(act).getZoomLevel()));
     }
 
-    private void findMe() {
-        MarkerItem marker = getUserLocationMarker();
-        if (marker == null) {
-            Toast.makeText(act, "Don't have a location fix", Toast.LENGTH_LONG).show();
-        } else {
-            meMarkerLayer.removeAllItems();
-            meMarkerLayer.addItem(getUserLocationMarker());
-            if (followMe || !initialRelocateHappened) {
-                // TODO find ways to accomplish this without two flags ;(
-                initialRelocateHappened = true;
-                map.setMapPosition(getUserLocationPosition());
-            }
+    public void findMe() {
+        meMarkerLayer.removeAllItems();
+        meMarkerLayer.addItem(getUserLocationMarker());
+        if (followMe || !initialRelocateHappened) {
+            // TODO find ways to accomplish this without two flags ;(
+            initialRelocateHappened = true;
+            map.setMapPosition(getUserLocationPosition());
         }
         updateMap();
     }
