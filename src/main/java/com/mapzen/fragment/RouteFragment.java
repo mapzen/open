@@ -157,6 +157,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
         if (correctedLocation != null) {
             MapController.getInstance(act).setLocation(correctedLocation);
+            mapFragment.findMe();
             hasFoundPath = true;
             Logger.d("RouteFragment::onLocationChange: Corrected: " + correctedLocation.toString());
         } else {

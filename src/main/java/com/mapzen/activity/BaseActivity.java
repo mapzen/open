@@ -54,8 +54,8 @@ public class BaseActivity extends MapActivity {
     private LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            mapController.setLocation(location);
             if (updateMapLocation) {
+                mapController.setLocation(location);
                 mapFragment.findMe();
             }
             Intent toBroadcast = new Intent(COM_MAPZEN_UPDATES_LOCATION);
