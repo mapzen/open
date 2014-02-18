@@ -103,7 +103,7 @@ public class MapControllerTest {
     }
 
     @Test
-    public void getZoomScale_shouldGetSToredZoomScale() throws Exception {
+    public void getZoomScale_shouldGetStoredZoomScale() throws Exception {
         getMapController().setZoomLevel(5);
         assertThat(getMapController().getZoomScale()).isEqualTo(Math.pow(2, 5));
     }
