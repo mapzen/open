@@ -197,7 +197,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>2.10</version>
                 <configuration>
-                    <configLocation>${basedir}/cq-configs/checkstyle/checkstyle.xml</configLocation>
+                    <configLocation>checkstyle.xml</configLocation>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>true</failsOnError>
                 </configuration>
@@ -211,15 +211,14 @@
                 </executions>
             </plugin>
 
-            <!-- TODO: Fix PMD -->
-            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>3.0.1</version>
                 <configuration>
+                    <verbose>true</verbose>
                     <rulesets>
-                        <ruleset>${basedir}/cq-configs/pmd/pmd-ruleset.xml</ruleset>
+                        <ruleset>rulesets/java/unusedcode.xml</ruleset>
                     </rulesets>
                 </configuration>
                 <executions>
@@ -231,7 +230,6 @@
                     </execution>
                 </executions>
             </plugin>
-            -->
 
         </plugins>
     </build>
