@@ -17,7 +17,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
-import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.SearchViewAdapter;
@@ -25,7 +24,6 @@ import com.mapzen.entity.Feature;
 import com.mapzen.fragment.BaseFragment;
 import com.mapzen.fragment.ItemFragment;
 import com.mapzen.fragment.ListResultsFragment;
-import com.mapzen.fragment.MapFragment;
 import com.mapzen.util.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;

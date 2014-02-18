@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
 import com.mapzen.search.OnPoiClickListener;
