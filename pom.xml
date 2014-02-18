@@ -211,7 +211,27 @@
                 </executions>
             </plugin>
 
-            <!-- TODO: PMD plugin -->
+            <!-- TODO: Fix PMD -->
+            <!--
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>3.0.1</version>
+                <configuration>
+                    <rulesets>
+                        <ruleset>${basedir}/cq-configs/pmd/pmd-ruleset.xml</ruleset>
+                    </rulesets>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            -->
 
         </plugins>
     </build>
