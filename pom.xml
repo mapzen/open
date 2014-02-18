@@ -218,7 +218,7 @@
                 <configuration>
                     <verbose>true</verbose>
                     <rulesets>
-                        <ruleset>rulesets/java/unusedcode.xml</ruleset>
+                        <ruleset>${basedir}/rulesets/java/unusedcode.xml</ruleset>
                     </rulesets>
                 </configuration>
                 <executions>
