@@ -9,6 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
 import com.google.android.gms.common.GooglePlayServicesClient;
+
+import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
@@ -57,6 +59,11 @@ public class BaseActivityTest {
     @Test
     public void shouldNotBeNull() throws Exception {
         assertThat(activity).isNotNull();
+    }
+
+    @Test
+    public void onCreate_shouldInitializeMapController() throws Exception {
+        assertThat(MapController.getMapController().getMap()).isNotNull();
     }
 
     @Test
