@@ -101,4 +101,10 @@ public class MapControllerTest {
         getMapController().setMapPosition(expected);
         assertThat(getMapController().getMapPosition()).isEqualTo(expected);
     }
+
+    @Test
+    public void getZoomScale_shouldGetSToredZoomScale() throws Exception {
+        getMapController().setZoomLevel(5);
+        assertThat(getMapController().getZoomScale()).isEqualTo(Math.pow(2, 5));
+    }
 }

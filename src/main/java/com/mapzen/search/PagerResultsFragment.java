@@ -105,7 +105,7 @@ public class PagerResultsFragment extends BaseFragment {
 
             @Override
             public void onPageSelected(int i) {
-                centerOnPlace(i, Math.pow(2, getMapController().getZoomLevel()));
+                centerOnPlace(i, getMapController().getZoomScale());
             }
 
             @Override

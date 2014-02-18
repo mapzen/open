@@ -205,7 +205,7 @@ public class MapFragment extends BaseFragment {
     private MapPosition getUserLocationPosition() {
         GeoPoint point = getUserLocationPoint();
         return new MapPosition(point.getLatitude(), point.getLongitude(),
-                Math.pow(2, getMapController().getZoomLevel()));
+                getMapController().getZoomScale());
     }
 
     public void findMe() {
