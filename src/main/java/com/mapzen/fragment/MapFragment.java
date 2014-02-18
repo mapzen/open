@@ -6,6 +6,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
 import com.mapzen.search.OnPoiClickListener;
@@ -29,11 +31,11 @@ import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import static com.mapzen.MapController.DEFAULT_ZOOMLEVEL;
 import static com.mapzen.MapController.getMapController;
 import static org.oscim.layers.marker.ItemizedLayer.OnItemGestureListener;
 
 public class MapFragment extends BaseFragment {
-    public static final int DEFAULT_ZOOMLEVEL = 17;
     public static final int ROUTE_LINE_WIDTH = 15;
     public static final int DURATION = 800;
     private VectorTileLayer baseLayer;

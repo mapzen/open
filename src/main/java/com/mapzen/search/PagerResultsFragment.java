@@ -16,6 +16,8 @@ import butterknife.OnClick;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+
+import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.SearchViewAdapter;
@@ -35,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.mapzen.MapController.DEFAULT_ZOOMLEVEL;
 import static com.mapzen.MapController.getMapController;
 
 public class PagerResultsFragment extends BaseFragment {
@@ -115,7 +118,7 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     private void centerOnPlace(int i) {
-        centerOnPlace(i, Math.pow(2, MapFragment.DEFAULT_ZOOMLEVEL));
+        centerOnPlace(i, Math.pow(2, DEFAULT_ZOOMLEVEL));
     }
 
     private void centerOnPlace(int i, double zoom) {
