@@ -13,22 +13,23 @@
     <name>Mapzen</name>
 
     <repositories>
-
         <repository>
             <id>crashlytics-repo</id>
             <url>http://download.crashlytics.com/maven</url>
         </repository>
-
     </repositories>
 
     <pluginRepositories>
-
         <pluginRepository>
             <id>crashlytics-plugin-repo</id>
             <url>http://download.crashlytics.com/maven</url>
         </pluginRepository>
-
     </pluginRepositories>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
 
     <dependencies>
         <dependency>
