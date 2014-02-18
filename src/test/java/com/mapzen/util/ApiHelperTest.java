@@ -1,7 +1,6 @@
 package com.mapzen.util;
 
 import com.mapzen.support.MapzenTestRunner;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.oscim.core.BoundingBox;

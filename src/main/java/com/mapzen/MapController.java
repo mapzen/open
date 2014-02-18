@@ -1,34 +1,29 @@
 package com.mapzen;
 
-import android.content.Context;
 import android.location.Location;
-
-import com.mapzen.activity.BaseActivity;
-
 import org.oscim.core.MapPosition;
 import org.oscim.map.Map;
 
-public class MapController {
+public final class MapController {
+    public static final int DEFAULT_ZOOMLEVEL = 15;
     private static MapController mapController;
     private Map map;
-    private MapzenApplication app;
     private Location location;
-    private MapPosition mapPosition = new MapPosition(1.0, 1.0, Math.pow(2, 15));
+    private MapPosition mapPosition = new MapPosition(1.0, 1.0, Math.pow(2, DEFAULT_ZOOMLEVEL));
 
-    public MapController(Context context) {
-        this.app = (MapzenApplication) context.getApplicationContext();
-        this.map = ((BaseActivity) context).getMap();
+    static {
+        mapController = new MapController();
     }
 
-    public static MapController getInstance(Context context) {
-        if (mapController == null) {
-            mapController = new MapController(context);
-        }
+    private MapController() {
+    }
+
+    public void setMap(Map map) {
+        this.map = map;
+    }
+
+    public static MapController getMapController() {
         return mapController;
-    }
-
-    public MapzenApplication getApp() {
-        return app;
     }
 
     public Map getMap() {

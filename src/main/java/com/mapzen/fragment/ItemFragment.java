@@ -6,17 +6,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
-
 import org.json.JSONObject;
 
+import static com.mapzen.MapController.getMapController;
 import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
 
 public class ItemFragment extends BaseFragment {
@@ -41,7 +39,7 @@ public class ItemFragment extends BaseFragment {
                     mapFragment.clearMarkers();
                     mapFragment.updateMap();
                     JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(getRouteUrlForCar(
-                            MapController.getInstance(act).getZoomLevel(), mapFragment.getUserLocationPoint(),
+                            getMapController().getZoomLevel(), mapFragment.getUserLocationPoint(),
                             routeFragment.getDestinationPoint()), null,
                             new Response.Listener<JSONObject>() {
                                 @Override

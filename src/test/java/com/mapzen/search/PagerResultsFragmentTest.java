@@ -2,7 +2,6 @@ package com.mapzen.search;
 
 import android.widget.SearchView;
 import android.widget.Toast;
-
 import com.android.volley.Request;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
@@ -12,7 +11,6 @@ import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.util.MapzenProgressDialogFragment;
-
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;

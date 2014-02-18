@@ -2,12 +2,10 @@ package com.mapzen.support;
 
 import android.location.Location;
 import android.support.v4.app.FragmentManager;
-
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
-
 import org.apache.commons.io.FileUtils;
 import org.oscim.android.MapView;
 import org.oscim.map.TestMap;
@@ -30,7 +28,6 @@ public final class TestHelper {
     }
 
     public static TestBaseActivity initBaseActivityWithMenu(TestMenu menu) {
-        // TODO: Add start() and resume() to TestBaseActivity initialization.
         TestBaseActivity activity = buildActivity(TestBaseActivity.class)
                 .create()
                 .start()

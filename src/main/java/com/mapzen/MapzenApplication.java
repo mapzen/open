@@ -2,13 +2,10 @@ package com.mapzen;
 
 import android.app.Application;
 import android.util.Log;
-
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-
-import org.oscim.core.MapPosition;
 
 import static android.provider.BaseColumns._ID;
 

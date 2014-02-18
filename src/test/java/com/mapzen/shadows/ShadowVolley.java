@@ -1,12 +1,10 @@
 package com.mapzen.shadows;
 
 import android.content.Context;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-
 import org.json.JSONObject;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;

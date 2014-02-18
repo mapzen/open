@@ -2,11 +2,9 @@ package com.mapzen.shadows;
 
 import android.content.Context;
 import android.location.Location;
-
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
-
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 

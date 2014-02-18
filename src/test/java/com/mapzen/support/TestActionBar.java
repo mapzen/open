@@ -4,7 +4,6 @@ import android.app.ActionBar;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.SpinnerAdapter;
-
 import org.robolectric.Robolectric;
 
 public class TestActionBar extends ActionBar {

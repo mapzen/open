@@ -3,7 +3,6 @@ package com.mapzen.search;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.FrameLayout;
-
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
@@ -13,7 +12,6 @@ import com.mapzen.fragment.ItemFragment;
 import com.mapzen.support.DummyActivity;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestHelper;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

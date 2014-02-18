@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
-
 import com.mapzen.osrm.Instruction;
 
 import java.util.Locale;
@@ -57,7 +56,8 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
     }
 
     public static String insertSQLForLocationCorrection(Location location,
-            Location correctedLocation, Instruction instruction) {
+            Location correctedLocation,
+            Instruction instruction) {
         String lat = String.valueOf(location.getLatitude());
         String correctedLat = String.valueOf(correctedLocation.getLatitude());
         String instructionLat = String.valueOf(instruction.getPoint()[0]);

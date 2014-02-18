@@ -1,13 +1,11 @@
 package com.mapzen.fragment;
 
 import android.view.MenuItem;
-
 import com.mapzen.MapzenApplication;
 import com.mapzen.entity.Feature;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestActionBar;
 import com.mapzen.support.TestBaseActivity;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

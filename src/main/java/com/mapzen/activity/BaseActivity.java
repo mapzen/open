@@ -14,7 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.SearchView;
 import android.widget.Toast;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
@@ -31,7 +30,6 @@ import com.mapzen.search.PagerResultsFragment;
 import com.mapzen.util.LocationDatabaseHelper;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialogFragment;
-
 import org.oscim.android.MapActivity;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.Map;
@@ -39,6 +37,7 @@ import org.oscim.map.Map;
 import static com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import static com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
 import static com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY;
+import static com.mapzen.MapController.getMapController;
 
 public class BaseActivity extends MapActivity {
     public static final int LOCATION_INTERVAL = 5000;
@@ -55,7 +54,7 @@ public class BaseActivity extends MapActivity {
         @Override
         public void onLocationChanged(Location location) {
             if (updateMapLocation) {
-                mapController.setLocation(location);
+                getMapController().setLocation(location);
                 mapFragment.findMe();
             }
             Intent toBroadcast = new Intent(COM_MAPZEN_UPDATES_LOCATION);
@@ -66,7 +65,6 @@ public class BaseActivity extends MapActivity {
     private SQLiteDatabase db;
     protected LocationDatabaseHelper dbHelper;
     private boolean debuggable = false;
-    private MapController mapController;
 
     public void deactivateMapLocationUpdates() {
         updateMapLocation = false;
@@ -89,7 +87,7 @@ public class BaseActivity extends MapActivity {
         initLocationClient();
         progressDialogFragment = new MapzenProgressDialogFragment();
         dbHelper = new LocationDatabaseHelper(this);
-        mapController = MapController.getInstance(this);
+        initMapController();
     }
 
     @Override
@@ -154,7 +152,7 @@ public class BaseActivity extends MapActivity {
         @Override
         public void onConnected(Bundle bundle) {
             Location location = locationClient.getLastLocation();
-            mapController.setLocation(location);
+            getMapController().setLocation(location);
             Logger.d("Location: last location: " + location.toString());
             LocationRequest locationRequest = LocationRequest.create();
             locationRequest.setInterval(LOCATION_INTERVAL);
@@ -316,6 +314,11 @@ public class BaseActivity extends MapActivity {
         assert searchView != null;
         searchView.setQuery("", false);
         searchView.clearFocus();
+    }
+
+    private void initMapController() {
+        MapController mapController = getMapController();
+        mapController.setMap(getMap());
     }
 
     public void showPlace(Feature feature, boolean clearSearch) {

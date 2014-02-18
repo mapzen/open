@@ -3,7 +3,6 @@ package com.mapzen.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.TextView;
-
 import com.mapzen.geo.DistanceFormatter;
 
 public class DistanceView extends TextView {

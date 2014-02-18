@@ -10,11 +10,12 @@ import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.SearchViewAdapter;
@@ -24,7 +25,6 @@ import com.mapzen.fragment.ItemFragment;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.util.Logger;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,9 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
+import static com.mapzen.MapController.getMapController;
 
 public class PagerResultsFragment extends BaseFragment {
     public static final String TAG = PagerResultsFragment.class.getSimpleName();
@@ -107,7 +105,7 @@ public class PagerResultsFragment extends BaseFragment {
 
             @Override
             public void onPageSelected(int i) {
-                centerOnPlace(i, Math.pow(2, MapController.getInstance(act).getZoomLevel()));
+                centerOnPlace(i, Math.pow(2, getMapController().getZoomLevel()));
             }
 
             @Override

@@ -6,13 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
-
-import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
 import com.mapzen.search.OnPoiClickListener;
-
 import org.oscim.android.canvas.AndroidBitmap;
 import org.oscim.backend.canvas.Bitmap;
 import org.oscim.backend.canvas.Color;
@@ -33,6 +29,7 @@ import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import static com.mapzen.MapController.getMapController;
 import static org.oscim.layers.marker.ItemizedLayer.OnItemGestureListener;
 
 public class MapFragment extends BaseFragment {
@@ -153,7 +150,7 @@ public class MapFragment extends BaseFragment {
                 if (positionChanged) {
                     followMe = false;
                 }
-                MapController.getInstance(act).setMapPosition(mapPosition);
+                getMapController().setMapPosition(mapPosition);
             }
         });
         setupMyLocationBtn(view);
@@ -193,7 +190,7 @@ public class MapFragment extends BaseFragment {
     }
 
     public GeoPoint getUserLocationPoint() {
-        Location userLocation = MapController.getInstance(act).getLocation();
+        Location userLocation = getMapController().getLocation();
         return new GeoPoint(userLocation.getLatitude(), userLocation.getLongitude());
     }
 
@@ -208,7 +205,7 @@ public class MapFragment extends BaseFragment {
     private MapPosition getUserLocationPosition() {
         GeoPoint point = getUserLocationPoint();
         return new MapPosition(point.getLatitude(), point.getLongitude(),
-                Math.pow(2, MapController.getInstance(act).getZoomLevel()));
+                Math.pow(2, getMapController().getZoomLevel()));
     }
 
     public void findMe() {

@@ -8,9 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
-
 import com.google.android.gms.common.GooglePlayServicesClient;
-import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
@@ -20,7 +18,6 @@ import com.mapzen.shadows.ShadowLocationClient;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -33,6 +30,7 @@ import org.robolectric.tester.android.view.TestMenu;
 
 import java.util.ArrayList;
 
+import static com.mapzen.MapController.getMapController;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
@@ -237,7 +235,7 @@ public class BaseActivityTest {
     public void onLocationChange_shouldUpdateMapController() throws Exception {
         Location expected = new Location("expected");
         activity.getLocationListener().onLocationChanged(expected);
-        Location actual = MapController.getInstance(activity).getLocation();
+        Location actual = getMapController().getLocation();
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -248,7 +246,7 @@ public class BaseActivityTest {
         GooglePlayServicesClient.ConnectionCallbacks callbacks =
                 ((TestBaseActivity) activity).getConnectionCallback();
         callbacks.onConnected(new Bundle());
-        Location actual = MapController.getInstance(activity).getLocation();
+        Location actual = getMapController().getLocation();
         assertThat(actual).isEqualTo(expected);
     }
 

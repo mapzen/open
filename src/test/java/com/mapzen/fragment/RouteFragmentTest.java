@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
 import com.mapzen.geo.DistanceFormatter;
@@ -20,7 +19,6 @@ import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.util.LocationDatabaseHelper;
 import com.mapzen.widget.DistanceView;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -39,7 +37,10 @@ import java.util.ArrayList;
 
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
-import static com.mapzen.support.TestHelper.*;
+import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
+import static com.mapzen.support.TestHelper.getTestFeature;
+import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
+import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 

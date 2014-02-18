@@ -12,7 +12,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CursorAdapter;
 import android.widget.SearchView;
 import android.widget.TextView;
-
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -23,7 +22,6 @@ import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.util.Logger;
 import com.mapzen.util.VolleyHelper;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
