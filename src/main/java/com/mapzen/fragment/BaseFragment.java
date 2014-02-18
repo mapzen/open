@@ -16,10 +16,6 @@ public abstract class BaseFragment extends Fragment {
     protected MapFragment mapFragment;
     protected MapzenApplication app;
 
-    public void setMap(Map map) {
-        this.map = map;
-    }
-
     public void setAct(BaseActivity act) {
         this.act = act;
         this.app = (MapzenApplication) act.getApplication();

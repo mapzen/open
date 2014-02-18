@@ -242,6 +242,6 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     private void addMarker(Feature feature) {
-        mapFragment.getPoiLayer().addItem(feature.getMarker());
+        mapFragment.addPoi(feature);
     }
 }

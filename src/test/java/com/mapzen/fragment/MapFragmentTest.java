@@ -1,5 +1,6 @@
 package com.mapzen.fragment;
 
+import com.mapzen.activity.BaseActivity;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.support.FakeMotionEvent;
 import com.mapzen.support.MapzenTestRunner;
@@ -11,9 +12,11 @@ import org.oscim.event.Gesture;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.TestMap;
+import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLog;
 
+import static com.mapzen.support.TestHelper.getTestFeature;
 import static com.mapzen.support.TestHelper.initBaseActivity;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -27,10 +30,11 @@ public class MapFragmentTest {
 
     @Before
     public void setUp() throws Exception {
+        BaseActivity activity = initBaseActivity();
         ShadowLog.stream = System.out;
         listener = new TestPoiClickListener();
         mapFragment = new MapFragment();
-        mapFragment.setAct(initBaseActivity());
+        mapFragment.setAct(activity);
         mapFragment.setMap(new TestMap());
         mapFragment.setOnPoiClickListener(listener);
         startFragment(mapFragment);
@@ -39,6 +43,21 @@ public class MapFragmentTest {
     @Test
     public void shouldNotBeNull() throws Exception {
         assertThat(mapFragment).isNotNull();
+    }
+
+    @Test
+    public void shouldHavePoiLayer() throws Exception {
+        assertThat(mapFragment.getPoiLayer()).isNotNull();
+    }
+
+    @Test
+    public void shouldHaveMeMarkerLayer() throws Exception {
+        assertThat(mapFragment.getMeMarkerLayer()).isNotNull();
+    }
+
+    @Test
+    public void shouldHavePathLayer() throws Exception {
+        assertThat(mapFragment.getPathLayer()).isNotNull();
     }
 
     @Test
@@ -75,5 +94,44 @@ public class MapFragmentTest {
         meMarkerLayer.addItem(new MarkerItem("Title", "Description", new GeoPoint(0, 0)));
         mapFragment.onPause();
         assertThat(meMarkerLayer.size()).isEqualTo(0);
+    }
+
+    @Test
+    public void onPause_shouldEmptyPoiMarkers() throws Exception {
+        mapFragment.addPoi(getTestFeature());
+        mapFragment.addPoi(getTestFeature());
+        ItemizedLayer<MarkerItem> poiMarkerLayer = mapFragment.getPoiLayer();
+        mapFragment.onPause();
+        assertThat(poiMarkerLayer.size()).isEqualTo(0);
+    }
+
+    @Test
+    public void onResume_shouldRepopulatePoiMarkers() throws Exception {
+        mapFragment.addPoi(getTestFeature());
+        mapFragment.addPoi(getTestFeature());
+        ItemizedLayer<MarkerItem> poiMarkerLayer = mapFragment.getPoiLayer();
+        mapFragment.onPause();
+        mapFragment.onResume();
+        assertThat(poiMarkerLayer.size()).isEqualTo(2);
+    }
+
+    @Test
+    public void clearMarkers_shouldEmptyMapPois() throws Exception {
+        mapFragment.addPoi(getTestFeature());
+        mapFragment.addPoi(getTestFeature());
+        ItemizedLayer<MarkerItem> poiMarkerLayer = mapFragment.getPoiLayer();
+        mapFragment.clearMarkers();
+        assertThat(poiMarkerLayer.size()).isZero();
+    }
+
+    @Test
+    public void clearMarkers_shouldEmptyStoredPois() throws Exception {
+        mapFragment.addPoi(getTestFeature());
+        mapFragment.addPoi(getTestFeature());
+        mapFragment.clearMarkers();
+        mapFragment.onPause();
+        mapFragment.onResume();
+        ItemizedLayer<MarkerItem> poiMarkerLayer = mapFragment.getPoiLayer();
+        assertThat(poiMarkerLayer.size()).isZero();
     }
 }
