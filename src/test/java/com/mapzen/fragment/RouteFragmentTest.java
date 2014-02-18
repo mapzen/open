@@ -6,12 +6,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
 import com.mapzen.geo.DistanceFormatter;
@@ -21,12 +19,12 @@ import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.util.LocationDatabaseHelper;
 import com.mapzen.widget.DistanceView;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.oscim.core.GeoPoint;
 import org.oscim.map.TestMap;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
@@ -39,7 +37,10 @@ import java.util.ArrayList;
 
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
-import static com.mapzen.support.TestHelper.*;
+import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
+import static com.mapzen.support.TestHelper.getTestFeature;
+import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
+import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -394,19 +395,24 @@ public class RouteFragmentTest {
 
     @Test
     public void onResume_shouldDeactivateActivitiesMapUpdates() throws Exception {
+        act.getLocationListener().onLocationChanged(getTestLocation(11.0, 11.0));
         attachFragment();
-        Location bogusLocation = getTestLocation(23.0, 23.0);
+        Location bogusLocation = getTestLocation(23.0, 63.0);
         act.getLocationListener().onLocationChanged(bogusLocation);
-        assertThat(act.getMapFragment().getUserLocation()).isNotEqualTo(bogusLocation);
+        GeoPoint point = act.getMapFragment().getMeMarker().geoPoint;
+        assertThat(Math.round(point.getLatitude())).isNotEqualTo(Math.round(23.0));
+        assertThat(Math.round(point.getLongitude())).isNotEqualTo(Math.round(63.0));
     }
 
     @Test
     public void onPause_shouldActivateActivitiesMapUpdates() throws Exception {
         attachFragment();
         fragment.onPause();
-        Location expectedLocation = getTestLocation(23.0, 23.0);
+        Location expectedLocation = getTestLocation(23.0, 63.0);
         act.getLocationListener().onLocationChanged(expectedLocation);
-        assertThat(act.getMapFragment().getUserLocation()).isEqualTo(expectedLocation);
+        GeoPoint point = act.getMapFragment().getMeMarker().geoPoint;
+        assertThat(Math.round(point.getLatitude())).isEqualTo(Math.round(23.0));
+        assertThat(Math.round(point.getLongitude())).isEqualTo(Math.round(63.0));
     }
 
     public void setMapPerspectiveForInstruction_shouldAlignBearing() throws Exception {

@@ -1,7 +1,6 @@
 package com.mapzen.util;
 
 import android.content.Context;
-
 import com.mapzen.R;
 
 public final class DisplayHelper {

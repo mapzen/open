@@ -10,7 +10,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.mapzen.R;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.util.DisplayHelper;

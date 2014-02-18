@@ -2,7 +2,6 @@ package com.mapzen.widget;
 
 import com.mapzen.geo.DistanceFormatter;
 import com.mapzen.support.MapzenTestRunner;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

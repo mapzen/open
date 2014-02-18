@@ -1,7 +1,6 @@
 package com.mapzen.util;
 
 import android.net.Uri;
-
 import org.oscim.core.BoundingBox;
 import org.oscim.core.GeoPoint;
 

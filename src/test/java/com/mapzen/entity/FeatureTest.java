@@ -1,7 +1,6 @@
 package com.mapzen.entity;
 
 import android.os.Parcel;
-
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;

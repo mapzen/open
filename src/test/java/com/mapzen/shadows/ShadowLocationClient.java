@@ -2,11 +2,9 @@ package com.mapzen.shadows;
 
 import android.content.Context;
 import android.location.Location;
-
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
-
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 
@@ -19,6 +17,7 @@ public class ShadowLocationClient {
     private boolean connected = false;
     private boolean updatesRequested = false;
     private LocationListener locationListener;
+    private Location location;
 
     public void __constructor__(Context context,
             ConnectionCallbacks connectionCallbacks,
@@ -57,7 +56,11 @@ public class ShadowLocationClient {
 
     @Implementation
     public Location getLastLocation() {
-        return new Location("fused");
+        return location;
+    }
+
+    public void setLastLocation(Location location) {
+        this.location = location;
     }
 
     @Implementation

@@ -3,7 +3,6 @@ package com.mapzen.fragment;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.support.FakeMotionEvent;
 import com.mapzen.support.MapzenTestRunner;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

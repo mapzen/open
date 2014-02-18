@@ -20,6 +20,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
@@ -31,7 +32,6 @@ import com.mapzen.search.PagerResultsFragment;
 import com.mapzen.util.LocationDatabaseHelper;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialogFragment;
-
 import org.oscim.android.MapActivity;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.Map;
@@ -39,6 +39,7 @@ import org.oscim.map.Map;
 import static com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import static com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
 import static com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY;
+import static com.mapzen.MapController.getMapController;
 
 public class BaseActivity extends MapActivity {
     public static final int LOCATION_INTERVAL = 5000;
@@ -55,9 +56,9 @@ public class BaseActivity extends MapActivity {
         @Override
         public void onLocationChanged(Location location) {
             if (updateMapLocation) {
-                mapFragment.setUserLocation(location);
+                getMapController().setLocation(location);
+                mapFragment.findMe();
             }
-            app.setLocation(location);
             Intent toBroadcast = new Intent(COM_MAPZEN_UPDATES_LOCATION);
             toBroadcast.putExtra("location", location);
             sendBroadcast(toBroadcast);
@@ -89,6 +90,7 @@ public class BaseActivity extends MapActivity {
         initLocationClient();
         progressDialogFragment = new MapzenProgressDialogFragment();
         dbHelper = new LocationDatabaseHelper(this);
+        initMapController();
     }
 
     @Override
@@ -131,7 +133,7 @@ public class BaseActivity extends MapActivity {
 
     private void notifyDebugMode() {
         String msg = "debug mode: "
-            + (debuggable ? "on" : "off");
+                + (debuggable ? "on" : "off");
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 
@@ -149,12 +151,11 @@ public class BaseActivity extends MapActivity {
         return progressDialogFragment;
     }
 
-    private ConnectionCallbacks connectionCallback = new ConnectionCallbacks() {
+    protected ConnectionCallbacks connectionCallback = new ConnectionCallbacks() {
         @Override
         public void onConnected(Bundle bundle) {
             Location location = locationClient.getLastLocation();
-            mapFragment.setUserLocation(location);
-            app.setLocation(location);
+            getMapController().setLocation(location);
             Logger.d("Location: last location: " + location.toString());
             LocationRequest locationRequest = LocationRequest.create();
             locationRequest.setInterval(LOCATION_INTERVAL);
@@ -316,6 +317,11 @@ public class BaseActivity extends MapActivity {
         assert searchView != null;
         searchView.setQuery("", false);
         searchView.clearFocus();
+    }
+
+    private void initMapController() {
+        MapController mapController = getMapController();
+        mapController.setMap(getMap());
     }
 
     public void showPlace(Feature feature, boolean clearSearch) {

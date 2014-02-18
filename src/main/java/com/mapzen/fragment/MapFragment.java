@@ -6,12 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
 import com.mapzen.search.OnPoiClickListener;
-
 import org.oscim.android.canvas.AndroidBitmap;
 import org.oscim.backend.canvas.Bitmap;
 import org.oscim.backend.canvas.Color;
@@ -32,10 +30,11 @@ import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import static com.mapzen.MapController.DEFAULT_ZOOMLEVEL;
+import static com.mapzen.MapController.getMapController;
 import static org.oscim.layers.marker.ItemizedLayer.OnItemGestureListener;
 
 public class MapFragment extends BaseFragment {
-    public static final int DEFAULT_ZOOMLEVEL = 17;
     public static final int ROUTE_LINE_WIDTH = 15;
     public static final int DURATION = 800;
     private VectorTileLayer baseLayer;
@@ -45,11 +44,9 @@ public class MapFragment extends BaseFragment {
     private MarkerSymbol highlightMarker;
     private PathLayer pathLayer;
     private ArrayList<MarkerItem> meMarkers = new ArrayList<MarkerItem>(1);
-    private Location userLocation;
     // TODO find ways to track state without two variables
     private boolean followMe = true;
     private boolean initialRelocateHappened = false;
-    private boolean bootingUp = true;
     private OnPoiClickListener onPoiClickListener;
 
     @Override
@@ -92,6 +89,13 @@ public class MapFragment extends BaseFragment {
         }
         GeoPoint geoPoint = feature.getGeoPoint();
         map.animator().animateTo(DURATION, geoPoint, zoom, false);
+    }
+
+    public MarkerItem getMeMarker() {
+        if (meMarkerLayer.size() == 1) {
+            return meMarkers.get(0);
+        }
+        return null;
     }
 
     private TileSource getTileBase() {
@@ -147,14 +151,10 @@ public class MapFragment extends BaseFragment {
                 if (positionChanged) {
                     followMe = false;
                 }
-                app.storeMapPosition(mapPosition);
+                getMapController().setMapPosition(mapPosition);
             }
         });
         setupMyLocationBtn(view);
-        if (bootingUp) {
-            bootingUp = false;
-            map.setMapPosition(app.getLocationPosition());
-        }
     }
 
     public Map getMap() {
@@ -190,28 +190,12 @@ public class MapFragment extends BaseFragment {
         });
     }
 
-    public void setUserLocation(Location location) {
-        if (location != null) {
-            userLocation = location;
-            findMe();
-        }
-    }
-
-    public Location getUserLocation() {
-        return userLocation;
-    }
-
-    private GeoPoint getUserLocationPoint() {
-        if (userLocation != null) {
-            return new GeoPoint(userLocation.getLatitude(), userLocation.getLongitude());
-        }
-        return null;
+    public GeoPoint getUserLocationPoint() {
+        Location userLocation = getMapController().getLocation();
+        return new GeoPoint(userLocation.getLatitude(), userLocation.getLongitude());
     }
 
     private MarkerItem getUserLocationMarker() {
-        if (userLocation == null) {
-            return null;
-        }
         MarkerItem markerItem = new MarkerItem("ME", "Current Location", getUserLocationPoint());
         MarkerSymbol symbol = new MarkerSymbol(getMyLocationSymbol(),
                 MarkerItem.HotspotPlace.BOTTOM_CENTER);
@@ -221,25 +205,17 @@ public class MapFragment extends BaseFragment {
 
     private MapPosition getUserLocationPosition() {
         GeoPoint point = getUserLocationPoint();
-        if (point != null) {
-            return new MapPosition(point.getLatitude(), point.getLongitude(),
-                    Math.pow(2, app.getStoredZoomLevel()));
-        }
-        return null;
+        return new MapPosition(point.getLatitude(), point.getLongitude(),
+                getMapController().getZoomScale());
     }
 
-    private void findMe() {
-        MarkerItem marker = getUserLocationMarker();
-        if (marker == null) {
-            Toast.makeText(act, "Don't have a location fix", Toast.LENGTH_LONG).show();
-        } else {
-            meMarkerLayer.removeAllItems();
-            meMarkerLayer.addItem(getUserLocationMarker());
-            if (followMe || !initialRelocateHappened) {
-                // TODO find ways to accomplish this without two flags ;(
-                initialRelocateHappened = true;
-                map.setMapPosition(getUserLocationPosition());
-            }
+    public void findMe() {
+        meMarkerLayer.removeAllItems();
+        meMarkerLayer.addItem(getUserLocationMarker());
+        if (followMe || !initialRelocateHappened) {
+            // TODO find ways to accomplish this without two flags ;(
+            initialRelocateHappened = true;
+            map.setMapPosition(getUserLocationPosition());
         }
         updateMap();
     }

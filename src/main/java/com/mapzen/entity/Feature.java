@@ -3,11 +3,9 @@ package com.mapzen.entity;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.widget.TextView;
-
 import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.mapzen.geo.GeoFeature;
-
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.Map;

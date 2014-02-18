@@ -18,7 +18,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
@@ -28,7 +27,6 @@ import com.mapzen.util.DisplayHelper;
 import com.mapzen.util.LocationDatabaseHelper;
 import com.mapzen.util.Logger;
 import com.mapzen.widget.DistanceView;
-
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.PathLayer;
@@ -37,6 +35,7 @@ import org.oscim.map.Map;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
 
@@ -155,7 +154,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             storeLocationInfo(location, correctedLocation);
         }
         if (correctedLocation != null) {
-            mapFragment.setUserLocation(correctedLocation);
+            getMapController().setLocation(correctedLocation);
+            mapFragment.findMe();
             hasFoundPath = true;
             Logger.d("RouteFragment::onLocationChange: Corrected: " + correctedLocation.toString());
         } else {

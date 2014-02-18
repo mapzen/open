@@ -5,12 +5,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.mapzen.R;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.widget.DistanceView;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -10,10 +10,13 @@ import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.SearchViewAdapter;
@@ -21,9 +24,7 @@ import com.mapzen.entity.Feature;
 import com.mapzen.fragment.BaseFragment;
 import com.mapzen.fragment.ItemFragment;
 import com.mapzen.fragment.ListResultsFragment;
-import com.mapzen.fragment.MapFragment;
 import com.mapzen.util.Logger;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,9 +35,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
+import static com.mapzen.MapController.DEFAULT_ZOOMLEVEL;
+import static com.mapzen.MapController.getMapController;
 
 public class PagerResultsFragment extends BaseFragment {
     public static final String TAG = PagerResultsFragment.class.getSimpleName();
@@ -106,7 +106,7 @@ public class PagerResultsFragment extends BaseFragment {
 
             @Override
             public void onPageSelected(int i) {
-                centerOnPlace(i, Math.pow(2, app.getStoredZoomLevel()));
+                centerOnPlace(i, getMapController().getZoomScale());
             }
 
             @Override
@@ -116,7 +116,7 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     private void centerOnPlace(int i) {
-        centerOnPlace(i, Math.pow(2, MapFragment.DEFAULT_ZOOMLEVEL));
+        centerOnPlace(i, Math.pow(2, DEFAULT_ZOOMLEVEL));
     }
 
     private void centerOnPlace(int i, double zoom) {

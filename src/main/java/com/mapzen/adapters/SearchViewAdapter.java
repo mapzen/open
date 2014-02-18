@@ -3,7 +3,6 @@ package com.mapzen.adapters;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-
 import com.mapzen.fragment.ItemFragment;
 
 import java.util.List;

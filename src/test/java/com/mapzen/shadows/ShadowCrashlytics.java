@@ -1,9 +1,7 @@
 package com.mapzen.shadows;
 
 import android.content.Context;
-
 import com.crashlytics.android.Crashlytics;
-
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 

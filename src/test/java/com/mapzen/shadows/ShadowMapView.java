@@ -2,7 +2,6 @@ package com.mapzen.shadows;
 
 import android.content.Context;
 import android.util.AttributeSet;
-
 import org.oscim.android.AndroidAssetAdapter;
 import org.oscim.android.MapView;
 import org.oscim.android.canvas.AndroidGraphics;

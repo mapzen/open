@@ -1,10 +1,8 @@
 package com.mapzen.util;
 
 import android.app.Activity;
-
 import com.mapzen.R;
 import com.mapzen.support.MapzenTestRunner;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;

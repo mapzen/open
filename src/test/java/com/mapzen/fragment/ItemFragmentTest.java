@@ -1,15 +1,15 @@
 package com.mapzen.fragment;
 
+import android.location.Location;
 import android.widget.ImageButton;
 import android.widget.Toast;
-
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
-
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +39,7 @@ public class ItemFragmentTest {
         act = initBaseActivity();
         initItemFragment();
         FragmentTestUtil.startFragment(itemFragment);
+        MapController.getMapController().setLocation(new Location(""));
     }
 
     private void initItemFragment() {
