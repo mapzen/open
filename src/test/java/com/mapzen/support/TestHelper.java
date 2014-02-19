@@ -13,6 +13,8 @@ import org.robolectric.tester.android.view.TestMenu;
 
 import java.io.File;
 
+import static com.mapzen.entity.Feature.ADMIN1_ABBR;
+import static com.mapzen.entity.Feature.ADMIN1_NAME;
 import static com.mapzen.entity.Feature.NAME;
 import static org.robolectric.Robolectric.buildActivity;
 
@@ -59,7 +61,9 @@ public final class TestHelper {
         Feature feature = new Feature();
         feature.setLat(1.0);
         feature.setLon(1.0);
-        feature.setProperty(NAME, "test feature");
+        feature.setProperty(NAME, "Test Feature");
+        feature.setProperty(ADMIN1_NAME, "New York");
+        feature.setProperty(ADMIN1_ABBR, "NY");
         return feature;
     }
 
