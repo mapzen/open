@@ -29,6 +29,7 @@ import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.mapzen.MapController.DEFAULT_ZOOMLEVEL;
 import static com.mapzen.MapController.getMapController;
@@ -40,7 +41,7 @@ public class MapFragment extends BaseFragment {
     private VectorTileLayer baseLayer;
     private Button myPosition;
     private ItemizedLayer<MarkerItem> meMarkerLayer;
-    private ItemizedLayer<MarkerItem> poiMarkersLayer;
+    private PoiItemizedLayer poiMarkersLayer;
     private MarkerSymbol highlightMarker;
     private PathLayer pathLayer;
     private ArrayList<MarkerItem> meMarkers = new ArrayList<MarkerItem>(1);
@@ -50,17 +51,28 @@ public class MapFragment extends BaseFragment {
     private OnPoiClickListener onPoiClickListener;
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setupMap();
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
-        View view = getView();
-        setupMap(view);
-        setupMyLocationBtn(view);
+        setupMyLocationBtn();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         meMarkerLayer.removeAllItems();
+        poiMarkersLayer.removeAllItems();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        poiMarkersLayer.repopulate();
     }
 
     @Override
@@ -98,12 +110,17 @@ public class MapFragment extends BaseFragment {
         return null;
     }
 
+    public void addPoi(Feature feature) {
+        MarkerItem markerItem = feature.getMarker();
+        poiMarkersLayer.addItem(markerItem);
+    }
+
     private TileSource getTileBase() {
         return new OSciMap4TileSource(getString(R.string.tiles_source_url));
     }
 
-    private ItemizedLayer<MarkerItem> buildPoiMarkersLayer() {
-        return new ItemizedLayer<MarkerItem>(map, new ArrayList<MarkerItem>(),
+    private PoiItemizedLayer buildPoiMarkersLayer() {
+        return new PoiItemizedLayer(map, new ArrayList<MarkerItem>(),
                 getDefaultMarkerSymbol(), new OnItemGestureListener<MarkerItem>() {
             @Override
             public boolean onItemSingleTapUp(int index, MarkerItem item) {
@@ -128,12 +145,17 @@ public class MapFragment extends BaseFragment {
         return new ItemizedLayer<MarkerItem>(map, meMarkers, getDefaultMarkerSymbol(), null);
     }
 
-    private void setupMap(View view) {
+    public void setMap(Map map) {
+        this.map = map;
+    }
+
+    private void setupMap() {
         baseLayer = map.setBaseMap(getTileBase());
         map.layers().add(new BuildingLayer(map, baseLayer));
         map.layers().add(new LabelLayer(map, baseLayer));
 
         highlightMarker = getHighlightMarkerSymbol();
+
         poiMarkersLayer = buildPoiMarkersLayer();
         map.layers().add(poiMarkersLayer);
 
@@ -154,7 +176,6 @@ public class MapFragment extends BaseFragment {
                 getMapController().setMapPosition(mapPosition);
             }
         });
-        setupMyLocationBtn(view);
     }
 
     public Map getMap() {
@@ -163,7 +184,7 @@ public class MapFragment extends BaseFragment {
 
     public void clearMarkers() {
         if (poiMarkersLayer != null) {
-            poiMarkersLayer.removeAllItems();
+            poiMarkersLayer.clearAll();
         }
     }
 
@@ -179,7 +200,8 @@ public class MapFragment extends BaseFragment {
         return pathLayer;
     }
 
-    private void setupMyLocationBtn(View view) {
+    private void setupMyLocationBtn() {
+        View view = getView();
         myPosition = (Button) view.findViewById(R.id.btn_my_position);
         myPosition.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -258,5 +280,29 @@ public class MapFragment extends BaseFragment {
 
     public OnPoiClickListener getOnPoiClickListener() {
         return onPoiClickListener;
+    }
+
+    private static class PoiItemizedLayer extends ItemizedLayer<MarkerItem> {
+        private ArrayList<MarkerItem> poiMarkers = new ArrayList<MarkerItem>();
+
+        public PoiItemizedLayer(Map map, List<MarkerItem> list, MarkerSymbol defaultMarker,
+                OnItemGestureListener<MarkerItem> onItemGestureListener) {
+            super(map, list, defaultMarker, onItemGestureListener);
+        }
+
+        public void repopulate() {
+            addItems(poiMarkers);
+        }
+
+        public void clearAll() {
+            poiMarkers.clear();
+            removeAllItems();
+        }
+
+        @Override
+        public boolean addItem(MarkerItem item) {
+            poiMarkers.add(item);
+            return super.addItem(item);
+        }
     }
 }
