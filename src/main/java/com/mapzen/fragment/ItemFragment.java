@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
@@ -50,7 +51,6 @@ public class ItemFragment extends BaseFragment {
 
         initTitle();
         initAddress();
-        initStartButton();
         return view;
     }
 
@@ -64,36 +64,32 @@ public class ItemFragment extends BaseFragment {
                 feature.getProperty(Feature.ADMIN1_ABBR)));
     }
 
-    private void initStartButton() {
-        startButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final RouteFragment routeFragment = RouteFragment.newInstance(act, feature);
-                act.hideActionBar();
-                act.showProgressDialog();
-                mapFragment.clearMarkers();
-                mapFragment.updateMap();
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                        getRouteUrlForCar(getMapController().getZoomLevel(),
-                                mapFragment.getUserLocationPoint(),
-                                routeFragment.getDestinationPoint()),
-                        null,
-                        new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                routeFragment.onRouteSuccess(response);
-                                act.dismissProgressDialog();
-                            }
-                        }, new Response.ErrorListener() {
+    @OnClick(R.id.start)
+    public void start() {
+        final RouteFragment routeFragment = RouteFragment.newInstance(act, feature);
+        act.hideActionBar();
+        act.showProgressDialog();
+        mapFragment.clearMarkers();
+        mapFragment.updateMap();
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                getRouteUrlForCar(getMapController().getZoomLevel(),
+                        mapFragment.getUserLocationPoint(),
+                        routeFragment.getDestinationPoint()),
+                null,
+                new Response.Listener<JSONObject>() {
                     @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        onServerError(volleyError);
+                    public void onResponse(JSONObject response) {
+                        routeFragment.onRouteSuccess(response);
+                        act.dismissProgressDialog();
                     }
-                }
-                );
-                app.enqueueApiRequest(jsonObjectRequest);
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                onServerError(volleyError);
             }
-        });
+        }
+        );
+        app.enqueueApiRequest(jsonObjectRequest);
     }
 
     public void setFeature(Feature feature) {
