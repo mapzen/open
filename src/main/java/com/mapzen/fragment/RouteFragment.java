@@ -1,5 +1,20 @@
 package com.mapzen.fragment;
 
+import com.mapzen.R;
+import com.mapzen.activity.BaseActivity;
+import com.mapzen.entity.Feature;
+import com.mapzen.osrm.Instruction;
+import com.mapzen.osrm.Route;
+import com.mapzen.util.DisplayHelper;
+import com.mapzen.util.LocationDatabaseHelper;
+import com.mapzen.util.Logger;
+import com.mapzen.widget.DistanceView;
+
+import org.json.JSONObject;
+import org.oscim.core.GeoPoint;
+import org.oscim.layers.PathLayer;
+import org.oscim.map.Map;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,29 +26,22 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.mapzen.R;
-import com.mapzen.activity.BaseActivity;
-import com.mapzen.entity.Feature;
-import com.mapzen.osrm.Instruction;
-import com.mapzen.osrm.Route;
-import com.mapzen.util.DisplayHelper;
-import com.mapzen.util.LocationDatabaseHelper;
-import com.mapzen.util.Logger;
-import com.mapzen.widget.DistanceView;
-import org.json.JSONObject;
-import org.oscim.core.GeoPoint;
-import org.oscim.layers.PathLayer;
-import org.oscim.map.Map;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
@@ -45,9 +53,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public static final int WALKING_ADVANCE_THRESHOLD = 15;
     public static final int WALKING_LOST_THRESHOLD = 70;
     public static final int ROUTE_ZOOM_LEVEL = 17;
+    @InjectView(R.id.overflow_menu)
+    ImageButton overflowMenu;
     private ArrayList<Instruction> instructions;
     private ViewPager pager;
-    private Button button;
     private RoutesAdapter adapter;
     private Route route;
     private LocationReceiver locationReceiver;
@@ -63,6 +72,25 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         fragment.setMapFragment(act.getMapFragment());
         fragment.setFeature(feature);
         return fragment;
+    }
+
+    @OnClick(R.id.overflow_menu)
+    @SuppressWarnings("unused")
+    public void onClickOverFlowMenu() {
+        PopupMenu popup = new PopupMenu(getActivity(), overflowMenu);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.route_options_menu, popup.getMenu());
+        popup.show();
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.route_menu_steps) {
+                    showDirectionListFragment();
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -88,7 +116,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.showActionBar();
         clearRoute();
     }
-
 
     public void setInstructions(ArrayList<Instruction> instructions) {
         Logger.d("instructions: " + instructions.toString());
@@ -146,7 +173,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         beginning.setLongitude(route.getStartCoordinates()[1]);
         return beginning;
     }
-
 
     public void onLocationChanged(Location location) {
         Location correctedLocation = snapTo(location);
@@ -208,13 +234,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.route_widget, container, false);
-        button = (Button) rootView.findViewById(R.id.view_steps);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDirectionListFragment();
-            }
-        });
         adapter = new RoutesAdapter(act, this, instructions);
         pager = (ViewPager) rootView.findViewById(R.id.routes);
         TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
@@ -228,7 +247,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager.setOnPageChangeListener(this);
         adapter.notifyDataSetChanged();
         previousPosition = pager.getCurrentItem();
-
+        ButterKnife.inject(this, rootView);
         return rootView;
     }
 
@@ -340,6 +359,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.registerReceiver(locationReceiver, filter);
     }
 
+    private void storeLocationInfo(Location location, Location correctedLocation) {
+        SQLiteDatabase db = act.getDb();
+        db.execSQL(
+                LocationDatabaseHelper.insertSQLForLocationCorrection(location, correctedLocation,
+                        instructions.get(pager.getCurrentItem())));
+    }
+
     private static class RoutesAdapter extends PagerAdapter {
         private List<Instruction> instructions = new ArrayList<Instruction>();
         private RouteFragment parent;
@@ -413,11 +439,4 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             onLocationChanged(location);
         }
     }
-
-    private void storeLocationInfo(Location location, Location correctedLocation) {
-        SQLiteDatabase db = act.getDb();
-        db.execSQL(LocationDatabaseHelper.insertSQLForLocationCorrection(location,
-                correctedLocation, instructions.get(pager.getCurrentItem())));
-    }
-
 }

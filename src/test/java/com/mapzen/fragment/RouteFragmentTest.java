@@ -1,15 +1,5 @@
 package com.mapzen.fragment;
 
-import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.location.Location;
-import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
 import com.mapzen.geo.DistanceFormatter;
@@ -19,6 +9,7 @@ import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.util.LocationDatabaseHelper;
 import com.mapzen.widget.DistanceView;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -30,8 +21,22 @@ import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowLog;
+import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.tester.android.view.TestMenu;
+import org.robolectric.tester.android.view.TestMenuItem;
 import org.robolectric.util.FragmentTestUtil;
+
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
+import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -97,22 +102,6 @@ public class RouteFragmentTest {
         attachFragment();
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
         assertThat(view.findViewById(R.id.routes)).isNotNull();
-    }
-
-    @Test
-    public void shouldHaveViewStepsButton() throws Exception {
-        attachFragment();
-        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        assertThat(view.findViewById(R.id.view_steps)).isNotNull();
-        assertThat((Button) view.findViewById(R.id.view_steps)).hasText("View steps");
-    }
-
-    @Test
-    public void shouldShowDirectionListFragment() throws Exception {
-        attachFragment();
-        View view = fragment.getView();
-        view.findViewById(R.id.view_steps).performClick();
-        assertThat(act.getSupportFragmentManager()).hasFragmentWithTag(DirectionListFragment.TAG);
     }
 
     @Test
@@ -319,6 +308,38 @@ public class RouteFragmentTest {
         int distance = fragment.getRoute().getTotalDistance();
         String expectedFormattedDistance = DistanceFormatter.format(distance, true);
         assertThat(textView.getText()).isEqualTo(expectedFormattedDistance);
+    }
+
+    @Test
+    public void onCreateView_shouldHaveOverflowMenu() throws Exception {
+        attachFragment();
+        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
+        ImageButton overFlowMenu = (ImageButton) view.findViewById(R.id.overflow_menu);
+        assertThat(overFlowMenu).isVisible();
+    }
+
+    @Test
+    public void MenuOnClick_shouldShowMenuOptions() throws Exception {
+        attachFragment();
+        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
+        ImageButton overFlowMenu = (ImageButton) view.findViewById(R.id.overflow_menu);
+        overFlowMenu.performClick();
+        ShadowPopupMenu popupMenu = Robolectric.shadowOf(ShadowPopupMenu.getLatestPopupMenu());
+        assertThat(popupMenu.isShowing()).isTrue();
+    }
+
+    @Test
+    public void shouldShowDirectionListFragment() throws Exception {
+        attachFragment();
+        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
+        ImageButton overFlowMenu = (ImageButton) view.findViewById(R.id.overflow_menu);
+        overFlowMenu.performClick();
+        ShadowPopupMenu popupMenu = Robolectric.shadowOf(ShadowPopupMenu.getLatestPopupMenu());
+        PopupMenu.OnMenuItemClickListener listener = popupMenu.getOnMenuItemClickListener();
+        TestMenuItem item = new TestMenuItem();
+        item.setItemId(R.id.route_menu_steps);
+        listener.onMenuItemClick(item);
+        assertThat(act.getSupportFragmentManager()).hasFragmentWithTag(DirectionListFragment.TAG);
     }
 
     @Test
