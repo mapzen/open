@@ -53,8 +53,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public static final int WALKING_ADVANCE_THRESHOLD = 15;
     public static final int WALKING_LOST_THRESHOLD = 70;
     public static final int ROUTE_ZOOM_LEVEL = 17;
-    @InjectView(R.id.overflow_menu)
-    ImageButton overflowMenu;
+    @InjectView(R.id.overflow_menu) ImageButton overflowMenu;
     private ArrayList<Instruction> instructions;
     private ViewPager pager;
     private RoutesAdapter adapter;
@@ -361,9 +360,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void storeLocationInfo(Location location, Location correctedLocation) {
         SQLiteDatabase db = act.getDb();
-        db.execSQL(
-                LocationDatabaseHelper.insertSQLForLocationCorrection(location, correctedLocation,
-                        instructions.get(pager.getCurrentItem())));
+        db.execSQL(LocationDatabaseHelper.insertSQLForLocationCorrection(location,
+                correctedLocation, instructions.get(pager.getCurrentItem())));
     }
 
     private static class RoutesAdapter extends PagerAdapter {

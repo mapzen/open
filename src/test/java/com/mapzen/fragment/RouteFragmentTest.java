@@ -319,7 +319,7 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void MenuOnClick_shouldShowMenuOptions() throws Exception {
+    public void menuOnClick_shouldShowMenuOptions() throws Exception {
         attachFragment();
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
         ImageButton overFlowMenu = (ImageButton) view.findViewById(R.id.overflow_menu);
