@@ -66,30 +66,35 @@ public class ItemFragment extends BaseFragment {
 
     @OnClick(R.id.start)
     public void start() {
-        final RouteFragment routeFragment = RouteFragment.newInstance(act, feature);
         act.hideActionBar();
         act.showProgressDialog();
         mapFragment.clearMarkers();
         mapFragment.updateMap();
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                getRouteUrlForCar(getMapController().getZoomLevel(),
-                        mapFragment.getUserLocationPoint(),
-                        routeFragment.getDestinationPoint()),
-                null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        routeFragment.onRouteSuccess(response);
-                        act.dismissProgressDialog();
-                    }
-                }, new Response.ErrorListener() {
+        app.enqueueApiRequest(getRouteRequest());
+    }
+
+    private JsonObjectRequest getRouteRequest() {
+        final RouteFragment routeFragment = RouteFragment.newInstance(act, feature);
+
+        final String url = getRouteUrlForCar(getMapController().getZoomLevel(),
+                mapFragment.getUserLocationPoint(), routeFragment.getDestinationPoint());
+
+        final Response.Listener<JSONObject> successListener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                routeFragment.onRouteSuccess(response);
+                act.dismissProgressDialog();
+            }
+        };
+
+        final Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 onServerError(volleyError);
             }
-        }
-        );
-        app.enqueueApiRequest(jsonObjectRequest);
+        };
+
+        return new JsonObjectRequest(url, null, successListener, errorListener);
     }
 
     public void setFeature(Feature feature) {
