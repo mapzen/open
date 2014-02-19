@@ -15,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Locale;
 
@@ -93,14 +92,6 @@ public class ItemFragment extends BaseFragment {
                 }
                 );
                 app.enqueueApiRequest(jsonObjectRequest);
-            }
-        });
-
-        startButton.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Toast.makeText(app, "Start where you are...", Toast.LENGTH_SHORT).show();
-                return true;
             }
         });
     }
