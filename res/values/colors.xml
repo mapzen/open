@@ -1,3 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="lets_go_light_blue">#50a4db</color>
+    <color name="lets_go_dark_blue">#007bb2</color>
 </resources>

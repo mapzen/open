@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="10dp"
-    android:layout_width="fill_parent"
+    android:padding="8dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/place_title"
-        android:paddingTop="3dp"
-        android:paddingLeft="3dp"
-        android:textColor="@android:color/black"
-        android:textStyle="bold"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/place_address"
-        android:paddingBottom="3dp"
-        android:paddingLeft="3dp"
-        android:textColor="@android:color/black"
-        android:layout_below="@id/place_title"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
-
-    <ImageButton
-        android:id="@+id/btn_route_go"
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/application_name"
-        android:layout_alignRight="@id/place_address"
-        android:visibility="gone"
-        android:background="@null"
-        android:padding="@dimen/default_button_padding"
-        android:src="@drawable/ic_route_lets_go" />
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="8dp"
+        android:textColor="@android:color/black"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
+        android:layout_marginLeft="8dp"
+        android:textColor="@android:color/darker_gray" />
+
+    <TextView
+        android:id="@+id/start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/address"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="8dp"
+        android:drawablePadding="-4dp"
+        android:drawableTop="@drawable/ic_lets_go"
+        android:textColor="@color/lets_go"
+        android:text="@string/start" />
+
 </RelativeLayout>
