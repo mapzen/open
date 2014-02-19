@@ -1,7 +1,6 @@
 package com.mapzen.fragment;
 
 import com.mapzen.R;
-import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
 
 import com.android.volley.Response;
@@ -41,14 +40,6 @@ public class ItemFragment extends BaseFragment {
             Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.search_item, container, false);
         ButterKnife.inject(this, view);
-
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((BaseActivity) getActivity()).showPlace(feature, false);
-            }
-        });
-
         initTitle();
         initAddress();
         return view;
