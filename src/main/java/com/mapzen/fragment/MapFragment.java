@@ -41,7 +41,7 @@ public class MapFragment extends BaseFragment {
     private VectorTileLayer baseLayer;
     private Button myPosition;
     private ItemizedLayer<MarkerItem> meMarkerLayer;
-    private PoiItemizedLayer<MarkerItem> poiMarkersLayer;
+    private PoiItemizedLayer poiMarkersLayer;
     private MarkerSymbol highlightMarker;
     private PathLayer pathLayer;
     private ArrayList<MarkerItem> meMarkers = new ArrayList<MarkerItem>(1);
@@ -119,8 +119,8 @@ public class MapFragment extends BaseFragment {
         return new OSciMap4TileSource(getString(R.string.tiles_source_url));
     }
 
-    private PoiItemizedLayer<MarkerItem> buildPoiMarkersLayer() {
-        return new PoiItemizedLayer<MarkerItem>(map, new ArrayList<MarkerItem>(),
+    private PoiItemizedLayer buildPoiMarkersLayer() {
+        return new PoiItemizedLayer(map, new ArrayList<MarkerItem>(),
                 getDefaultMarkerSymbol(), new OnItemGestureListener<MarkerItem>() {
             @Override
             public boolean onItemSingleTapUp(int index, MarkerItem item) {
@@ -282,8 +282,7 @@ public class MapFragment extends BaseFragment {
         return onPoiClickListener;
     }
 
-    private class PoiItemizedLayer<MarkerItem extends org.oscim.layers.marker.MarkerItem> extends
-            ItemizedLayer<MarkerItem> {
+    private static class PoiItemizedLayer extends ItemizedLayer<MarkerItem> {
         private ArrayList<MarkerItem> poiMarkers = new ArrayList<MarkerItem>();
 
         public PoiItemizedLayer(Map map, List<MarkerItem> list, MarkerSymbol defaultMarker,
