@@ -3,10 +3,13 @@ package com.mapzen.activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.Menu;
@@ -23,6 +26,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
+import com.mapzen.core.SettingsFragment;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.fragment.MapFragment;
@@ -66,7 +70,6 @@ public class BaseActivity extends MapActivity {
     };
     private SQLiteDatabase db;
     protected LocationDatabaseHelper dbHelper;
-    private boolean debuggable = false;
 
     public void deactivateMapLocationUpdates() {
         updateMapLocation = false;
@@ -112,7 +115,8 @@ public class BaseActivity extends MapActivity {
     }
 
     public boolean isInDebugMode() {
-        return debuggable;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        return prefs.getBoolean("checkbox_debug", false);
     }
 
     @Override
@@ -123,18 +127,14 @@ public class BaseActivity extends MapActivity {
             if (fragment != null) {
                 return fragment.onOptionsItemSelected(item);
             }
-        } else if (item.getItemId() == R.id.debug_toggle) {
-            debuggable = !debuggable;
-            notifyDebugMode();
+        } else if (item.getItemId() == R.id.settings) {
+            final PreferenceFragment fragment = new SettingsFragment();
+            getFragmentManager().beginTransaction()
+                    .add(R.id.settings, fragment, SettingsFragment.TAG)
+                    .addToBackStack(null)
+                    .commit();
         }
-
         return super.onOptionsItemSelected(item);
-    }
-
-    private void notifyDebugMode() {
-        String msg = "debug mode: "
-                + (debuggable ? "on" : "off");
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
     }
 
     public void showProgressDialog() {
@@ -257,6 +257,19 @@ public class BaseActivity extends MapActivity {
         }
 
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        SettingsFragment fragment = (SettingsFragment) getFragmentManager()
+                .findFragmentByTag(SettingsFragment.TAG);
+        if (fragment != null && fragment.isAdded()) {
+            getFragmentManager().beginTransaction()
+                    .detach(fragment)
+                    .commit();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override

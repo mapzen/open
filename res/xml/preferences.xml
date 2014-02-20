@@ -1,0 +1,14 @@
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/settings_debug_title">
+
+        <CheckBoxPreference
+            android:key="checkbox_debug"
+            android:title="@string/settings_debug_mode"
+            android:summary="@string/settings_debug_mode_summary" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
