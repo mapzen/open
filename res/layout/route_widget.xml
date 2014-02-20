@@ -1,53 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:background="@android:color/transparent"
-                android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/routes"
-        android:keepScreenOn="true"
-        android:background="@android:color/black"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/route_header_height"/>
+        android:layout_height="@dimen/route_header_height"
+        android:background="@android:color/black"
+        android:keepScreenOn="true" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/routes"
-        android:background="#ccc">
-
-        <Button
-            android:id="@+id/view_steps"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/view_steps"
-            style="?android:attr/buttonStyleSmall"/>
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:background="@android:color/black"
+        android:layout_height="@dimen/route_footer_height"
         android:layout_alignParentBottom="true"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/route_footer_height">
+        android:background="@android:color/white">
 
         <TextView
             android:id="@+id/destination_name"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textColor="@android:color/white"
-            android:layout_margin="@dimen/default_margin"/>
+            android:layout_margin="@dimen/default_margin"
+            android:textColor="@android:color/black" />
 
         <com.mapzen.widget.DistanceView
             android:id="@+id/destination_distance"
-            android:layout_toRightOf="@id/destination_name"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textColor="@android:color/white"
-            android:layout_margin="@dimen/default_margin"/>
+            android:layout_margin="@dimen/default_margin"
+            android:layout_toRightOf="@id/destination_name"
+            android:textColor="@android:color/black" />
+
+        <ImageButton
+            android:id="@+id/overflow_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/item_background_holo_light"
+            android:contentDescription="@string/overflow_menu"
+            android:src="@drawable/ic_menu_moreoverflow_normal_holo_light" />
 
     </RelativeLayout>
 
