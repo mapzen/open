@@ -116,7 +116,7 @@ public class BaseActivity extends MapActivity {
 
     public boolean isInDebugMode() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        return prefs.getBoolean("checkbox_debug", false);
+        return prefs.getBoolean(getString(R.string.settings_key_debug), false);
     }
 
     @Override

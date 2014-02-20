@@ -460,6 +460,19 @@ public class RouteFragmentTest {
         assertThat(Math.round(map.getMapPosition().getLongitude())).isEqualTo(100);
     }
 
+    @Test
+    public void getWalkingAdvanceRadius_shouldHaveDefaultValue() {
+        assertThat(fragment.getWalkingAdvanceRadius())
+            .isEqualTo(RouteFragment.WALKING_ADVANCE_DEFAULT_RADIUS);
+    }
+
+    @Test
+    public void getWalkingAdvanceRadius_shouldBeConfigurable() {
+        int expected = 102;
+        setWalkingRadius(expected);
+        assertThat(fragment.getWalkingAdvanceRadius()).isEqualTo(expected);
+    }
+
     private View getInstructionView(int position) {
         ViewPager pager = (ViewPager) fragment.getView().findViewById(R.id.routes);
         ViewGroup group = new ViewGroup(act) {
@@ -521,7 +534,14 @@ public class RouteFragmentTest {
     private void enableDebugMode() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
         SharedPreferences.Editor prefEditor = prefs.edit();
-        prefEditor.putBoolean("checkbox_debug", true);
+        prefEditor.putBoolean(act.getString(R.string.settings_key_debug), true);
+        prefEditor.commit();
+    }
+
+    private void setWalkingRadius(int expected) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
+        SharedPreferences.Editor prefEditor = prefs.edit();
+        prefEditor.putInt(act.getString(R.string.settings_key_walking_advance_radius), expected);
         prefEditor.commit();
     }
 

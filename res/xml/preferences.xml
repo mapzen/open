@@ -5,9 +5,17 @@
         android:title="@string/settings_debug_title">
 
         <CheckBoxPreference
-            android:key="checkbox_debug"
+            android:key="@string/settings_key_debug"
             android:title="@string/settings_debug_mode"
             android:summary="@string/settings_debug_mode_summary" />
+
+        <EditTextPreference
+            android:key="@string/settings_key_walking_advance_radius"
+            android:title="@string/settings_walking_advance_radius"
+            android:summary="@string/settings_walking_advance_radius_summary"
+            android:numeric="integer"
+            android:defaultValue="15"
+            android:dialogTitle="@string/settings_walking_advance_radius_dialog_title" />
 
     </PreferenceCategory>
 

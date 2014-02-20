@@ -27,5 +27,10 @@
     <string name="settings_debug_mode">Debug Mode</string>
     <string name="settings_debug_mode_summary">This will keep application in debug mode and location will be stored</string>
     <string name="settings_debug_title">Debugging</string>
+    <string name="settings_walking_advance_radius">Walking advance radius</string>
+    <string name="settings_walking_advance_radius_summary">This will define the radius for when instruction will advance</string>
+    <string name="settings_walking_advance_radius_dialog_title">In Meters</string>
+    <string name="settings_key_debug">checkbox_debug</string>
+    <string name="settings_key_walking_advance_radius">edittext_walking_advance_radius</string>
 
 </resources>
