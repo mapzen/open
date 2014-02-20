@@ -324,27 +324,9 @@ public class BaseActivity extends MapActivity {
         searchView.setSuggestionsAdapter(autoCompleteAdapter);
     }
 
-    private void clearSearchText() {
-        app.setCurrentSearchTerm("");
-        final SearchView searchView = (SearchView) menuItem.getActionView();
-        assert searchView != null;
-        searchView.setQuery("", false);
-        searchView.clearFocus();
-    }
-
     private void initMapController() {
         MapController mapController = getMapController();
         mapController.setMap(getMap());
-    }
-
-    public void showPlace(Feature feature, boolean clearSearch) {
-        final PagerResultsFragment pagerResultsFragment = getPagerResultsFragment();
-
-        pagerResultsFragment.flipTo(feature);
-        if (clearSearch) {
-            clearSearchText();
-        }
-        mapFragment.centerOn(feature);
     }
 
     public void hideActionBar() {
