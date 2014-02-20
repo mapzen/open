@@ -16,6 +16,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 
 import android.location.Location;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import java.util.List;
@@ -62,11 +63,15 @@ public class ItemFragmentTest {
     @Test
     public void shouldHaveTitle() throws Exception {
         assertThat(itemFragment.title).hasText("Test Feature");
+        assertThat(itemFragment.title).hasEllipsize(TextUtils.TruncateAt.END);
+        assertThat(itemFragment.title).hasMaxLines(1);
     }
 
     @Test
     public void shouldHaveAddress() throws Exception {
         assertThat(itemFragment.address).hasText("New York, NY");
+        assertThat(itemFragment.title).hasEllipsize(TextUtils.TruncateAt.END);
+        assertThat(itemFragment.title).hasMaxLines(1);
     }
 
     @Test
