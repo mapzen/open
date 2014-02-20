@@ -4,7 +4,6 @@
     <string name="application_name">Mapzen</string>
     <string name="results_title">Results</string>
     <string name="search_title">find stuff</string>
-    <string name="debug_toggle_title">debug</string>
     <string name="tiles_source_url_key">url</string>
     <string name="tiles_source_url">http://opensciencemap.org/tiles/vtm</string>
     <string name="generic_server_down">Server is down</string>
@@ -24,5 +23,14 @@
     <string name="start">Start</string>
     <string name="overflow_menu">overflow</string>
     <string name="route_steps_menu_option">Step-by-step list</string>
+    <string name="settings">Settings</string>
+    <string name="settings_debug_mode">Debug Mode</string>
+    <string name="settings_debug_mode_summary">This will keep application in debug mode and location will be stored</string>
+    <string name="settings_debug_title">Debugging</string>
+    <string name="settings_walking_advance_radius">Walking advance radius</string>
+    <string name="settings_walking_advance_radius_summary">This will define the radius for when instruction will advance</string>
+    <string name="settings_walking_advance_radius_dialog_title">In Meters</string>
+    <string name="settings_key_debug">checkbox_debug</string>
+    <string name="settings_key_walking_advance_radius">edittext_walking_advance_radius</string>
 
 </resources>

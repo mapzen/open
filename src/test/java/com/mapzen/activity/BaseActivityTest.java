@@ -13,6 +13,7 @@ import com.google.android.gms.common.GooglePlayServicesClient;
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
+import com.mapzen.core.SettingsFragment;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.search.PagerResultsFragment;
@@ -163,21 +164,39 @@ public class BaseActivityTest {
     }
 
     @Test
-    public void onOptionsItemSelected_shouldToggleDebugMode() throws Exception {
-        MenuItem menuItem = menu.findItem(R.id.debug_toggle);
+    public void onOptionsItemSelected_shouldLaunchSettingsFragment() throws Exception {
+        MenuItem menuItem = menu.findItem(R.id.settings);
         activity.onOptionsItemSelected(menuItem);
-        assertThat(activity.isInDebugMode()).isTrue();
-        activity.onOptionsItemSelected(menuItem);
-        assertThat(activity.isInDebugMode()).isFalse();
+        assertThat(activity.getFragmentManager()).hasFragmentWithTag(SettingsFragment.TAG);
     }
 
     @Test
-    public void onOptionsItemSelected_shouldToastDebugModeIndication() throws Exception {
-        MenuItem menuItem = menu.findItem(R.id.debug_toggle);
+    public void onOptionsItemSelected_shouldHideActionBar() throws Exception {
+        MenuItem menuItem = menu.findItem(R.id.settings);
         activity.onOptionsItemSelected(menuItem);
-        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo("debug mode: on");
+        assertThat(activity.getActionBar()).isNotShowing();
+    }
+
+    @Test
+    public void shouldShowActionBarWhenGettingBackFromSettings() throws Exception {
+        MenuItem menuItem = menu.findItem(R.id.settings);
         activity.onOptionsItemSelected(menuItem);
-        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo("debug mode: off");
+        activity.onBackPressed();
+        assertThat(activity.getActionBar()).isShowing();
+    }
+
+    @Test
+    public void onBackPressed_shouldStayInBaseActivityWhenSettingsIsActive() throws Exception {
+        MenuItem menuItem = menu.findItem(R.id.settings);
+        activity.onOptionsItemSelected(menuItem);
+        activity.onBackPressed();
+        assertThat(activity.isFinishing()).isFalse();
+    }
+
+    @Test
+    public void onBackPressed_shouldFinishBaseActivity() throws Exception {
+        activity.onBackPressed();
+        assertThat(activity.isFinishing()).isTrue();
     }
 
     @Test

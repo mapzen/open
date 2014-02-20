@@ -19,9 +19,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -50,7 +52,7 @@ import static com.mapzen.entity.Feature.NAME;
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
         ViewPager.OnPageChangeListener {
     public static final String TAG = RouteFragment.class.getSimpleName();
-    public static final int WALKING_ADVANCE_THRESHOLD = 15;
+    public static final int WALKING_ADVANCE_DEFAULT_RADIUS = 15;
     public static final int WALKING_LOST_THRESHOLD = 70;
     public static final int ROUTE_ZOOM_LEVEL = 17;
     @InjectView(R.id.overflow_menu) ImageButton overflowMenu;
@@ -114,6 +116,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         super.onDetach();
         act.showActionBar();
         clearRoute();
+    }
+
+    public int getWalkingAdvanceRadius() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
+        return prefs.getInt(act.getString(R.string.settings_key_walking_advance_radius),
+                WALKING_ADVANCE_DEFAULT_RADIUS);
     }
 
     public void setInstructions(ArrayList<Instruction> instructions) {
@@ -188,12 +196,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
 
         if (WALKING_LOST_THRESHOLD < location.distanceTo(correctedLocation) &&
-                location.getAccuracy() < WALKING_ADVANCE_THRESHOLD) {
+                location.getAccuracy() < getWalkingAdvanceRadius()) {
             // execute reroute query and reset the path
             Logger.d("RouteFragment::onLocationChange: probably off course");
         }
 
-        if (!hasFoundPath && getStartLocation().distanceTo(location) > WALKING_ADVANCE_THRESHOLD) {
+        if (!hasFoundPath && getStartLocation().distanceTo(location) > getWalkingAdvanceRadius()) {
             Logger.d("RouteFragment::onLocationChange: hasn't hit first location and is"
                     + "probably off course");
         }
@@ -201,7 +209,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         Location nextTurn = getNextTurnTo(instructions.get(pager.getCurrentItem() + 1));
         if (correctedLocation != null && nextTurn != null) {
             int distanceToNextTurn = (int) Math.floor(correctedLocation.distanceTo(nextTurn));
-            if (distanceToNextTurn > WALKING_ADVANCE_THRESHOLD) {
+            if (distanceToNextTurn > getWalkingAdvanceRadius()) {
                 Logger.d("RouteFragment::onLocationChangeLocation: " +
                         "outside defined radius");
             } else {
@@ -216,7 +224,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             Logger.d("RouteFragment::onLocationChangeLocation: " +
                     "distance to next turn: " + String.valueOf(distanceToNextTurn));
             Logger.d("RouteFragment::onLocationChangeLocation: " +
-                    "threshold: " + String.valueOf(WALKING_ADVANCE_THRESHOLD));
+                    "threshold: " + String.valueOf(getWalkingAdvanceRadius()));
         } else {
             if (correctedLocation == null) {
                 Logger.d("RouteFragment::onLocationChangeLocation: " +

@@ -27,9 +27,11 @@ import org.robolectric.tester.android.view.TestMenuItem;
 import org.robolectric.util.FragmentTestUtil;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -135,7 +137,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreOriginalLocationRecordInDatabase() throws Exception {
-        act.onOptionsItemSelected(menu.findItem(R.id.debug_toggle));
+        enableDebugMode();
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(0, 0));
@@ -154,7 +156,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreCorrectedLocationRecordInDatabase() throws Exception {
-        act.onOptionsItemSelected(menu.findItem(R.id.debug_toggle));
+        enableDebugMode();
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(0, 0));
@@ -174,7 +176,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreInstructionPointsRecordInDatabase() throws Exception {
-        act.onOptionsItemSelected(menu.findItem(R.id.debug_toggle));
+        enableDebugMode();
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(99.0, 89.0));
         instructions.add(getTestInstruction(0, 0));
@@ -194,7 +196,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreInstructionBearingRecordInDatabase() throws Exception {
-        act.onOptionsItemSelected(menu.findItem(R.id.debug_toggle));
+        enableDebugMode();
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(99.0, 89.0));
         instructions.add(getTestInstruction(0, 0));
@@ -458,6 +460,19 @@ public class RouteFragmentTest {
         assertThat(Math.round(map.getMapPosition().getLongitude())).isEqualTo(100);
     }
 
+    @Test
+    public void getWalkingAdvanceRadius_shouldHaveDefaultValue() {
+        assertThat(fragment.getWalkingAdvanceRadius())
+            .isEqualTo(RouteFragment.WALKING_ADVANCE_DEFAULT_RADIUS);
+    }
+
+    @Test
+    public void getWalkingAdvanceRadius_shouldBeConfigurable() {
+        int expected = 102;
+        setWalkingRadius(expected);
+        assertThat(fragment.getWalkingAdvanceRadius()).isEqualTo(expected);
+    }
+
     private View getInstructionView(int position) {
         ViewPager pager = (ViewPager) fragment.getView().findViewById(R.id.routes);
         ViewGroup group = new ViewGroup(act) {
@@ -515,4 +530,19 @@ public class RouteFragmentTest {
         testLocation.setLongitude(lng);
         return testLocation;
     }
+
+    private void enableDebugMode() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
+        SharedPreferences.Editor prefEditor = prefs.edit();
+        prefEditor.putBoolean(act.getString(R.string.settings_key_debug), true);
+        prefEditor.commit();
+    }
+
+    private void setWalkingRadius(int expected) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
+        SharedPreferences.Editor prefEditor = prefs.edit();
+        prefEditor.putInt(act.getString(R.string.settings_key_walking_advance_radius), expected);
+        prefEditor.commit();
+    }
+
 }
