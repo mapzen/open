@@ -1,5 +1,28 @@
 package com.mapzen.activity;
 
+import com.mapzen.MapController;
+import com.mapzen.MapzenApplication;
+import com.mapzen.R;
+import com.mapzen.core.SettingsFragment;
+import com.mapzen.fragment.ListResultsFragment;
+import com.mapzen.fragment.MapFragment;
+import com.mapzen.search.AutoCompleteAdapter;
+import com.mapzen.search.OnPoiClickListener;
+import com.mapzen.search.PagerResultsFragment;
+import com.mapzen.util.LocationDatabaseHelper;
+import com.mapzen.util.Logger;
+import com.mapzen.util.MapzenProgressDialogFragment;
+
+import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+
+import org.oscim.android.MapActivity;
+import org.oscim.layers.marker.MarkerItem;
+import org.oscim.map.Map;
+
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -17,28 +40,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.SearchView;
 import android.widget.Toast;
-
-import com.crashlytics.android.Crashlytics;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.location.LocationClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.mapzen.MapController;
-import com.mapzen.MapzenApplication;
-import com.mapzen.R;
-import com.mapzen.core.SettingsFragment;
-import com.mapzen.entity.Feature;
-import com.mapzen.fragment.ListResultsFragment;
-import com.mapzen.fragment.MapFragment;
-import com.mapzen.search.AutoCompleteAdapter;
-import com.mapzen.search.OnPoiClickListener;
-import com.mapzen.search.PagerResultsFragment;
-import com.mapzen.util.LocationDatabaseHelper;
-import com.mapzen.util.Logger;
-import com.mapzen.util.MapzenProgressDialogFragment;
-import org.oscim.android.MapActivity;
-import org.oscim.layers.marker.MarkerItem;
-import org.oscim.map.Map;
 
 import static com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import static com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;

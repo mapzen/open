@@ -1,41 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/results_wrapper">
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/multi_result_header"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:background="@android:color/darker_gray">
+        android:layout_height="wrap_content"
+        android:background="@android:color/darker_gray"
+        android:paddingTop="@dimen/default_padding_vertical"
+        android:paddingBottom="@dimen/default_padding_vertical"
+        android:paddingLeft="@dimen/default_padding_horizontal"
+        android:paddingRight="@dimen/default_padding_horizontal">
 
-        <TextView
+    <TextView
             android:id="@+id/pagination"
-            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:textColor="@android:color/white"
-            android:textStyle="bold"
-            android:padding="3dp"
-            android:layout_centerVertical="true" />
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/view_all"
-            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:padding="3dp"
-            android:background="@android:color/darker_gray"
+            android:background="@android:color/transparent"
+            android:textColor="@color/view_all"
             android:text="@string/view_all" />
     </RelativeLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/results"
-        android:layout_height="75dp"
         android:layout_width="match_parent"
+        android:layout_height="72dp"
         android:layout_gravity="bottom" />
+
 </LinearLayout>
