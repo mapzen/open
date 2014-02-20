@@ -119,9 +119,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public int getWalkingAdvanceRadius() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
-        return prefs.getInt(act.getString(R.string.settings_key_walking_advance_radius),
-                WALKING_ADVANCE_DEFAULT_RADIUS);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
+        final String walkingAdvanceString =
+                prefs.getString(act.getString(R.string.settings_key_walking_advance_radius),
+                        Integer.toString(WALKING_ADVANCE_DEFAULT_RADIUS));
+        return Integer.valueOf(walkingAdvanceString);
     }
 
     public void setInstructions(ArrayList<Instruction> instructions) {

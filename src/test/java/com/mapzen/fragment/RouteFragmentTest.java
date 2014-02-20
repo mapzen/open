@@ -541,8 +541,8 @@ public class RouteFragmentTest {
     private void setWalkingRadius(int expected) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
         SharedPreferences.Editor prefEditor = prefs.edit();
-        prefEditor.putInt(act.getString(R.string.settings_key_walking_advance_radius), expected);
+        prefEditor.putString(act.getString(R.string.settings_key_walking_advance_radius),
+                Integer.toString(expected));
         prefEditor.commit();
     }
-
 }
