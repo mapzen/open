@@ -182,8 +182,7 @@ public class BaseActivityTest {
         MenuItem menuItem = menu.findItem(R.id.settings);
         activity.onOptionsItemSelected(menuItem);
         activity.onBackPressed();
-        // TODO fails in test not in reality
-        //assertThat(activity.getActionBar()).isShowing();
+        assertThat(activity.getActionBar()).isShowing();
     }
 
     @Test

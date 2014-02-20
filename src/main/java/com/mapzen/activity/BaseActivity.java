@@ -128,7 +128,7 @@ public class BaseActivity extends MapActivity {
                 return fragment.onOptionsItemSelected(item);
             }
         } else if (item.getItemId() == R.id.settings) {
-            final PreferenceFragment fragment = new SettingsFragment();
+            final PreferenceFragment fragment = SettingsFragment.newInstance(this);
             getFragmentManager().beginTransaction()
                     .add(R.id.settings, fragment, SettingsFragment.TAG)
                     .addToBackStack(null)

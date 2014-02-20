@@ -11,6 +11,7 @@ public class TestActionBar extends ActionBar {
     private CharSequence title;
     private boolean homeButtonEnabled = false;
     private boolean showHomeAsUp = false;
+    private boolean isShowing = false;
 
     @Override
     public void setHomeButtonEnabled(boolean enabled) {
@@ -210,15 +211,17 @@ public class TestActionBar extends ActionBar {
 
     @Override
     public void show() {
+        isShowing = true;
     }
 
     @Override
     public void hide() {
+        isShowing = false;
     }
 
     @Override
     public boolean isShowing() {
-        return false;
+        return isShowing;
     }
 
     @Override
