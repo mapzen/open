@@ -20,7 +20,6 @@ import org.oscim.map.TestMap;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
-import org.robolectric.shadows.ShadowLog;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.tester.android.view.TestMenuItem;
@@ -32,7 +31,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.preference.PreferenceManager;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +60,6 @@ public class RouteFragmentTest {
 
     @Before
     public void setUp() throws Exception {
-        ShadowLog.stream = System.out;
         ShadowVolley.clearMockRequestQueue();
         menu = new TestMenu();
         act = initBaseActivityWithMenu(menu);
@@ -102,8 +99,7 @@ public class RouteFragmentTest {
     @Test
     public void shouldHaveRoutesViewPager() throws Exception {
         attachFragment();
-        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        assertThat(view.findViewById(R.id.routes)).isNotNull();
+        assertThat(fragment.pager).isNotNull();
     }
 
     @Test
@@ -474,14 +470,13 @@ public class RouteFragmentTest {
     }
 
     private View getInstructionView(int position) {
-        ViewPager pager = (ViewPager) fragment.getView().findViewById(R.id.routes);
         ViewGroup group = new ViewGroup(act) {
             @Override
             protected void onLayout(boolean changed, int l, int t, int r, int b) {
 
             }
         };
-        return (View) pager.getAdapter().instantiateItem(group, position);
+        return (View) fragment.pager.getAdapter().instantiateItem(group, position);
     }
 
     private void initTestFragment() {

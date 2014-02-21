@@ -55,9 +55,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public static final int WALKING_ADVANCE_DEFAULT_RADIUS = 15;
     public static final int WALKING_LOST_THRESHOLD = 70;
     public static final int ROUTE_ZOOM_LEVEL = 17;
+
     @InjectView(R.id.overflow_menu) ImageButton overflowMenu;
+    @InjectView(R.id.routes) ViewPager pager;
+
     private ArrayList<Instruction> instructions;
-    private ViewPager pager;
     private RoutesAdapter adapter;
     private Route route;
     private LocationReceiver locationReceiver;
@@ -394,7 +396,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             Instruction instruction = instructions.get(position);
-            View view = View.inflate(context, R.layout.fragment_instruction, null);
+            View view = View.inflate(context, R.layout.instruction, null);
 
             TextView fullInstruction = (TextView) view.findViewById(R.id.full_instruction);
             fullInstruction.setText(instruction.getFullInstruction());
