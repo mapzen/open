@@ -81,6 +81,26 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return fragment;
     }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.route_widget, container, false);
+        ButterKnife.inject(this, rootView);
+        adapter = new RoutesAdapter(act, this, instructions);
+        TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
+        destinationName.setText(feature.getProperty(NAME));
+        distanceLeftView = (DistanceView) rootView.findViewById(R.id.destination_distance);
+        distanceLeftView.setRealTime(true);
+        if (route != null) {
+            distanceLeftView.setDistance(route.getTotalDistance());
+        }
+        pager.setAdapter(adapter);
+        pager.setOnPageChangeListener(this);
+        adapter.notifyDataSetChanged();
+        previousPosition = pager.getCurrentItem();
+        return rootView;
+    }
+
     @OnClick(R.id.overflow_menu)
     @SuppressWarnings("unused")
     public void onClickOverFlowMenu() {
@@ -251,26 +271,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                         "**location** is null screw it");
             }
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.route_widget, container, false);
-        ButterKnife.inject(this, rootView);
-        adapter = new RoutesAdapter(act, this, instructions);
-        TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
-        destinationName.setText(feature.getProperty(NAME));
-        distanceLeftView = (DistanceView) rootView.findViewById(R.id.destination_distance);
-        distanceLeftView.setRealTime(true);
-        if (route != null) {
-            distanceLeftView.setDistance(route.getTotalDistance());
-        }
-        pager.setAdapter(adapter);
-        pager.setOnPageChangeListener(this);
-        adapter.notifyDataSetChanged();
-        previousPosition = pager.getCurrentItem();
-        return rootView;
     }
 
     private void showDirectionListFragment() {

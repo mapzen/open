@@ -17,27 +17,40 @@
         android:layout_alignParentBottom="true"
         android:background="@android:color/white">
 
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_height"
+            android:layout_alignParentTop="true"
+            android:background="@color/dark_gray" />
+
         <TextView
             android:id="@+id/destination_name"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_margin="@dimen/default_margin"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/default_padding_horizontal"
+            android:textSize="16sp"
             android:textColor="@android:color/black" />
 
         <com.mapzen.widget.DistanceView
             android:id="@+id/destination_distance"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_margin="@dimen/default_margin"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/narrow_padding_horizontal"
             android:layout_toRightOf="@id/destination_name"
+            android:textSize="16sp"
             android:textColor="@android:color/black" />
 
         <ImageButton
             android:id="@+id/overflow_menu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/icon_width"
+            android:layout_height="@dimen/icon_height"
             android:layout_alignParentRight="true"
-            android:background="@drawable/item_background_holo_light"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/narrow_padding_horizontal"
+            android:background="@drawable/selectable_background_mapzen"
             android:contentDescription="@string/overflow_menu"
             android:src="@drawable/ic_menu_moreoverflow_normal_holo_light" />
 

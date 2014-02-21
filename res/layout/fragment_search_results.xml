@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/darker_gray"
-    android:paddingTop="@dimen/search_border_width"
+    android:paddingTop="@dimen/divider_height"
     android:orientation="vertical">
 
     <RelativeLayout
