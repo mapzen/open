@@ -509,6 +509,18 @@ public class RouteFragmentTest {
         assertThat(spannedString.getSpans(0, spannedString.length(), StyleSpan.class)).isNotNull();
     }
 
+    @Test
+    public void onLocationChanged_finalInstructionShouldNotAdvance() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        attachFragment();
+        fragment.pager.setCurrentItem(1);
+        fragment.onLocationChanged(getTestLocation(0, 0));
+        assertThat(fragment.pager).hasCurrentItem(1);
+    }
+
     private View getInstructionView(int position) {
         ViewGroup group = new ViewGroup(act) {
             @Override
