@@ -6,4 +6,5 @@
     <dimen name="default_button_padding">10dp</dimen>
     <dimen name="route_header_height">120dp</dimen>
     <dimen name="route_footer_height">60dp</dimen>
+    <dimen name="search_border_width">1dp</dimen>
 </resources>
