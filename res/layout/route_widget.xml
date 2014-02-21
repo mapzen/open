@@ -9,7 +9,6 @@
         android:id="@+id/routes"
         android:layout_width="match_parent"
         android:layout_height="@dimen/route_header_height"
-        android:background="@android:color/black"
         android:keepScreenOn="true" />
 
     <RelativeLayout

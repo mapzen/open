@@ -20,7 +20,6 @@ import org.oscim.map.TestMap;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
-import org.robolectric.shadows.ShadowLog;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.tester.android.view.TestMenuItem;
@@ -30,9 +29,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.preference.PreferenceManager;
-import android.support.v4.view.ViewPager;
+import android.text.SpannedString;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,7 @@ import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.robolectric.Robolectric.shadowOf;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
@@ -62,7 +64,6 @@ public class RouteFragmentTest {
 
     @Before
     public void setUp() throws Exception {
-        ShadowLog.stream = System.out;
         ShadowVolley.clearMockRequestQueue();
         menu = new TestMenu();
         act = initBaseActivityWithMenu(menu);
@@ -102,8 +103,7 @@ public class RouteFragmentTest {
     @Test
     public void shouldHaveRoutesViewPager() throws Exception {
         attachFragment();
-        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        assertThat(view.findViewById(R.id.routes)).isNotNull();
+        assertThat(fragment.pager).isNotNull();
     }
 
     @Test
@@ -326,7 +326,7 @@ public class RouteFragmentTest {
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
         ImageButton overFlowMenu = (ImageButton) view.findViewById(R.id.overflow_menu);
         overFlowMenu.performClick();
-        ShadowPopupMenu popupMenu = Robolectric.shadowOf(ShadowPopupMenu.getLatestPopupMenu());
+        ShadowPopupMenu popupMenu = shadowOf(ShadowPopupMenu.getLatestPopupMenu());
         assertThat(popupMenu.isShowing()).isTrue();
     }
 
@@ -336,7 +336,7 @@ public class RouteFragmentTest {
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
         ImageButton overFlowMenu = (ImageButton) view.findViewById(R.id.overflow_menu);
         overFlowMenu.performClick();
-        ShadowPopupMenu popupMenu = Robolectric.shadowOf(ShadowPopupMenu.getLatestPopupMenu());
+        ShadowPopupMenu popupMenu = shadowOf(ShadowPopupMenu.getLatestPopupMenu());
         PopupMenu.OnMenuItemClickListener listener = popupMenu.getOnMenuItemClickListener();
         TestMenuItem item = new TestMenuItem();
         item.setItemId(R.id.route_menu_steps);
@@ -473,15 +473,50 @@ public class RouteFragmentTest {
         assertThat(fragment.getWalkingAdvanceRadius()).isEqualTo(expected);
     }
 
+    @Test
+    public void firstInstruction_shouldHaveDarkGrayBackground() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        attachFragment();
+        View view = getInstructionView(0);
+        ColorDrawable background = (ColorDrawable) view.getBackground();
+        assertThat(background.getColor()).isEqualTo(0xff333333);
+    }
+
+    @Test
+    public void lastInstruction_shouldHaveGreenBackground() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        attachFragment();
+        View view = getInstructionView(1);
+        ColorDrawable background = (ColorDrawable) view.getBackground();
+        assertThat(background.getColor()).isEqualTo(0xff68a547);
+    }
+
+    @Test
+    public void shouldBoldName() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        attachFragment();
+        TextView textView = (TextView) getInstructionView(0).findViewById(R.id.full_instruction);
+        SpannedString spannedString = (SpannedString) textView.getText();
+        assertThat(spannedString.getSpans(0, spannedString.length(), StyleSpan.class)).isNotNull();
+    }
+
     private View getInstructionView(int position) {
-        ViewPager pager = (ViewPager) fragment.getView().findViewById(R.id.routes);
         ViewGroup group = new ViewGroup(act) {
             @Override
             protected void onLayout(boolean changed, int l, int t, int r, int b) {
 
             }
         };
-        return (View) pager.getAdapter().instantiateItem(group, position);
+        return (View) fragment.pager.getAdapter().instantiateItem(group, position);
     }
 
     private void initTestFragment() {

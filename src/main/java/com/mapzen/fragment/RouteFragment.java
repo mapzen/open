@@ -21,12 +21,16 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -55,9 +59,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public static final int WALKING_ADVANCE_DEFAULT_RADIUS = 15;
     public static final int WALKING_LOST_THRESHOLD = 70;
     public static final int ROUTE_ZOOM_LEVEL = 17;
+
     @InjectView(R.id.overflow_menu) ImageButton overflowMenu;
+    @InjectView(R.id.routes) ViewPager pager;
+
     private ArrayList<Instruction> instructions;
-    private ViewPager pager;
     private RoutesAdapter adapter;
     private Route route;
     private LocationReceiver locationReceiver;
@@ -243,8 +249,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.route_widget, container, false);
+        ButterKnife.inject(this, rootView);
         adapter = new RoutesAdapter(act, this, instructions);
-        pager = (ViewPager) rootView.findViewById(R.id.routes);
         TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
         destinationName.setText(feature.getProperty(NAME));
         distanceLeftView = (DistanceView) rootView.findViewById(R.id.destination_distance);
@@ -256,7 +262,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager.setOnPageChangeListener(this);
         adapter.notifyDataSetChanged();
         previousPosition = pager.getCurrentItem();
-        ButterKnife.inject(this, rootView);
         return rootView;
     }
 
@@ -394,10 +399,16 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             Instruction instruction = instructions.get(position);
-            View view = View.inflate(context, R.layout.fragment_instruction, null);
+            View view = View.inflate(context, R.layout.instruction, null);
+
+            if (position == instructions.size() - 1) {
+                view.setBackgroundColor(context.getResources().getColor(R.color.destination_green));
+            } else {
+                view.setBackgroundColor(context.getResources().getColor(R.color.dark_gray));
+            }
 
             TextView fullInstruction = (TextView) view.findViewById(R.id.full_instruction);
-            fullInstruction.setText(instruction.getFullInstruction());
+            fullInstruction.setText(getFullInstructionWithBoldName(instruction));
 
             ImageView turnIcon = (ImageView) view.findViewById(R.id.turn_icon);
             turnIcon.setImageResource(DisplayHelper.getRouteDrawable(context,
@@ -426,6 +437,18 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             }
             container.addView(view);
             return view;
+        }
+
+        private SpannableStringBuilder getFullInstructionWithBoldName(Instruction instruction) {
+            final String fullInstruction = instruction.getFullInstruction();
+            final String name = instruction.getName();
+            final int startOfName = fullInstruction.indexOf(name);
+            final int endOfName = startOfName + name.length();
+            final StyleSpan boldStyleSpan = new StyleSpan(Typeface.BOLD);
+
+            final SpannableStringBuilder ssb = new SpannableStringBuilder(fullInstruction);
+            ssb.setSpan(boldStyleSpan, startOfName, endOfName, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+            return ssb;
         }
 
         @Override
