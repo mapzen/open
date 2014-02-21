@@ -3,7 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/search_top_border"
+    android:background="@android:color/darker_gray"
     android:paddingTop="@dimen/search_border_width"
     android:orientation="vertical">
 
