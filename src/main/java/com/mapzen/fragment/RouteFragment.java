@@ -245,8 +245,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.route_widget, container, false);
+        ButterKnife.inject(this, rootView);
         adapter = new RoutesAdapter(act, this, instructions);
-        pager = (ViewPager) rootView.findViewById(R.id.routes);
         TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
         destinationName.setText(feature.getProperty(NAME));
         distanceLeftView = (DistanceView) rootView.findViewById(R.id.destination_distance);
@@ -258,7 +258,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager.setOnPageChangeListener(this);
         adapter.notifyDataSetChanged();
         previousPosition = pager.getCurrentItem();
-        ButterKnife.inject(this, rootView);
         return rootView;
     }
 
@@ -397,6 +396,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         public Object instantiateItem(ViewGroup container, int position) {
             Instruction instruction = instructions.get(position);
             View view = View.inflate(context, R.layout.instruction, null);
+
+            if (position == instructions.size() - 1) {
+                view.setBackgroundColor(context.getResources().getColor(R.color.destination_green));
+            } else {
+                view.setBackgroundColor(context.getResources().getColor(R.color.dark_gray));
+            }
 
             TextView fullInstruction = (TextView) view.findViewById(R.id.full_instruction);
             fullInstruction.setText(instruction.getFullInstruction());

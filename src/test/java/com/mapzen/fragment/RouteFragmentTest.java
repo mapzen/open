@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -48,6 +49,7 @@ import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.robolectric.Robolectric.shadowOf;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
@@ -322,7 +324,7 @@ public class RouteFragmentTest {
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
         ImageButton overFlowMenu = (ImageButton) view.findViewById(R.id.overflow_menu);
         overFlowMenu.performClick();
-        ShadowPopupMenu popupMenu = Robolectric.shadowOf(ShadowPopupMenu.getLatestPopupMenu());
+        ShadowPopupMenu popupMenu = shadowOf(ShadowPopupMenu.getLatestPopupMenu());
         assertThat(popupMenu.isShowing()).isTrue();
     }
 
@@ -332,7 +334,7 @@ public class RouteFragmentTest {
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
         ImageButton overFlowMenu = (ImageButton) view.findViewById(R.id.overflow_menu);
         overFlowMenu.performClick();
-        ShadowPopupMenu popupMenu = Robolectric.shadowOf(ShadowPopupMenu.getLatestPopupMenu());
+        ShadowPopupMenu popupMenu = shadowOf(ShadowPopupMenu.getLatestPopupMenu());
         PopupMenu.OnMenuItemClickListener listener = popupMenu.getOnMenuItemClickListener();
         TestMenuItem item = new TestMenuItem();
         item.setItemId(R.id.route_menu_steps);
@@ -467,6 +469,30 @@ public class RouteFragmentTest {
         int expected = 102;
         setWalkingRadius(expected);
         assertThat(fragment.getWalkingAdvanceRadius()).isEqualTo(expected);
+    }
+
+    @Test
+    public void firstInstruction_shouldHaveDarkGrayBackground() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        attachFragment();
+        View view = getInstructionView(0);
+        ColorDrawable background = (ColorDrawable) view.getBackground();
+        assertThat(background.getColor()).isEqualTo(0xff333333);
+    }
+
+    @Test
+    public void lastInstruction_shouldHaveGreenBackground() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        attachFragment();
+        View view = getInstructionView(1);
+        ColorDrawable background = (ColorDrawable) view.getBackground();
+        assertThat(background.getColor()).isEqualTo(0xff68a547);
     }
 
     private View getInstructionView(int position) {
