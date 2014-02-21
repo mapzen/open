@@ -21,12 +21,16 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -404,7 +408,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             }
 
             TextView fullInstruction = (TextView) view.findViewById(R.id.full_instruction);
-            fullInstruction.setText(instruction.getFullInstruction());
+            fullInstruction.setText(getFullInstructionWithBoldName(instruction));
 
             ImageView turnIcon = (ImageView) view.findViewById(R.id.turn_icon);
             turnIcon.setImageResource(DisplayHelper.getRouteDrawable(context,
@@ -433,6 +437,18 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             }
             container.addView(view);
             return view;
+        }
+
+        private SpannableStringBuilder getFullInstructionWithBoldName(Instruction instruction) {
+            final String fullInstruction = instruction.getFullInstruction();
+            final String name = instruction.getName();
+            final int startOfName = fullInstruction.indexOf(name);
+            final int endOfName = startOfName + name.length();
+            final StyleSpan boldStyleSpan = new StyleSpan(Typeface.BOLD);
+
+            final SpannableStringBuilder ssb = new SpannableStringBuilder(fullInstruction);
+            ssb.setSpan(boldStyleSpan, startOfName, endOfName, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+            return ssb;
         }
 
         @Override

@@ -32,6 +32,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.preference.PreferenceManager;
+import android.text.SpannedString;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -493,6 +495,18 @@ public class RouteFragmentTest {
         View view = getInstructionView(1);
         ColorDrawable background = (ColorDrawable) view.getBackground();
         assertThat(background.getColor()).isEqualTo(0xff68a547);
+    }
+
+    @Test
+    public void shouldBoldName() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        attachFragment();
+        TextView textView = (TextView) getInstructionView(0).findViewById(R.id.full_instruction);
+        SpannedString spannedString = (SpannedString) textView.getText();
+        assertThat(spannedString.getSpans(0, spannedString.length(), StyleSpan.class)).isNotNull();
     }
 
     private View getInstructionView(int position) {
