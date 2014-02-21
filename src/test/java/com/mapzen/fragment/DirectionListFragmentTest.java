@@ -1,18 +1,20 @@
 package com.mapzen.fragment;
 
+import com.mapzen.R;
+import com.mapzen.osrm.Instruction;
+import com.mapzen.support.MapzenTestRunner;
+import com.mapzen.widget.DistanceView;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.annotation.Config;
+
 import android.content.res.Resources;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.mapzen.R;
-import com.mapzen.osrm.Instruction;
-import com.mapzen.support.MapzenTestRunner;
-import com.mapzen.widget.DistanceView;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 
@@ -24,6 +26,8 @@ import static org.robolectric.util.FragmentTestUtil.startFragment;
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class DirectionListFragmentTest {
+    private static final double METERS_IN_MILE = 1609.34;
+
     private DirectionListFragment fragment;
     private ListView listView;
     private TestListener listener;
