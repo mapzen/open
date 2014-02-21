@@ -174,10 +174,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             if (onRoadPoint == null) {
                 onRoadPoint = instruction.snapTo(locationPoint, 90);
             }
-            Location correctedLocation = new Location("Corrected");
-            correctedLocation.setLatitude(onRoadPoint[0]);
-            correctedLocation.setLongitude(onRoadPoint[1]);
-            return correctedLocation;
+
+            if (onRoadPoint != null) {
+                Location correctedLocation = new Location("Corrected");
+                correctedLocation.setLatitude(onRoadPoint[0]);
+                correctedLocation.setLongitude(onRoadPoint[1]);
+                return correctedLocation;
+            }
         }
         return location;
     }
@@ -214,7 +217,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     + "probably off course");
         }
 
-        Location nextTurn = getNextTurnTo(instructions.get(pager.getCurrentItem() + 1));
+        Location nextTurn = null;
+        final int currentItem = pager.getCurrentItem();
+        if (currentItem < (instructions.size() - 1)) {
+            nextTurn = getNextTurnTo(instructions.get(pager.getCurrentItem() + 1));
+        }
+
         if (correctedLocation != null && nextTurn != null) {
             int distanceToNextTurn = (int) Math.floor(correctedLocation.distanceTo(nextTurn));
             if (distanceToNextTurn > getWalkingAdvanceRadius()) {
