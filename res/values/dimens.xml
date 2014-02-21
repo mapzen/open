@@ -3,8 +3,11 @@
     <dimen name="default_margin">10dp</dimen>
     <dimen name="default_padding_vertical">8dp</dimen>
     <dimen name="default_padding_horizontal">16dp</dimen>
+    <dimen name="narrow_padding_horizontal">8dp</dimen>
     <dimen name="default_button_padding">10dp</dimen>
     <dimen name="route_header_height">120dp</dimen>
     <dimen name="route_footer_height">60dp</dimen>
-    <dimen name="search_border_width">1dp</dimen>
+    <dimen name="divider_height">1dp</dimen>
+    <dimen name="icon_width">48dp</dimen>
+    <dimen name="icon_height">48dp</dimen>
 </resources>
