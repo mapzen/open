@@ -1,15 +1,5 @@
 package com.mapzen.activity;
 
-import android.content.Intent;
-import android.location.Location;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.SearchView;
-import com.google.android.gms.common.GooglePlayServicesClient;
-
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
@@ -21,6 +11,10 @@ import com.mapzen.shadows.ShadowLocationClient;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
+
+import com.google.android.gms.common.GooglePlayServicesClient;
+
+import org.fest.assertions.data.Offset;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -28,14 +22,22 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
+
+import android.content.Intent;
+import android.location.Location;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.SearchView;
 
 import java.util.ArrayList;
 
+import static android.location.LocationManager.GPS_PROVIDER;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
-import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
@@ -54,7 +56,6 @@ public class BaseActivityTest {
         menu = new TestMenu();
         activity = initBaseActivityWithMenu(menu);
         shadowLocationClient = Robolectric.shadowOf_(activity.getLocationClient());
-        initMapFragment(activity);
     }
 
     @Test
@@ -277,6 +278,24 @@ public class BaseActivityTest {
     }
 
     @Test
+    public void onConnect_shouldResetZoomLevel() throws Exception {
+        getMapController().setZoomLevel(1);
+        initLastLocation();
+        invokeOnConnected();
+        assertThat(getMapController().getZoomLevel()).isEqualTo(MapController.DEFAULT_ZOOMLEVEL);
+    }
+
+    @Test
+    public void onConnect_shouldFindMe() throws Exception {
+        initLastLocation();
+        invokeOnConnected();
+        assertThat(activity.getMapFragment().getMap().getMapPosition().getLatitude())
+                .isEqualTo(1.0, Offset.offset(0.1));
+        assertThat(activity.getMapFragment().getMap().getMapPosition().getLongitude())
+                .isEqualTo(2.0, Offset.offset(0.1));
+    }
+
+    @Test
     public void shouldHaveSuggestionsAdapter() throws Exception {
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         assertThat(searchView.getSuggestionsAdapter()).isNotNull();
@@ -287,5 +306,18 @@ public class BaseActivityTest {
         activity.executeSearchOnMap("query");
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         assertThat(searchView.getSuggestionsAdapter()).isNull();
+    }
+
+    private void initLastLocation() {
+        Location location = new Location(GPS_PROVIDER);
+        location.setLatitude(1.0);
+        location.setLongitude(2.0);
+        shadowLocationClient.setLastLocation(location);
+    }
+
+    private void invokeOnConnected() {
+        GooglePlayServicesClient.ConnectionCallbacks callbacks =
+                ((TestBaseActivity) activity).getConnectionCallback();
+        callbacks.onConnected(new Bundle());
     }
 }

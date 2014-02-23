@@ -1,10 +1,7 @@
 package org.oscim.map;
 
-import org.oscim.core.MapPosition;
-
 public class TestMap extends Map {
     private TestViewport viewport;
-    private MapPosition mapPosition;
 
     public TestMap() {
         super();
@@ -37,17 +34,6 @@ public class TestMap extends Map {
     @Override
     public int getHeight() {
         return 0;
-    }
-
-    @Override
-    public void setMapPosition(double latitude, double longitude, double scale) {
-        super.setMapPosition(latitude, longitude, scale);
-        mapPosition = new MapPosition(latitude, longitude, scale);
-    }
-
-    @Override
-    public MapPosition getMapPosition() {
-        return mapPosition;
     }
 
     @Override
