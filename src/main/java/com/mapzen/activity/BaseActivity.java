@@ -91,10 +91,10 @@ public class BaseActivity extends MapActivity {
         app = (MapzenApplication) getApplication();
         setContentView(R.layout.base);
         initMapFragment();
-        initLocationClient();
         progressDialogFragment = new MapzenProgressDialogFragment();
         dbHelper = new LocationDatabaseHelper(this);
         initMapController();
+        initLocationClient();
     }
 
     @Override
@@ -157,6 +157,8 @@ public class BaseActivity extends MapActivity {
         public void onConnected(Bundle bundle) {
             Location location = locationClient.getLastLocation();
             getMapController().setLocation(location);
+            getMapController().setZoomLevel(MapController.DEFAULT_ZOOMLEVEL);
+            mapFragment.findMe();
             Logger.d("Location: last location: " + location.toString());
             LocationRequest locationRequest = LocationRequest.create();
             locationRequest.setInterval(LOCATION_INTERVAL);
