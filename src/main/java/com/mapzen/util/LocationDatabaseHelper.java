@@ -1,5 +1,6 @@
 package com.mapzen.util;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
@@ -7,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
+
+import org.apache.http.entity.ContentProducer;
 
 import java.util.Locale;
 
@@ -68,31 +71,23 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(createRoutesSql);
     }
 
-    public static String insertSQLForLocationCorrection(Location location,
+    public static ContentValues valuesForLocationCorrection(Location location,
             Location correctedLocation,
             Instruction instruction, long routeId) {
-        String lat = String.valueOf(location.getLatitude());
-        String correctedLat = String.valueOf(correctedLocation.getLatitude());
-        String instructionLat = String.valueOf(instruction.getPoint()[0]);
-        String lng = String.valueOf(location.getLongitude());
-        String correctedLng = String.valueOf(correctedLocation.getLongitude());
-        String instructionLng = String.valueOf(instruction.getPoint()[1]);
-        String full = location.toString();
-        String provider = location.getProvider();
-        long time = System.currentTimeMillis();
-        float acc = location.getAccuracy();
-        String alt = String.valueOf(location.getAltitude());
-
-        String insertSql = String.format(Locale.ENGLISH, "insert into %s " +
-                "(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ",
-                TABLE_LOCATIONS, COLUMN_PROVIDER, COLUMN_LAT, COLUMN_LNG, COLUMN_DUMP, COLUMN_ALT,
-                COLUMN_ACC, COLUMN_TIME, COLUMN_CORRECTED_LAT, COLUMN_CORRECTED_LNG,
-                COLUMN_INSTRUCTION_LAT, COLUMN_INSTRUCTION_LNG, COLUMN_INSTRUCTION_BEARING,
-                COLUMN_ROUTE_ID);
-        String valuesSql = String.format(Locale.ENGLISH, "values (\"%s\", \"%s\", \"%s\", " +
-                "\"%s\", \"%s\", %.2f, %d, \"%s\", \"%s\", \"%s\", \"%s\", %d, %d)",
-                provider, lat, lng, full, alt, acc, time, correctedLat, correctedLng,
-                instructionLat, instructionLng, instruction.getBearing(), routeId);
-        return insertSql + valuesSql;
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PROVIDER, location.getProvider());
+        values.put(COLUMN_LAT, location.getLatitude());
+        values.put(COLUMN_LNG, location.getLongitude());
+        values.put(COLUMN_DUMP, location.toString());
+        values.put(COLUMN_ALT, location.getAltitude());
+        values.put(COLUMN_ACC, location.getAccuracy());
+        values.put(COLUMN_TIME, System.currentTimeMillis());
+        values.put(COLUMN_CORRECTED_LAT, correctedLocation.getLatitude());
+        values.put(COLUMN_CORRECTED_LNG, correctedLocation.getLongitude());
+        values.put(COLUMN_INSTRUCTION_LAT, instruction.getPoint()[0]);
+        values.put(COLUMN_INSTRUCTION_LNG, instruction.getPoint()[1]);
+        values.put(COLUMN_INSTRUCTION_BEARING, instruction.getBearing());
+        values.put(COLUMN_ROUTE_ID, routeId);
+        return values;
     }
 }

@@ -53,6 +53,10 @@ import butterknife.OnClick;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
+import static com.mapzen.util.LocationDatabaseHelper.COLUMN_RAW;
+import static com.mapzen.util.LocationDatabaseHelper.TABLE_LOCATIONS;
+import static com.mapzen.util.LocationDatabaseHelper.TABLE_ROUTES;
+import static com.mapzen.util.LocationDatabaseHelper.valuesForLocationCorrection;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
         ViewPager.OnPageChangeListener {
@@ -311,8 +315,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (act.isInDebugMode()) {
             SQLiteDatabase db = act.getDb();
             ContentValues insertValues = new ContentValues();
-            insertValues.put(LocationDatabaseHelper.COLUMN_RAW, rawRoute.toString());
-            routeId = db.insert(LocationDatabaseHelper.TABLE_ROUTES, null, insertValues);
+            insertValues.put(COLUMN_RAW, rawRoute.toString());
+            routeId = db.insert(TABLE_ROUTES, null, insertValues);
         }
         this.route = new Route(rawRoute);
         if (route.foundRoute()) {
@@ -395,8 +399,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void storeLocationInfo(Location location, Location correctedLocation) {
         SQLiteDatabase db = act.getDb();
-        db.execSQL(LocationDatabaseHelper.insertSQLForLocationCorrection(location,
-                correctedLocation, instructions.get(pager.getCurrentItem()), routeId));
+        db.insert(TABLE_LOCATIONS, null,
+                valuesForLocationCorrection(location,
+                        correctedLocation, instructions.get(pager.getCurrentItem()), routeId));
     }
 
     private static class RoutesAdapter extends PagerAdapter {
