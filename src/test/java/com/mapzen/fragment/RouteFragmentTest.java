@@ -7,6 +7,7 @@ import com.mapzen.osrm.Instruction;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
+import com.mapzen.support.TestHelper;
 import com.mapzen.util.LocationDatabaseHelper;
 import com.mapzen.widget.DistanceView;
 
@@ -46,6 +47,7 @@ import java.util.ArrayList;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
 import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
+import static com.mapzen.support.TestHelper.enableDebugMode;
 import static com.mapzen.support.TestHelper.getTestFeature;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static com.mapzen.support.TestHelper.initMapFragment;
@@ -137,7 +139,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreOriginalLocationRecordInDatabase() throws Exception {
-        enableDebugMode();
+        enableDebugMode(act);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(0, 0));
@@ -156,7 +158,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreCorrectedLocationRecordInDatabase() throws Exception {
-        enableDebugMode();
+        enableDebugMode(act);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(0, 0));
@@ -176,7 +178,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreInstructionPointsRecordInDatabase() throws Exception {
-        enableDebugMode();
+        enableDebugMode(act);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(99.0, 89.0));
         instructions.add(getTestInstruction(0, 0));
@@ -196,7 +198,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onRouteSuccess_shouldStoreRawJson() throws Exception {
-        enableDebugMode();
+        enableDebugMode(act);
         fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query("routes",
@@ -217,7 +219,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreInstructionBearingRecordInDatabase() throws Exception {
-        enableDebugMode();
+        enableDebugMode(act);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(99.0, 89.0));
         instructions.add(getTestInstruction(0, 0));
@@ -250,7 +252,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreAssociatedRoute() throws Exception {
-        enableDebugMode();
+        enableDebugMode(act);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(99.0, 89.0));
         instructions.add(getTestInstruction(0, 0));
@@ -613,13 +615,6 @@ public class RouteFragmentTest {
         testLocation.setLatitude(lat);
         testLocation.setLongitude(lng);
         return testLocation;
-    }
-
-    private void enableDebugMode() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
-        SharedPreferences.Editor prefEditor = prefs.edit();
-        prefEditor.putBoolean(act.getString(R.string.settings_key_debug), true);
-        prefEditor.commit();
     }
 
     private void setWalkingRadius(int expected) {

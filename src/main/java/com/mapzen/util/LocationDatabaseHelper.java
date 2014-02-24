@@ -31,6 +31,9 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_ROUTES = "routes";
     public static final String COLUMN_RAW = "raw";
     public static final String COLUMN_ROUTE_ID = "route_id";
+    public static final String TABLE_LOG_ENTRIES = "log_entries";
+    public static final String COLUMN_TAG = "tag";
+    public static final String COLUMN_MSG = "msg";
 
     private final String createLocationsSql = "create table " + TABLE_LOCATIONS + " ("
             + "_id integer primary key autoincrement,"
@@ -52,6 +55,11 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
             + "_id integer primary key autoincrement,"
             + COLUMN_RAW + " text not null)";
 
+    private final String createLogEntriesSql = "create table " + TABLE_LOG_ENTRIES + " ("
+            + "_id integer primary key autoincrement,"
+            + COLUMN_TAG + " text not null,"
+            + COLUMN_MSG + " text not null)";
+
     public LocationDatabaseHelper(Context context) {
         super(context, context.getExternalFilesDir(null).getAbsolutePath() + "/" + DB_NAME,
                 null, 1);
@@ -61,14 +69,17 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(createLocationsSql);
         db.execSQL(createRoutesSql);
+        db.execSQL(createLogEntriesSql);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("drop table " + TABLE_LOCATIONS);
         db.execSQL("drop table " + TABLE_ROUTES);
+        db.execSQL("drop table " + TABLE_LOG_ENTRIES);
         db.execSQL(createLocationsSql);
         db.execSQL(createRoutesSql);
+        db.execSQL(createLogEntriesSql);
     }
 
     public static ContentValues valuesForLocationCorrection(Location location,
