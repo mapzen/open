@@ -249,6 +249,22 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onLocationChange_shouldStoreAssociatedRoute() throws Exception {
+        enableDebugMode();
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(99.0, 89.0));
+        instructions.add(getTestInstruction(0, 0));
+        attachFragmentWith(instructions);
+        Location testLocation = getTestLocation(20.0, 30.0);
+        fragment.onLocationChanged(testLocation);
+        SQLiteDatabase db = act.getReadableDb();
+        Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIONS,
+                new String[]{LocationDatabaseHelper.COLUMN_ROUTE_ID},
+                "route_id = ?", new String[] {String.valueOf(fragment.getRouteId())}, null, null, null);
+        assertThat(cursor).hasCount(1);
+    }
+
+    @Test
     public void shouldHaveNextArrow() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));

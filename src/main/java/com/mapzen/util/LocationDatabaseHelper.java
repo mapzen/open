@@ -27,6 +27,7 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_LOCATIONS = "locations";
     public static final String TABLE_ROUTES = "routes";
     public static final String COLUMN_RAW = "raw";
+    public static final String COLUMN_ROUTE_ID = "route_id";
 
     private final String createLocationsSql = "create table " + TABLE_LOCATIONS + " ("
             + "_id integer primary key autoincrement,"
@@ -41,6 +42,7 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
             + COLUMN_ALT + " text not null,"
             + COLUMN_ACC + " integer not null,"
             + COLUMN_TIME + " numeric not null,"
+            + COLUMN_ROUTE_ID + " integer not null,"
             + COLUMN_DUMP + " text not null)";
 
     private final String createRoutesSql = "create table " + TABLE_ROUTES + " ("
@@ -68,7 +70,7 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
 
     public static String insertSQLForLocationCorrection(Location location,
             Location correctedLocation,
-            Instruction instruction) {
+            Instruction instruction, long routeId) {
         String lat = String.valueOf(location.getLatitude());
         String correctedLat = String.valueOf(correctedLocation.getLatitude());
         String instructionLat = String.valueOf(instruction.getPoint()[0]);
@@ -82,19 +84,15 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
         String alt = String.valueOf(location.getAltitude());
 
         String insertSql = String.format(Locale.ENGLISH, "insert into %s " +
-                "(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ",
+                "(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ",
                 TABLE_LOCATIONS, COLUMN_PROVIDER, COLUMN_LAT, COLUMN_LNG, COLUMN_DUMP, COLUMN_ALT,
                 COLUMN_ACC, COLUMN_TIME, COLUMN_CORRECTED_LAT, COLUMN_CORRECTED_LNG,
-                COLUMN_INSTRUCTION_LAT, COLUMN_INSTRUCTION_LNG, COLUMN_INSTRUCTION_BEARING);
+                COLUMN_INSTRUCTION_LAT, COLUMN_INSTRUCTION_LNG, COLUMN_INSTRUCTION_BEARING,
+                COLUMN_ROUTE_ID);
         String valuesSql = String.format(Locale.ENGLISH, "values (\"%s\", \"%s\", \"%s\", " +
-                "\"%s\", \"%s\", %.2f, %d, \"%s\", \"%s\", \"%s\", \"%s\", %d)",
+                "\"%s\", \"%s\", %.2f, %d, \"%s\", \"%s\", \"%s\", \"%s\", %d, %d)",
                 provider, lat, lng, full, alt, acc, time, correctedLat, correctedLng,
-                instructionLat, instructionLng, instruction.getBearing());
+                instructionLat, instructionLng, instruction.getBearing(), routeId);
         return insertSql + valuesSql;
-    }
-
-    public static String insertSQLForRoutes(String raw) {
-        return String.format(Locale.ENGLISH, "insert into %s ('raw') values (%s)", TABLE_ROUTES,
-                DatabaseUtils.sqlEscapeString(raw));
     }
 }

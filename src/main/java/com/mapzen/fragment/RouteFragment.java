@@ -16,6 +16,7 @@ import org.oscim.layers.PathLayer;
 import org.oscim.map.Map;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -72,6 +73,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private int previousPosition;
     private boolean locationPassThrough = false;
     private boolean hasFoundPath = false;
+    private long routeId;
 
     public static RouteFragment newInstance(BaseActivity act, Feature feature) {
         final RouteFragment fragment = new RouteFragment();
@@ -142,6 +144,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         super.onDetach();
         act.showActionBar();
         clearRoute();
+    }
+
+    public long getRouteId() {
+        return routeId;
     }
 
     public int getWalkingAdvanceRadius() {
@@ -304,7 +310,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void onRouteSuccess(JSONObject rawRoute) {
         if (act.isInDebugMode()) {
             SQLiteDatabase db = act.getDb();
-            db.execSQL(LocationDatabaseHelper.insertSQLForRoutes(rawRoute.toString()));
+            ContentValues insertValues = new ContentValues();
+            insertValues.put(LocationDatabaseHelper.COLUMN_RAW, rawRoute.toString());
+            routeId = db.insert(LocationDatabaseHelper.TABLE_ROUTES, null, insertValues);
         }
         this.route = new Route(rawRoute);
         if (route.foundRoute()) {
@@ -388,7 +396,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private void storeLocationInfo(Location location, Location correctedLocation) {
         SQLiteDatabase db = act.getDb();
         db.execSQL(LocationDatabaseHelper.insertSQLForLocationCorrection(location,
-                correctedLocation, instructions.get(pager.getCurrentItem())));
+                correctedLocation, instructions.get(pager.getCurrentItem()), routeId));
     }
 
     private static class RoutesAdapter extends PagerAdapter {
