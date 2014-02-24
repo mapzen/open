@@ -302,6 +302,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public void onRouteSuccess(JSONObject rawRoute) {
+        if (act.isInDebugMode()) {
+            SQLiteDatabase db = act.getDb();
+            db.execSQL(LocationDatabaseHelper.insertSQLForRoutes(rawRoute.toString()));
+        }
         this.route = new Route(rawRoute);
         if (route.foundRoute()) {
             setInstructions(route.getRouteInstructions());

@@ -1,10 +1,12 @@
 package com.mapzen.util;
 
 import android.content.Context;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
 import com.mapzen.osrm.Instruction;
+import com.mapzen.osrm.Route;
 
 import java.util.Locale;
 
@@ -23,8 +25,10 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_DUMP = "dump";
     public static final String DB_NAME = "locations.db";
     public static final String TABLE_LOCATIONS = "locations";
+    public static final String TABLE_ROUTES = "routes";
+    public static final String COLUMN_RAW = "raw";
 
-    private final String sql = "create table " + TABLE_LOCATIONS + " ("
+    private final String createLocationsSql = "create table " + TABLE_LOCATIONS + " ("
             + "_id integer primary key autoincrement,"
             + COLUMN_PROVIDER + " text not null,"
             + COLUMN_LAT + " text not null,"
@@ -39,6 +43,10 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
             + COLUMN_TIME + " numeric not null,"
             + COLUMN_DUMP + " text not null)";
 
+    private final String createRoutesSql = "create table " + TABLE_ROUTES + " ("
+            + "_id integer primary key autoincrement,"
+            + COLUMN_RAW + " text not null)";
+
     public LocationDatabaseHelper(Context context) {
         super(context, context.getExternalFilesDir(null).getAbsolutePath() + "/" + DB_NAME,
                 null, 1);
@@ -46,13 +54,16 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(sql);
+        db.execSQL(createLocationsSql);
+        db.execSQL(createRoutesSql);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("drop table locations");
-        db.execSQL(sql);
+        db.execSQL("drop table " + TABLE_LOCATIONS);
+        db.execSQL("drop table " + TABLE_ROUTES);
+        db.execSQL(createLocationsSql);
+        db.execSQL(createRoutesSql);
     }
 
     public static String insertSQLForLocationCorrection(Location location,
@@ -80,5 +91,10 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
                 provider, lat, lng, full, alt, acc, time, correctedLat, correctedLng,
                 instructionLat, instructionLng, instruction.getBearing());
         return insertSql + valuesSql;
+    }
+
+    public static String insertSQLForRoutes(String raw) {
+        return String.format(Locale.ENGLISH, "insert into %s ('raw') values (%s)", TABLE_ROUTES,
+                DatabaseUtils.sqlEscapeString(raw));
     }
 }

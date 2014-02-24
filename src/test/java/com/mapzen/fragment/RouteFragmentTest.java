@@ -195,6 +195,27 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onRouteSuccess_shouldStoreRawJson() throws Exception {
+        enableDebugMode();
+        fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
+        SQLiteDatabase db = act.getReadableDb();
+        Cursor cursor = db.query("routes",
+                new String[]{"raw"},
+                null, null, null, null, null);
+        assertThat(cursor).hasCount(1);
+    }
+
+    @Test
+    public void onRouteSuccess_shouldNoteStoreRawJson() throws Exception {
+        fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
+        SQLiteDatabase db = act.getReadableDb();
+        Cursor cursor = db.query("routes",
+                new String[]{"raw"},
+                null, null, null, null, null);
+        assertThat(cursor).hasCount(0);
+    }
+
+    @Test
     public void onLocationChange_shouldStoreInstructionBearingRecordInDatabase() throws Exception {
         enableDebugMode();
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
