@@ -4,8 +4,6 @@
     <string name="application_name">Mapzen</string>
     <string name="results_title">Results</string>
     <string name="search_title">Search</string>
-    <string name="tiles_source_url_key">url</string>
-    <string name="tiles_source_url">http://opensciencemap.org/tiles/vtm</string>
     <string name="generic_server_down">Server is down</string>
     <string name="request_timed_out">Timeout error</string>
     <string name="no_internet">Device doesn\'t have connection</string>
@@ -32,5 +30,9 @@
     <string name="settings_walking_advance_radius_dialog_title">In Meters</string>
     <string name="settings_key_debug">checkbox_debug</string>
     <string name="settings_key_walking_advance_radius">edittext_walking_advance_radius</string>
-
+    <string name="settings_key_mapsource">edittext_mapsource</string>
+    <string name="settings_default_mapsource">http://opensciencemap.org/tiles/vtm</string>
+    <string name="settings_mapsource_dialog_title">Configure Map Tile source</string>
+    <string name="settings_mapsource">Configure Tile server</string>
+    <string name="settings_mapsource_summary">This takes url of the tile service (remember to flush caches)</string>
 </resources>

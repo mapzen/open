@@ -1,5 +1,6 @@
 package com.mapzen.fragment;
 
+import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.support.FakeMotionEvent;
@@ -15,6 +16,9 @@ import org.oscim.map.TestMap;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLog;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 import static com.mapzen.support.TestHelper.getTestFeature;
 import static com.mapzen.support.TestHelper.initBaseActivity;
 import static org.fest.assertions.api.ANDROID.assertThat;
@@ -26,10 +30,11 @@ import static org.robolectric.util.FragmentTestUtil.startFragment;
 public class MapFragmentTest {
     private MapFragment mapFragment;
     private TestPoiClickListener listener;
+    private BaseActivity activity;
 
     @Before
     public void setUp() throws Exception {
-        BaseActivity activity = initBaseActivity();
+        activity = initBaseActivity();
         ShadowLog.stream = System.out;
         listener = new TestPoiClickListener();
         mapFragment = new MapFragment();
@@ -132,5 +137,27 @@ public class MapFragmentTest {
         mapFragment.onResume();
         ItemizedLayer<MarkerItem> poiMarkerLayer = mapFragment.getPoiLayer();
         assertThat(poiMarkerLayer.size()).isZero();
+    }
+
+    @Test
+    public void shouldPointToDefaultTileService() throws Exception {
+        assertThat(mapFragment.getTileBaseSource()).isEqualTo(
+                mapFragment.getActivity().getResources().getString(
+                        R.string.settings_default_mapsource));
+    }
+
+    @Test
+    public void shouldPointToConfiguredTileService() throws Exception {
+        String expected = "http://test.com";
+        setTileSourceConfiguration(expected);
+        assertThat(mapFragment.getTileBaseSource()).isEqualTo(expected);
+    }
+
+    private void setTileSourceConfiguration(String source) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
+                activity);
+        SharedPreferences.Editor prefEditor = prefs.edit();
+        prefEditor.putString(activity.getString(R.string.settings_key_mapsource), source);
+        prefEditor.commit();
     }
 }
