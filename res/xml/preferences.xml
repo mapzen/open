@@ -15,6 +15,14 @@
             android:summary="@string/settings_walking_advance_radius_summary"
             android:title="@string/settings_walking_advance_radius" />
 
+        <EditTextPreference
+            android:dialogTitle="@string/settings_mapsource_dialog_title"
+            android:defaultValue="@string/settings_default_mapsource"
+            android:key="@string/settings_key_mapsource"
+            android:inputType="textUri"
+            android:summary="@string/settings_mapsource_summary"
+            android:title="@string/settings_mapsource" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

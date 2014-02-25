@@ -1,7 +1,9 @@
 package com.mapzen.fragment;
 
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +26,6 @@ import org.oscim.layers.tile.vector.VectorTileLayer;
 import org.oscim.layers.tile.vector.labeling.LabelLayer;
 import org.oscim.map.Map;
 import org.oscim.theme.InternalRenderTheme;
-import org.oscim.tiling.source.TileSource;
 import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 
 import java.io.InputStream;
@@ -115,8 +116,10 @@ public class MapFragment extends BaseFragment {
         poiMarkersLayer.addItem(markerItem);
     }
 
-    private TileSource getTileBase() {
-        return new OSciMap4TileSource(getString(R.string.tiles_source_url));
+    public String getTileBaseSource() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
+        return prefs.getString(getString(R.string.settings_key_mapsource),
+                getString(R.string.settings_default_mapsource));
     }
 
     private PoiItemizedLayer buildPoiMarkersLayer() {
@@ -150,7 +153,7 @@ public class MapFragment extends BaseFragment {
     }
 
     private void setupMap() {
-        baseLayer = map.setBaseMap(getTileBase());
+        baseLayer = map.setBaseMap(new OSciMap4TileSource(getTileBaseSource()));
         map.layers().add(new BuildingLayer(map, baseLayer));
         map.layers().add(new LabelLayer(map, baseLayer));
 
