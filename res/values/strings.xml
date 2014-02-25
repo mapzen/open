@@ -30,7 +30,7 @@
     <string name="settings_walking_advance_radius_dialog_title">In Meters</string>
     <string name="settings_key_debug">checkbox_debug</string>
     <string name="settings_key_walking_advance_radius">edittext_walking_advance_radius</string>
-    <string name="settings_key_mapsource">edittest_mapsource</string>
+    <string name="settings_key_mapsource">edittext_mapsource</string>
     <string name="settings_default_mapsource">http://opensciencemap.org/tiles/vtm</string>
     <string name="settings_mapsource_dialog_title">Configure Map Tile source</string>
     <string name="settings_mapsource">Configure Tile server</string>
