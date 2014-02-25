@@ -52,9 +52,13 @@ import butterknife.OnClick;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
+import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
+import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
+import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
 import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
+import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
 import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
@@ -310,6 +314,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return pager.getCurrentItem();
     }
 
+    public void setRoute(Route route) {
+        this.route = route;
+    }
+
     public void onRouteSuccess(JSONObject rawRoute) {
         if (act.isInDebugMode()) {
             SQLiteDatabase db = act.getDb();
@@ -317,7 +325,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             insertValues.put(COLUMN_RAW, rawRoute.toString());
             routeId = db.insert(TABLE_ROUTES, null, insertValues);
         }
-        this.route = new Route(rawRoute);
+        setRoute(new Route(rawRoute));
         if (route.foundRoute()) {
             setInstructions(route.getRouteInstructions());
             drawRoute();
@@ -335,8 +343,20 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         layer.clearPath();
         if (route != null) {
             for (double[] pair : route.getGeometry()) {
+                addCoordinateToDatabase(pair);
                 layer.addPoint(new GeoPoint(pair[0], pair[1]));
             }
+        }
+    }
+
+    private void addCoordinateToDatabase(double[] pair) {
+        if (act.isInDebugMode()) {
+            SQLiteDatabase db = act.getDb();
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_ROUTE_ID, routeId);
+            values.put(COLUMN_LAT, pair[0]);
+            values.put(COLUMN_LNG, pair[1]);
+            db.insert(TABLE_ROUTE_GEOMETRY, null, values);
         }
     }
 
