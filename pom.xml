@@ -169,7 +169,21 @@
                     <sdk>
                         <platform>19</platform>
                     </sdk>
+                    <lint>
+                        <skip>false</skip>
+                        <failOnError>true</failOnError>
+                        <warningsAsErrors>true</warningsAsErrors>
+                    </lint>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>lint</id>
+                        <goals>
+                            <goal>lint</goal>
+                        </goals>
+                        <phase>install</phase>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>

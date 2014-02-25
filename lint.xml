@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
+
     <issue id="IconMissingDensityFolder" severity="ignore" />
     <issue id="IconLocation" severity="ignore" />
-    <issue id="UnusedResources" severity="ignore">
-	<ignore path="app/src/main/res/values/com_crashlytics_export_strings.xml" />
-    </issue>
-    <issue id="TypographyDashes" severity="ignore">
-	<ignore path="app/src/main/res/values/com_crashlytics_export_strings.xml" />
+    <issue id="UnusedResources">
+        <ignore path="res/layout/dummy.xml" />
     </issue>
     <issue id="InvalidPackage" severity="ignore" />
+    <issue id="UseCompoundDrawables" severity="ignore" />
+
 </lint>
 
