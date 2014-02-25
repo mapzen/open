@@ -50,6 +50,8 @@ import static com.mapzen.support.TestHelper.enableDebugMode;
 import static com.mapzen.support.TestHelper.getTestFeature;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static com.mapzen.support.TestHelper.initMapFragment;
+import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
+import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.shadowOf;
@@ -202,8 +204,8 @@ public class RouteFragmentTest {
         enableDebugMode(act);
         fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
         SQLiteDatabase db = act.getReadableDb();
-        Cursor cursor = db.query("routes",
-                new String[]{"raw"},
+        Cursor cursor = db.query(TABLE_ROUTES,
+                new String[]{ COLUMN_RAW},
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
     }
@@ -212,8 +214,8 @@ public class RouteFragmentTest {
     public void onRouteSuccess_shouldNoteStoreRawJson() throws Exception {
         fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
         SQLiteDatabase db = act.getReadableDb();
-        Cursor cursor = db.query("routes",
-                new String[]{"raw"},
+        Cursor cursor = db.query(TABLE_ROUTES,
+                new String[]{ COLUMN_RAW},
                 null, null, null, null, null);
         assertThat(cursor).hasCount(0);
     }
