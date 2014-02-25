@@ -1,6 +1,9 @@
 package com.mapzen.support;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
@@ -77,5 +80,12 @@ public final class TestHelper {
             fixture = "not found";
         }
         return fixture;
+    }
+
+    public static void enableDebugMode(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor prefEditor = prefs.edit();
+        prefEditor.putBoolean(context.getString(R.string.settings_key_debug), true);
+        prefEditor.commit();
     }
 }

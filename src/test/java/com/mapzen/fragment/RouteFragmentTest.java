@@ -4,10 +4,11 @@ import com.mapzen.R;
 import com.mapzen.entity.Feature;
 import com.mapzen.geo.DistanceFormatter;
 import com.mapzen.osrm.Instruction;
+import com.mapzen.osrm.Route;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
-import com.mapzen.util.LocationDatabaseHelper;
+import com.mapzen.util.DatabaseHelper;
 import com.mapzen.widget.DistanceView;
 
 import org.json.JSONArray;
@@ -46,9 +47,14 @@ import java.util.ArrayList;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
 import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
+import static com.mapzen.support.TestHelper.enableDebugMode;
 import static com.mapzen.support.TestHelper.getTestFeature;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static com.mapzen.support.TestHelper.initMapFragment;
+import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
+import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
+import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
+import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.shadowOf;
@@ -137,7 +143,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreOriginalLocationRecordInDatabase() throws Exception {
-        enableDebugMode();
+        enableDebugMode(act);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(0, 0));
@@ -145,8 +151,8 @@ public class RouteFragmentTest {
         Location testLocation = getTestLocation(20.0, 30.0);
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
-        Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIONS,
-                new String[]{LocationDatabaseHelper.COLUMN_LAT, LocationDatabaseHelper.COLUMN_LNG},
+        Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
+                new String[]{ DatabaseHelper.COLUMN_LAT, DatabaseHelper.COLUMN_LNG},
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
         cursor.moveToNext();
@@ -156,7 +162,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreCorrectedLocationRecordInDatabase() throws Exception {
-        enableDebugMode();
+        enableDebugMode(act);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(0, 0));
@@ -164,9 +170,10 @@ public class RouteFragmentTest {
         Location testLocation = getTestLocation(20.0, 30.0);
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
-        Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIONS,
-                new String[]{LocationDatabaseHelper.COLUMN_CORRECTED_LAT,
-                        LocationDatabaseHelper.COLUMN_CORRECTED_LNG},
+        Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
+                new String[]{
+                        DatabaseHelper.COLUMN_CORRECTED_LAT,
+                        DatabaseHelper.COLUMN_CORRECTED_LNG},
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
         cursor.moveToNext();
@@ -176,7 +183,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreInstructionPointsRecordInDatabase() throws Exception {
-        enableDebugMode();
+        enableDebugMode(act);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(99.0, 89.0));
         instructions.add(getTestInstruction(0, 0));
@@ -184,9 +191,10 @@ public class RouteFragmentTest {
         Location testLocation = getTestLocation(20.0, 30.0);
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
-        Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIONS,
-                new String[]{LocationDatabaseHelper.COLUMN_INSTRUCTION_LAT,
-                        LocationDatabaseHelper.COLUMN_INSTRUCTION_LNG},
+        Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
+                new String[]{
+                        DatabaseHelper.COLUMN_INSTRUCTION_LAT,
+                        DatabaseHelper.COLUMN_INSTRUCTION_LNG},
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
         cursor.moveToNext();
@@ -195,8 +203,54 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onRouteSuccess_shouldStoreRawJson() throws Exception {
+        enableDebugMode(act);
+        fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
+        SQLiteDatabase db = act.getReadableDb();
+        Cursor cursor = db.query(TABLE_ROUTES,
+                new String[]{ COLUMN_RAW},
+                null, null, null, null, null);
+        assertThat(cursor).hasCount(1);
+    }
+
+    @Test
+    public void onRouteSuccess_shouldNoteStoreRawJson() throws Exception {
+        fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
+        SQLiteDatabase db = act.getReadableDb();
+        Cursor cursor = db.query(TABLE_ROUTES,
+                new String[]{ COLUMN_RAW},
+                null, null, null, null, null);
+        assertThat(cursor).hasCount(0);
+    }
+
+    @Test
+    public void drawRoute_shouldStoreCoordinates() throws Exception {
+        enableDebugMode(act);
+        fragment.setRoute(new Route(new JSONObject(MOCK_ROUTE_JSON)));
+        fragment.onResume();
+        SQLiteDatabase db = act.getReadableDb();
+        Cursor cursor = db.query(TABLE_ROUTE_GEOMETRY,
+                new String[]{COLUMN_ROUTE_ID},
+                COLUMN_ROUTE_ID + " = ?",
+                new String[] {String.valueOf(fragment.getRouteId())}, null, null, null);
+        assertThat(cursor).hasCount(fragment.getRoute().getGeometry().size());
+    }
+
+    @Test
+    public void drawRoute_shouldNotStoreCoordinates() throws Exception {
+        fragment.setRoute(new Route(new JSONObject(MOCK_ROUTE_JSON)));
+        fragment.onResume();
+        SQLiteDatabase db = act.getReadableDb();
+        Cursor cursor = db.query(TABLE_ROUTE_GEOMETRY,
+                new String[]{COLUMN_ROUTE_ID},
+                COLUMN_ROUTE_ID + " = ?",
+                new String[] {String.valueOf(fragment.getRouteId())}, null, null, null);
+        assertThat(cursor).hasCount(0);
+    }
+
+    @Test
     public void onLocationChange_shouldStoreInstructionBearingRecordInDatabase() throws Exception {
-        enableDebugMode();
+        enableDebugMode(act);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(99.0, 89.0));
         instructions.add(getTestInstruction(0, 0));
@@ -204,8 +258,8 @@ public class RouteFragmentTest {
         Location testLocation = getTestLocation(20.0, 30.0);
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
-        Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIONS,
-                new String[]{LocationDatabaseHelper.COLUMN_INSTRUCTION_BEARING},
+        Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
+                new String[]{ DatabaseHelper.COLUMN_INSTRUCTION_BEARING},
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
         cursor.moveToNext();
@@ -221,10 +275,27 @@ public class RouteFragmentTest {
         Location testLocation = getTestLocation(20.0, 30.0);
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
-        Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIONS,
-                new String[]{LocationDatabaseHelper.COLUMN_INSTRUCTION_BEARING},
+        Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
+                new String[]{ DatabaseHelper.COLUMN_INSTRUCTION_BEARING},
                 null, null, null, null, null);
         assertThat(cursor).hasCount(0);
+    }
+
+    @Test
+    public void onLocationChange_shouldStoreAssociatedRoute() throws Exception {
+        enableDebugMode(act);
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(99.0, 89.0));
+        instructions.add(getTestInstruction(0, 0));
+        attachFragmentWith(instructions);
+        Location testLocation = getTestLocation(20.0, 30.0);
+        fragment.onLocationChanged(testLocation);
+        SQLiteDatabase db = act.getReadableDb();
+        Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
+                new String[]{ COLUMN_ROUTE_ID},
+                COLUMN_ROUTE_ID + " = ?",
+                new String[] {String.valueOf(fragment.getRouteId())}, null, null, null);
+        assertThat(cursor).hasCount(1);
     }
 
     @Test
@@ -576,13 +647,6 @@ public class RouteFragmentTest {
         testLocation.setLatitude(lat);
         testLocation.setLongitude(lng);
         return testLocation;
-    }
-
-    private void enableDebugMode() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
-        SharedPreferences.Editor prefEditor = prefs.edit();
-        prefEditor.putBoolean(act.getString(R.string.settings_key_debug), true);
-        prefEditor.commit();
     }
 
     private void setWalkingRadius(int expected) {

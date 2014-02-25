@@ -6,7 +6,6 @@ import com.mapzen.entity.Feature;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.util.DisplayHelper;
-import com.mapzen.util.LocationDatabaseHelper;
 import com.mapzen.util.Logger;
 import com.mapzen.widget.DistanceView;
 
@@ -16,6 +15,7 @@ import org.oscim.layers.PathLayer;
 import org.oscim.map.Map;
 
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -52,6 +52,14 @@ import butterknife.OnClick;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
+import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
+import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
+import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
+import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
+import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
+import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
+import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
+import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
         ViewPager.OnPageChangeListener {
@@ -72,6 +80,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private int previousPosition;
     private boolean locationPassThrough = false;
     private boolean hasFoundPath = false;
+    private long routeId;
 
     public static RouteFragment newInstance(BaseActivity act, Feature feature) {
         final RouteFragment fragment = new RouteFragment();
@@ -142,6 +151,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         super.onDetach();
         act.showActionBar();
         clearRoute();
+    }
+
+    public long getRouteId() {
+        return routeId;
     }
 
     public int getWalkingAdvanceRadius() {
@@ -301,8 +314,18 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return pager.getCurrentItem();
     }
 
+    public void setRoute(Route route) {
+        this.route = route;
+    }
+
     public void onRouteSuccess(JSONObject rawRoute) {
-        this.route = new Route(rawRoute);
+        if (act.isInDebugMode()) {
+            SQLiteDatabase db = act.getDb();
+            ContentValues insertValues = new ContentValues();
+            insertValues.put(COLUMN_RAW, rawRoute.toString());
+            routeId = db.insert(TABLE_ROUTES, null, insertValues);
+        }
+        setRoute(new Route(rawRoute));
         if (route.foundRoute()) {
             setInstructions(route.getRouteInstructions());
             drawRoute();
@@ -320,8 +343,20 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         layer.clearPath();
         if (route != null) {
             for (double[] pair : route.getGeometry()) {
+                addCoordinateToDatabase(pair);
                 layer.addPoint(new GeoPoint(pair[0], pair[1]));
             }
+        }
+    }
+
+    private void addCoordinateToDatabase(double[] pair) {
+        if (act.isInDebugMode()) {
+            SQLiteDatabase db = act.getDb();
+            ContentValues values = new ContentValues();
+            values.put(COLUMN_ROUTE_ID, routeId);
+            values.put(COLUMN_LAT, pair[0]);
+            values.put(COLUMN_LNG, pair[1]);
+            db.insert(TABLE_ROUTE_GEOMETRY, null, values);
         }
     }
 
@@ -383,8 +418,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void storeLocationInfo(Location location, Location correctedLocation) {
         SQLiteDatabase db = act.getDb();
-        db.execSQL(LocationDatabaseHelper.insertSQLForLocationCorrection(location,
-                correctedLocation, instructions.get(pager.getCurrentItem())));
+        db.insert(TABLE_LOCATIONS, null,
+                valuesForLocationCorrection(location,
+                        correctedLocation, instructions.get(pager.getCurrentItem()), routeId));
     }
 
     private static class RoutesAdapter extends PagerAdapter {
