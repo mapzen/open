@@ -142,7 +142,8 @@ public class MapFragmentTest {
     @Test
     public void shouldPointToDefaultTileService() throws Exception {
         assertThat(mapFragment.getTileBaseSource()).isEqualTo(
-                mapFragment.getActivity().getResources().getString(R.string.settings_default_mapsource));
+                mapFragment.getActivity().getResources().getString(
+                        R.string.settings_default_mapsource));
     }
 
     @Test
