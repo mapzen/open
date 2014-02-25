@@ -30,6 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TAG = "tag";
     public static final String COLUMN_MSG = "msg";
     public static final String TABLE_ROUTE_GEOMETRY = "route_geometry";
+    public static final int VERSION = 2;
 
     private final String createLocationsSql = "create table " + TABLE_LOCATIONS + " ("
             + "_id integer primary key autoincrement,"
@@ -64,7 +65,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public DatabaseHelper(Context context) {
         super(context, context.getExternalFilesDir(null).getAbsolutePath() + "/" + DB_NAME,
-                null, 1);
+                null, VERSION);
     }
 
     @Override
