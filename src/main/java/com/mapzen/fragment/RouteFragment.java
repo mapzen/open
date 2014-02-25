@@ -95,7 +95,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.route_widget, container, false);
         ButterKnife.inject(this, rootView);
-        adapter = new RoutesAdapter(act, this, instructions);
+        adapter = new RoutesAdapter(act, instructions);
         TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
         destinationName.setText(feature.getProperty(NAME));
         distanceLeftView = (DistanceView) rootView.findViewById(R.id.destination_distance);
@@ -425,14 +425,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private static class RoutesAdapter extends PagerAdapter {
         private List<Instruction> instructions = new ArrayList<Instruction>();
-        private RouteFragment parent;
         private Context context;
 
-        public RoutesAdapter(Context context, RouteFragment parent,
-                List<Instruction> instructions) {
+        public RoutesAdapter(Context context, List<Instruction> instructions) {
             this.context = context;
             this.instructions = instructions;
-            this.parent = parent;
         }
 
         @Override
@@ -458,27 +455,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             turnIcon.setImageResource(DisplayHelper.getRouteDrawable(context,
                     instruction.getTurnInstruction(), DisplayHelper.IconStyle.WHITE));
 
-            if (instructions.size() != position + 1) {
-                ImageButton next = (ImageButton) view.findViewById(R.id.route_next);
-                next.setVisibility(View.VISIBLE);
-                next.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        parent.goToNextInstruction();
-                    }
-                });
-            }
-
-            if (position > 0) {
-                ImageButton prev = (ImageButton) view.findViewById(R.id.route_previous);
-                prev.setVisibility(View.VISIBLE);
-                prev.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        parent.goToPrevInstruction();
-                    }
-                });
-            }
             container.addView(view);
             return view;
         }

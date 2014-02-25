@@ -299,45 +299,6 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void shouldHaveNextArrow() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-        assertThat(getInstructionView(0).findViewById(R.id.route_next)).isVisible();
-    }
-
-    @Test
-    public void shouldNotHaveNextArrow() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-        assertThat(getInstructionView(0).findViewById(R.id.route_next)).isNotVisible();
-    }
-
-    @Test
-    public void shouldHavePrevArrow() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-        assertThat(getInstructionView(1).findViewById(R.id.route_previous)).isVisible();
-    }
-
-    @Test
-    public void shouldNotHavePrevArrow() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-        assertThat(getInstructionView(0).findViewById(R.id.route_previous)).isNotVisible();
-    }
-
-    @Test
     public void shouldRegisterReceiver() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         assertThat(app.hasReceiverForIntent(new Intent(COM_MAPZEN_UPDATES_LOCATION))).isTrue();
@@ -416,25 +377,6 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void shouldDecreaseDistanceOnAdvanceViaClick() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        Instruction firstInstruction = getTestInstruction(0, 0);
-        firstInstruction.setDistance(5);
-        instructions.add(firstInstruction);
-        instructions.add(getTestInstruction(0, 0));
-        fragment.setInstructions(instructions);
-        attachFragment();
-        int expectedDistance = fragment.getRoute().getTotalDistance()
-                - firstInstruction.getDistance();
-        String expectedFormattedDistance = DistanceFormatter.format(expectedDistance, true);
-        fragment.setInstructions(instructions);
-        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        DistanceView textView = (DistanceView) view.findViewById(R.id.destination_distance);
-        getInstructionView(0).findViewById(R.id.route_next).performClick();
-        assertThat(textView.getText()).isEqualTo(expectedFormattedDistance);
-    }
-
-    @Test
     public void shouldDecreaseDistanceOnAdvanceViaSwipe() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction firstInstruction = getTestInstruction(0, 0);
@@ -450,23 +392,6 @@ public class RouteFragmentTest {
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
         DistanceView textView = (DistanceView) view.findViewById(R.id.destination_distance);
         fragment.onPageSelected(1);
-        assertThat(textView.getText()).isEqualTo(expectedFormattedDistance);
-    }
-
-    @Test
-    public void shouldIncreaseDistanceOnRegressViaClick() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        fragment.setInstructions(instructions);
-        attachFragment();
-        fragment.setInstructions(instructions);
-        int expectedDistance = fragment.getRoute().getTotalDistance();
-        String expectedFormattedDistance = DistanceFormatter.format(expectedDistance, true);
-        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        DistanceView textView = (DistanceView) view.findViewById(R.id.destination_distance);
-        fragment.goToNextInstruction();
-        getInstructionView(1).findViewById(R.id.route_previous).performClick();
         assertThat(textView.getText()).isEqualTo(expectedFormattedDistance);
     }
 

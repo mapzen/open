@@ -5,17 +5,6 @@
     android:layout_height="120dp"
     android:layout_gravity="fill_horizontal">
 
-    <ImageButton
-        android:id="@+id/route_previous"
-        android:contentDescription="@string/route_previous"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:padding="@dimen/default_button_padding"
-        android:visibility="invisible"
-        android:background="@null"
-        android:src="@drawable/ic_wh_previous" />
-
     <ImageView
         android:id="@+id/turn_icon"
         android:contentDescription="@string/route_description"
@@ -31,17 +20,6 @@
         android:textSize="20sp"
         android:layout_margin="@dimen/default_margin"
         android:layout_height="wrap_content" />
-
-    <ImageButton
-        android:id="@+id/route_next"
-        android:contentDescription="@string/route_next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:padding="@dimen/default_button_padding"
-        android:visibility="invisible"
-        android:background="@null"
-        android:src="@drawable/ic_wh_next" />
 
  </LinearLayout>
 
