@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
 
-public class LocationDatabaseHelper extends SQLiteOpenHelper {
+public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_PROVIDER = "provider";
     public static final String COLUMN_LAT = "lat";
     public static final String COLUMN_CORRECTED_LAT = "corrected_lat";
@@ -55,7 +55,7 @@ public class LocationDatabaseHelper extends SQLiteOpenHelper {
             + COLUMN_TAG + " text not null,"
             + COLUMN_MSG + " text not null)";
 
-    public LocationDatabaseHelper(Context context) {
+    public DatabaseHelper(Context context) {
         super(context, context.getExternalFilesDir(null).getAbsolutePath() + "/" + DB_NAME,
                 null, 1);
     }

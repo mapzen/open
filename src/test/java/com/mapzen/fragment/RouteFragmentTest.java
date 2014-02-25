@@ -7,8 +7,7 @@ import com.mapzen.osrm.Instruction;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
-import com.mapzen.support.TestHelper;
-import com.mapzen.util.LocationDatabaseHelper;
+import com.mapzen.util.DatabaseHelper;
 import com.mapzen.widget.DistanceView;
 
 import org.json.JSONArray;
@@ -147,8 +146,8 @@ public class RouteFragmentTest {
         Location testLocation = getTestLocation(20.0, 30.0);
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
-        Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIONS,
-                new String[]{LocationDatabaseHelper.COLUMN_LAT, LocationDatabaseHelper.COLUMN_LNG},
+        Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
+                new String[]{ DatabaseHelper.COLUMN_LAT, DatabaseHelper.COLUMN_LNG},
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
         cursor.moveToNext();
@@ -166,9 +165,10 @@ public class RouteFragmentTest {
         Location testLocation = getTestLocation(20.0, 30.0);
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
-        Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIONS,
-                new String[]{LocationDatabaseHelper.COLUMN_CORRECTED_LAT,
-                        LocationDatabaseHelper.COLUMN_CORRECTED_LNG},
+        Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
+                new String[]{
+                        DatabaseHelper.COLUMN_CORRECTED_LAT,
+                        DatabaseHelper.COLUMN_CORRECTED_LNG},
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
         cursor.moveToNext();
@@ -186,9 +186,10 @@ public class RouteFragmentTest {
         Location testLocation = getTestLocation(20.0, 30.0);
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
-        Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIONS,
-                new String[]{LocationDatabaseHelper.COLUMN_INSTRUCTION_LAT,
-                        LocationDatabaseHelper.COLUMN_INSTRUCTION_LNG},
+        Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
+                new String[]{
+                        DatabaseHelper.COLUMN_INSTRUCTION_LAT,
+                        DatabaseHelper.COLUMN_INSTRUCTION_LNG},
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
         cursor.moveToNext();
@@ -227,8 +228,8 @@ public class RouteFragmentTest {
         Location testLocation = getTestLocation(20.0, 30.0);
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
-        Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIONS,
-                new String[]{LocationDatabaseHelper.COLUMN_INSTRUCTION_BEARING},
+        Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
+                new String[]{ DatabaseHelper.COLUMN_INSTRUCTION_BEARING},
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
         cursor.moveToNext();
@@ -244,8 +245,8 @@ public class RouteFragmentTest {
         Location testLocation = getTestLocation(20.0, 30.0);
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
-        Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIONS,
-                new String[]{LocationDatabaseHelper.COLUMN_INSTRUCTION_BEARING},
+        Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
+                new String[]{ DatabaseHelper.COLUMN_INSTRUCTION_BEARING},
                 null, null, null, null, null);
         assertThat(cursor).hasCount(0);
     }
@@ -260,8 +261,8 @@ public class RouteFragmentTest {
         Location testLocation = getTestLocation(20.0, 30.0);
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
-        Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOCATIONS,
-                new String[]{LocationDatabaseHelper.COLUMN_ROUTE_ID},
+        Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
+                new String[]{ DatabaseHelper.COLUMN_ROUTE_ID},
                 "route_id = ?", new String[] {String.valueOf(fragment.getRouteId())}, null, null, null);
         assertThat(cursor).hasCount(1);
     }

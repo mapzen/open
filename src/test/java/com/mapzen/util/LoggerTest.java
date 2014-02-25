@@ -1,6 +1,5 @@
 package com.mapzen.util;
 
-import com.mapzen.activity.BaseActivity;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.support.TestHelper;
@@ -32,8 +31,8 @@ public class LoggerTest {
         TestHelper.enableDebugMode(activity);
         Logger.logToDatabase(activity, "tag", "message");
         SQLiteDatabase db = activity.getReadableDb();
-        Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOG_ENTRIES,
-                new String[]{LocationDatabaseHelper.COLUMN_TAG, LocationDatabaseHelper.COLUMN_MSG},
+        Cursor cursor = db.query(DatabaseHelper.TABLE_LOG_ENTRIES,
+                new String[]{ DatabaseHelper.COLUMN_TAG, DatabaseHelper.COLUMN_MSG},
                 "tag = ? AND msg = ?", new String[] {"tag", "message"}, null, null, null);
         assertThat(cursor).hasCount(1);
     }
@@ -42,8 +41,8 @@ public class LoggerTest {
     public void logToDatabase_shouldNotWriteToDatabase() throws Exception {
         Logger.logToDatabase(activity, "tag", "message");
         SQLiteDatabase db = activity.getReadableDb();
-        Cursor cursor = db.query(LocationDatabaseHelper.TABLE_LOG_ENTRIES,
-                new String[]{LocationDatabaseHelper.COLUMN_TAG, LocationDatabaseHelper.COLUMN_MSG},
+        Cursor cursor = db.query(DatabaseHelper.TABLE_LOG_ENTRIES,
+                new String[]{ DatabaseHelper.COLUMN_TAG, DatabaseHelper.COLUMN_MSG},
                 null, null, null, null, null);
         assertThat(cursor).hasCount(0);
     }

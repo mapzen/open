@@ -52,10 +52,10 @@ import butterknife.OnClick;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
-import static com.mapzen.util.LocationDatabaseHelper.COLUMN_RAW;
-import static com.mapzen.util.LocationDatabaseHelper.TABLE_LOCATIONS;
-import static com.mapzen.util.LocationDatabaseHelper.TABLE_ROUTES;
-import static com.mapzen.util.LocationDatabaseHelper.valuesForLocationCorrection;
+import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
+import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
+import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
+import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
         ViewPager.OnPageChangeListener {

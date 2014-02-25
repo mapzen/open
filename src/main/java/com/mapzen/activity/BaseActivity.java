@@ -9,7 +9,7 @@ import com.mapzen.fragment.MapFragment;
 import com.mapzen.search.AutoCompleteAdapter;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.search.PagerResultsFragment;
-import com.mapzen.util.LocationDatabaseHelper;
+import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
@@ -70,7 +70,7 @@ public class BaseActivity extends MapActivity {
         }
     };
     private SQLiteDatabase db;
-    protected LocationDatabaseHelper dbHelper;
+    protected DatabaseHelper dbHelper;
 
     public void deactivateMapLocationUpdates() {
         updateMapLocation = false;
@@ -92,7 +92,7 @@ public class BaseActivity extends MapActivity {
         setContentView(R.layout.base);
         initMapFragment();
         progressDialogFragment = new MapzenProgressDialogFragment();
-        dbHelper = new LocationDatabaseHelper(this);
+        dbHelper = new DatabaseHelper(this);
         initMapController();
         initLocationClient();
     }

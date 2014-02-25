@@ -5,8 +5,8 @@ import com.mapzen.activity.BaseActivity;
 import android.content.ContentValues;
 import android.util.Log;
 
-import static com.mapzen.util.LocationDatabaseHelper.COLUMN_MSG;
-import static com.mapzen.util.LocationDatabaseHelper.COLUMN_TAG;
+import static com.mapzen.util.DatabaseHelper.COLUMN_MSG;
+import static com.mapzen.util.DatabaseHelper.COLUMN_TAG;
 
 public final class Logger {
     private static boolean enabled = true;
@@ -32,7 +32,7 @@ public final class Logger {
             ContentValues values = new ContentValues();
             values.put(COLUMN_TAG, tag);
             values.put(COLUMN_MSG, msg);
-            activity.getDb().insert(LocationDatabaseHelper.TABLE_LOG_ENTRIES, null, values);
+            activity.getDb().insert(DatabaseHelper.TABLE_LOG_ENTRIES, null, values);
         }
     }
 }
