@@ -4,6 +4,6 @@
     "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 
 <suppressions>
-    <suppress checks="MethodName" files=".*/app/src/test/java/*" />
-    <suppress checks="MagicNumberCheck" files=".*/app/src/test/java/*" />
+    <suppress checks="MethodName" files=".*src/test/java/*" />
+    <suppress checks="MagicNumberCheck" files=".*src/test/java/*" />
 </suppressions>
