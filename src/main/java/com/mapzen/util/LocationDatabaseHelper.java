@@ -1,17 +1,12 @@
 package com.mapzen.util;
 
+import com.mapzen.osrm.Instruction;
+
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
-import com.mapzen.osrm.Instruction;
-import com.mapzen.osrm.Route;
-
-import org.apache.http.entity.ContentProducer;
-
-import java.util.Locale;
 
 public class LocationDatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_PROVIDER = "provider";

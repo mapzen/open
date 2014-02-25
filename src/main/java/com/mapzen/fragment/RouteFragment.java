@@ -6,7 +6,6 @@ import com.mapzen.entity.Feature;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.util.DisplayHelper;
-import com.mapzen.util.LocationDatabaseHelper;
 import com.mapzen.util.Logger;
 import com.mapzen.widget.DistanceView;
 
