@@ -439,6 +439,7 @@ public class RouteFragmentTest {
         assertThat(Math.round(point.getLongitude())).isEqualTo(Math.round(63.0));
     }
 
+    @Test
     public void setMapPerspectiveForInstruction_shouldAlignBearing() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction instruction = getTestInstruction(0, 0);
