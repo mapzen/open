@@ -116,9 +116,30 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void initSpeakerbox() {
         speakerbox = new Speakerbox(getActivity());
+        addRemixPatterns();
+        checkIfVoiceNavigationIsEnabled();
+        playFirstInstruction();
+    }
+
+    private void addRemixPatterns() {
         speakerbox.remix(" mi", " miles");
         speakerbox.remix(" 1 miles", " 1 mile");
         speakerbox.remix(" ft", " feet");
+    }
+
+    private void checkIfVoiceNavigationIsEnabled() {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
+        boolean voiceNavigationEnabled =
+                prefs.getBoolean(getString(R.string.settings_voice_navigation_key), false);
+
+        if (voiceNavigationEnabled) {
+            speakerbox.unmute();
+        } else {
+            speakerbox.mute();
+        }
+    }
+
+    private void playFirstInstruction() {
         if (instructions != null && instructions.size() > 0) {
             speakerbox.play(instructions.get(0).getFullInstruction());
         }

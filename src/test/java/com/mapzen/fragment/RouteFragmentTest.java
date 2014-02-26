@@ -80,6 +80,7 @@ public class RouteFragmentTest {
         act = initBaseActivityWithMenu(menu);
         initTestFragment();
         app = Robolectric.getShadowApplication();
+        setVoiceNavigationEnabled(true);
     }
 
     @Test
@@ -603,11 +604,29 @@ public class RouteFragmentTest {
                 .isEqualTo("Head on 19th Street for 100 feet");
     }
 
+    @Test
+    public void shouldMuteVoiceNavigation() throws Exception {
+        setVoiceNavigationEnabled(false);
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        attachFragment();
+        ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
+        shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
+        assertThat(shadowTextToSpeech.getLastSpokenText()).isNull();
+    }
+
+    private void setVoiceNavigationEnabled(boolean enabled) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
+        SharedPreferences.Editor prefEditor = prefs.edit();
+        prefEditor.putBoolean(act.getString(R.string.settings_voice_navigation_key), enabled);
+        prefEditor.commit();
+    }
+
     private View getInstructionView(int position) {
         ViewGroup group = new ViewGroup(act) {
             @Override
             protected void onLayout(boolean changed, int l, int t, int r, int b) {
-
             }
         };
         return (View) fragment.pager.getAdapter().instantiateItem(group, position);

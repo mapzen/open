@@ -18,6 +18,9 @@
     <string name="start">Start</string>
     <string name="overflow_menu">More</string>
     <string name="route_steps_menu_option">Step-by-step list</string>
+
+    <!--Settings-->
+
     <string name="settings">Settings</string>
     <string name="settings_debug_mode">Debug Mode</string>
     <string name="settings_debug_mode_summary">This will keep application in debug mode and location will be stored</string>
@@ -32,4 +35,8 @@
     <string name="settings_mapsource_dialog_title">Configure Map Tile source</string>
     <string name="settings_mapsource">Configure Tile server</string>
     <string name="settings_mapsource_summary">This takes url of the tile service (remember to flush caches)</string>
+    <string name="settings_voice_navigation_key">checkbox_voice_navigation</string>
+    <string name="settings_voice_navigation_summary">Enable voice navigation</string>
+    <string name="settings_voice_navigation_title">Voice navigation</string>
+
 </resources>
