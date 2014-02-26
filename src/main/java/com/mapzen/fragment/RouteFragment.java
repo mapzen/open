@@ -5,6 +5,7 @@ import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
+import com.mapzen.speakerbox.Speakerbox;
 import com.mapzen.util.DisplayHelper;
 import com.mapzen.util.Logger;
 import com.mapzen.widget.DistanceView;
@@ -82,6 +83,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private boolean hasFoundPath = false;
     private long routeId;
 
+    Speakerbox speakerbox;
+
     public static RouteFragment newInstance(BaseActivity act, Feature feature) {
         final RouteFragment fragment = new RouteFragment();
         fragment.setAct(act);
@@ -107,7 +110,39 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager.setOnPageChangeListener(this);
         adapter.notifyDataSetChanged();
         previousPosition = pager.getCurrentItem();
+        initSpeakerbox();
         return rootView;
+    }
+
+    private void initSpeakerbox() {
+        speakerbox = new Speakerbox(getActivity());
+        addRemixPatterns();
+        checkIfVoiceNavigationIsEnabled();
+        playFirstInstruction();
+    }
+
+    private void addRemixPatterns() {
+        speakerbox.remix(" mi", " miles");
+        speakerbox.remix(" 1 miles", " 1 mile");
+        speakerbox.remix(" ft", " feet");
+    }
+
+    private void checkIfVoiceNavigationIsEnabled() {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
+        boolean voiceNavigationEnabled =
+                prefs.getBoolean(getString(R.string.settings_voice_navigation_key), false);
+
+        if (voiceNavigationEnabled) {
+            speakerbox.unmute();
+        } else {
+            speakerbox.mute();
+        }
+    }
+
+    private void playFirstInstruction() {
+        if (instructions != null && instructions.size() > 0) {
+            speakerbox.play(instructions.get(0).getFullInstruction());
+        }
     }
 
     @OnClick(R.id.overflow_menu)
@@ -305,11 +340,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    public void goToPrevInstruction() {
-        int nextItemIndex = pager.getCurrentItem() - 1;
-        pager.setCurrentItem(nextItemIndex);
-    }
-
     public int getCurrentItem() {
         return pager.getCurrentItem();
     }
@@ -395,6 +425,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
         previousPosition = i;
         setMapPerspectiveForInstruction(instructions.get(i));
+        speakerbox.play(instructions.get(i).getFullInstruction());
     }
 
     @Override

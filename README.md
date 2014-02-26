@@ -36,6 +36,12 @@ $ cd vtm && ./gradlew clean install
 $ cd vtm-native-libs && ./install-dependencies.sh
 </pre></code>
 
+### Install Speakerbox
+
+<pre><code>$ git clone https://github.com/mapzen/speakerbox.git
+$ cd speakerbox && mvn clean install
+</pre></code>
+
 ### Install Robolectric
 
 <pre><code>$ git clone https://github.com/mapzen/robolectric.git
