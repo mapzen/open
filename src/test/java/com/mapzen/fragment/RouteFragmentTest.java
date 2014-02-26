@@ -5,6 +5,7 @@ import com.mapzen.entity.Feature;
 import com.mapzen.geo.DistanceFormatter;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
+import com.mapzen.shadows.ShadowTextToSpeech;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
@@ -33,6 +34,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.preference.PreferenceManager;
+import android.speech.tts.TextToSpeech;
 import android.text.SpannedString;
 import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
@@ -46,6 +48,8 @@ import java.util.ArrayList;
 
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
+import static com.mapzen.geo.DistanceFormatter.METERS_IN_ONE_FOOT;
+import static com.mapzen.geo.DistanceFormatter.METERS_IN_ONE_MILE;
 import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
 import static com.mapzen.support.TestHelper.enableDebugMode;
 import static com.mapzen.support.TestHelper.getTestFeature;
@@ -58,6 +62,7 @@ import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.shadowOf;
+import static org.robolectric.Robolectric.shadowOf_;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
@@ -515,6 +520,86 @@ public class RouteFragmentTest {
         fragment.pager.setCurrentItem(1);
         fragment.onLocationChanged(getTestLocation(0, 0));
         assertThat(fragment.pager).hasCurrentItem(1);
+    }
+
+    @Test
+    public void onCreateView_shouldSpeakFirstInstruction() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction instruction = getTestInstruction(0, 0);
+        instructions.add(instruction);
+
+        fragment.setInstructions(instructions);
+        attachFragment();
+        ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
+        shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
+        assertThat(shadowTextToSpeech.getLastSpokenText())
+                .isEqualTo("Head on 19th Street for 520 feet");
+    }
+
+    @Test
+    public void onPageSelected_shouldSpeakInstruction() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+
+        Instruction firstInstruction = getTestInstruction(0, 0);
+        firstInstruction.setDistance(100);
+        instructions.add(firstInstruction);
+
+        Instruction secondInstruction = getTestInstruction(0, 0);
+        secondInstruction.setDistance(200);
+        instructions.add(secondInstruction);
+
+        attachFragment();
+        fragment.setInstructions(instructions);
+        fragment.onPageSelected(1);
+        ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
+        shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
+        assertThat(shadowTextToSpeech.getLastSpokenText())
+                .isEqualTo("Head on 19th Street for 0.1 miles");
+    }
+
+    @Test
+    public void textToSpeechRules_shouldReplaceMiWithMiles() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction instruction = getTestInstruction(0, 0);
+        instruction.setDistance((int) Math.round(2 * METERS_IN_ONE_MILE));
+        instructions.add(instruction);
+
+        fragment.setInstructions(instructions);
+        attachFragment();
+        ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
+        shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
+        assertThat(shadowTextToSpeech.getLastSpokenText())
+                .isEqualTo("Head on 19th Street for 2 miles");
+    }
+
+    @Test
+    public void textToSpeech_shouldReplace1MilesWith1Mile() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction instruction = getTestInstruction(0, 0);
+        instruction.setDistance((int) Math.round(METERS_IN_ONE_MILE));
+        instructions.add(instruction);
+
+        fragment.setInstructions(instructions);
+        attachFragment();
+        ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
+        shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
+        assertThat(shadowTextToSpeech.getLastSpokenText())
+                .isEqualTo("Head on 19th Street for 1 mile");
+    }
+
+    @Test
+    public void textToSpeechRules_shouldReplaceFtWithFeet() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction instruction = getTestInstruction(0, 0);
+        instruction.setDistance((int) Math.ceil(100 * METERS_IN_ONE_FOOT));
+        instructions.add(instruction);
+
+        fragment.setInstructions(instructions);
+        attachFragment();
+        ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
+        shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
+        assertThat(shadowTextToSpeech.getLastSpokenText())
+                .isEqualTo("Head on 19th Street for 100 feet");
     }
 
     private View getInstructionView(int position) {
