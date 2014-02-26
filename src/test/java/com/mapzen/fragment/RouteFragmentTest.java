@@ -136,6 +136,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldNotAdvance() throws Exception {
+        fragment.setLocationPassThrough(true);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(0, 0));

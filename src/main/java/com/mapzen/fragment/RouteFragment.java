@@ -230,18 +230,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private Location snapTo(Location location) {
         if (!locationPassThrough) {
-            Instruction instruction = instructions.get(getCurrentItem());
-            double[] locationPoint = {location.getLatitude(), location.getLongitude()};
-            Logger.d("RouteFragment::onLocationChange: current location: "
-                    + String.valueOf(location.getLatitude()) + " ,"
-                    + String.valueOf(location.getLongitude()));
-            Logger.d("RouteFragment::onLocationChange: reference location: "
-                    + instruction.toString());
             double[] onRoadPoint;
-            onRoadPoint = instruction.snapTo(locationPoint, -90);
-            if (onRoadPoint == null) {
-                onRoadPoint = instruction.snapTo(locationPoint, 90);
-            }
+            onRoadPoint = route.snapToRoute(
+                new double[] {location.getLatitude(), location.getLongitude()}
+            );
 
             if (onRoadPoint != null) {
                 Location correctedLocation = new Location("Corrected");
