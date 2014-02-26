@@ -305,11 +305,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    public void goToPrevInstruction() {
-        int nextItemIndex = pager.getCurrentItem() - 1;
-        pager.setCurrentItem(nextItemIndex);
-    }
-
     public int getCurrentItem() {
         return pager.getCurrentItem();
     }
