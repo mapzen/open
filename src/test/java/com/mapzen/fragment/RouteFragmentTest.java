@@ -36,6 +36,7 @@ import android.location.Location;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.text.SpannedString;
+import android.text.TextUtils;
 import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -337,6 +338,8 @@ public class RouteFragmentTest {
         Feature feature = getTestFeature();
         TextView view = (TextView) fragment.getView().findViewById(R.id.destination_name);
         assertThat(view.getText()).isEqualTo(feature.getProperty(NAME));
+        assertThat(view).hasEllipsize(TextUtils.TruncateAt.END);
+        assertThat(view).hasMaxLines(1);
     }
 
     @Test
