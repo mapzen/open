@@ -68,6 +68,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public static final int WALKING_ADVANCE_DEFAULT_RADIUS = 15;
     public static final int WALKING_LOST_THRESHOLD = 70;
     public static final int ROUTE_ZOOM_LEVEL = 17;
+    public static final String ROUTE_TAG = "route";
 
     @InjectView(R.id.overflow_menu) ImageButton overflowMenu;
     @InjectView(R.id.routes) ViewPager pager;
@@ -230,18 +231,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private Location snapTo(Location location) {
         if (!locationPassThrough) {
-            Instruction instruction = instructions.get(getCurrentItem());
-            double[] locationPoint = {location.getLatitude(), location.getLongitude()};
-            Logger.d("RouteFragment::onLocationChange: current location: "
-                    + String.valueOf(location.getLatitude()) + " ,"
-                    + String.valueOf(location.getLongitude()));
-            Logger.d("RouteFragment::onLocationChange: reference location: "
-                    + instruction.toString());
             double[] onRoadPoint;
-            onRoadPoint = instruction.snapTo(locationPoint, -90);
-            if (onRoadPoint == null) {
-                onRoadPoint = instruction.snapTo(locationPoint, 90);
-            }
+            onRoadPoint = route.snapToRoute(
+                new double[] {location.getLatitude(), location.getLongitude()}
+            );
 
             if (onRoadPoint != null) {
                 Location correctedLocation = new Location("Corrected");
@@ -253,13 +246,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return location;
     }
 
-    private Location getStartLocation() {
-        Location beginning = new Location("begin point");
-        beginning.setLatitude(route.getStartCoordinates()[0]);
-        beginning.setLongitude(route.getStartCoordinates()[1]);
-        return beginning;
-    }
-
     public void onLocationChanged(Location location) {
         Location correctedLocation = snapTo(location);
         if (act.isInDebugMode()) {
@@ -269,20 +255,15 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             getMapController().setLocation(correctedLocation);
             mapFragment.findMe();
             hasFoundPath = true;
-            Logger.d("RouteFragment::onLocationChange: Corrected: " + correctedLocation.toString());
-        } else {
-            Logger.d("RouteFragment::onLocationChange: ambigous location");
+            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChange: Corrected: "
+                    + correctedLocation.toString());
         }
 
         if (WALKING_LOST_THRESHOLD < location.distanceTo(correctedLocation) &&
                 location.getAccuracy() < getWalkingAdvanceRadius()) {
             // execute reroute query and reset the path
-            Logger.d("RouteFragment::onLocationChange: probably off course");
-        }
-
-        if (!hasFoundPath && getStartLocation().distanceTo(location) > getWalkingAdvanceRadius()) {
-            Logger.d("RouteFragment::onLocationChange: hasn't hit first location and is"
-                    + "probably off course");
+            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChange: " +
+                    "probably off course");
         }
 
         Location nextTurn = null;
@@ -294,28 +275,28 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (correctedLocation != null && nextTurn != null) {
             int distanceToNextTurn = (int) Math.floor(correctedLocation.distanceTo(nextTurn));
             if (distanceToNextTurn > getWalkingAdvanceRadius()) {
-                Logger.d("RouteFragment::onLocationChangeLocation: " +
+                Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
                         "outside defined radius");
             } else {
-                Logger.d("RouteFragment::onLocationChangeLocation: " +
+                Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
                         "inside defined radius advancing");
                 goToNextInstruction();
             }
-            Logger.d("RouteFragment::onLocationChangeLocation: " +
+            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
                     "new current location: " + location.toString());
-            Logger.d("RouteFragment::onLocationChangeLocation: " +
+            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
                     "next turn: " + nextTurn.toString());
-            Logger.d("RouteFragment::onLocationChangeLocation: " +
+            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
                     "distance to next turn: " + String.valueOf(distanceToNextTurn));
-            Logger.d("RouteFragment::onLocationChangeLocation: " +
+            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
                     "threshold: " + String.valueOf(getWalkingAdvanceRadius()));
         } else {
             if (correctedLocation == null) {
-                Logger.d("RouteFragment::onLocationChangeLocation: " +
+                Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
                         "**next turn** is null screw it");
             }
             if (nextTurn == null) {
-                Logger.d("RouteFragment::onLocationChangeLocation: " +
+                Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
                         "**location** is null screw it");
             }
         }
