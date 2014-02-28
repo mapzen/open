@@ -10,6 +10,7 @@ import com.mapzen.search.AutoCompleteAdapter;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.search.PagerResultsFragment;
 import com.mapzen.util.DatabaseHelper;
+import com.mapzen.util.LocationHelper;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
@@ -155,7 +156,8 @@ public class BaseActivity extends MapActivity {
     protected ConnectionCallbacks connectionCallback = new ConnectionCallbacks() {
         @Override
         public void onConnected(Bundle bundle) {
-            Location location = locationClient.getLastLocation();
+            final LocationHelper locationHelper = new LocationHelper(BaseActivity.this);
+            final Location location = locationHelper.getLastLocation();
             getMapController().setLocation(location);
             getMapController().setZoomLevel(MapController.DEFAULT_ZOOMLEVEL);
             mapFragment.findMe();

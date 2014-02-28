@@ -24,8 +24,10 @@ import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.tester.android.view.TestMenu;
 
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -268,8 +270,7 @@ public class BaseActivityTest {
 
     @Test
     public void onConnect_shouldUpdateMapController() throws Exception {
-        Location expected = new Location("expected");
-        shadowLocationClient.setLastLocation(expected);
+        Location expected = initLastLocation();
         GooglePlayServicesClient.ConnectionCallbacks callbacks =
                 ((TestBaseActivity) activity).getConnectionCallback();
         callbacks.onConnected(new Bundle());
@@ -308,11 +309,13 @@ public class BaseActivityTest {
         assertThat(searchView.getSuggestionsAdapter()).isNull();
     }
 
-    private void initLastLocation() {
+    private Location initLastLocation() {
         Location location = new Location(GPS_PROVIDER);
         location.setLatitude(1.0);
         location.setLongitude(2.0);
-        shadowLocationClient.setLastLocation(location);
+        Robolectric.shadowOf((LocationManager) activity.getSystemService(Context.LOCATION_SERVICE))
+                .setLastKnownLocation(GPS_PROVIDER, location);
+        return location;
     }
 
     private void invokeOnConnected() {
