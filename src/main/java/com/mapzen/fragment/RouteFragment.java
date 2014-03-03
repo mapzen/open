@@ -273,34 +273,39 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         manageMap(correctedLocation, location);
         Location nextTurn = getNextTurn();
 
-        if (correctedLocation != null && nextTurn != null) {
-            int distanceToNextTurn = (int) Math.floor(correctedLocation.distanceTo(nextTurn));
-            if (distanceToNextTurn > getWalkingAdvanceRadius()) {
-                Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                        "outside defined radius");
-            } else {
-                Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                        "inside defined radius advancing");
-                goToNextInstruction();
-            }
+        // No corrected location
+        if (correctedLocation == null) {
             Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                    "new current location: " + location.toString());
-            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                    "next turn: " + nextTurn.toString());
-            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                    "distance to next turn: " + String.valueOf(distanceToNextTurn));
-            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                    "threshold: " + String.valueOf(getWalkingAdvanceRadius()));
-        } else {
-            if (correctedLocation == null) {
-                Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                        "**next turn** is null screw it");
-            }
-            if (nextTurn == null) {
-                Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                        "**location** is null screw it");
-            }
+                    "**correctedLocation** is null");
+            return;
         }
+
+        if (nextTurn == null) {
+            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
+                    "**nextTurn** is null are we there yet? ");
+            return;
+        }
+
+        int distanceToNextTurn = (int) Math.floor(correctedLocation.distanceTo(nextTurn));
+        if (distanceToNextTurn < getWalkingAdvanceRadius()) {
+            goToNextInstruction();
+        } else {
+            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
+                    "outside defined turn radius");
+        }
+
+        logForDebugging(location, nextTurn, distanceToNextTurn);
+    }
+
+    private void logForDebugging(Location location, Location nextTurn, int distanceToNextTurn) {
+        Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
+                "new current location: " + location.toString());
+        Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
+                "next turn: " + nextTurn.toString());
+        Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
+                "distance to next turn: " + String.valueOf(distanceToNextTurn));
+        Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
+                "threshold: " + String.valueOf(getWalkingAdvanceRadius()));
     }
 
     private void showDirectionListFragment() {
@@ -312,6 +317,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public void goToNextInstruction() {
+        Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
+                "goToNextInstruction() flipping instruction");
         pager.setCurrentItem(pager.getCurrentItem() + 1);
     }
 
