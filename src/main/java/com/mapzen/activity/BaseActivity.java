@@ -6,11 +6,11 @@ import com.mapzen.R;
 import com.mapzen.core.SettingsFragment;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.fragment.MapFragment;
+import com.mapzen.location.LocationHelper;
 import com.mapzen.search.AutoCompleteAdapter;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.search.PagerResultsFragment;
 import com.mapzen.util.DatabaseHelper;
-import com.mapzen.location.LocationHelper;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
@@ -156,7 +156,19 @@ public class BaseActivity extends MapActivity {
     protected ConnectionCallbacks connectionCallback = new ConnectionCallbacks() {
         @Override
         public void onConnected(Bundle bundle) {
-            final LocationHelper locationHelper = new LocationHelper(BaseActivity.this);
+            final LocationHelper locationHelper = new LocationHelper(BaseActivity.this,
+                    new LocationHelper.ConnectionCallbacks() {
+                @Override
+                public void onConnected(Bundle connectionHint) {
+                    Logger.d("LocationHelper connected.");
+                }
+                @Override
+                public void onDisconnected() {
+                    Logger.d("LocationHelper disconnected.");
+                }
+            });
+            locationHelper.connect();
+
             final Location location = locationHelper.getLastLocation();
             getMapController().setLocation(location);
             getMapController().setZoomLevel(MapController.DEFAULT_ZOOMLEVEL);

@@ -2,8 +2,6 @@ package com.mapzen.location;
 
 import com.mapzen.support.MapzenTestRunner;
 
-import com.google.android.gms.common.ConnectionResult;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,18 +26,41 @@ public class LocationHelperTest {
     private LocationHelper locationHelper;
     private LocationManager locationManager;
     private ShadowLocationManager shadowLocationManager;
+    private TestConnectionCallbacks connectionCallbacks;
 
     @Before
     public void setUp() throws Exception {
-        locationHelper = new LocationHelper(application, new TestConnectionCallbacks(),
-                new TestOnConnectionFailedListener());
+        connectionCallbacks = new TestConnectionCallbacks();
+        locationHelper = new LocationHelper(application, connectionCallbacks);
         locationManager = (LocationManager) application.getSystemService(LOCATION_SERVICE);
         shadowLocationManager = shadowOf(locationManager);
+        locationHelper.connect();
     }
 
     @Test
     public void shouldNotBeNull() throws Exception {
         assertThat(locationHelper).isNotNull();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void getLastLocation_shouldThrowExceptionIfNotConnected() throws Exception {
+        locationHelper = new LocationHelper(application, connectionCallbacks);
+        locationHelper.getLastLocation();
+    }
+
+    @Test
+    public void connect_shouldCallOnConnected() throws Exception {
+        locationHelper = new LocationHelper(application, connectionCallbacks);
+        locationHelper.connect();
+        assertThat(connectionCallbacks.connected).isTrue();
+    }
+
+    @Test
+    public void disconnect_shouldCallOnDisconnected() throws Exception {
+        locationHelper = new LocationHelper(application, connectionCallbacks);
+        locationHelper.connect();
+        locationHelper.disconnect();
+        assertThat(connectionCallbacks.connected).isFalse();
     }
 
     @Test
@@ -86,18 +107,16 @@ public class LocationHelperTest {
     }
 
     class TestConnectionCallbacks implements LocationHelper.ConnectionCallbacks {
+        private boolean connected = false;
+
         @Override
         public void onConnected(Bundle connectionHint) {
+            connected = true;
         }
 
         @Override
         public void onDisconnected() {
-        }
-    }
-
-    class TestOnConnectionFailedListener implements LocationHelper.OnConnectionFailedListener {
-        @Override
-        public void onConnectionFailed(ConnectionResult result) {
+            connected = false;
         }
     }
 }
