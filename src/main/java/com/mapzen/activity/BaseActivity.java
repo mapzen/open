@@ -48,7 +48,7 @@ import static com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCU
 import static com.mapzen.MapController.getMapController;
 
 public class BaseActivity extends MapActivity {
-    public static final int LOCATION_INTERVAL = 5000;
+    public static final int LOCATION_INTERVAL = 1000;
     public static final String PLAY_SERVICE_FAIL_MESSAGE = "Your device cannot be located";
     public static final String COM_MAPZEN_UPDATES_LOCATION = "com.mapzen.updates.location";
     private AutoCompleteAdapter autoCompleteAdapter;
