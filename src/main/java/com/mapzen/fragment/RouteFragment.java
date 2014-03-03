@@ -361,16 +361,19 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         PathLayer layer = mapFragment.getPathLayer();
         layer.clearPath();
         if (route != null) {
+            SQLiteDatabase db = act.getDb();
+            db.beginTransaction();
             for (double[] pair : route.getGeometry()) {
-                addCoordinateToDatabase(pair);
+                addCoordinateToDatabase(db, pair);
                 layer.addPoint(new GeoPoint(pair[0], pair[1]));
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
         }
     }
 
-    private void addCoordinateToDatabase(double[] pair) {
+    private void addCoordinateToDatabase(SQLiteDatabase db, double[] pair) {
         if (act.isInDebugMode()) {
-            SQLiteDatabase db = act.getDb();
             ContentValues values = new ContentValues();
             values.put(COLUMN_ROUTE_ID, routeId);
             values.put(COLUMN_LAT, pair[0]);
