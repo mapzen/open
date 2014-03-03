@@ -8,6 +8,18 @@
             android:title="@string/settings_debug_mode" />
 
         <CheckBoxPreference
+            android:key="@string/settings_key_enable_fixed_location"
+            android:summary="@string/settings_enable_fixed_location_summary"
+            android:title="@string/settings_enable_fixed_location_title" />
+
+        <EditTextPreference
+            android:dialogTitle="@string/settings_fixed_location_dialog_title"
+            android:defaultValue="@string/settings_fixed_location_default_value"
+            android:key="@string/settings_fixed_location_key"
+            android:summary="@string/settings_fixed_location_summary"
+            android:title="@string/settings_fixed_location_title" />
+
+        <CheckBoxPreference
             android:defaultValue="true"
             android:key="@string/settings_voice_navigation_key"
             android:summary="@string/settings_voice_navigation_summary"
@@ -15,17 +27,17 @@
 
         <EditTextPreference
             android:dialogTitle="@string/settings_walking_advance_radius_dialog_title"
+            android:inputType="number"
             android:key="@string/settings_key_walking_advance_radius"
             android:numeric="integer"
-            android:inputType="number"
             android:summary="@string/settings_walking_advance_radius_summary"
             android:title="@string/settings_walking_advance_radius" />
 
         <EditTextPreference
-            android:dialogTitle="@string/settings_mapsource_dialog_title"
             android:defaultValue="@string/settings_default_mapsource"
-            android:key="@string/settings_key_mapsource"
+            android:dialogTitle="@string/settings_mapsource_dialog_title"
             android:inputType="textUri"
+            android:key="@string/settings_key_mapsource"
             android:summary="@string/settings_mapsource_summary"
             android:title="@string/settings_mapsource" />
 
