@@ -26,12 +26,9 @@ public final class MapController {
     private MapController() {
     }
 
-    public void setMap(Map map) {
-        this.map = map;
-    }
-
     public void setActivity(BaseActivity activity) {
         this.activity = activity;
+        this.map = activity.getMap();
     }
 
     public static MapController getMapController() {

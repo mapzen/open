@@ -28,7 +28,6 @@ public class MapControllerTest {
     public void setUp() throws Exception {
         activity = TestHelper.initBaseActivity();
         MapController controller = getMapController();
-        controller.setMap(activity.getMap());
         controller.setActivity(activity);
     }
 
