@@ -42,7 +42,7 @@
     <string name="settings_enable_fixed_location_summary">Enable fixed preset location</string>
     <string name="settings_enable_fixed_location_title">Fixed location</string>
     <string name="settings_fixed_location_dialog_title">Set Fixed Location (lat, lng)</string>
-    <string name="settings_fixed_location_default_value">64.1354, -21.8961</string>
+    <string name="settings_fixed_location_default_value">40.7443, -73.9903</string>
     <string name="settings_fixed_location_key">edittext_fixed_location</string>
     <string name="settings_fixed_location_summary">Set fixed debug location</string>
     <string name="settings_fixed_location_title">Debug location</string>
