@@ -1,6 +1,9 @@
 package com.mapzen;
 
+import android.content.SharedPreferences;
 import android.location.Location;
+import android.preference.PreferenceManager;
+
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.support.TestHelper;
@@ -9,7 +12,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.oscim.core.MapPosition;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowToast;
 
+import static com.mapzen.MapController.DEBUG_LOCATION;
 import static com.mapzen.MapController.getMapController;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -24,6 +29,7 @@ public class MapControllerTest {
         activity = TestHelper.initBaseActivity();
         MapController controller = getMapController();
         controller.setMap(activity.getMap());
+        controller.setActivity(activity);
     }
 
     @Test
@@ -45,6 +51,65 @@ public class MapControllerTest {
     public void getLocation_shouldNotBeNull() throws Exception {
         getMapController().setLocation(new Location(""));
         assertThat(getMapController().getLocation()).isNotNull();
+    }
+
+    @Test
+    public void getLocation_shouldOverWriteLocation() throws Exception {
+        enableFixedLocation();
+        Location notExpected = new Location("not expected");
+        getMapController().setLocation(notExpected);
+        assertThat(getMapController().getLocation()).isNotSameAs(notExpected);
+    }
+
+    @Test
+    public void getLocation_shouldBeReturnDefaultDebugLocation() throws Exception {
+        enableFixedLocation();
+        Location actual = getMapController().getLocation();
+        String defaultLatLng = activity.getString(R.string.settings_fixed_location_default_value);
+        String[] defaultValues = defaultLatLng.split(", ");
+        Location expected = new Location(DEBUG_LOCATION);
+        expected.setLatitude(Double.valueOf(defaultValues[0]));
+        expected.setLongitude(Double.valueOf(defaultValues[1]));
+        assertThat(actual.getLatitude()).isEqualTo(expected.getLatitude());
+        assertThat(actual.getLongitude()).isEqualTo(expected.getLongitude());
+    }
+
+    @Test
+    public void getLocation_shouldBeReturnPresetDebugLocation() throws Exception {
+        enableFixedLocation();
+        String expectedLat = "40.6638";
+        String expectedLng = "-73.9843";
+        setFixedLocation(expectedLat + ", " + expectedLng);
+        Location actual = getMapController().getLocation();
+        Location expected = new Location(DEBUG_LOCATION);
+        expected.setLatitude(Double.valueOf(expectedLat));
+        expected.setLongitude(Double.valueOf(expectedLng));
+        assertThat(actual.getLatitude()).isEqualTo(expected.getLatitude());
+        assertThat(actual.getLongitude()).isEqualTo(expected.getLongitude());
+    }
+
+    @Test
+    public void getLocation_shouldReturnNotBlowUpWhenPresetIsMalformed() throws Exception {
+        enableFixedLocation();
+        setFixedLocation("malformed which makes no sense");
+        Location expected = new Location("expected");
+        getMapController().setLocation(expected);
+        Location actual = getMapController().getLocation();
+        assertThat(ShadowToast.getTextOfLatestToast())
+                .isEqualTo(activity.getString(R.string.toast_fixed_location_is_malformed));
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void getLocation_shouldReturnNotBlowUpWhenPresetIsMalformedWithComma() throws Exception {
+        enableFixedLocation();
+        setFixedLocation("malformed, which makes no sense");
+        Location expected = new Location("expected");
+        getMapController().setLocation(expected);
+        Location actual = getMapController().getLocation();
+        assertThat(ShadowToast.getTextOfLatestToast())
+                .isEqualTo(activity.getString(R.string.toast_fixed_location_is_malformed));
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -107,4 +172,19 @@ public class MapControllerTest {
         getMapController().setZoomLevel(5);
         assertThat(getMapController().getZoomScale()).isEqualTo(Math.pow(2, 5));
     }
+
+    private void enableFixedLocation() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences.Editor prefEditor = prefs.edit();
+        prefEditor.putBoolean(activity.getString(R.string.settings_key_enable_fixed_location), true);
+        prefEditor.commit();
+    }
+
+    private void setFixedLocation(String fixedLocation) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences.Editor prefEditor = prefs.edit();
+        prefEditor.putString(activity.getString(R.string.settings_fixed_location_key), fixedLocation);
+        prefEditor.commit();
+    }
+
 }

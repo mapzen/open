@@ -332,6 +332,7 @@ public class BaseActivity extends MapActivity {
     private void initMapController() {
         MapController mapController = getMapController();
         mapController.setMap(getMap());
+        mapController.setActivity(this);
     }
 
     public void hideActionBar() {
