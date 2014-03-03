@@ -1,4 +1,4 @@
-package com.mapzen.util;
+package com.mapzen.location;
 
 import android.content.Context;
 import android.location.Location;

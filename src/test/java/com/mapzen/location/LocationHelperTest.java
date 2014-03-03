@@ -1,4 +1,4 @@
-package com.mapzen.util;
+package com.mapzen.location;
 
 import com.mapzen.support.MapzenTestRunner;
 

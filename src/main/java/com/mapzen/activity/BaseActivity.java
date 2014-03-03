@@ -10,7 +10,7 @@ import com.mapzen.search.AutoCompleteAdapter;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.search.PagerResultsFragment;
 import com.mapzen.util.DatabaseHelper;
-import com.mapzen.util.LocationHelper;
+import com.mapzen.location.LocationHelper;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
