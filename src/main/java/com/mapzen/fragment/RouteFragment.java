@@ -245,30 +245,33 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return location;
     }
 
-    public void onLocationChanged(Location location) {
-        Location correctedLocation = snapTo(location);
-        if (act.isInDebugMode()) {
-            storeLocationInfo(location, correctedLocation);
-        }
-        if (correctedLocation != null) {
-            getMapController().setLocation(correctedLocation);
+    private void manageMap(Location location, Location originalLocation) {
+        if (location != null) {
+            getMapController().setLocation(location);
             mapFragment.findMe();
             Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChange: Corrected: "
-                    + correctedLocation.toString());
+                    + location.toString());
+        } else {
+            Logger.logToDatabase(act, ROUTE_TAG,
+                    "RouteFragment::onLocationChange: Unable to Correct: location: "
+                    + originalLocation.toString());
         }
+    }
 
-        if (WALKING_LOST_THRESHOLD < location.distanceTo(correctedLocation) &&
-                location.getAccuracy() < getWalkingAdvanceRadius()) {
-            // execute reroute query and reset the path
-            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChange: " +
-                    "probably off course");
-        }
-
-        Location nextTurn = null;
+    private Location getNextTurn() {
         final int currentItem = pager.getCurrentItem();
+        Location nextTurn = null;
         if (currentItem < (instructions.size() - 1)) {
             nextTurn = getNextTurnTo(instructions.get(pager.getCurrentItem() + 1));
         }
+        return nextTurn;
+    }
+
+    public void onLocationChanged(Location location) {
+        Location correctedLocation = snapTo(location);
+        storeLocationInfo(location, correctedLocation);
+        manageMap(correctedLocation, location);
+        Location nextTurn = getNextTurn();
 
         if (correctedLocation != null && nextTurn != null) {
             int distanceToNextTurn = (int) Math.floor(correctedLocation.distanceTo(nextTurn));
@@ -427,10 +430,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void storeLocationInfo(Location location, Location correctedLocation) {
-        SQLiteDatabase db = act.getDb();
-        db.insert(TABLE_LOCATIONS, null,
-                valuesForLocationCorrection(location,
-                        correctedLocation, instructions.get(pager.getCurrentItem()), routeId));
+        if (act.isInDebugMode()) {
+            SQLiteDatabase db = act.getDb();
+            db.insert(TABLE_LOCATIONS, null,
+                    valuesForLocationCorrection(location,
+                            correctedLocation, instructions.get(pager.getCurrentItem()), routeId));
+        }
     }
 
     private static class RoutesAdapter extends PagerAdapter {
