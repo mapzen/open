@@ -175,14 +175,16 @@ public class MapControllerTest {
     private void enableFixedLocation() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         SharedPreferences.Editor prefEditor = prefs.edit();
-        prefEditor.putBoolean(activity.getString(R.string.settings_key_enable_fixed_location), true);
+        prefEditor.putBoolean(
+                activity.getString(R.string.settings_key_enable_fixed_location), true);
         prefEditor.commit();
     }
 
     private void setFixedLocation(String fixedLocation) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         SharedPreferences.Editor prefEditor = prefs.edit();
-        prefEditor.putString(activity.getString(R.string.settings_fixed_location_key), fixedLocation);
+        prefEditor.putString(
+                activity.getString(R.string.settings_fixed_location_key), fixedLocation);
         prefEditor.commit();
     }
 

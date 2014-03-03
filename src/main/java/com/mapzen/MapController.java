@@ -40,7 +40,7 @@ public final class MapController {
     }
 
     public Location getLocation() {
-        if(!isFixedLocationEnabled()) {
+        if (!isFixedLocationEnabled()) {
             return location;
         } else {
             return getFixedLocation();
@@ -73,10 +73,10 @@ public final class MapController {
     }
 
     private boolean isFixedLocationEnabled() {
-        String fixed_location_key =
+        String fixedLocationLey =
                 activity.getString(R.string.settings_key_enable_fixed_location);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        return prefs.getBoolean(fixed_location_key, false);
+        return prefs.getBoolean(fixedLocationLey, false);
     }
 
     private boolean isFixedLocationValid(String[] values) {
@@ -89,7 +89,7 @@ public final class MapController {
         String latLng = prefs.getString(activity.getString(R.string.settings_fixed_location_key),
                 activity.getString(R.string.settings_fixed_location_default_value));
         String[] latLngValues = latLng.split(",");
-        if(!isFixedLocationValid(latLngValues)) {
+        if (!isFixedLocationValid(latLngValues)) {
             Toast.makeText(activity, activity.getString(R.string.toast_fixed_location_is_malformed),
                     Toast.LENGTH_LONG).show();
             return location;
