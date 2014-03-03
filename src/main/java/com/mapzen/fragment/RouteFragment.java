@@ -81,7 +81,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private DistanceView distanceLeftView;
     private int previousPosition;
     private boolean locationPassThrough = false;
-    private boolean hasFoundPath = false;
     private long routeId;
 
     Speakerbox speakerbox;
@@ -254,7 +253,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (correctedLocation != null) {
             getMapController().setLocation(correctedLocation);
             mapFragment.findMe();
-            hasFoundPath = true;
             Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChange: Corrected: "
                     + correctedLocation.toString());
         }
