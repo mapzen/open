@@ -2,8 +2,6 @@ package com.mapzen.location;
 
 import com.mapzen.support.MapzenTestRunner;
 
-import com.google.android.gms.location.LocationRequest;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -110,7 +108,7 @@ public class LocationHelperTest {
     @Test
     public void requestLocationUpdates_shouldRegisterGpsListener() throws Exception {
         LocationListener listener = new TestLocationListener();
-        locationHelper.requestLocationUpdates(new LocationRequest(), listener);
+        locationHelper.requestLocationUpdates(LocationRequest.create(), listener);
         List<LocationListener> list = shadowLocationManager.getRequestLocationUpdateListeners();
         assertThat(list).hasSize(1);
         assertThat(list).contains(listener);

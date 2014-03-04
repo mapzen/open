@@ -1,7 +1,5 @@
 package com.mapzen.location;
 
-import com.google.android.gms.location.LocationRequest;
-
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
