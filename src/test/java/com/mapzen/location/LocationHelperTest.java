@@ -2,6 +2,8 @@ package com.mapzen.location;
 
 import com.mapzen.support.MapzenTestRunner;
 
+import com.google.android.gms.location.LocationRequest;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,8 +11,11 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLocationManager;
 
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+
+import java.util.List;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
@@ -50,15 +55,11 @@ public class LocationHelperTest {
 
     @Test
     public void connect_shouldCallOnConnected() throws Exception {
-        locationHelper = new LocationHelper(application, connectionCallbacks);
-        locationHelper.connect();
         assertThat(connectionCallbacks.connected).isTrue();
     }
 
     @Test
     public void disconnect_shouldCallOnDisconnected() throws Exception {
-        locationHelper = new LocationHelper(application, connectionCallbacks);
-        locationHelper.connect();
         locationHelper.disconnect();
         assertThat(connectionCallbacks.connected).isFalse();
     }
@@ -106,6 +107,15 @@ public class LocationHelperTest {
         assertThat(locationHelper.getLastLocation()).isEqualTo(passiveLocation);
     }
 
+    @Test
+    public void requestLocationUpdates_shouldRegisterGpsListener() throws Exception {
+        LocationListener listener = new TestLocationListener();
+        locationHelper.requestLocationUpdates(new LocationRequest(), listener);
+        List<LocationListener> list = shadowLocationManager.getRequestLocationUpdateListeners();
+        assertThat(list).hasSize(1);
+        assertThat(list).contains(listener);
+    }
+
     class TestConnectionCallbacks implements LocationHelper.ConnectionCallbacks {
         private boolean connected = false;
 
@@ -117,6 +127,24 @@ public class LocationHelperTest {
         @Override
         public void onDisconnected() {
             connected = false;
+        }
+    }
+
+    class TestLocationListener implements LocationListener {
+        @Override
+        public void onLocationChanged(Location location) {
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
         }
     }
 }

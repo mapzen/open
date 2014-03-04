@@ -1,13 +1,17 @@
 package com.mapzen.location;
 
+import com.google.android.gms.location.LocationRequest;
+
 import android.content.Context;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
 import java.util.List;
 
 import static android.content.Context.LOCATION_SERVICE;
+import static android.location.LocationManager.GPS_PROVIDER;
 
 public class LocationHelper {
     private final Context context;
@@ -46,6 +50,10 @@ public class LocationHelper {
         }
 
         return bestLocation;
+    }
+
+    public void requestLocationUpdates(LocationRequest request, LocationListener listener) {
+        locationManager.requestLocationUpdates(GPS_PROVIDER, 0, 0, listener);
     }
 
     public static interface ConnectionCallbacks {
