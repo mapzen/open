@@ -395,7 +395,8 @@ public class RouteFragmentTest {
         String expectedFormattedDistance = DistanceFormatter.format(expectedDistance, true);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
         DistanceView textView = (DistanceView) view.findViewById(R.id.destination_distance);
-        fragment.goToNextInstruction();
+        int current = fragment.pager.getCurrentItem();
+        fragment.pager.setCurrentItem(++current);
         fragment.onPageSelected(0);
         assertThat(textView.getText()).isEqualTo(expectedFormattedDistance);
     }
