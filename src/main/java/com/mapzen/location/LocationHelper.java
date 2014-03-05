@@ -73,7 +73,8 @@ public class LocationHelper {
             }
         };
 
-        locationManager.requestLocationUpdates(GPS_PROVIDER, 0, 0, gpsListener);
+        locationManager.requestLocationUpdates(GPS_PROVIDER, request.getFastestInterval(),
+                request.getSmallestDisplacement(), gpsListener);
     }
 
     public static interface ConnectionCallbacks {

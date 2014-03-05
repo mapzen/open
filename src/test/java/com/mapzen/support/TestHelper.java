@@ -55,10 +55,11 @@ public final class TestHelper {
         return mapFragment;
     }
 
-    public static Location getTestLocation() {
-        Location location = new Location("test location");
-        location.setLatitude(1.0);
-        location.setLongitude(1.0);
+    public static Location getTestLocation(String provider, float lat, float lng, long time) {
+        Location location = new Location(provider);
+        location.setLatitude(lat);
+        location.setLongitude(lng);
+        location.setTime(time);
         return location;
     }
 

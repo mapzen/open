@@ -16,6 +16,7 @@ import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 import static android.location.LocationManager.PASSIVE_PROVIDER;
+import static com.mapzen.support.TestHelper.getTestLocation;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.shadowOf;
@@ -116,6 +117,23 @@ public class LocationHelperTest {
         Location location = new Location(GPS_PROVIDER);
         shadowLocationManager.simulateLocation(location);
         assertThat(listener.location).isEqualTo(location);
+    }
+
+    @Test
+    public void requestLocationUpdates_shouldNotNotifyIfDoesNotExceedCriteria() throws Exception {
+        TestLocationListener listener = new TestLocationListener();
+        LocationRequest request = LocationRequest.create();
+        request.setFastestInterval(5000);
+        request.setSmallestDisplacement(200000);
+        locationHelper.requestLocationUpdates(request, listener);
+
+        final long time = System.currentTimeMillis();
+        Location location1 = getTestLocation(GPS_PROVIDER, 0, 0, time);
+        Location location2 = getTestLocation(GPS_PROVIDER, 1, 1, time + 1000);
+
+        shadowLocationManager.simulateLocation(location1);
+        shadowLocationManager.simulateLocation(location2);
+        assertThat(listener.location).isEqualTo(location1);
     }
 
     class TestConnectionCallbacks implements LocationHelper.ConnectionCallbacks {
