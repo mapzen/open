@@ -343,12 +343,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 .commit();
     }
 
-    public void goToNextInstruction() {
-        Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                "goToNextInstruction() flipping instruction");
-        pager.setCurrentItem(pager.getCurrentItem() + 1);
-    }
-
     private void changeDistance(int difference) {
         if (!distanceLeftView.getText().toString().isEmpty()) {
             int newDistance = distanceLeftView.getDistance() + difference;
