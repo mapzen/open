@@ -1,4 +1,4 @@
-package com.mapzen.util;
+package com.mapzen.location;
 
 import com.mapzen.support.MapzenTestRunner;
 
@@ -10,11 +10,13 @@ import org.robolectric.shadows.ShadowLocationManager;
 
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Bundle;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 import static android.location.LocationManager.PASSIVE_PROVIDER;
+import static com.mapzen.support.TestHelper.getTestLocation;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.shadowOf;
@@ -25,17 +27,37 @@ public class LocationHelperTest {
     private LocationHelper locationHelper;
     private LocationManager locationManager;
     private ShadowLocationManager shadowLocationManager;
+    private TestConnectionCallbacks connectionCallbacks;
 
     @Before
     public void setUp() throws Exception {
-        locationHelper = new LocationHelper(application);
+        connectionCallbacks = new TestConnectionCallbacks();
+        locationHelper = new LocationHelper(application, connectionCallbacks);
         locationManager = (LocationManager) application.getSystemService(LOCATION_SERVICE);
         shadowLocationManager = shadowOf(locationManager);
+        locationHelper.connect();
     }
 
     @Test
     public void shouldNotBeNull() throws Exception {
         assertThat(locationHelper).isNotNull();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void getLastLocation_shouldThrowExceptionIfNotConnected() throws Exception {
+        locationHelper = new LocationHelper(application, connectionCallbacks);
+        locationHelper.getLastLocation();
+    }
+
+    @Test
+    public void connect_shouldCallOnConnected() throws Exception {
+        assertThat(connectionCallbacks.connected).isTrue();
+    }
+
+    @Test
+    public void disconnect_shouldCallOnDisconnected() throws Exception {
+        locationHelper.disconnect();
+        assertThat(connectionCallbacks.connected).isFalse();
     }
 
     @Test
@@ -79,5 +101,61 @@ public class LocationHelperTest {
         shadowLocationManager.setLastKnownLocation(PASSIVE_PROVIDER, passiveLocation);
 
         assertThat(locationHelper.getLastLocation()).isEqualTo(passiveLocation);
+    }
+
+    @Test
+    public void requestLocationUpdates_shouldRegisterGpsListener() throws Exception {
+        LocationListener listener = new TestLocationListener();
+        locationHelper.requestLocationUpdates(LocationRequest.create(), listener);
+        assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).hasSize(1);
+    }
+
+    @Test
+    public void requestLocationUpdates_shouldInvokeListenerOnLocationChanged() throws Exception {
+        TestLocationListener listener = new TestLocationListener();
+        locationHelper.requestLocationUpdates(LocationRequest.create(), listener);
+        Location location = new Location(GPS_PROVIDER);
+        shadowLocationManager.simulateLocation(location);
+        assertThat(listener.location).isEqualTo(location);
+    }
+
+    @Test
+    public void requestLocationUpdates_shouldNotNotifyIfDoesNotExceedCriteria() throws Exception {
+        TestLocationListener listener = new TestLocationListener();
+        LocationRequest request = LocationRequest.create();
+        request.setFastestInterval(5000);
+        request.setSmallestDisplacement(200000);
+        locationHelper.requestLocationUpdates(request, listener);
+
+        final long time = System.currentTimeMillis();
+        Location location1 = getTestLocation(GPS_PROVIDER, 0, 0, time);
+        Location location2 = getTestLocation(GPS_PROVIDER, 1, 1, time + 1000);
+
+        shadowLocationManager.simulateLocation(location1);
+        shadowLocationManager.simulateLocation(location2);
+        assertThat(listener.location).isEqualTo(location1);
+    }
+
+    class TestConnectionCallbacks implements LocationHelper.ConnectionCallbacks {
+        private boolean connected = false;
+
+        @Override
+        public void onConnected(Bundle connectionHint) {
+            connected = true;
+        }
+
+        @Override
+        public void onDisconnected() {
+            connected = false;
+        }
+    }
+
+    class TestLocationListener implements LocationListener {
+        private Location location;
+
+        @Override
+        public void onLocationChanged(Location location) {
+            this.location = location;
+        }
     }
 }
