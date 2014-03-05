@@ -46,6 +46,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -66,6 +68,7 @@ import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
 import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
+import static java.util.Map.Entry;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
         ViewPager.OnPageChangeListener {
@@ -89,7 +92,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private boolean locationPassThrough = false;
     private long routeId;
     private ProximityIntentReceiver proximityIntentReceiver = new ProximityIntentReceiver();
-    private ArrayList<PendingIntent> proximityAlerts = new ArrayList<PendingIntent>();
+    private HashMap<Instruction, PendingIntent> proximityAlerts = new HashMap<Instruction, PendingIntent>();
 
     Speakerbox speakerbox;
 
@@ -236,8 +239,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private void clearProximityAlerts() {
         LocationManager locationManager =
                 (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        for (PendingIntent intent : proximityAlerts) {
-            locationManager.removeProximityAlert(intent);
+        Iterator it = proximityAlerts.entrySet().iterator();
+        while (it.hasNext()) {
+            Entry pairs = (Entry)it.next();
+            locationManager.removeProximityAlert((PendingIntent) pairs.getValue());
+            it.remove();
         }
         act.unregisterReceiver(proximityIntentReceiver);
     }
@@ -251,7 +257,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             PendingIntent proximityIntent = PendingIntent.getBroadcast(
                     act, PROXIMITY_REQUEST_CODE, intent, PendingIntent.FLAG_CANCEL_CURRENT);
             double[] turnPoint = instruction.getPoint();
-            proximityAlerts.add(proximityIntent);
+            proximityAlerts.put(instruction, proximityIntent);
             locationManager.addProximityAlert(turnPoint[0], turnPoint[1],
                     getWalkingAdvanceRadius(), -1, proximityIntent);
         }
@@ -321,6 +327,19 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
                     "**nextTurn** is null are we there yet? ");
             return;
+        }
+
+        Location temporaryLocationObj = new Location("tmp");
+        Iterator it = proximityAlerts.entrySet().iterator();
+        while (it.hasNext()) {
+            Entry pairs = (Entry)it.next();
+            Instruction instruction = (Instruction)pairs.getKey();
+            temporaryLocationObj.setLatitude(instruction.getPoint()[0]);
+            temporaryLocationObj.setLongitude(instruction.getPoint()[1]);
+            if (Math.floor(correctedLocation.distanceTo(temporaryLocationObj)) < getWalkingAdvanceRadius()) {
+                pager.setCurrentItem(instructions.indexOf(instruction));
+            }
+            it.remove();
         }
 
         logForDebugging(location, nextTurn);
@@ -539,14 +558,17 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Toast.makeText(act, "foo", Toast.LENGTH_LONG).show();
             int id = intent.getIntExtra(INSTRUCTION_ID, -1);
             if (intent.getBooleanExtra(KEY_PROXIMITY_ENTERING, false)) {
                 Logger.logToDatabase(act, "geofence", "entering: " + String.valueOf(id));
                 if (id > 0) {
+                    Toast.makeText(act, "entering: " + String.valueOf(id), Toast.LENGTH_LONG).show();
                     pager.setCurrentItem(id);
                 }
             } else {
+                if (id > 0) {
+                    Toast.makeText(act, "exiting: " + String.valueOf(id), Toast.LENGTH_LONG).show();
+                }
                 Logger.logToDatabase(act, "geofence", "exiting: " + String.valueOf(id));
             }
         }
