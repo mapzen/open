@@ -9,11 +9,8 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLocationManager;
 
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-
-import java.util.List;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
@@ -109,9 +106,16 @@ public class LocationHelperTest {
     public void requestLocationUpdates_shouldRegisterGpsListener() throws Exception {
         LocationListener listener = new TestLocationListener();
         locationHelper.requestLocationUpdates(LocationRequest.create(), listener);
-        List<LocationListener> list = shadowLocationManager.getRequestLocationUpdateListeners();
-        assertThat(list).hasSize(1);
-        assertThat(list).contains(listener);
+        assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).hasSize(1);
+    }
+
+    @Test
+    public void requestLocationUpdates_shouldInvokeListenerOnLocationChanged() throws Exception {
+        TestLocationListener listener = new TestLocationListener();
+        locationHelper.requestLocationUpdates(LocationRequest.create(), listener);
+        Location location = new Location(GPS_PROVIDER);
+        shadowLocationManager.simulateLocation(location);
+        assertThat(listener.location).isEqualTo(location);
     }
 
     class TestConnectionCallbacks implements LocationHelper.ConnectionCallbacks {
@@ -129,20 +133,11 @@ public class LocationHelperTest {
     }
 
     class TestLocationListener implements LocationListener {
+        private Location location;
+
         @Override
         public void onLocationChanged(Location location) {
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
+            this.location = location;
         }
     }
 }

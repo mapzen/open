@@ -2,7 +2,6 @@ package com.mapzen.location;
 
 import android.content.Context;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
@@ -14,7 +13,9 @@ import static android.location.LocationManager.GPS_PROVIDER;
 public class LocationHelper {
     private final Context context;
     private final ConnectionCallbacks connectionCallbacks;
+
     private LocationManager locationManager;
+    private LocationListener locationListener;
 
     public LocationHelper(Context context, ConnectionCallbacks connectionCallbacks) {
         this.context = context;
@@ -50,8 +51,29 @@ public class LocationHelper {
         return bestLocation;
     }
 
-    public void requestLocationUpdates(LocationRequest request, LocationListener listener) {
-        locationManager.requestLocationUpdates(GPS_PROVIDER, 0, 0, listener);
+    public void requestLocationUpdates(LocationRequest request, LocationListener locationListener) {
+        this.locationListener = locationListener;
+
+        android.location.LocationListener gpsListener = new android.location.LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                LocationHelper.this.locationListener.onLocationChanged(location);
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+            }
+        };
+
+        locationManager.requestLocationUpdates(GPS_PROVIDER, 0, 0, gpsListener);
     }
 
     public static interface ConnectionCallbacks {
