@@ -45,6 +45,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -358,12 +359,27 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     Logger.logToDatabase(act, ROUTE_TAG, "post language: " +
                             instruction.toString());
                     act.appendToDebugView("post language for: " + instruction.toString());
-                    // flip to post language
+                    flipInstructionToAfter(instruction);
                 }
             }
         }
 
         logForDebugging(location, correctedLocation);
+    }
+
+    private void flipInstructionToAfter(Instruction instruction) {
+        final int index = instructions.indexOf(instruction);
+        View view = pager.getChildAt(index);
+        if (view != null) {
+            TextView fullBefore = (TextView) view.findViewById(R.id.full_instruction);
+            TextView fullAfter = (TextView) view.findViewById(R.id.full_instruction_after_action);
+            fullBefore.setVisibility(View.GONE);
+            fullAfter.setVisibility(View.VISIBLE);
+            ImageView turnIconBefore = (ImageView) view.findViewById(R.id.turn_icon);
+            turnIconBefore.setVisibility(View.GONE);
+            ImageView turnIconAfter = (ImageView) view.findViewById(R.id.turn_icon_after_action);
+            turnIconAfter.setVisibility(View.VISIBLE);
+        }
     }
 
     private void logForDebugging(Location location, Location correctedLocation) {
@@ -511,6 +527,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private static class RoutesAdapter extends PagerAdapter {
         private List<Instruction> instructions = new ArrayList<Instruction>();
         private Context context;
+        private Instruction currentInstruction;
 
         public RoutesAdapter(Context context, List<Instruction> instructions) {
             this.context = context;
@@ -524,7 +541,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            Instruction instruction = instructions.get(position);
+            currentInstruction = instructions.get(position);
             View view = View.inflate(context, R.layout.instruction, null);
 
             if (position == instructions.size() - 1) {
@@ -534,19 +551,31 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             }
 
             TextView fullInstruction = (TextView) view.findViewById(R.id.full_instruction);
-            fullInstruction.setText(getFullInstructionWithBoldName(instruction));
+            fullInstruction.setText(
+                    getFullInstructionWithBoldName(currentInstruction.getFullInstruction()));
+
+            TextView fullInstructionAfterAction =
+                    (TextView) view.findViewById(R.id.full_instruction_after_action);
+            fullInstructionAfterAction.setText(
+                    getFullInstructionWithBoldName(
+                            currentInstruction.getFullInstructionAfterAction()));
 
             ImageView turnIcon = (ImageView) view.findViewById(R.id.turn_icon);
             turnIcon.setImageResource(DisplayHelper.getRouteDrawable(context,
-                    instruction.getTurnInstruction(), DisplayHelper.IconStyle.WHITE));
+                    currentInstruction.getTurnInstruction(), DisplayHelper.IconStyle.WHITE));
 
+            ImageView turnIconAfterAction =
+                    (ImageView) view.findViewById(R.id.turn_icon_after_action);
+            turnIconAfterAction.setImageResource(DisplayHelper.getRouteDrawable(context,
+                    10, DisplayHelper.IconStyle.WHITE));
+
+            view.setTag("Instruction_" + String.valueOf(position));
             container.addView(view);
             return view;
         }
 
-        private SpannableStringBuilder getFullInstructionWithBoldName(Instruction instruction) {
-            final String fullInstruction = instruction.getFullInstruction();
-            final String name = instruction.getName();
+        private SpannableStringBuilder getFullInstructionWithBoldName(String fullInstruction) {
+            final String name = currentInstruction.getName();
             final int startOfName = fullInstruction.indexOf(name);
             final int endOfName = startOfName + name.length();
             final StyleSpan boldStyleSpan = new StyleSpan(Typeface.BOLD);
