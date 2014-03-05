@@ -136,6 +136,15 @@ public class LocationHelperTest {
         assertThat(listener.location).isEqualTo(location1);
     }
 
+    @Test
+    public void disconnect_shouldUnregisterAllListeners() throws Exception {
+        TestLocationListener listener = new TestLocationListener();
+        LocationRequest request = LocationRequest.create();
+        locationHelper.requestLocationUpdates(request, listener);
+        locationHelper.disconnect();
+        assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).isEmpty();
+    }
+
     class TestConnectionCallbacks implements LocationHelper.ConnectionCallbacks {
         private boolean connected = false;
 

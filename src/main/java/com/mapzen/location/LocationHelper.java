@@ -17,6 +17,8 @@ public class LocationHelper {
     private LocationManager locationManager;
     private LocationListener locationListener;
 
+    private android.location.LocationListener gpsListener;
+
     public LocationHelper(Context context, ConnectionCallbacks connectionCallbacks) {
         this.context = context;
         this.connectionCallbacks = connectionCallbacks;
@@ -28,6 +30,10 @@ public class LocationHelper {
     }
 
     public void disconnect() {
+        if (gpsListener != null) {
+            locationManager.removeUpdates(gpsListener);
+        }
+
         connectionCallbacks.onDisconnected();
     }
 
@@ -53,7 +59,7 @@ public class LocationHelper {
     public void requestLocationUpdates(LocationRequest request, LocationListener locationListener) {
         this.locationListener = locationListener;
 
-        android.location.LocationListener gpsListener = new android.location.LocationListener() {
+        gpsListener = new android.location.LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 LocationHelper.this.locationListener.onLocationChanged(location);
