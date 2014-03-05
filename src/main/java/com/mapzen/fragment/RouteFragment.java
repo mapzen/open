@@ -47,8 +47,10 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -92,7 +94,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private boolean locationPassThrough = false;
     private long routeId;
     private ProximityIntentReceiver proximityIntentReceiver = new ProximityIntentReceiver();
-    private HashMap<Instruction, PendingIntent> proximityAlerts = new HashMap<Instruction, PendingIntent>();
+    private HashMap<Instruction, PendingIntent> proximityAlerts =
+            new HashMap<Instruction, PendingIntent>();
 
     Speakerbox speakerbox;
 
@@ -241,9 +244,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Iterator it = proximityAlerts.entrySet().iterator();
         while (it.hasNext()) {
-            Entry pairs = (Entry)it.next();
+            Entry pairs = (Entry) it.next();
             locationManager.removeProximityAlert((PendingIntent) pairs.getValue());
-            it.remove();
         }
         act.unregisterReceiver(proximityIntentReceiver);
     }
@@ -301,20 +303,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    private Location getNextTurn() {
-        final int currentItem = pager.getCurrentItem();
-        Location nextTurn = null;
-        if (currentItem < (instructions.size() - 1)) {
-            nextTurn = getNextTurnTo(instructions.get(pager.getCurrentItem() + 1));
-        }
-        return nextTurn;
-    }
-
+    HashMap<Location, Instruction> lastClosestTurns = new HashMap<Location, Instruction>();
+    Set<Instruction> seenInstructions = new HashSet<Instruction>();
     public void onLocationChanged(Location location) {
         Location correctedLocation = snapTo(location);
         storeLocationInfo(location, correctedLocation);
         manageMap(correctedLocation, location);
-        Location nextTurn = getNextTurn();
 
         // No corrected location
         if (correctedLocation == null) {
@@ -323,35 +317,73 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             return;
         }
 
-        if (nextTurn == null) {
-            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                    "**nextTurn** is null are we there yet? ");
-            return;
-        }
-
-        Location temporaryLocationObj = new Location("tmp");
-        Iterator it = proximityAlerts.entrySet().iterator();
+        final Iterator it = proximityAlerts.entrySet().iterator();
+        Instruction closestInstruction = null;
+        Location closestLocation = null;
+        int closestDistance = (int) 1e8;
         while (it.hasNext()) {
-            Entry pairs = (Entry)it.next();
-            Instruction instruction = (Instruction)pairs.getKey();
+            Entry pairs = (Entry) it.next();
+            Instruction instruction = (Instruction) pairs.getKey();
+            Location temporaryLocationObj = new Location("tmp");
             temporaryLocationObj.setLatitude(instruction.getPoint()[0]);
             temporaryLocationObj.setLongitude(instruction.getPoint()[1]);
-            if (Math.floor(correctedLocation.distanceTo(temporaryLocationObj)) < getWalkingAdvanceRadius()) {
-                pager.setCurrentItem(instructions.indexOf(instruction));
+            final int distanceToTurn =
+                    (int) Math.floor(correctedLocation.distanceTo(temporaryLocationObj));
+            Logger.logToDatabase(act, ROUTE_TAG, String.valueOf(distanceToTurn)
+                    + " distance to instruction: " + instruction.toString()
+                    + " threshold is: " + String.valueOf(getWalkingAdvanceRadius()));
+            Logger.logToDatabase(act, ROUTE_TAG, "current closest distance: "
+                    + String.valueOf(closestDistance));
+            if (closestInstruction != null) {
+                Logger.logToDatabase(act, ROUTE_TAG, "current closest instruction: "
+                        + closestInstruction.toString());
+            } else {
+                Logger.logToDatabase(act, ROUTE_TAG, "current closest instruction: null");
             }
-            it.remove();
+            if (distanceToTurn < closestDistance) {
+                closestDistance = distanceToTurn;
+                closestInstruction = instruction;
+                closestLocation = temporaryLocationObj;
+            }
+        }
+        act.writeToDebugView(String.valueOf(closestDistance));
+        if (closestDistance < getWalkingAdvanceRadius()) {
+            Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: "
+                    + closestInstruction.toString());
+            final int instructionIndex = instructions.indexOf(closestInstruction);
+            pager.setCurrentItem(instructionIndex);
+            seenInstructions.add(closestInstruction);
+            lastClosestTurns.put(closestLocation, closestInstruction);
         }
 
-        logForDebugging(location, nextTurn);
+        Iterator lastClosestIt = lastClosestTurns.entrySet().iterator();
+        while (lastClosestIt.hasNext()) {
+            Entry pairs = (Entry) lastClosestIt.next();
+            Instruction instruction = (Instruction) pairs.getValue();
+            if (seenInstructions.contains(instruction)) {
+                Location l = (Location) pairs.getKey();
+                if (l.distanceTo(correctedLocation) > getWalkingAdvanceRadius()) {
+                    Logger.logToDatabase(act, ROUTE_TAG, "post language: " +
+                            instruction.toString());
+                    act.appendToDebugView("post language for: " + instruction.toString());
+                    // flip to post language
+                }
+            }
+        }
+
+        logForDebugging(location, correctedLocation);
     }
 
-    private void logForDebugging(Location location, Location nextTurn) {
-        Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                "new current location: " + location.toString());
-        Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                "next turn: " + nextTurn.toString());
+    private void logForDebugging(Location location, Location correctedLocation) {
+        Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: "
+                + "new corrected location: " + correctedLocation.toString()
+                + " from original: " + location.toString());
         Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
                 "threshold: " + String.valueOf(getWalkingAdvanceRadius()));
+        for (Instruction instruction : instructions) {
+            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
+                    "turnPoint: " + instruction.toString());
+        }
     }
 
     private void showDirectionListFragment() {
@@ -558,18 +590,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            int id = intent.getIntExtra(INSTRUCTION_ID, -1);
             if (intent.getBooleanExtra(KEY_PROXIMITY_ENTERING, false)) {
-                Logger.logToDatabase(act, "geofence", "entering: " + String.valueOf(id));
-                if (id > 0) {
-                    Toast.makeText(act, "entering: " + String.valueOf(id), Toast.LENGTH_LONG).show();
-                    pager.setCurrentItem(id);
-                }
+                Logger.logToDatabase(act, "geofence", "entering: " + intent.toString());
             } else {
-                if (id > 0) {
-                    Toast.makeText(act, "exiting: " + String.valueOf(id), Toast.LENGTH_LONG).show();
-                }
-                Logger.logToDatabase(act, "geofence", "exiting: " + String.valueOf(id));
+                Logger.logToDatabase(act, "geofence", "exiting: " + intent.toString());
             }
         }
     }
