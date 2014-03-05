@@ -39,7 +39,9 @@ import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import static com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
@@ -72,6 +74,7 @@ public class BaseActivity extends MapActivity {
     };
     private SQLiteDatabase db;
     protected DatabaseHelper dbHelper;
+    private TextView debugView;
 
     public void deactivateMapLocationUpdates() {
         updateMapLocation = false;
@@ -96,6 +99,7 @@ public class BaseActivity extends MapActivity {
         dbHelper = new DatabaseHelper(this);
         initMapController();
         initLocationClient();
+        initDebugView();
     }
 
     @Override
@@ -380,4 +384,21 @@ public class BaseActivity extends MapActivity {
 
         return pagerResultsFragment.executeSearchOnMap(getSearchView(), query);
     }
+
+    private void initDebugView() {
+        debugView = (TextView) findViewById(R.id.debugging);
+        if (isInDebugMode()) {
+            debugView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void writeToDebugView(String msg) {
+        debugView.setText(msg);
+    }
+
+    public void appendToDebugView(String msg) {
+        String fullText = debugView.getText().toString() + "," +  msg;
+        debugView.setText(fullText);
+    }
+
 }
