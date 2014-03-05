@@ -30,6 +30,13 @@ public class LocationRequestTest {
     }
 
     @Test
+    public void shouldAllowMethodChaining() throws Exception {
+        assertThat(locationRequest.setInterval(1000)).isSameAs(locationRequest);
+        assertThat(locationRequest.setFastestInterval(1000)).isSameAs(locationRequest);
+        assertThat(locationRequest.setSmallestDisplacement(10.0f)).isSameAs(locationRequest);
+    }
+
+    @Test
     public void setInterval_shouldOverrideDefaultValue() throws Exception {
         locationRequest.setInterval(5000);
         assertThat(locationRequest.getInterval()).isEqualTo(5000);
