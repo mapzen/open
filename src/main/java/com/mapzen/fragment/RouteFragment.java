@@ -356,10 +356,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    public int getCurrentItem() {
-        return pager.getCurrentItem();
-    }
-
     public void setRoute(Route route) {
         this.route = route;
     }
