@@ -43,12 +43,6 @@ public class LocationHelperTest {
         assertThat(locationHelper).isNotNull();
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void getLastLocation_shouldThrowExceptionIfNotConnected() throws Exception {
-        locationHelper = new LocationHelper(application, connectionCallbacks);
-        locationHelper.getLastLocation();
-    }
-
     @Test
     public void connect_shouldCallOnConnected() throws Exception {
         assertThat(connectionCallbacks.connected).isTrue();
@@ -58,6 +52,12 @@ public class LocationHelperTest {
     public void disconnect_shouldCallOnDisconnected() throws Exception {
         locationHelper.disconnect();
         assertThat(connectionCallbacks.connected).isFalse();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void getLastLocation_shouldThrowExceptionIfNotConnected() throws Exception {
+        locationHelper = new LocationHelper(application, connectionCallbacks);
+        locationHelper.getLastLocation();
     }
 
     @Test
@@ -101,6 +101,12 @@ public class LocationHelperTest {
         shadowLocationManager.setLastKnownLocation(PASSIVE_PROVIDER, passiveLocation);
 
         assertThat(locationHelper.getLastLocation()).isEqualTo(passiveLocation);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void requestLocationUpdates_shouldThrowExceptionIfNotConnected() throws Exception {
+        locationHelper = new LocationHelper(application, connectionCallbacks);
+        locationHelper.requestLocationUpdates(LocationRequest.create(), new TestLocationListener());
     }
 
     @Test

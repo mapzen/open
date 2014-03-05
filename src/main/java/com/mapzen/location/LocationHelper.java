@@ -38,11 +38,7 @@ public class LocationHelper {
     }
 
     public Location getLastLocation() {
-        if (locationManager == null) {
-            throw new IllegalStateException("Not connected. "
-                    + "Call connect() and wait for onConnected() to be called.");
-        }
-
+        throwIfNotConnected();
         final List<String> providers = locationManager.getAllProviders();
         Location bestLocation = null;
         for (String provider : providers) {
@@ -57,6 +53,7 @@ public class LocationHelper {
     }
 
     public void requestLocationUpdates(LocationRequest request, LocationListener locationListener) {
+        throwIfNotConnected();
         this.locationListener = locationListener;
 
         gpsListener = new android.location.LocationListener() {
@@ -80,6 +77,13 @@ public class LocationHelper {
 
         locationManager.requestLocationUpdates(GPS_PROVIDER, request.getFastestInterval(),
                 request.getSmallestDisplacement(), gpsListener);
+    }
+
+    private void throwIfNotConnected() {
+        if (locationManager == null) {
+            throw new IllegalStateException("Not connected. "
+                    + "Call connect() and wait for onConnected() to be called.");
+        }
     }
 
     public static interface ConnectionCallbacks {
