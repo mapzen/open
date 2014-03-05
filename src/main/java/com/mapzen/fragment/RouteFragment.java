@@ -265,14 +265,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-
-    private Location getNextTurnTo(Instruction nextInstruction) {
-        Location nextTurn = new Location(getResources().getString(R.string.application_name));
-        nextTurn.setLatitude(nextInstruction.getPoint()[0]);
-        nextTurn.setLongitude(nextInstruction.getPoint()[1]);
-        return nextTurn;
-    }
-
     private Location snapTo(Location location) {
         if (!locationPassThrough) {
             double[] onRoadPoint;
