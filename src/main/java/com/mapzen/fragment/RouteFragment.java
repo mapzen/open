@@ -15,6 +15,7 @@ import org.oscim.core.GeoPoint;
 import org.oscim.layers.PathLayer;
 import org.oscim.map.Map;
 
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -24,6 +25,7 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -50,9 +52,12 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
+import static android.location.LocationManager.KEY_PROXIMITY_ENTERING;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
+import static com.mapzen.fragment.RouteFragment.ProximityIntentReceiver.PROXIMITY_REQUEST_ACTION;
+import static com.mapzen.fragment.RouteFragment.ProximityIntentReceiver.PROXIMITY_REQUEST_CODE;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
@@ -69,6 +74,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public static final int WALKING_LOST_THRESHOLD = 70;
     public static final int ROUTE_ZOOM_LEVEL = 17;
     public static final String ROUTE_TAG = "route";
+    public static final String INSTRUCTION_ID = "instruction_id";
 
     @InjectView(R.id.overflow_menu) ImageButton overflowMenu;
     @InjectView(R.id.routes) ViewPager pager;
@@ -82,6 +88,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private int previousPosition;
     private boolean locationPassThrough = false;
     private long routeId;
+    private ProximityIntentReceiver proximityIntentReceiver = new ProximityIntentReceiver();
+    private ArrayList<PendingIntent> proximityAlerts = new ArrayList<PendingIntent>();
 
     Speakerbox speakerbox;
 
@@ -171,6 +179,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.hideActionBar();
         act.deactivateMapLocationUpdates();
         drawRoute();
+        initProximityAlerts();
     }
 
     @Override
@@ -179,6 +188,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.unregisterReceiver(locationReceiver);
         act.activateMapLocationUpdates();
         clearRoute();
+        clearProximityAlerts();
     }
 
     @Override
@@ -217,15 +227,42 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return feature.getGeoPoint();
     }
 
+    private void initProximityAlerts() {
+        setProximityAlerts();
+        IntentFilter filter = new IntentFilter(PROXIMITY_REQUEST_ACTION);
+        act.registerReceiver(proximityIntentReceiver, filter);
+    }
+
+    private void clearProximityAlerts() {
+        LocationManager locationManager =
+                (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        for (PendingIntent intent : proximityAlerts) {
+            locationManager.removeProximityAlert(intent);
+        }
+        act.unregisterReceiver(proximityIntentReceiver);
+    }
+
+    private void setProximityAlerts() {
+        LocationManager locationManager =
+                (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        for (Instruction instruction : instructions) {
+            Intent intent = new Intent(PROXIMITY_REQUEST_ACTION);
+            intent.putExtra(INSTRUCTION_ID, instructions.indexOf(instruction));
+            PendingIntent proximityIntent = PendingIntent.getBroadcast(
+                    act, PROXIMITY_REQUEST_CODE, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+            double[] turnPoint = instruction.getPoint();
+            proximityAlerts.add(proximityIntent);
+            locationManager.addProximityAlert(turnPoint[0], turnPoint[1],
+                    getWalkingAdvanceRadius(), -1, proximityIntent);
+        }
+    }
+
+
     private Location getNextTurnTo(Instruction nextInstruction) {
         Location nextTurn = new Location(getResources().getString(R.string.application_name));
         nextTurn.setLatitude(nextInstruction.getPoint()[0]);
         nextTurn.setLongitude(nextInstruction.getPoint()[1]);
         return nextTurn;
-    }
-
-    public void setLocationPassThrough(boolean locationPassThrough) {
-        this.locationPassThrough = locationPassThrough;
     }
 
     private Location snapTo(Location location) {
@@ -286,24 +323,14 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             return;
         }
 
-        int distanceToNextTurn = (int) Math.floor(correctedLocation.distanceTo(nextTurn));
-        if (distanceToNextTurn < getWalkingAdvanceRadius()) {
-            goToNextInstruction();
-        } else {
-            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                    "outside defined turn radius");
-        }
-
-        logForDebugging(location, nextTurn, distanceToNextTurn);
+        logForDebugging(location, nextTurn);
     }
 
-    private void logForDebugging(Location location, Location nextTurn, int distanceToNextTurn) {
+    private void logForDebugging(Location location, Location nextTurn) {
         Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
                 "new current location: " + location.toString());
         Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
                 "next turn: " + nextTurn.toString());
-        Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                "distance to next turn: " + String.valueOf(distanceToNextTurn));
         Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
                 "threshold: " + String.valueOf(getWalkingAdvanceRadius()));
     }
@@ -515,4 +542,24 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             onLocationChanged(location);
         }
     }
+
+    public class ProximityIntentReceiver extends BroadcastReceiver {
+        public static final int PROXIMITY_REQUEST_CODE = 1000;
+        public static final String PROXIMITY_REQUEST_ACTION = "com.mapzen.route";
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Toast.makeText(act, "foo", Toast.LENGTH_LONG).show();
+            int id = intent.getIntExtra(INSTRUCTION_ID, -1);
+            if (intent.getBooleanExtra(KEY_PROXIMITY_ENTERING, false)) {
+                Logger.logToDatabase(act, "geofence", "entering: " + String.valueOf(id));
+                if (id > 0) {
+                    pager.setCurrentItem(id);
+                }
+            } else {
+                Logger.logToDatabase(act, "geofence", "exiting: " + String.valueOf(id));
+            }
+        }
+    }
+
 }

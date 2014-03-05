@@ -5,6 +5,7 @@ import com.mapzen.entity.Feature;
 import com.mapzen.geo.DistanceFormatter;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
+import com.mapzen.shadows.ShadowMapzenLocationManager;
 import com.mapzen.shadows.ShadowTextToSpeech;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
@@ -27,12 +28,15 @@ import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.tester.android.view.TestMenuItem;
 import org.robolectric.util.FragmentTestUtil;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
+import android.location.LocationManager;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.text.SpannedString;
@@ -46,9 +50,11 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
+import static com.mapzen.fragment.RouteFragment.ProximityIntentReceiver.PROXIMITY_REQUEST_ACTION;
 import static com.mapzen.geo.DistanceFormatter.METERS_IN_ONE_FOOT;
 import static com.mapzen.geo.DistanceFormatter.METERS_IN_ONE_MILE;
 import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
@@ -62,6 +68,7 @@ import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.robolectric.Robolectric.getShadowApplication;
 import static org.robolectric.Robolectric.shadowOf;
 import static org.robolectric.Robolectric.shadowOf_;
 
@@ -117,36 +124,6 @@ public class RouteFragmentTest {
     public void shouldHaveRoutesViewPager() throws Exception {
         attachFragment();
         assertThat(fragment.pager).isNotNull();
-    }
-
-    @Test
-    public void onLocationChange_shouldAdvance() throws Exception {
-        fragment.setLocationPassThrough(true);
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(1, 1));
-        instructions.add(getTestInstruction(2, 2));
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-
-        assertThat(fragment.getCurrentItem()).isEqualTo(0);
-        fragment.onLocationChanged(getTestLocation(1, 1));
-        assertThat(fragment.getCurrentItem()).isEqualTo(1);
-    }
-
-    @Test
-    public void onLocationChange_shouldNotAdvance() throws Exception {
-        fragment.setLocationPassThrough(true);
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-
-        assertThat(fragment.getCurrentItem()).isEqualTo(0);
-        fragment.onLocationChanged(getTestLocation(1, 0));
-        assertThat(fragment.getCurrentItem()).isEqualTo(0);
     }
 
     @Test
@@ -235,7 +212,7 @@ public class RouteFragmentTest {
     public void drawRoute_shouldStoreCoordinates() throws Exception {
         enableDebugMode(act);
         fragment.setRoute(new Route(new JSONObject(MOCK_ROUTE_JSON)));
-        fragment.onResume();
+        attachFragment();
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(TABLE_ROUTE_GEOMETRY,
                 new String[]{COLUMN_ROUTE_ID},
@@ -246,6 +223,7 @@ public class RouteFragmentTest {
 
     @Test
     public void drawRoute_shouldNotStoreCoordinates() throws Exception {
+        attachFragment();
         fragment.setRoute(new Route(new JSONObject(MOCK_ROUTE_JSON)));
         fragment.onResume();
         SQLiteDatabase db = act.getReadableDb();
@@ -445,6 +423,69 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onResume_shouldRegisterProximityReceiver() throws Exception {
+        attachFragment();
+        assertThat(app.hasReceiverForIntent(new Intent(PROXIMITY_REQUEST_ACTION))).isTrue();
+    }
+
+    @Test
+    public void onResume_shouldAddProximityAlertsForEveryInstruction() throws Exception {
+        LocationManager locationManager =
+                (LocationManager) act.getSystemService(Context.LOCATION_SERVICE);
+        ShadowMapzenLocationManager shadowLocationManager = shadowOf_(locationManager);
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(1, 1));
+        instructions.add(getTestInstruction(2, 2));
+        attachFragmentWith(instructions);
+        fragment.onResume();
+        assertThat(shadowLocationManager.getProximityAlerts().size())
+                .isEqualTo(instructions.size());
+    }
+
+    @Test
+    public void onPause_shouldUnRegisterProximityReceiver() throws Exception {
+        attachFragment();
+        fragment.onPause();
+        assertThat(app.hasReceiverForIntent(new Intent(PROXIMITY_REQUEST_ACTION))).isFalse();
+    }
+
+    @Test
+    public void onPause_shouldRemoveAllProximityAlerts() throws Exception {
+        LocationManager locationManager =
+                (LocationManager) act.getSystemService(Context.LOCATION_SERVICE);
+        ShadowMapzenLocationManager shadowLocationManager = shadowOf_(locationManager);
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(1, 1));
+        instructions.add(getTestInstruction(2, 2));
+        attachFragmentWith(instructions);
+        fragment.onResume();
+        fragment.onPause();
+        assertThat(shadowLocationManager.getProximityAlerts().size())
+                .isEqualTo(0);
+    }
+
+    @Test
+    public void shouldSwitchToAppropriateInstructionWhenEnteringInProximity() throws Exception {
+        LocationManager locationManager =
+                (LocationManager) act.getSystemService(Context.LOCATION_SERVICE);
+        ShadowMapzenLocationManager shadowLocationManager = shadowOf_(locationManager);
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(1, 1));
+        instructions.add(getTestInstruction(2, 2));
+        attachFragmentWith(instructions);
+        fragment.onResume();
+        List<BroadcastReceiver> br = getShadowApplication().getReceiversForIntent(
+                new Intent(PROXIMITY_REQUEST_ACTION));
+        Intent intent = shadowLocationManager.getProximityAlerts().get(1).getSavedIntent();
+        intent.putExtra(LocationManager.KEY_PROXIMITY_ENTERING, true);
+        br.get(0).onReceive(act, intent);
+        //TODO assertThat(fragment.pager).hasCurrentItem(1);
+    }
+
+    @Test
     public void setMapPerspectiveForInstruction_shouldAlignBearing() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction instruction = getTestInstruction(0, 0);
@@ -531,7 +572,7 @@ public class RouteFragmentTest {
     @Test
     public void onCreateView_shouldSpeakFirstInstruction() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        Instruction instruction = getTestInstruction(0, 0);
+        Instruction instruction = getTestInstruction(3, 3);
         instructions.add(instruction);
 
         fragment.setInstructions(instructions);
@@ -650,7 +691,7 @@ public class RouteFragmentTest {
         fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(1, 1));
         fragment.setInstructions(instructions);
     }
 
