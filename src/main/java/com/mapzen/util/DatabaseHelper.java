@@ -29,6 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_LOG_ENTRIES = "log_entries";
     public static final String COLUMN_TAG = "tag";
     public static final String COLUMN_MSG = "msg";
+    public static final String COLUMN_POSITION = "position";
     public static final String TABLE_ROUTE_GEOMETRY = "route_geometry";
     public static final int VERSION = 3;
 
@@ -60,6 +61,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private final String createRouteGeometrySql = "create table " + TABLE_ROUTE_GEOMETRY + " ("
             + "_id integer primary key autoincrement,"
             + COLUMN_ROUTE_ID + " integer not null,"
+            + COLUMN_POSITION + " integer not null,"
             + COLUMN_LAT + " text not null,"
             + COLUMN_LNG + " text not null)";
 

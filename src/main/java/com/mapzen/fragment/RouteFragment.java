@@ -58,6 +58,7 @@ import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
+import static com.mapzen.util.DatabaseHelper.COLUMN_POSITION;
 import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
 import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
 import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
@@ -350,6 +351,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         // this is becasue testing the pager is challenging ;(
         flippedInstructions.add(instruction);
         View view = pager.getChildAt(index);
+
+        if (pager.getCurrentItem() == instructions.indexOf(instruction)) {
+            speakerbox.play(instruction.getFullInstructionAfterAction());
+        }
+
         if (view != null) {
             TextView fullBefore = (TextView) view.findViewById(R.id.full_instruction);
             TextView fullAfter = (TextView) view.findViewById(R.id.full_instruction_after_action);
@@ -360,7 +366,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             ImageView turnIconAfter = (ImageView) view.findViewById(R.id.turn_icon_after_action);
             turnIconAfter.setVisibility(View.VISIBLE);
         }
-        speakerbox.play(instruction.getFullInstructionAfterAction());
     }
 
     private void logForDebugging(Location location, Location correctedLocation) {
@@ -416,17 +421,20 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         PathLayer layer = mapFragment.getPathLayer();
         layer.clearPath();
         if (route != null) {
-            for (double[] pair : route.getGeometry()) {
-                addCoordinateToDatabase(pair);
+            ArrayList<double[]> geometry = route.getGeometry();
+            for (int index = 0; index < geometry.size(); index++) {
+                double[] pair = geometry.get(index);
+                addCoordinateToDatabase(pair, index);
                 layer.addPoint(new GeoPoint(pair[0], pair[1]));
             }
         }
     }
 
-    private void addCoordinateToDatabase(double[] pair) {
+    private void addCoordinateToDatabase(double[] pair, int pos) {
         if (act.isInDebugMode()) {
             ContentValues values = new ContentValues();
             values.put(COLUMN_ROUTE_ID, routeId);
+            values.put(COLUMN_POSITION, pos);
             values.put(COLUMN_LAT, pair[0]);
             values.put(COLUMN_LNG, pair[1]);
             act.getDb().insert(TABLE_ROUTE_GEOMETRY, null, values);
