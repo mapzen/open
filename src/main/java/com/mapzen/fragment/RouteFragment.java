@@ -181,6 +181,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         initLocationReceiver();
         act.hideActionBar();
         act.deactivateMapLocationUpdates();
+        act.getDb().beginTransaction();
         drawRoute();
         initProximityAlerts();
     }
@@ -190,6 +191,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         super.onPause();
         act.unregisterReceiver(locationReceiver);
         act.activateMapLocationUpdates();
+        act.getDb().setTransactionSuccessful();
+        act.getDb().endTransaction();
         clearRoute();
     }
 
@@ -384,15 +387,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     public void onRouteSuccess(JSONObject rawRoute) {
         if (act.isInDebugMode()) {
-            SQLiteDatabase db = act.getDb();
             ContentValues insertValues = new ContentValues();
             insertValues.put(COLUMN_RAW, rawRoute.toString());
-            routeId = db.insert(TABLE_ROUTES, null, insertValues);
+            routeId = act.getDb().insert(TABLE_ROUTES, null, insertValues);
         }
         setRoute(new Route(rawRoute));
         if (route.foundRoute()) {
             setInstructions(route.getRouteInstructions());
-            drawRoute();
             displayRoute();
             setMapPerspectiveForInstruction(instructions.get(0));
         } else {
@@ -406,24 +407,20 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         PathLayer layer = mapFragment.getPathLayer();
         layer.clearPath();
         if (route != null) {
-            SQLiteDatabase db = act.getDb();
-            db.beginTransaction();
             for (double[] pair : route.getGeometry()) {
-                addCoordinateToDatabase(db, pair);
+                addCoordinateToDatabase(pair);
                 layer.addPoint(new GeoPoint(pair[0], pair[1]));
             }
-            db.setTransactionSuccessful();
-            db.endTransaction();
         }
     }
 
-    private void addCoordinateToDatabase(SQLiteDatabase db, double[] pair) {
+    private void addCoordinateToDatabase(double[] pair) {
         if (act.isInDebugMode()) {
             ContentValues values = new ContentValues();
             values.put(COLUMN_ROUTE_ID, routeId);
             values.put(COLUMN_LAT, pair[0]);
             values.put(COLUMN_LNG, pair[1]);
-            db.insert(TABLE_ROUTE_GEOMETRY, null, values);
+            act.getDb().insert(TABLE_ROUTE_GEOMETRY, null, values);
         }
     }
 
@@ -494,8 +491,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void storeLocationInfo(Location location, Location correctedLocation) {
         if (act.isInDebugMode()) {
-            SQLiteDatabase db = act.getDb();
-            db.insert(TABLE_LOCATIONS, null,
+            act.getDb().insert(TABLE_LOCATIONS, null,
                     valuesForLocationCorrection(location,
                             correctedLocation, instructions.get(pager.getCurrentItem()), routeId));
         }
