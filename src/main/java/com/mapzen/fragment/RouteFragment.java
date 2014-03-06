@@ -97,6 +97,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private ProximityIntentReceiver proximityIntentReceiver = new ProximityIntentReceiver();
     private HashMap<Instruction, PendingIntent> proximityAlerts =
             new HashMap<Instruction, PendingIntent>();
+    private HashMap<Location, Instruction> lastClosestTurns = new HashMap<Location, Instruction>();
+    private Set<Instruction> seenInstructions = new HashSet<Instruction>();
+
 
     Speakerbox speakerbox;
 
@@ -296,8 +299,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    HashMap<Location, Instruction> lastClosestTurns = new HashMap<Location, Instruction>();
-    Set<Instruction> seenInstructions = new HashSet<Instruction>();
     public void onLocationChanged(Location location) {
         Location correctedLocation = snapTo(location);
         storeLocationInfo(location, correctedLocation);
@@ -349,7 +350,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             lastClosestTurns.put(closestLocation, closestInstruction);
         }
 
-        Iterator lastClosestIt = lastClosestTurns.entrySet().iterator();
+        final Iterator lastClosestIt = lastClosestTurns.entrySet().iterator();
         while (lastClosestIt.hasNext()) {
             Entry pairs = (Entry) lastClosestIt.next();
             Instruction instruction = (Instruction) pairs.getValue();
