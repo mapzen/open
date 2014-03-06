@@ -470,6 +470,26 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onLocationChange_shouldSayPostInstructions() throws Exception {
+        attachFragment();
+        fragment.onResume();
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        double[] point0 = instructions.get(0).getPoint();
+        fragment.onLocationChanged(getTestLocation(point0[0], point0[1]));
+        double[] point1 = instructions.get(1).getPoint();
+        fragment.onLocationChanged(getTestLocation(point1[0], point1[1]));
+        double[] point2 = instructions.get(2).getPoint();
+        fragment.onLocationChanged(getTestLocation(point2[0], point2[1]));
+
+        ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
+        shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
+        assertThat(shadowTextToSpeech.getLastSpokenText())
+                .isEqualTo(instructions.get(1).getFullInstructionAfterAction()
+                        .replace("ft", "feet"));
+    }
+
+    @Test
     public void onLocationChange_shouldNotFlipToPostInstructionLanguage() throws Exception {
         attachFragment();
         fragment.onResume();

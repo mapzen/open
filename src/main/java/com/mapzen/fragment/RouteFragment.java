@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
@@ -361,6 +360,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             ImageView turnIconAfter = (ImageView) view.findViewById(R.id.turn_icon_after_action);
             turnIconAfter.setVisibility(View.VISIBLE);
         }
+        speakerbox.play(instruction.getFullInstructionAfterAction());
     }
 
     private void logForDebugging(Location location, Location correctedLocation) {
