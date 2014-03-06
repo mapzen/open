@@ -4,7 +4,6 @@ import com.mapzen.shadows.ShadowCrashlytics;
 import com.mapzen.shadows.ShadowGLMatrix;
 import com.mapzen.shadows.ShadowLocationClient;
 import com.mapzen.shadows.ShadowMapView;
-import com.mapzen.shadows.ShadowMapzenLocationManager;
 import com.mapzen.shadows.ShadowTextToSpeech;
 import com.mapzen.shadows.ShadowVolley;
 
@@ -65,7 +64,6 @@ public class MapzenTestRunner extends RobolectricTestRunner {
                 .addShadowClass(ShadowVolley.class)
                 .addShadowClass(ShadowLocationClient.class)
                 .addShadowClass(ShadowTextToSpeech.class)
-                .addShadowClass(ShadowMapzenLocationManager.class)
                 .build();
     }
 
