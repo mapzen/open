@@ -15,7 +15,6 @@ import org.oscim.core.GeoPoint;
 import org.oscim.layers.PathLayer;
 import org.oscim.map.Map;
 
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -25,7 +24,6 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -56,12 +54,9 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-import static android.location.LocationManager.KEY_PROXIMITY_ENTERING;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
-import static com.mapzen.fragment.RouteFragment.ProximityIntentReceiver.PROXIMITY_REQUEST_ACTION;
-import static com.mapzen.fragment.RouteFragment.ProximityIntentReceiver.PROXIMITY_REQUEST_CODE;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
@@ -79,7 +74,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public static final int WALKING_LOST_THRESHOLD = 70;
     public static final int ROUTE_ZOOM_LEVEL = 17;
     public static final String ROUTE_TAG = "route";
-    public static final String INSTRUCTION_ID = "instruction_id";
 
     @InjectView(R.id.overflow_menu) ImageButton overflowMenu;
     @InjectView(R.id.routes) ViewPager pager;
@@ -92,15 +86,15 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private DistanceView distanceLeftView;
     private int previousPosition;
     private long routeId;
-    private ProximityIntentReceiver proximityIntentReceiver = new ProximityIntentReceiver();
-    private HashMap<Instruction, PendingIntent> proximityAlerts =
-            new HashMap<Instruction, PendingIntent>();
+    private Set<Instruction> proximityAlerts = new HashSet<Instruction>();
     private HashMap<Location, Instruction> lastClosestTurns = new HashMap<Location, Instruction>();
     private Set<Instruction> seenInstructions = new HashSet<Instruction>();
-    public int itemIndex = 0;
-    public Set<Instruction> flippedInstructions = new HashSet<Instruction>();
 
     Speakerbox speakerbox;
+
+    // FOR testing
+    private int itemIndex = 0;
+    private Set<Instruction> flippedInstructions = new HashSet<Instruction>();
 
     public static RouteFragment newInstance(BaseActivity act, Feature feature) {
         final RouteFragment fragment = new RouteFragment();
@@ -197,7 +191,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.unregisterReceiver(locationReceiver);
         act.activateMapLocationUpdates();
         clearRoute();
-        clearProximityAlerts();
     }
 
     @Override
@@ -237,34 +230,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void initProximityAlerts() {
-        setProximityAlerts();
-        IntentFilter filter = new IntentFilter(PROXIMITY_REQUEST_ACTION);
-        act.registerReceiver(proximityIntentReceiver, filter);
-    }
-
-    private void clearProximityAlerts() {
-        LocationManager locationManager =
-                (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        Iterator it = proximityAlerts.entrySet().iterator();
-        while (it.hasNext()) {
-            Entry pairs = (Entry) it.next();
-            locationManager.removeProximityAlert((PendingIntent) pairs.getValue());
-        }
-        act.unregisterReceiver(proximityIntentReceiver);
-    }
-
-    private void setProximityAlerts() {
-        LocationManager locationManager =
-                (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         for (Instruction instruction : instructions) {
-            Intent intent = new Intent(PROXIMITY_REQUEST_ACTION);
-            intent.putExtra(INSTRUCTION_ID, instructions.indexOf(instruction));
-            PendingIntent proximityIntent = PendingIntent.getBroadcast(
-                    act, PROXIMITY_REQUEST_CODE, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-            double[] turnPoint = instruction.getPoint();
-            proximityAlerts.put(instruction, proximityIntent);
-            locationManager.addProximityAlert(turnPoint[0], turnPoint[1],
-                    getWalkingAdvanceRadius(), -1, proximityIntent);
+            proximityAlerts.add(instruction);
         }
     }
 
@@ -296,6 +263,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
+    public Set<Instruction> getProximityAlerts() {
+        return proximityAlerts;
+    }
+
     public void onLocationChanged(Location location) {
         Location correctedLocation = snapTo(location);
         storeLocationInfo(location, correctedLocation);
@@ -308,13 +279,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             return;
         }
 
-        final Iterator it = proximityAlerts.entrySet().iterator();
         Instruction closestInstruction = null;
         Location closestLocation = null;
         int closestDistance = (int) 1e8;
-        while (it.hasNext()) {
-            Entry pairs = (Entry) it.next();
-            Instruction instruction = (Instruction) pairs.getKey();
+        for (Instruction instruction : proximityAlerts) {
             Location temporaryLocationObj = new Location("tmp");
             temporaryLocationObj.setLatitude(instruction.getPoint()[0]);
             temporaryLocationObj.setLongitude(instruction.getPoint()[1]);
@@ -348,9 +316,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             lastClosestTurns.put(closestLocation, closestInstruction);
         }
 
-        final Iterator lastClosestIt = lastClosestTurns.entrySet().iterator();
-        while (lastClosestIt.hasNext()) {
-            Entry pairs = (Entry) lastClosestIt.next();
+        final Iterator it = lastClosestTurns.entrySet().iterator();
+        while (it.hasNext()) {
+            Entry pairs = (Entry) it.next();
             Instruction instruction = (Instruction) pairs.getValue();
             if (seenInstructions.contains(instruction)) {
                 Location l = (Location) pairs.getKey();
@@ -509,6 +477,14 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         map.updateMap(true);
     }
 
+    public int getItemIndex() {
+        return itemIndex;
+    }
+
+    public Set<Instruction> getFlippedInstructions() {
+        return flippedInstructions;
+    }
+
     private void initLocationReceiver() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(COM_MAPZEN_UPDATES_LOCATION);
@@ -605,19 +581,4 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             onLocationChanged(location);
         }
     }
-
-    public class ProximityIntentReceiver extends BroadcastReceiver {
-        public static final int PROXIMITY_REQUEST_CODE = 1000;
-        public static final String PROXIMITY_REQUEST_ACTION = "com.mapzen.route";
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getBooleanExtra(KEY_PROXIMITY_ENTERING, false)) {
-                Logger.logToDatabase(act, "geofence", "entering: " + intent.toString());
-            } else {
-                Logger.logToDatabase(act, "geofence", "exiting: " + intent.toString());
-            }
-        }
-    }
-
 }
