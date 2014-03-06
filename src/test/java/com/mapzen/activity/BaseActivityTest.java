@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
 
 import android.content.Context;
@@ -307,6 +308,12 @@ public class BaseActivityTest {
         activity.executeSearchOnMap("query");
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         assertThat(searchView.getSuggestionsAdapter()).isNull();
+    }
+
+    @Test
+    public void shouldNotifyUserIfLastLocationNotAvailable() throws Exception {
+        invokeOnConnected();
+        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo("Waiting for location");
     }
 
     private Location initLastLocation() {

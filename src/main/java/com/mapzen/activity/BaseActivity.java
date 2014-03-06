@@ -170,10 +170,16 @@ public class BaseActivity extends MapActivity {
             locationHelper.connect();
 
             final Location location = locationHelper.getLastLocation();
-            getMapController().setLocation(location);
+            if (location != null) {
+                getMapController().setLocation(location);
+                Logger.d("Last location = " + location);
+            } else {
+                Toast.makeText(BaseActivity.this, getString(R.string.waiting_for_location),
+                        Toast.LENGTH_LONG).show();
+            }
+
             getMapController().setZoomLevel(MapController.DEFAULT_ZOOMLEVEL);
             mapFragment.findMe();
-            Logger.d("Location: last location: " + location.toString());
             LocationRequest locationRequest = LocationRequest.create();
             locationRequest.setInterval(LOCATION_INTERVAL);
             locationRequest.setPriority(PRIORITY_HIGH_ACCURACY);
