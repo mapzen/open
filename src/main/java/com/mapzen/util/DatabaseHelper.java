@@ -30,7 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TAG = "tag";
     public static final String COLUMN_MSG = "msg";
     public static final String TABLE_ROUTE_GEOMETRY = "route_geometry";
-    public static final int VERSION = 2;
+    public static final int VERSION = 3;
 
     private final String createLocationsSql = "create table " + TABLE_LOCATIONS + " ("
             + "_id integer primary key autoincrement,"
@@ -63,17 +63,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + COLUMN_LAT + " text not null,"
             + COLUMN_LNG + " text not null)";
 
+    private final String createRouteGeometryIndexSql = "CREATE UNIQUE INDEX route_lat_lng "
+                + "on " + TABLE_ROUTE_GEOMETRY
+                + " ("+COLUMN_ROUTE_ID+","+COLUMN_LAT+", "+COLUMN_LAT+");";
+
     public DatabaseHelper(Context context) {
         super(context, context.getExternalFilesDir(null).getAbsolutePath() + "/" + DB_NAME,
                 null, VERSION);
     }
 
-    @Override
-    public void onCreate(SQLiteDatabase db) {
+    private void createDatabases(SQLiteDatabase db) {
         db.execSQL(createLocationsSql);
         db.execSQL(createRoutesSql);
         db.execSQL(createLogEntriesSql);
         db.execSQL(createRouteGeometrySql);
+        db.execSQL(createRouteGeometryIndexSql);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        createDatabases(db);
     }
 
     @Override
@@ -82,10 +91,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("drop table " + TABLE_ROUTES);
         db.execSQL("drop table " + TABLE_LOG_ENTRIES);
         db.execSQL("drop table " + TABLE_ROUTE_GEOMETRY);
-        db.execSQL(createLocationsSql);
-        db.execSQL(createRoutesSql);
-        db.execSQL(createLogEntriesSql);
-        db.execSQL(createRouteGeometrySql);
+        createDatabases(db);
     }
 
     public static ContentValues valuesForLocationCorrection(Location location,

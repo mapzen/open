@@ -183,7 +183,9 @@ public class RouteFragmentTest {
     @Test
     public void onRouteSuccess_shouldStoreRawJson() throws Exception {
         enableDebugMode(act);
+        fragment.onResume();
         fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
+        fragment.onPause();
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(TABLE_ROUTES,
                 new String[]{ COLUMN_RAW},
@@ -193,7 +195,9 @@ public class RouteFragmentTest {
 
     @Test
     public void onRouteSuccess_shouldNoteStoreRawJson() throws Exception {
+        fragment.onResume();
         fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
+        fragment.onPause();
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(TABLE_ROUTES,
                 new String[]{ COLUMN_RAW},
@@ -204,8 +208,9 @@ public class RouteFragmentTest {
     @Test
     public void drawRoute_shouldStoreCoordinates() throws Exception {
         enableDebugMode(act);
-        fragment.setRoute(new Route(new JSONObject(MOCK_ROUTE_JSON)));
-        attachFragment();
+        fragment.onResume();
+        fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
+        fragment.onPause();
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(TABLE_ROUTE_GEOMETRY,
                 new String[]{COLUMN_ROUTE_ID},
@@ -216,9 +221,9 @@ public class RouteFragmentTest {
 
     @Test
     public void drawRoute_shouldNotStoreCoordinates() throws Exception {
-        attachFragment();
-        fragment.setRoute(new Route(new JSONObject(MOCK_ROUTE_JSON)));
         fragment.onResume();
+        fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
+        fragment.onPause();
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(TABLE_ROUTE_GEOMETRY,
                 new String[]{COLUMN_ROUTE_ID},
