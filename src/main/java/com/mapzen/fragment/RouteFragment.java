@@ -45,7 +45,6 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.awt.Image;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -92,14 +91,14 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private Feature feature;
     private DistanceView distanceLeftView;
     private int previousPosition;
-    private boolean locationPassThrough = false;
     private long routeId;
     private ProximityIntentReceiver proximityIntentReceiver = new ProximityIntentReceiver();
     private HashMap<Instruction, PendingIntent> proximityAlerts =
             new HashMap<Instruction, PendingIntent>();
     private HashMap<Location, Instruction> lastClosestTurns = new HashMap<Location, Instruction>();
     private Set<Instruction> seenInstructions = new HashSet<Instruction>();
-
+    public int itemIndex = 0;
+    public Set<Instruction> flippedInstructions = new HashSet<Instruction>();
 
     Speakerbox speakerbox;
 
@@ -270,18 +269,16 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private Location snapTo(Location location) {
-        if (!locationPassThrough) {
-            double[] onRoadPoint;
-            onRoadPoint = route.snapToRoute(
-                new double[] {location.getLatitude(), location.getLongitude()}
-            );
+        double[] onRoadPoint;
+        onRoadPoint = route.snapToRoute(
+            new double[] {location.getLatitude(), location.getLongitude()}
+        );
 
-            if (onRoadPoint != null) {
-                Location correctedLocation = new Location("Corrected");
-                correctedLocation.setLatitude(onRoadPoint[0]);
-                correctedLocation.setLongitude(onRoadPoint[1]);
-                return correctedLocation;
-            }
+        if (onRoadPoint != null) {
+            Location correctedLocation = new Location("Corrected");
+            correctedLocation.setLatitude(onRoadPoint[0]);
+            correctedLocation.setLongitude(onRoadPoint[1]);
+            return correctedLocation;
         }
         return location;
     }
@@ -346,6 +343,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     + closestInstruction.toString());
             final int instructionIndex = instructions.indexOf(closestInstruction);
             pager.setCurrentItem(instructionIndex);
+            itemIndex = instructionIndex;
             seenInstructions.add(closestInstruction);
             lastClosestTurns.put(closestLocation, closestInstruction);
         }
@@ -370,6 +368,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void flipInstructionToAfter(Instruction instruction) {
         final int index = instructions.indexOf(instruction);
+        // this is becasue testing the pager is challenging ;(
+        flippedInstructions.add(instruction);
         View view = pager.getChildAt(index);
         if (view != null) {
             TextView fullBefore = (TextView) view.findViewById(R.id.full_instruction);

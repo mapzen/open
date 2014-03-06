@@ -24,6 +24,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowPopupMenu;
+import org.robolectric.shadows.ShadowViewGroup;
 import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.tester.android.view.TestMenuItem;
 import org.robolectric.util.FragmentTestUtil;
@@ -468,22 +469,51 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void shouldSwitchToAppropriateInstructionWhenEnteringInProximity() throws Exception {
-        LocationManager locationManager =
-                (LocationManager) act.getSystemService(Context.LOCATION_SERVICE);
-        ShadowMapzenLocationManager shadowLocationManager = shadowOf_(locationManager);
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(1, 1));
-        instructions.add(getTestInstruction(2, 2));
-        attachFragmentWith(instructions);
+    public void onLocationChange_shouldAdvance() throws Exception {
+        attachFragment();
         fragment.onResume();
-        List<BroadcastReceiver> br = getShadowApplication().getReceiversForIntent(
-                new Intent(PROXIMITY_REQUEST_ACTION));
-        Intent intent = shadowLocationManager.getProximityAlerts().get(1).getSavedIntent();
-        intent.putExtra(LocationManager.KEY_PROXIMITY_ENTERING, true);
-        br.get(0).onReceive(act, intent);
-        //TODO assertThat(fragment.pager).hasCurrentItem(1);
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        assertThat(fragment.itemIndex).isEqualTo(0);
+        double[] point = instructions.get(2).getPoint();
+        fragment.onLocationChanged(getTestLocation(point[0], point[1]));
+        assertThat(fragment.itemIndex).isEqualTo(2);
+    }
+
+    @Test
+    public void onLocationChange_shouldNotAdvance() throws Exception {
+        attachFragment();
+        assertThat(fragment.itemIndex).isEqualTo(0);
+        fragment.onLocationChanged(getTestLocation(1, 0));
+        assertThat(fragment.itemIndex).isEqualTo(0);
+    }
+
+    @Test
+    public void onLocationChange_shouldFlipToPostInstructionLanguage() throws Exception {
+        attachFragment();
+        fragment.onResume();
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        double[] point0 = instructions.get(0).getPoint();
+        fragment.onLocationChanged(getTestLocation(point0[0], point0[1]));
+        double[] point1 = instructions.get(1).getPoint();
+        fragment.onLocationChanged(getTestLocation(point1[0], point1[1]));
+        double[] point2 = instructions.get(2).getPoint();
+        fragment.onLocationChanged(getTestLocation(point2[0], point2[1]));
+        assertThat(fragment.flippedInstructions.contains(instructions.get(0))).isTrue();
+        assertThat(fragment.flippedInstructions.contains(instructions.get(1))).isTrue();
+        assertThat(fragment.flippedInstructions.contains(instructions.get(2))).isFalse();
+    }
+
+    @Test
+    public void onLocationChange_shouldNotFlipToPostInstructionLanguage() throws Exception {
+        attachFragment();
+        fragment.onResume();
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        assertThat(fragment.flippedInstructions.contains(instructions.get(0))).isFalse();
+        assertThat(fragment.flippedInstructions.contains(instructions.get(1))).isFalse();
+        assertThat(fragment.flippedInstructions.contains(instructions.get(2))).isFalse();
     }
 
     @Test
@@ -690,10 +720,6 @@ public class RouteFragmentTest {
     private void attachFragment() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(1, 1));
-        fragment.setInstructions(instructions);
     }
 
     private void attachFragmentWith(ArrayList<Instruction> instructions) throws Exception {
