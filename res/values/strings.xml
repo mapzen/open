@@ -18,6 +18,7 @@
     <string name="start">Start</string>
     <string name="overflow_menu">More</string>
     <string name="route_steps_menu_option">Step-by-step list</string>
+    <string name="waiting_for_location">Waiting for location</string>
 
     <!--Settings-->
 
