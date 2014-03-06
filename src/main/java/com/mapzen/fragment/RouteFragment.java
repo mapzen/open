@@ -87,7 +87,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private int previousPosition;
     private long routeId;
     private Set<Instruction> proximityAlerts = new HashSet<Instruction>();
-    private HashMap<Location, Instruction> lastClosestTurns = new HashMap<Location, Instruction>();
+    private HashMap<Instruction, Location> lastClosestTurns = new HashMap<Instruction, Location>();
     private Set<Instruction> seenInstructions = new HashSet<Instruction>();
 
     Speakerbox speakerbox;
@@ -274,6 +274,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         Location correctedLocation = snapTo(location);
         storeLocationInfo(location, correctedLocation);
         manageMap(correctedLocation, location);
+        StringBuilder debugStringBuilder = new StringBuilder();
 
         // No corrected location
         if (correctedLocation == null) {
@@ -283,7 +284,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
 
         Instruction closestInstruction = null;
-        Location closestLocation = null;
         int closestDistance = (int) 1e8;
         for (Instruction instruction : proximityAlerts) {
             Location temporaryLocationObj = new Location("tmp");
@@ -305,35 +305,44 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             if (distanceToTurn < closestDistance) {
                 closestDistance = distanceToTurn;
                 closestInstruction = instruction;
-                closestLocation = temporaryLocationObj;
             }
         }
-        act.writeToDebugView(String.valueOf(closestDistance));
+
+        if (closestInstruction != null) {
+            debugStringBuilder.append("Closest instruction is: " + closestInstruction.getName());
+            debugStringBuilder.append(", distance: " + String.valueOf(closestDistance));
+        }
+
         if (closestDistance < getWalkingAdvanceRadius()) {
             Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: "
                     + closestInstruction.toString());
             final int instructionIndex = instructions.indexOf(closestInstruction);
             pager.setCurrentItem(instructionIndex);
             itemIndex = instructionIndex;
-            seenInstructions.add(closestInstruction);
-            lastClosestTurns.put(closestLocation, closestInstruction);
-        }
-
-        final Iterator it = lastClosestTurns.entrySet().iterator();
-        while (it.hasNext()) {
-            Entry pairs = (Entry) it.next();
-            Instruction instruction = (Instruction) pairs.getValue();
-            if (seenInstructions.contains(instruction)) {
-                Location l = (Location) pairs.getKey();
-                if (l.distanceTo(correctedLocation) > getWalkingAdvanceRadius()) {
-                    Logger.logToDatabase(act, ROUTE_TAG, "post language: " +
-                            instruction.toString());
-                    act.appendToDebugView("post language for: " + instruction.toString());
-                    flipInstructionToAfter(instruction);
-                }
+            if (!seenInstructions.contains(closestInstruction)) {
+                seenInstructions.add(closestInstruction);
             }
         }
 
+        final Iterator it = seenInstructions.iterator();
+        while (it.hasNext()) {
+            Instruction instruction = (Instruction) it.next();
+            final Location l = new Location("temp");
+            l.setLatitude(instruction.getPoint()[0]);
+            l.setLongitude(instruction.getPoint()[1]);
+            final int distance = (int) Math.floor(l.distanceTo(correctedLocation));
+            debugStringBuilder.append("\n");
+            debugStringBuilder.append("seen instruction: " + instruction.getName());
+            debugStringBuilder.append(" distance: " + String.valueOf(distance));
+            if (distance > getWalkingAdvanceRadius()) {
+                Logger.logToDatabase(act, ROUTE_TAG, "post language: " +
+                        instruction.toString());
+                act.appendToDebugView("post language for: " + instruction.toString());
+                flipInstructionToAfter(instruction);
+            }
+        }
+
+        act.writeToDebugView(debugStringBuilder.toString());
         logForDebugging(location, correctedLocation);
     }
 
