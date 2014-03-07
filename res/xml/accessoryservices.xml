@@ -1,0 +1,20 @@
+<resources>
+    <application name="GearProvider">
+    <serviceProfile
+        name="smartview"
+        role="provider"
+        serviceImpl="com.mapzen.util.ServiceImpl"
+        id="/samsung/hellob"
+        version="1.0">
+        <supportedTransports>
+            <transport type="TRANSPORT_BT"/>
+		</supportedTransports>      
+        <serviceChannel
+            id="104"
+            qosDataRate="low"
+            qosPriority="low"
+            qosType="unrestrictedDatagramUnOrder" >
+        </serviceChannel>
+    </serviceProfile>
+    </application>
+</resources>
