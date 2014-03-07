@@ -8,6 +8,8 @@ import com.mapzen.osrm.Route;
 import com.mapzen.speakerbox.Speakerbox;
 import com.mapzen.util.DisplayHelper;
 import com.mapzen.util.Logger;
+import com.mapzen.util.ServiceConnection;
+import com.mapzen.util.ServiceImpl;
 import com.mapzen.widget.DistanceView;
 
 import org.json.JSONObject;
@@ -42,6 +44,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -481,6 +484,16 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         previousPosition = i;
         setMapPerspectiveForInstruction(instructions.get(i));
         speakerbox.play(instructions.get(i).getFullInstruction());
+        try {
+            ServiceConnection conn = ServiceImpl.mConnection;
+            if (conn != null) {
+                int channelId = ServiceImpl.CHANNEL_ID;
+                conn.send(channelId, instructions.get(i).getGearJson().toString().getBytes());
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
