@@ -43,7 +43,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -65,7 +64,6 @@ import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
 import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
-import static java.util.Map.Entry;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
         ViewPager.OnPageChangeListener {
@@ -87,7 +85,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private int previousPosition;
     private long routeId;
     private Set<Instruction> proximityAlerts = new HashSet<Instruction>();
-    private HashMap<Instruction, Location> lastClosestTurns = new HashMap<Instruction, Location>();
     private Set<Instruction> seenInstructions = new HashSet<Instruction>();
 
     Speakerbox speakerbox;
@@ -348,13 +345,16 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void flipInstructionToAfter(Instruction instruction) {
         final int index = instructions.indexOf(instruction);
-        // this is becasue testing the pager is challenging ;(
+        if (flippedInstructions.contains(instruction)) {
+            return;
+        }
         flippedInstructions.add(instruction);
-        View view = pager.getChildAt(index);
-
-        if (pager.getCurrentItem() == instructions.indexOf(instruction)) {
+        if (pager.getCurrentItem() == index) {
             speakerbox.play(instruction.getFullInstructionAfterAction());
         }
+
+        View view = pager.findViewWithTag(
+                "Instruction_" + String.valueOf(index));
 
         if (view != null) {
             TextView fullBefore = (TextView) view.findViewById(R.id.full_instruction);
