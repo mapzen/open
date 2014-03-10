@@ -19,6 +19,9 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.oscim.core.GeoPoint;
 import org.oscim.map.TestMap;
 import org.robolectric.Robolectric;
@@ -71,10 +74,11 @@ import static org.robolectric.Robolectric.shadowOf_;
 @RunWith(MapzenTestRunner.class)
 public class RouteFragmentTest {
 
-    private TestBaseActivity act;
-    private RouteFragment fragment;
-    private ShadowApplication app;
-    private TestMenu menu;
+    TestBaseActivity act;
+    RouteFragment fragment;
+    ShadowApplication app;
+    TestMenu menu;
+    ArrayList<Instruction> testInstructions;
 
     @Before
     public void setUp() throws Exception {
@@ -445,13 +449,9 @@ public class RouteFragmentTest {
 
     @Test
     public void onResume_shouldAddProximityAlertsForEveryInstruction() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(1, 1));
-        instructions.add(getTestInstruction(2, 2));
-        attachFragmentWith(instructions);
+        attachFragmentWith(testInstructions);
         fragment.onResume();
-        assertThat(fragment.getProximityAlerts().size()).isEqualTo(instructions.size());
+        assertThat(fragment.getProximityAlerts().size()).isEqualTo(testInstructions.size());
     }
 
     @Test
@@ -602,6 +602,76 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onCreateView_shouldSendFirstInstructionToGear() throws Exception {
+        GearServiceSocket mockSocket = Mockito.mock(GearServiceSocket.class);
+        GearAgentService.mConnection = mockSocket;
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction instruction = getTestInstruction(3, 3);
+        instructions.add(instruction);
+
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+
+        Mockito.verify(mockSocket).send(Matchers.eq(GearAgentService.CHANNEL_ID),
+                Matchers.eq(instruction.getGearJson().toString().getBytes()));
+    }
+
+    @Test
+    public void onCreateView_shouldNotSendFirstInstructionToGear() throws Exception {
+        GearServiceSocket mockSocket = Mockito.mock(GearServiceSocket.class);
+        GearAgentService.mConnection = null;
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction instruction = getTestInstruction(3, 3);
+        instructions.add(instruction);
+
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+
+        Mockito.verifyZeroInteractions(mockSocket);
+    }
+
+    @Test
+    public void onPageSelected_shouldSendInstructionToGear() throws Exception {
+        GearServiceSocket mockSocket = Mockito.mock(GearServiceSocket.class);
+        InOrder inOrder = Mockito.inOrder(mockSocket);
+        GearAgentService.mConnection = mockSocket;
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction firstInstruction = getTestInstruction(0, 0);
+        firstInstruction.setDistance(100);
+        instructions.add(firstInstruction);
+        Instruction secondInstruction = getTestInstruction(0, 0);
+        secondInstruction.setDistance(200);
+        instructions.add(secondInstruction);
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+
+        fragment.onPageSelected(1);
+
+        inOrder.verify(mockSocket).send(Matchers.eq(GearAgentService.CHANNEL_ID),
+                Matchers.eq(instructions.get(0).getGearJson().toString().getBytes()));
+        inOrder.verify(mockSocket).send(Matchers.eq(GearAgentService.CHANNEL_ID),
+                Matchers.eq(instructions.get(1).getGearJson().toString().getBytes()));
+    }
+
+    @Test
+    public void onPageSelected_shouldNotSendInstructionToGear() throws Exception {
+        GearServiceSocket mockSocket = Mockito.mock(GearServiceSocket.class);
+        GearAgentService.mConnection = null;
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction firstInstruction = getTestInstruction(0, 0);
+        firstInstruction.setDistance(100);
+        instructions.add(firstInstruction);
+        Instruction secondInstruction = getTestInstruction(0, 0);
+        secondInstruction.setDistance(200);
+        instructions.add(secondInstruction);
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+
+        fragment.onPageSelected(1);
+        Mockito.verifyZeroInteractions(mockSocket);
+    }
+
+    @Test
     public void textToSpeechRules_shouldReplaceMiWithMiles() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction instruction = getTestInstruction(0, 0);
@@ -674,13 +744,16 @@ public class RouteFragmentTest {
         return (View) fragment.pager.getAdapter().instantiateItem(group, position);
     }
 
-    private void initTestFragment() {
+    private void initTestFragment() throws Exception{
         fragment = new RouteFragment();
         fragment.setFeature(getTestFeature());
         fragment.setAct(act);
         fragment.setMapFragment(initMapFragment(act));
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        fragment.setInstructions(instructions);
+        testInstructions = new ArrayList<Instruction>();
+        testInstructions.add(getTestInstruction(0, 0));
+        testInstructions.add(getTestInstruction(1, 1));
+        testInstructions.add(getTestInstruction(2, 2));
+        fragment.setInstructions(testInstructions);
     }
 
     private void attachFragment() throws Exception {
