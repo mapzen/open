@@ -604,7 +604,7 @@ public class RouteFragmentTest {
     @Test
     public void onCreateView_shouldSendFirstInstructionToGear() throws Exception {
         GearServiceSocket mockSocket = Mockito.mock(GearServiceSocket.class);
-        GearAgentService.mConnection = mockSocket;
+        GearAgentService.setmConnection(mockSocket);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction instruction = getTestInstruction(3, 3);
         instructions.add(instruction);
@@ -619,7 +619,7 @@ public class RouteFragmentTest {
     @Test
     public void onCreateView_shouldNotSendFirstInstructionToGear() throws Exception {
         GearServiceSocket mockSocket = Mockito.mock(GearServiceSocket.class);
-        GearAgentService.mConnection = null;
+        GearAgentService.setmConnection(null);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction instruction = getTestInstruction(3, 3);
         instructions.add(instruction);
@@ -634,7 +634,7 @@ public class RouteFragmentTest {
     public void onPageSelected_shouldSendInstructionToGear() throws Exception {
         GearServiceSocket mockSocket = Mockito.mock(GearServiceSocket.class);
         InOrder inOrder = Mockito.inOrder(mockSocket);
-        GearAgentService.mConnection = mockSocket;
+        GearAgentService.setmConnection(mockSocket);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction firstInstruction = getTestInstruction(0, 0);
         firstInstruction.setDistance(100);
@@ -656,7 +656,7 @@ public class RouteFragmentTest {
     @Test
     public void onPageSelected_shouldNotSendInstructionToGear() throws Exception {
         GearServiceSocket mockSocket = Mockito.mock(GearServiceSocket.class);
-        GearAgentService.mConnection = null;
+        GearAgentService.setmConnection(null);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction firstInstruction = getTestInstruction(0, 0);
         firstInstruction.setDistance(100);
@@ -744,7 +744,7 @@ public class RouteFragmentTest {
         return (View) fragment.pager.getAdapter().instantiateItem(group, position);
     }
 
-    private void initTestFragment() throws Exception{
+    private void initTestFragment() throws Exception {
         fragment = new RouteFragment();
         fragment.setFeature(getTestFeature());
         fragment.setAct(act);
