@@ -122,6 +122,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         adapter.notifyDataSetChanged();
         previousPosition = pager.getCurrentItem();
         initSpeakerbox();
+        sendFirstInstructionToGear();
         return rootView;
     }
 
@@ -476,6 +477,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @Override
     public void onPageSelected(int i) {
+        sendToGear(i);
         if (previousPosition > i) {
             changeDistance(instructions.get(i + 1).getDistance());
         } else if (previousPosition < i) {
@@ -484,16 +486,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         previousPosition = i;
         setMapPerspectiveForInstruction(instructions.get(i));
         speakerbox.play(instructions.get(i).getFullInstruction());
-        try {
-            ServiceConnection conn = ServiceImpl.mConnection;
-            if (conn != null) {
-                int channelId = ServiceImpl.CHANNEL_ID;
-                conn.send(channelId, instructions.get(i).getGearJson().toString().getBytes());
-            }
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -611,4 +603,22 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             onLocationChanged(location);
         }
     }
+
+    private void sendFirstInstructionToGear() {
+        sendToGear(0);
+    }
+
+    private void sendToGear(int index) {
+        try {
+            GearServiceSocket conn = GearAgentService.mConnection;
+            if (conn != null) {
+                int channelId = GearAgentService.CHANNEL_ID;
+                conn.send(channelId, instructions.get(index).getGearJson().toString().getBytes());
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
