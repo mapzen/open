@@ -67,7 +67,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private final String createRouteGeometryIndexSql = "CREATE UNIQUE INDEX route_lat_lng "
                 + "on " + TABLE_ROUTE_GEOMETRY
-                + " ("+COLUMN_ROUTE_ID+","+COLUMN_LAT+", "+COLUMN_LAT+");";
+                + " (" + COLUMN_ROUTE_ID + "," + COLUMN_LAT + ", " + COLUMN_LAT + ");";
 
     public DatabaseHelper(Context context) {
         super(context, context.getExternalFilesDir(null).getAbsolutePath() + "/" + DB_NAME,
