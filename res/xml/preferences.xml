@@ -33,13 +33,13 @@
             android:summary="@string/settings_walking_advance_radius_summary"
             android:title="@string/settings_walking_advance_radius" />
 
-        <EditTextPreference
-            android:defaultValue="@string/settings_default_mapsource"
-            android:dialogTitle="@string/settings_mapsource_dialog_title"
-            android:inputType="textUri"
+        <ListPreference
+            android:title="@string/settings_mapsource"
+            android:entries="@array/vtm_source_titles"
+            android:entryValues="@array/vtm_source_values"
             android:key="@string/settings_key_mapsource"
             android:summary="@string/settings_mapsource_summary"
-            android:title="@string/settings_mapsource" />
+            android:defaultValue="@string/settings_default_mapsource" />
 
     </PreferenceCategory>
 
