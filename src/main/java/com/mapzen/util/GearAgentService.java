@@ -8,29 +8,29 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
-public class ServiceImpl extends SAAgent {
+public class GearAgentService extends SAAgent {
 
     public static final int CHANNEL_ID = 104;
-    private static final String TAG = "HelloBProviderService";
+    private static final String TAG = "GearAgentService";
     private static final int SERVICE_CONNECTION_RESULT_OK = 0;
-    public static ServiceConnection mConnection = null;
+    public static GearServiceSocket mConnection = null;
 
     private final IBinder mBinder = new LocalBinder();
 
-    public ServiceImpl() {
-        super(TAG, ServiceConnection.class);
+    public GearAgentService() {
+        super(TAG, GearServiceSocket.class);
     }
 
     @Override
-    protected void onFindPeerAgentResponse(SAPeerAgent arg0, int arg1) {
+    protected void onFindPeerAgentResponse(SAPeerAgent peerAgent, int index) {
         // TODO Auto-generated method stub
     }
 
     @Override
-    protected void onServiceConnectionResponse(SASocket uThisConnection, int result) {
+    protected void onServiceConnectionResponse(SASocket socket, int result) {
         if (result == SERVICE_CONNECTION_RESULT_OK) {
-            if (uThisConnection != null) {
-                mConnection = (ServiceConnection) uThisConnection;
+            if (socket != null) {
+                mConnection = (GearServiceSocket) socket;
                 mConnection.mConnectionId = (int) (System.currentTimeMillis() & 255);
                 Logger.d("onServiceConnection connectionID = " + mConnection.mConnectionId);
             } else {
@@ -47,8 +47,8 @@ public class ServiceImpl extends SAAgent {
     }
 
     public class LocalBinder extends Binder {
-        public ServiceImpl getService() {
-            return ServiceImpl.this;
+        public GearAgentService getService() {
+            return GearAgentService.this;
         }
     }
 }

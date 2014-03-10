@@ -10,6 +10,8 @@ import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.util.DatabaseHelper;
+import com.mapzen.util.GearAgentService;
+import com.mapzen.util.GearServiceSocket;
 import com.mapzen.widget.DistanceView;
 
 import org.json.JSONArray;

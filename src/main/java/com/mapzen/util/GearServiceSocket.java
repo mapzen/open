@@ -4,19 +4,19 @@ import com.samsung.android.sdk.accessory.SASocket;
 
 import java.io.IOException;
 
-public class ServiceConnection extends SASocket {
+public class GearServiceSocket extends SASocket {
     public int mConnectionId;
 
-    public ServiceConnection() {
-        super(ServiceConnection.class.getName());
+    public GearServiceSocket() {
+        super(GearServiceSocket.class.getName());
     }
 
     @Override
     public void onReceive(int channelId, byte[] data) {
         String strToUpdateUI = new String(data);
-        ServiceConnection uHandler = ServiceImpl.mConnection;
+        GearServiceSocket uHandler = GearAgentService.mConnection;
         try {
-            uHandler.send(ServiceImpl.CHANNEL_ID, strToUpdateUI.getBytes());
+            uHandler.send(GearAgentService.CHANNEL_ID, strToUpdateUI.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -31,8 +31,8 @@ public class ServiceConnection extends SASocket {
     protected void onServiceConnectionLost(int errorCode) {
         Logger.e(
                 "onServiceConectionLost  for peer = " + mConnectionId + "error code =" + errorCode);
-        if (ServiceImpl.mConnection != null) {
-            ServiceImpl.mConnection = null;
+        if (GearAgentService.mConnection != null) {
+            GearAgentService.mConnection = null;
         }
     }
 }

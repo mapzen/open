@@ -7,9 +7,9 @@ import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.speakerbox.Speakerbox;
 import com.mapzen.util.DisplayHelper;
+import com.mapzen.util.GearAgentService;
+import com.mapzen.util.GearServiceSocket;
 import com.mapzen.util.Logger;
-import com.mapzen.util.ServiceConnection;
-import com.mapzen.util.ServiceImpl;
 import com.mapzen.widget.DistanceView;
 
 import org.json.JSONObject;

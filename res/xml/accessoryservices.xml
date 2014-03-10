@@ -3,7 +3,7 @@
     <serviceProfile
         name="smartview"
         role="provider"
-        serviceImpl="com.mapzen.util.ServiceImpl"
+        serviceImpl="com.mapzen.util.GearAgentService"
         id="/samsung/hellob"
         version="1.0">
         <supportedTransports>
