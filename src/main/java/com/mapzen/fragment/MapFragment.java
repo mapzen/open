@@ -12,6 +12,7 @@ import android.widget.Button;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
 import com.mapzen.search.OnPoiClickListener;
+
 import org.oscim.android.canvas.AndroidBitmap;
 import org.oscim.backend.canvas.Bitmap;
 import org.oscim.backend.canvas.Color;
@@ -25,7 +26,12 @@ import org.oscim.layers.tile.vector.BuildingLayer;
 import org.oscim.layers.tile.vector.VectorTileLayer;
 import org.oscim.layers.tile.vector.labeling.LabelLayer;
 import org.oscim.map.Map;
-import org.oscim.theme.InternalRenderTheme;
+
+import com.mapzen.util.MapzenTheme;
+
+import org.oscim.renderer.MapRenderer;
+import org.oscim.theme.IRenderTheme;
+import org.oscim.theme.ThemeLoader;
 import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 
 import java.io.InputStream;
@@ -152,6 +158,13 @@ public class MapFragment extends BaseFragment {
         this.map = map;
     }
 
+    public void setTheme(MapzenTheme theme) {
+        IRenderTheme t = ThemeLoader.load(theme);
+        baseLayer.setRenderTheme(t);
+        MapRenderer.setBackgroundColor(t.getMapBackground());
+        map.clearMap();
+    }
+
     private void setupMap() {
         baseLayer = map.setBaseMap(new OSciMap4TileSource(getTileBaseSource()));
         map.layers().add(new BuildingLayer(map, baseLayer));
@@ -168,7 +181,7 @@ public class MapFragment extends BaseFragment {
         meMarkerLayer = buildMyPositionLayer();
         map.layers().add(meMarkerLayer);
 
-        map.setTheme(InternalRenderTheme.OSMARENDER);
+        setTheme(MapzenTheme.valueOf(getString(R.string.settings_default_mapstyle)));
         map.bind(new Map.UpdateListener() {
             @Override
             public void onMapUpdate(MapPosition mapPosition, boolean positionChanged,

@@ -46,6 +46,12 @@
     <string name="settings_fixed_location_key">edittext_fixed_location</string>
     <string name="settings_fixed_location_summary">Set fixed debug location</string>
     <string name="settings_fixed_location_title">Debug location</string>
+
+    <string name="settings_mapstyle">Map style</string>
+    <string name="settings_key_mapstyle">listpreference_map_style</string>
+    <string name="settings_mapstyle_summary">Changes style of map</string>
+    <string name="settings_default_mapstyle">MAPZEN</string>
+
     <string name="toast_fixed_location_is_malformed">Your fixed location is malformed</string>
 
 </resources>
