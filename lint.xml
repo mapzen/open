@@ -5,7 +5,9 @@
     <issue id="IconLocation" severity="ignore" />
     <issue id="UnusedResources">
         <ignore path="res/layout/dummy.xml" />
+        <ignore path="res/xml/accessoryservices.xml" />
     </issue>
+    <issue id="MissingRegistered" severity="ignore" />
     <issue id="InvalidPackage" severity="ignore" />
     <issue id="UseCompoundDrawables" severity="ignore" />
 
