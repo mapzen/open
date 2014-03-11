@@ -47,7 +47,6 @@ public class LocationHelper {
                 }
             }
         }
-
         return bestLocation;
     }
 

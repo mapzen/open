@@ -10,6 +10,8 @@ import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.util.DatabaseHelper;
+import com.mapzen.util.GearAgentService;
+import com.mapzen.util.GearServiceSocket;
 import com.mapzen.widget.DistanceView;
 
 import org.json.JSONArray;
@@ -17,6 +19,9 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 import org.oscim.core.GeoPoint;
 import org.oscim.map.TestMap;
 import org.robolectric.Robolectric;
@@ -69,10 +74,11 @@ import static org.robolectric.Robolectric.shadowOf_;
 @RunWith(MapzenTestRunner.class)
 public class RouteFragmentTest {
 
-    private TestBaseActivity act;
-    private RouteFragment fragment;
-    private ShadowApplication app;
-    private TestMenu menu;
+    TestBaseActivity act;
+    RouteFragment fragment;
+    ShadowApplication app;
+    TestMenu menu;
+    ArrayList<Instruction> testInstructions;
 
     @Before
     public void setUp() throws Exception {
@@ -117,36 +123,6 @@ public class RouteFragmentTest {
     public void shouldHaveRoutesViewPager() throws Exception {
         attachFragment();
         assertThat(fragment.pager).isNotNull();
-    }
-
-    @Test
-    public void onLocationChange_shouldAdvance() throws Exception {
-        fragment.setLocationPassThrough(true);
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(1, 1));
-        instructions.add(getTestInstruction(2, 2));
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-
-        assertThat(fragment.getCurrentItem()).isEqualTo(0);
-        fragment.onLocationChanged(getTestLocation(1, 1));
-        assertThat(fragment.getCurrentItem()).isEqualTo(1);
-    }
-
-    @Test
-    public void onLocationChange_shouldNotAdvance() throws Exception {
-        fragment.setLocationPassThrough(true);
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-
-        assertThat(fragment.getCurrentItem()).isEqualTo(0);
-        fragment.onLocationChanged(getTestLocation(1, 0));
-        assertThat(fragment.getCurrentItem()).isEqualTo(0);
     }
 
     @Test
@@ -213,7 +189,9 @@ public class RouteFragmentTest {
     @Test
     public void onRouteSuccess_shouldStoreRawJson() throws Exception {
         enableDebugMode(act);
+        fragment.onResume();
         fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
+        fragment.onPause();
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(TABLE_ROUTES,
                 new String[]{ COLUMN_RAW},
@@ -223,7 +201,9 @@ public class RouteFragmentTest {
 
     @Test
     public void onRouteSuccess_shouldNoteStoreRawJson() throws Exception {
+        fragment.onResume();
         fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
+        fragment.onPause();
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(TABLE_ROUTES,
                 new String[]{ COLUMN_RAW},
@@ -234,8 +214,9 @@ public class RouteFragmentTest {
     @Test
     public void drawRoute_shouldStoreCoordinates() throws Exception {
         enableDebugMode(act);
-        fragment.setRoute(new Route(new JSONObject(MOCK_ROUTE_JSON)));
         fragment.onResume();
+        fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
+        fragment.onPause();
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(TABLE_ROUTE_GEOMETRY,
                 new String[]{COLUMN_ROUTE_ID},
@@ -246,8 +227,9 @@ public class RouteFragmentTest {
 
     @Test
     public void drawRoute_shouldNotStoreCoordinates() throws Exception {
-        fragment.setRoute(new Route(new JSONObject(MOCK_ROUTE_JSON)));
         fragment.onResume();
+        fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
+        fragment.onPause();
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(TABLE_ROUTE_GEOMETRY,
                 new String[]{COLUMN_ROUTE_ID},
@@ -417,7 +399,8 @@ public class RouteFragmentTest {
         String expectedFormattedDistance = DistanceFormatter.format(expectedDistance, true);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
         DistanceView textView = (DistanceView) view.findViewById(R.id.destination_distance);
-        fragment.goToNextInstruction();
+        int current = fragment.pager.getCurrentItem();
+        fragment.pager.setCurrentItem(++current);
         fragment.onPageSelected(0);
         assertThat(textView.getText()).isEqualTo(expectedFormattedDistance);
     }
@@ -442,6 +425,61 @@ public class RouteFragmentTest {
         GeoPoint point = act.getMapFragment().getMeMarker().geoPoint;
         assertThat(Math.round(point.getLatitude())).isEqualTo(Math.round(23.0));
         assertThat(Math.round(point.getLongitude())).isEqualTo(Math.round(63.0));
+    }
+
+    @Test
+    public void onLocationChange_shouldAdvance() throws Exception {
+        attachFragment();
+        fragment.onResume();
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        assertThat(fragment.getItemIndex()).isEqualTo(0);
+        double[] point = instructions.get(2).getPoint();
+        fragment.onLocationChanged(getTestLocation(point[0], point[1]));
+        assertThat(fragment.getItemIndex()).isEqualTo(2);
+    }
+
+    @Test
+    public void onLocationChange_shouldNotAdvance() throws Exception {
+        attachFragment();
+        assertThat(fragment.getItemIndex()).isEqualTo(0);
+        fragment.onLocationChanged(getTestLocation(1, 0));
+        assertThat(fragment.getItemIndex()).isEqualTo(0);
+    }
+
+    @Test
+    public void onResume_shouldAddProximityAlertsForEveryInstruction() throws Exception {
+        attachFragmentWith(testInstructions);
+        fragment.onResume();
+        assertThat(fragment.getProximityAlerts().size()).isEqualTo(testInstructions.size());
+    }
+
+    @Test
+    public void onLocationChange_shouldFlipToPostInstructionLanguage() throws Exception {
+        attachFragment();
+        fragment.onResume();
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        double[] point0 = instructions.get(0).getPoint();
+        fragment.onLocationChanged(getTestLocation(point0[0], point0[1]));
+        double[] point1 = instructions.get(1).getPoint();
+        fragment.onLocationChanged(getTestLocation(point1[0], point1[1]));
+        double[] point2 = instructions.get(2).getPoint();
+        fragment.onLocationChanged(getTestLocation(point2[0], point2[1]));
+        assertThat(fragment.getFlippedInstructions().contains(instructions.get(0))).isTrue();
+        assertThat(fragment.getFlippedInstructions().contains(instructions.get(1))).isTrue();
+        assertThat(fragment.getFlippedInstructions().contains(instructions.get(2))).isFalse();
+    }
+
+    @Test
+    public void onLocationChange_shouldNotFlipToPostInstructionLanguage() throws Exception {
+        attachFragment();
+        fragment.onResume();
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        assertThat(fragment.getFlippedInstructions().contains(instructions.get(0))).isFalse();
+        assertThat(fragment.getFlippedInstructions().contains(instructions.get(1))).isFalse();
+        assertThat(fragment.getFlippedInstructions().contains(instructions.get(2))).isFalse();
     }
 
     @Test
@@ -531,7 +569,7 @@ public class RouteFragmentTest {
     @Test
     public void onCreateView_shouldSpeakFirstInstruction() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        Instruction instruction = getTestInstruction(0, 0);
+        Instruction instruction = getTestInstruction(3, 3);
         instructions.add(instruction);
 
         fragment.setInstructions(instructions);
@@ -561,6 +599,76 @@ public class RouteFragmentTest {
         shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
         assertThat(shadowTextToSpeech.getLastSpokenText())
                 .isEqualTo("Head on 19th Street for 0.1 miles");
+    }
+
+    @Test
+    public void onCreateView_shouldSendFirstInstructionToGear() throws Exception {
+        GearServiceSocket mockSocket = Mockito.mock(GearServiceSocket.class);
+        GearAgentService.setmConnection(mockSocket);
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction instruction = getTestInstruction(3, 3);
+        instructions.add(instruction);
+
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+
+        Mockito.verify(mockSocket).send(Matchers.eq(GearAgentService.CHANNEL_ID),
+                Matchers.eq(instruction.getGearJson().toString().getBytes()));
+    }
+
+    @Test
+    public void onCreateView_shouldNotSendFirstInstructionToGear() throws Exception {
+        GearServiceSocket mockSocket = Mockito.mock(GearServiceSocket.class);
+        GearAgentService.setmConnection(null);
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction instruction = getTestInstruction(3, 3);
+        instructions.add(instruction);
+
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+
+        Mockito.verifyZeroInteractions(mockSocket);
+    }
+
+    @Test
+    public void onPageSelected_shouldSendInstructionToGear() throws Exception {
+        GearServiceSocket mockSocket = Mockito.mock(GearServiceSocket.class);
+        InOrder inOrder = Mockito.inOrder(mockSocket);
+        GearAgentService.setmConnection(mockSocket);
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction firstInstruction = getTestInstruction(0, 0);
+        firstInstruction.setDistance(100);
+        instructions.add(firstInstruction);
+        Instruction secondInstruction = getTestInstruction(0, 0);
+        secondInstruction.setDistance(200);
+        instructions.add(secondInstruction);
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+
+        fragment.onPageSelected(1);
+
+        inOrder.verify(mockSocket).send(Matchers.eq(GearAgentService.CHANNEL_ID),
+                Matchers.eq(instructions.get(0).getGearJson().toString().getBytes()));
+        inOrder.verify(mockSocket).send(Matchers.eq(GearAgentService.CHANNEL_ID),
+                Matchers.eq(instructions.get(1).getGearJson().toString().getBytes()));
+    }
+
+    @Test
+    public void onPageSelected_shouldNotSendInstructionToGear() throws Exception {
+        GearServiceSocket mockSocket = Mockito.mock(GearServiceSocket.class);
+        GearAgentService.setmConnection(null);
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction firstInstruction = getTestInstruction(0, 0);
+        firstInstruction.setDistance(100);
+        instructions.add(firstInstruction);
+        Instruction secondInstruction = getTestInstruction(0, 0);
+        secondInstruction.setDistance(200);
+        instructions.add(secondInstruction);
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+
+        fragment.onPageSelected(1);
+        Mockito.verifyZeroInteractions(mockSocket);
     }
 
     @Test
@@ -636,22 +744,21 @@ public class RouteFragmentTest {
         return (View) fragment.pager.getAdapter().instantiateItem(group, position);
     }
 
-    private void initTestFragment() {
+    private void initTestFragment() throws Exception {
         fragment = new RouteFragment();
         fragment.setFeature(getTestFeature());
         fragment.setAct(act);
         fragment.setMapFragment(initMapFragment(act));
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        fragment.setInstructions(instructions);
+        testInstructions = new ArrayList<Instruction>();
+        testInstructions.add(getTestInstruction(0, 0));
+        testInstructions.add(getTestInstruction(1, 1));
+        testInstructions.add(getTestInstruction(2, 2));
+        fragment.setInstructions(testInstructions);
     }
 
     private void attachFragment() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        fragment.setInstructions(instructions);
     }
 
     private void attachFragmentWith(ArrayList<Instruction> instructions) throws Exception {
