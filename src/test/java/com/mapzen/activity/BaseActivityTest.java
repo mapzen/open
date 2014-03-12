@@ -11,6 +11,7 @@ import com.mapzen.shadows.ShadowLocationClient;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
+import com.mapzen.support.TestHelper;
 
 import com.google.android.gms.common.GooglePlayServicesClient;
 
@@ -39,6 +40,7 @@ import java.util.ArrayList;
 
 import static android.location.LocationManager.GPS_PROVIDER;
 import static com.mapzen.MapController.getMapController;
+import static com.mapzen.support.TestHelper.enableDebugMode;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -307,6 +309,18 @@ public class BaseActivityTest {
         activity.executeSearchOnMap("query");
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         assertThat(searchView.getSuggestionsAdapter()).isNull();
+    }
+
+    @Test
+    public void onCreate_debugViewShouldBeHidden() throws Exception {
+        assertThat(activity.findViewById(R.id.debugging)).isNotVisible();
+    }
+
+    @Test
+    public void onCreate_debugViewShouldBeVisible() throws Exception {
+        enableDebugMode(Robolectric.application.getApplicationContext());
+        BaseActivity act = TestHelper.initBaseActivity();
+        assertThat(act.findViewById(R.id.debugging)).isVisible();
     }
 
     private Location initLastLocation() {

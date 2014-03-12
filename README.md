@@ -48,6 +48,12 @@ $ cd speakerbox && mvn clean install
 $ cd robolectric && mvn clean install
 </pre></code>
 
+### Install Samsung Accessories
+
+<pre><code>
+$ mvn install:install-file -Dpackaging=jar -Dfile=<path to>/accessory-v1.0.9.jar -DgroupId=com.samsung -DartifactId=samsung-accessory -Dversion=1.0.9
+</pre></code>
+
 ## Build Mapzen Application
 
 <pre><code>$ git clone https://github.com/mapzen/android.git mapzen-android

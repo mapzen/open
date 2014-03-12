@@ -13,8 +13,8 @@
             android:title="@string/settings_enable_fixed_location_title" />
 
         <EditTextPreference
-            android:dialogTitle="@string/settings_fixed_location_dialog_title"
             android:defaultValue="@string/settings_fixed_location_default_value"
+            android:dialogTitle="@string/settings_fixed_location_dialog_title"
             android:key="@string/settings_fixed_location_key"
             android:summary="@string/settings_fixed_location_summary"
             android:title="@string/settings_fixed_location_title" />
@@ -40,6 +40,12 @@
             android:key="@string/settings_key_mapsource"
             android:summary="@string/settings_mapsource_summary"
             android:defaultValue="@string/settings_default_mapsource" />
+
+        <ListPreference
+            android:title="@string/settings_mapstyle"
+            android:key="@string/settings_key_mapstyle"
+            android:summary="@string/settings_mapstyle_summary"
+            android:defaultValue="@string/settings_default_mapstyle" />
 
     </PreferenceCategory>
 
