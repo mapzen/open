@@ -13,12 +13,20 @@ public class GearAgentService extends SAAgent {
     public static final int CHANNEL_ID = 104;
     private static final String TAG = "GearAgentService";
     private static final int SERVICE_CONNECTION_RESULT_OK = 0;
-    public static GearServiceSocket mConnection = null;
+    private static GearServiceSocket mConnection = null;
 
     private final IBinder mBinder = new LocalBinder();
 
     public GearAgentService() {
         super(TAG, GearServiceSocket.class);
+    }
+
+    public static GearServiceSocket getmConnection() {
+        return mConnection;
+    }
+
+    public static void setmConnection(GearServiceSocket mConnection) {
+        GearAgentService.mConnection = mConnection;
     }
 
     @Override
@@ -31,8 +39,9 @@ public class GearAgentService extends SAAgent {
         if (result == SERVICE_CONNECTION_RESULT_OK) {
             if (socket != null) {
                 mConnection = (GearServiceSocket) socket;
-                mConnection.mConnectionId = (int) (System.currentTimeMillis() & 255);
-                Logger.d("onServiceConnection connectionID = " + mConnection.mConnectionId);
+                mConnection.setConnectionId((int) (System.currentTimeMillis() & 255));
+                Logger.d("onServiceConnection connectionID = " +
+                        String.valueOf(mConnection.getConnectionId()));
             } else {
                 Logger.e("SASocket object is null");
             }
