@@ -422,6 +422,27 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onResume_shouldStartDbTransaction() throws Exception {
+        enableDebugMode(act);
+        attachFragment();
+        assertThat(act.getDb().inTransaction()).isTrue();
+    }
+
+    @Test
+    public void onPause_shouldEndDbTransaction() throws Exception {
+        enableDebugMode(act);
+        attachFragment();
+        fragment.onPause();
+        assertThat(act.getDb().inTransaction()).isFalse();
+    }
+
+    @Test
+    public void onResume_shouldNotStartDbTransaction() throws Exception {
+        attachFragment();
+        assertThat(act.getDb().inTransaction()).isFalse();
+    }
+
+    @Test
     public void onLocationChange_shouldAdvance() throws Exception {
         attachFragment();
         fragment.onResume();

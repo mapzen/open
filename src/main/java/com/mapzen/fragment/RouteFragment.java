@@ -178,7 +178,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         initLocationReceiver();
         act.hideActionBar();
         act.deactivateMapLocationUpdates();
-        act.getDb().beginTransaction();
+        if (act.isInDebugMode()) {
+            act.getDb().beginTransaction();
+        }
         drawRoute();
         initProximityAlerts();
     }
@@ -188,8 +190,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         super.onPause();
         act.unregisterReceiver(locationReceiver);
         act.activateMapLocationUpdates();
-        act.getDb().setTransactionSuccessful();
-        act.getDb().endTransaction();
+        if (act.isInDebugMode()) {
+            act.getDb().setTransactionSuccessful();
+            act.getDb().endTransaction();
+        }
         clearRoute();
     }
 
