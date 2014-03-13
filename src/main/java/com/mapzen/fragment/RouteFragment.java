@@ -610,7 +610,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void sendToGear(int index) {
         try {
-            GearServiceSocket conn = GearAgentService.getmConnection();
+            GearServiceSocket conn = GearAgentService.getConnection();
             if (conn != null) {
                 int channelId = GearAgentService.CHANNEL_ID;
                 conn.send(channelId, instructions.get(index).getGearJson().toString().getBytes());
