@@ -328,7 +328,7 @@ public class BaseActivityTest {
     }
 
     private void invokeOnConnected() {
-        ConnectionCallbacks callbacks =((TestBaseActivity) activity).getConnectionCallback();
+        ConnectionCallbacks callbacks = ((TestBaseActivity) activity).getConnectionCallback();
         callbacks.onConnected(new Bundle());
     }
 }
