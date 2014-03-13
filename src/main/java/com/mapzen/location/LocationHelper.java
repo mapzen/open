@@ -32,14 +32,7 @@ public class LocationHelper {
     }
 
     public void disconnect() {
-        if (gpsListener != null) {
-            locationManager.removeUpdates(gpsListener);
-        }
-
-        if (networkListener != null) {
-            locationManager.removeUpdates(networkListener);
-        }
-
+        removeLocationUpdates(locationListener);
         connectionCallbacks.onDisconnected();
     }
 
@@ -70,7 +63,7 @@ public class LocationHelper {
     }
 
     private void initGpsListener(long interval, float displacement) {
-        this.gpsListener =  new android.location.LocationListener() {
+        this.gpsListener = new android.location.LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 LocationHelper.this.locationListener.onLocationChanged(location);
@@ -93,7 +86,7 @@ public class LocationHelper {
     }
 
     private void initNetworkListener(long interval, float displacement) {
-        this.networkListener =  new android.location.LocationListener() {
+        this.networkListener = new android.location.LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 LocationHelper.this.locationListener.onLocationChanged(location);
@@ -120,6 +113,16 @@ public class LocationHelper {
         if (locationManager == null) {
             throw new IllegalStateException("Not connected. "
                     + "Call connect() and wait for onConnected() to be called.");
+        }
+    }
+
+    public void removeLocationUpdates(LocationListener locationListener) {
+        if (gpsListener != null) {
+            locationManager.removeUpdates(gpsListener);
+        }
+
+        if (networkListener != null) {
+            locationManager.removeUpdates(networkListener);
         }
     }
 

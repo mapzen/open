@@ -171,6 +171,15 @@ public class LocationHelperTest {
     }
 
     @Test
+    public void removeLocationUpdates_shouldUnregisterAllListeners() throws Exception {
+        TestLocationListener listener = new TestLocationListener();
+        LocationRequest request = LocationRequest.create();
+        locationHelper.requestLocationUpdates(request, listener);
+        locationHelper.removeLocationUpdates(listener);
+        assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).isEmpty();
+    }
+
+    @Test
     public void disconnect_shouldUnregisterAllListeners() throws Exception {
         TestLocationListener listener = new TestLocationListener();
         LocationRequest request = LocationRequest.create();
