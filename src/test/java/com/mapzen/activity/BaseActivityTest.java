@@ -318,7 +318,7 @@ public class BaseActivityTest {
 
     @Test
     public void onCreate_debugViewShouldBeVisible() throws Exception {
-        enableDebugMode(Robolectric.application.getApplicationContext());
+        enableDebugMode(Robolectric.application);
         BaseActivity act = TestHelper.initBaseActivity();
         assertThat(act.findViewById(R.id.debugging)).isVisible();
     }
