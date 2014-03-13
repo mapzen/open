@@ -33,6 +33,7 @@ public class LocationHelper {
 
     public void disconnect() {
         removeLocationUpdates(locationListener);
+        locationManager = null;
         connectionCallbacks.onDisconnected();
     }
 
@@ -124,6 +125,10 @@ public class LocationHelper {
         if (networkListener != null) {
             locationManager.removeUpdates(networkListener);
         }
+    }
+
+    public boolean isConnected() {
+        return locationManager != null;
     }
 
     public static interface ConnectionCallbacks {

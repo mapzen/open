@@ -188,6 +188,18 @@ public class LocationHelperTest {
         assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).isEmpty();
     }
 
+    @Test
+    public void isConnected_shouldReturnTrueWhenConnected() throws Exception {
+        locationHelper.connect();
+        assertThat(locationHelper.isConnected()).isTrue();
+    }
+
+    @Test
+    public void isConnected_shouldReturnFalseWhenDisconnected() throws Exception {
+        locationHelper.disconnect();
+        assertThat(locationHelper.isConnected()).isFalse();
+    }
+
     class TestConnectionCallbacks implements LocationHelper.ConnectionCallbacks {
         private boolean connected = false;
 
