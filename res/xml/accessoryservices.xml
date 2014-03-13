@@ -4,7 +4,7 @@
         name="smartview"
         role="provider"
         serviceImpl="com.mapzen.util.GearAgentService"
-        id="/samsung/hellob"
+        id="/samsung/MapzenGear"
         version="1.0">
         <supportedTransports>
             <transport type="TRANSPORT_BT"/>
