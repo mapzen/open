@@ -1,12 +1,9 @@
 package com.mapzen;
 
-import android.content.SharedPreferences;
-import android.location.Location;
-import android.preference.PreferenceManager;
-
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.support.TestHelper;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +14,10 @@ import org.oscim.map.MapAnimator;
 import org.oscim.map.TestMap;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
+
+import android.content.SharedPreferences;
+import android.location.Location;
+import android.preference.PreferenceManager;
 
 import static com.mapzen.MapController.DEBUG_LOCATION;
 import static com.mapzen.MapController.getMapController;

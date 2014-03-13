@@ -7,13 +7,10 @@ import com.mapzen.core.SettingsFragment;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.search.PagerResultsFragment;
-import com.mapzen.shadows.ShadowLocationClient;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.support.TestHelper;
-
-import com.google.android.gms.common.GooglePlayServicesClient;
 
 import org.fest.assertions.data.Offset;
 import org.json.JSONArray;
@@ -41,6 +38,7 @@ import java.util.ArrayList;
 import static android.location.LocationManager.GPS_PROVIDER;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.support.TestHelper.enableDebugMode;
+import static com.mapzen.location.LocationHelper.ConnectionCallbacks;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -51,7 +49,6 @@ import static org.robolectric.util.FragmentTestUtil.startFragment;
 @RunWith(MapzenTestRunner.class)
 public class BaseActivityTest {
     private BaseActivity activity;
-    private ShadowLocationClient shadowLocationClient;
     private TestMenu menu;
 
     @Before
@@ -59,7 +56,6 @@ public class BaseActivityTest {
         ShadowVolley.clearMockRequestQueue();
         menu = new TestMenu();
         activity = initBaseActivityWithMenu(menu);
-        shadowLocationClient = Robolectric.shadowOf_(activity.getLocationClient());
     }
 
     @Test
@@ -118,13 +114,13 @@ public class BaseActivityTest {
 
     @Test
     public void onCreate_shouldConnectLocationClient() throws Exception {
-        assertThat(shadowLocationClient.isConnected()).isTrue();
+        assertThat(activity.locationHelper.isConnected()).isTrue();
     }
 
     @Test
     public void onPause_shouldDisconnectLocationClient() throws Exception {
         activity.onPause();
-        assertThat(shadowLocationClient.isConnected()).isFalse();
+        assertThat(activity.locationHelper.isConnected()).isFalse();
     }
 
     @Test
@@ -135,9 +131,9 @@ public class BaseActivityTest {
 
     @Test
     public void onResume_shouldReConnectLocationClient() throws Exception {
-        shadowLocationClient.disconnect();
+        activity.locationHelper.disconnect();
         activity.onResume();
-        assertThat(shadowLocationClient.isConnected()).isTrue();
+        assertThat(activity.locationHelper.isConnected()).isTrue();
     }
 
     @Test
@@ -273,8 +269,7 @@ public class BaseActivityTest {
     @Test
     public void onConnect_shouldUpdateMapController() throws Exception {
         Location expected = initLastLocation();
-        GooglePlayServicesClient.ConnectionCallbacks callbacks =
-                ((TestBaseActivity) activity).getConnectionCallback();
+        ConnectionCallbacks callbacks = ((TestBaseActivity) activity).getConnectionCallback();
         callbacks.onConnected(new Bundle());
         Location actual = getMapController().getLocation();
         assertThat(actual).isEqualTo(expected);
@@ -333,8 +328,7 @@ public class BaseActivityTest {
     }
 
     private void invokeOnConnected() {
-        GooglePlayServicesClient.ConnectionCallbacks callbacks =
-                ((TestBaseActivity) activity).getConnectionCallback();
+        ConnectionCallbacks callbacks =((TestBaseActivity) activity).getConnectionCallback();
         callbacks.onConnected(new Bundle());
     }
 }

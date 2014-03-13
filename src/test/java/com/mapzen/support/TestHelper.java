@@ -8,20 +8,26 @@ import com.mapzen.fragment.MapFragment;
 import org.apache.commons.io.FileUtils;
 import org.oscim.android.MapView;
 import org.oscim.map.TestMap;
+import org.robolectric.shadows.ShadowLocationManager;
 import org.robolectric.tester.android.view.TestMenu;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.location.LocationManager;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 
 import java.io.File;
 
+import static android.content.Context.LOCATION_SERVICE;
+import static android.location.LocationManager.GPS_PROVIDER;
 import static com.mapzen.entity.Feature.ADMIN1_ABBR;
 import static com.mapzen.entity.Feature.ADMIN1_NAME;
 import static com.mapzen.entity.Feature.NAME;
+import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.buildActivity;
+import static org.robolectric.Robolectric.shadowOf;
 
 public final class TestHelper {
 
@@ -35,6 +41,7 @@ public final class TestHelper {
     }
 
     public static TestBaseActivity initBaseActivityWithMenu(TestMenu menu) {
+        TestHelper.initLastKnownLocation();
         TestBaseActivity activity = buildActivity(TestBaseActivity.class)
                 .create()
                 .start()
@@ -90,6 +97,13 @@ public final class TestHelper {
         SharedPreferences.Editor prefEditor = prefs.edit();
         prefEditor.putBoolean(context.getString(R.string.settings_key_debug), true);
         prefEditor.commit();
+    }
+
+    public static void initLastKnownLocation() {
+        LocationManager locationManager = (LocationManager)
+                application.getSystemService(LOCATION_SERVICE);
+        ShadowLocationManager shadowLocationManager = shadowOf(locationManager);
+        shadowLocationManager.setLastKnownLocation(GPS_PROVIDER, new Location(GPS_PROVIDER));
     }
 
     public static class TestLocation extends Location {

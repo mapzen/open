@@ -1,14 +1,5 @@
 package com.mapzen.fragment;
 
-import android.content.SharedPreferences;
-import android.location.Location;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
 import com.mapzen.search.OnPoiClickListener;
@@ -33,6 +24,15 @@ import org.oscim.renderer.MapRenderer;
 import org.oscim.theme.IRenderTheme;
 import org.oscim.theme.ThemeLoader;
 import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
+
+import android.content.SharedPreferences;
+import android.location.Location;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -248,13 +248,17 @@ public class MapFragment extends BaseFragment {
     }
 
     public void findMe() {
-        meMarkerLayer.removeAllItems();
-        meMarkerLayer.addItem(getUserLocationMarker());
+        if (meMarkerLayer != null) {
+            meMarkerLayer.removeAllItems();
+            meMarkerLayer.addItem(getUserLocationMarker());
+        }
+
         if (followMe || !initialRelocateHappened) {
             // TODO find ways to accomplish this without two flags ;(
             initialRelocateHappened = true;
             map.setMapPosition(getUserLocationPosition());
         }
+
         updateMap();
     }
 
