@@ -110,14 +110,14 @@ public class LocationHelperTest {
     }
 
     @Test
-    public void requestLocationUpdates_shouldRegisterGpsListener() throws Exception {
+    public void requestLocationUpdates_shouldRegisterGpsAndNetworkListener() throws Exception {
         LocationListener listener = new TestLocationListener();
         locationHelper.requestLocationUpdates(LocationRequest.create(), listener);
-        assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).hasSize(1);
+        assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).hasSize(2);
     }
 
     @Test
-    public void requestLocationUpdates_shouldInvokeListenerOnLocationChanged() throws Exception {
+    public void requestLocationUpdates_shouldNotifyOnLocationChangedGps() throws Exception {
         TestLocationListener listener = new TestLocationListener();
         locationHelper.requestLocationUpdates(LocationRequest.create(), listener);
         Location location = new Location(GPS_PROVIDER);
@@ -126,7 +126,17 @@ public class LocationHelperTest {
     }
 
     @Test
-    public void requestLocationUpdates_shouldNotNotifyIfDoesNotExceedCriteria() throws Exception {
+    public void requestLocationUpdates_shouldNotifyOnLocationChangedNetwork() throws Exception {
+        TestLocationListener listener = new TestLocationListener();
+        locationHelper.requestLocationUpdates(LocationRequest.create(), listener);
+        Location location = new Location(NETWORK_PROVIDER);
+        shadowLocationManager.simulateLocation(location);
+        assertThat(listener.location).isEqualTo(location);
+    }
+
+    @Test
+    public void requestLocationUpdates_shouldNotNotifyIfDoesNotExceedCriteriaGps()
+            throws Exception {
         TestLocationListener listener = new TestLocationListener();
         LocationRequest request = LocationRequest.create();
         request.setFastestInterval(5000);
@@ -136,6 +146,24 @@ public class LocationHelperTest {
         final long time = System.currentTimeMillis();
         Location location1 = getTestLocation(GPS_PROVIDER, 0, 0, time);
         Location location2 = getTestLocation(GPS_PROVIDER, 1, 1, time + 1000);
+
+        shadowLocationManager.simulateLocation(location1);
+        shadowLocationManager.simulateLocation(location2);
+        assertThat(listener.location).isEqualTo(location1);
+    }
+
+    @Test
+    public void requestLocationUpdates_shouldNotNotifyIfDoesNotExceedCriteriaNetwork()
+            throws Exception {
+        TestLocationListener listener = new TestLocationListener();
+        LocationRequest request = LocationRequest.create();
+        request.setFastestInterval(5000);
+        request.setSmallestDisplacement(200000);
+        locationHelper.requestLocationUpdates(request, listener);
+
+        final long time = System.currentTimeMillis();
+        Location location1 = getTestLocation(NETWORK_PROVIDER, 0, 0, time);
+        Location location2 = getTestLocation(NETWORK_PROVIDER, 1, 1, time + 1000);
 
         shadowLocationManager.simulateLocation(location1);
         shadowLocationManager.simulateLocation(location2);

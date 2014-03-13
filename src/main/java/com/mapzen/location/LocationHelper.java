@@ -9,6 +9,7 @@ import java.util.List;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
+import static android.location.LocationManager.NETWORK_PROVIDER;
 
 public class LocationHelper {
     private final Context context;
@@ -18,6 +19,7 @@ public class LocationHelper {
     private LocationListener locationListener;
 
     private android.location.LocationListener gpsListener;
+    private android.location.LocationListener networkListener;
 
     public LocationHelper(Context context, ConnectionCallbacks connectionCallbacks) {
         this.context = context;
@@ -32,6 +34,10 @@ public class LocationHelper {
     public void disconnect() {
         if (gpsListener != null) {
             locationManager.removeUpdates(gpsListener);
+        }
+
+        if (networkListener != null) {
+            locationManager.removeUpdates(networkListener);
         }
 
         connectionCallbacks.onDisconnected();
@@ -56,7 +62,15 @@ public class LocationHelper {
         throwIfNotConnected();
         this.locationListener = locationListener;
 
-        gpsListener = new android.location.LocationListener() {
+        final long interval = request.getFastestInterval();
+        final float displacement = request.getSmallestDisplacement();
+
+        initGpsListener(interval, displacement);
+        initNetworkListener(interval, displacement);
+    }
+
+    private void initGpsListener(long interval, float displacement) {
+        this.gpsListener =  new android.location.LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 LocationHelper.this.locationListener.onLocationChanged(location);
@@ -75,8 +89,31 @@ public class LocationHelper {
             }
         };
 
-        locationManager.requestLocationUpdates(GPS_PROVIDER, request.getFastestInterval(),
-                request.getSmallestDisplacement(), gpsListener);
+        locationManager.requestLocationUpdates(GPS_PROVIDER, interval, displacement, gpsListener);
+    }
+
+    private void initNetworkListener(long interval, float displacement) {
+        this.networkListener =  new android.location.LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                LocationHelper.this.locationListener.onLocationChanged(location);
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+            }
+        };
+
+        locationManager.requestLocationUpdates(NETWORK_PROVIDER, interval, displacement,
+                networkListener);
     }
 
     private void throwIfNotConnected() {
