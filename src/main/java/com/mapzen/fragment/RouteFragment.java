@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
@@ -44,7 +43,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -55,6 +57,7 @@ import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
+import static com.mapzen.util.DatabaseHelper.COLUMN_POSITION;
 import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
 import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
 import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
@@ -80,11 +83,15 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private Feature feature;
     private DistanceView distanceLeftView;
     private int previousPosition;
-    private boolean locationPassThrough = false;
-    private boolean hasFoundPath = false;
     private long routeId;
+    private Set<Instruction> proximityAlerts = new HashSet<Instruction>();
+    private Set<Instruction> seenInstructions = new HashSet<Instruction>();
 
     Speakerbox speakerbox;
+
+    // FOR testing
+    private int itemIndex = 0;
+    private Set<Instruction> flippedInstructions = new HashSet<Instruction>();
 
     public static RouteFragment newInstance(BaseActivity act, Feature feature) {
         final RouteFragment fragment = new RouteFragment();
@@ -171,7 +178,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         initLocationReceiver();
         act.hideActionBar();
         act.deactivateMapLocationUpdates();
+        if (act.isInDebugMode()) {
+            act.getDb().beginTransaction();
+        }
         drawRoute();
+        initProximityAlerts();
     }
 
     @Override
@@ -179,6 +190,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         super.onPause();
         act.unregisterReceiver(locationReceiver);
         act.activateMapLocationUpdates();
+        if (act.isInDebugMode()) {
+            act.getDb().setTransactionSuccessful();
+            act.getDb().endTransaction();
+        }
         clearRoute();
     }
 
@@ -218,87 +233,154 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return feature.getGeoPoint();
     }
 
-    private Location getNextTurnTo(Instruction nextInstruction) {
-        Location nextTurn = new Location(getResources().getString(R.string.application_name));
-        nextTurn.setLatitude(nextInstruction.getPoint()[0]);
-        nextTurn.setLongitude(nextInstruction.getPoint()[1]);
-        return nextTurn;
-    }
-
-    public void setLocationPassThrough(boolean locationPassThrough) {
-        this.locationPassThrough = locationPassThrough;
+    private void initProximityAlerts() {
+        for (Instruction instruction : instructions) {
+            proximityAlerts.add(instruction);
+        }
     }
 
     private Location snapTo(Location location) {
-        if (!locationPassThrough) {
-            double[] onRoadPoint;
-            onRoadPoint = route.snapToRoute(
-                new double[] {location.getLatitude(), location.getLongitude()}
-            );
+        double[] onRoadPoint;
+        onRoadPoint = route.snapToRoute(
+            new double[] {location.getLatitude(), location.getLongitude()}
+        );
 
-            if (onRoadPoint != null) {
-                Location correctedLocation = new Location("Corrected");
-                correctedLocation.setLatitude(onRoadPoint[0]);
-                correctedLocation.setLongitude(onRoadPoint[1]);
-                return correctedLocation;
-            }
+        if (onRoadPoint != null) {
+            Location correctedLocation = new Location("Corrected");
+            correctedLocation.setLatitude(onRoadPoint[0]);
+            correctedLocation.setLongitude(onRoadPoint[1]);
+            return correctedLocation;
         }
         return location;
     }
 
+    private void manageMap(Location location, Location originalLocation) {
+        if (location != null) {
+            getMapController().setLocation(location);
+            mapFragment.findMe();
+            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChange: Corrected: "
+                    + location.toString());
+        } else {
+            Logger.logToDatabase(act, ROUTE_TAG,
+                    "RouteFragment::onLocationChange: Unable to Correct: location: "
+                    + originalLocation.toString());
+        }
+    }
+
+    public Set<Instruction> getProximityAlerts() {
+        return proximityAlerts;
+    }
+
     public void onLocationChanged(Location location) {
         Location correctedLocation = snapTo(location);
-        if (act.isInDebugMode()) {
-            storeLocationInfo(location, correctedLocation);
-        }
-        if (correctedLocation != null) {
-            getMapController().setLocation(correctedLocation);
-            mapFragment.findMe();
-            hasFoundPath = true;
-            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChange: Corrected: "
-                    + correctedLocation.toString());
+        storeLocationInfo(location, correctedLocation);
+        manageMap(correctedLocation, location);
+        StringBuilder debugStringBuilder = new StringBuilder();
+
+        // No corrected location
+        if (correctedLocation == null) {
+            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
+                    "**correctedLocation** is null");
+            return;
         }
 
-        if (WALKING_LOST_THRESHOLD < location.distanceTo(correctedLocation) &&
-                location.getAccuracy() < getWalkingAdvanceRadius()) {
-            // execute reroute query and reset the path
-            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChange: " +
-                    "probably off course");
-        }
-
-        Location nextTurn = null;
-        final int currentItem = pager.getCurrentItem();
-        if (currentItem < (instructions.size() - 1)) {
-            nextTurn = getNextTurnTo(instructions.get(pager.getCurrentItem() + 1));
-        }
-
-        if (correctedLocation != null && nextTurn != null) {
-            int distanceToNextTurn = (int) Math.floor(correctedLocation.distanceTo(nextTurn));
-            if (distanceToNextTurn > getWalkingAdvanceRadius()) {
-                Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                        "outside defined radius");
+        Instruction closestInstruction = null;
+        int closestDistance = (int) 1e8;
+        for (Instruction instruction : proximityAlerts) {
+            Location temporaryLocationObj = new Location("tmp");
+            temporaryLocationObj.setLatitude(instruction.getPoint()[0]);
+            temporaryLocationObj.setLongitude(instruction.getPoint()[1]);
+            final int distanceToTurn =
+                    (int) Math.floor(correctedLocation.distanceTo(temporaryLocationObj));
+            Logger.logToDatabase(act, ROUTE_TAG, String.valueOf(distanceToTurn)
+                    + " distance to instruction: " + instruction.toString()
+                    + " threshold is: " + String.valueOf(getWalkingAdvanceRadius()));
+            Logger.logToDatabase(act, ROUTE_TAG, "current closest distance: "
+                    + String.valueOf(closestDistance));
+            if (closestInstruction != null) {
+                Logger.logToDatabase(act, ROUTE_TAG, "current closest instruction: "
+                        + closestInstruction.toString());
             } else {
-                Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                        "inside defined radius advancing");
-                goToNextInstruction();
+                Logger.logToDatabase(act, ROUTE_TAG, "current closest instruction: null");
             }
-            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                    "new current location: " + location.toString());
-            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                    "next turn: " + nextTurn.toString());
-            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                    "distance to next turn: " + String.valueOf(distanceToNextTurn));
-            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                    "threshold: " + String.valueOf(getWalkingAdvanceRadius()));
-        } else {
-            if (correctedLocation == null) {
-                Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                        "**next turn** is null screw it");
+            if (distanceToTurn < closestDistance) {
+                closestDistance = distanceToTurn;
+                closestInstruction = instruction;
             }
-            if (nextTurn == null) {
-                Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                        "**location** is null screw it");
+        }
+
+        if (closestInstruction != null) {
+            debugStringBuilder.append("Closest instruction is: " + closestInstruction.getName());
+            debugStringBuilder.append(", distance: " + String.valueOf(closestDistance));
+        }
+
+        if (closestDistance < getWalkingAdvanceRadius()) {
+            Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: "
+                    + closestInstruction.toString());
+            final int instructionIndex = instructions.indexOf(closestInstruction);
+            pager.setCurrentItem(instructionIndex);
+            itemIndex = instructionIndex;
+            if (!seenInstructions.contains(closestInstruction)) {
+                seenInstructions.add(closestInstruction);
             }
+        }
+
+        final Iterator it = seenInstructions.iterator();
+        while (it.hasNext()) {
+            Instruction instruction = (Instruction) it.next();
+            final Location l = new Location("temp");
+            l.setLatitude(instruction.getPoint()[0]);
+            l.setLongitude(instruction.getPoint()[1]);
+            final int distance = (int) Math.floor(l.distanceTo(correctedLocation));
+            debugStringBuilder.append("\n");
+            debugStringBuilder.append("seen instruction: " + instruction.getName());
+            debugStringBuilder.append(" distance: " + String.valueOf(distance));
+            if (distance > getWalkingAdvanceRadius()) {
+                Logger.logToDatabase(act, ROUTE_TAG, "post language: " +
+                        instruction.toString());
+                act.appendToDebugView("post language for: " + instruction.toString());
+                flipInstructionToAfter(instruction);
+            }
+        }
+
+        act.writeToDebugView(debugStringBuilder.toString());
+        logForDebugging(location, correctedLocation);
+    }
+
+    private void flipInstructionToAfter(Instruction instruction) {
+        final int index = instructions.indexOf(instruction);
+        if (flippedInstructions.contains(instruction)) {
+            return;
+        }
+        flippedInstructions.add(instruction);
+        if (pager.getCurrentItem() == index) {
+            speakerbox.play(instruction.getFullInstructionAfterAction());
+        }
+
+        View view = pager.findViewWithTag(
+                "Instruction_" + String.valueOf(index));
+
+        if (view != null) {
+            TextView fullBefore = (TextView) view.findViewById(R.id.full_instruction);
+            TextView fullAfter = (TextView) view.findViewById(R.id.full_instruction_after_action);
+            fullBefore.setVisibility(View.GONE);
+            fullAfter.setVisibility(View.VISIBLE);
+            ImageView turnIconBefore = (ImageView) view.findViewById(R.id.turn_icon);
+            turnIconBefore.setVisibility(View.GONE);
+            ImageView turnIconAfter = (ImageView) view.findViewById(R.id.turn_icon_after_action);
+            turnIconAfter.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void logForDebugging(Location location, Location correctedLocation) {
+        Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: "
+                + "new corrected location: " + correctedLocation.toString()
+                + " from original: " + location.toString());
+        Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
+                "threshold: " + String.valueOf(getWalkingAdvanceRadius()));
+        for (Instruction instruction : instructions) {
+            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
+                    "turnPoint: " + instruction.toString());
         }
     }
 
@@ -310,19 +392,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 .commit();
     }
 
-    public void goToNextInstruction() {
-        pager.setCurrentItem(pager.getCurrentItem() + 1);
-    }
-
     private void changeDistance(int difference) {
         if (!distanceLeftView.getText().toString().isEmpty()) {
             int newDistance = distanceLeftView.getDistance() + difference;
             distanceLeftView.setDistance(newDistance);
         }
-    }
-
-    public int getCurrentItem() {
-        return pager.getCurrentItem();
     }
 
     public void setRoute(Route route) {
@@ -331,15 +405,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     public void onRouteSuccess(JSONObject rawRoute) {
         if (act.isInDebugMode()) {
-            SQLiteDatabase db = act.getDb();
             ContentValues insertValues = new ContentValues();
             insertValues.put(COLUMN_RAW, rawRoute.toString());
-            routeId = db.insert(TABLE_ROUTES, null, insertValues);
+            routeId = act.getDb().insert(TABLE_ROUTES, null, insertValues);
         }
         setRoute(new Route(rawRoute));
         if (route.foundRoute()) {
             setInstructions(route.getRouteInstructions());
-            drawRoute();
             displayRoute();
             setMapPerspectiveForInstruction(instructions.get(0));
         } else {
@@ -353,21 +425,23 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         PathLayer layer = mapFragment.getPathLayer();
         layer.clearPath();
         if (route != null) {
-            for (double[] pair : route.getGeometry()) {
-                addCoordinateToDatabase(pair);
+            ArrayList<double[]> geometry = route.getGeometry();
+            for (int index = 0; index < geometry.size(); index++) {
+                double[] pair = geometry.get(index);
+                addCoordinateToDatabase(pair, index);
                 layer.addPoint(new GeoPoint(pair[0], pair[1]));
             }
         }
     }
 
-    private void addCoordinateToDatabase(double[] pair) {
+    private void addCoordinateToDatabase(double[] pair, int pos) {
         if (act.isInDebugMode()) {
-            SQLiteDatabase db = act.getDb();
             ContentValues values = new ContentValues();
             values.put(COLUMN_ROUTE_ID, routeId);
+            values.put(COLUMN_POSITION, pos);
             values.put(COLUMN_LAT, pair[0]);
             values.put(COLUMN_LNG, pair[1]);
-            db.insert(TABLE_ROUTE_GEOMETRY, null, values);
+            act.getDb().insert(TABLE_ROUTE_GEOMETRY, null, values);
         }
     }
 
@@ -421,6 +495,14 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         map.updateMap(true);
     }
 
+    public int getItemIndex() {
+        return itemIndex;
+    }
+
+    public Set<Instruction> getFlippedInstructions() {
+        return flippedInstructions;
+    }
+
     private void initLocationReceiver() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(COM_MAPZEN_UPDATES_LOCATION);
@@ -429,15 +511,17 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void storeLocationInfo(Location location, Location correctedLocation) {
-        SQLiteDatabase db = act.getDb();
-        db.insert(TABLE_LOCATIONS, null,
-                valuesForLocationCorrection(location,
-                        correctedLocation, instructions.get(pager.getCurrentItem()), routeId));
+        if (act.isInDebugMode()) {
+            act.getDb().insert(TABLE_LOCATIONS, null,
+                    valuesForLocationCorrection(location,
+                            correctedLocation, instructions.get(pager.getCurrentItem()), routeId));
+        }
     }
 
     private static class RoutesAdapter extends PagerAdapter {
         private List<Instruction> instructions = new ArrayList<Instruction>();
         private Context context;
+        private Instruction currentInstruction;
 
         public RoutesAdapter(Context context, List<Instruction> instructions) {
             this.context = context;
@@ -451,7 +535,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            Instruction instruction = instructions.get(position);
+            currentInstruction = instructions.get(position);
             View view = View.inflate(context, R.layout.instruction, null);
 
             if (position == instructions.size() - 1) {
@@ -461,19 +545,31 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             }
 
             TextView fullInstruction = (TextView) view.findViewById(R.id.full_instruction);
-            fullInstruction.setText(getFullInstructionWithBoldName(instruction));
+            fullInstruction.setText(
+                    getFullInstructionWithBoldName(currentInstruction.getFullInstruction()));
+
+            TextView fullInstructionAfterAction =
+                    (TextView) view.findViewById(R.id.full_instruction_after_action);
+            fullInstructionAfterAction.setText(
+                    getFullInstructionWithBoldName(
+                            currentInstruction.getFullInstructionAfterAction()));
 
             ImageView turnIcon = (ImageView) view.findViewById(R.id.turn_icon);
             turnIcon.setImageResource(DisplayHelper.getRouteDrawable(context,
-                    instruction.getTurnInstruction(), DisplayHelper.IconStyle.WHITE));
+                    currentInstruction.getTurnInstruction(), DisplayHelper.IconStyle.WHITE));
 
+            ImageView turnIconAfterAction =
+                    (ImageView) view.findViewById(R.id.turn_icon_after_action);
+            turnIconAfterAction.setImageResource(DisplayHelper.getRouteDrawable(context,
+                    10, DisplayHelper.IconStyle.WHITE));
+
+            view.setTag("Instruction_" + String.valueOf(position));
             container.addView(view);
             return view;
         }
 
-        private SpannableStringBuilder getFullInstructionWithBoldName(Instruction instruction) {
-            final String fullInstruction = instruction.getFullInstruction();
-            final String name = instruction.getName();
+        private SpannableStringBuilder getFullInstructionWithBoldName(String fullInstruction) {
+            final String name = currentInstruction.getName();
             final int startOfName = fullInstruction.indexOf(name);
             final int endOfName = startOfName + name.length();
             final StyleSpan boldStyleSpan = new StyleSpan(Typeface.BOLD);

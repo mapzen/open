@@ -28,6 +28,7 @@ public final class Logger {
     }
 
     public static void logToDatabase(BaseActivity activity, String tag, String msg) {
+        Log.v(TAG, tag + ": " + msg);
         if (activity.isInDebugMode()) {
             ContentValues values = new ContentValues();
             values.put(COLUMN_TAG, tag);
