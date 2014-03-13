@@ -1,5 +1,5 @@
 <resources>
-    <application name="GearProvider">
+    <application name="MapzenGearProvider">
     <serviceProfile
         name="smartview"
         role="provider"
