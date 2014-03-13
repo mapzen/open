@@ -23,6 +23,7 @@ import org.mockito.InOrder;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.oscim.core.GeoPoint;
+import org.oscim.map.MapAnimator;
 import org.oscim.map.TestMap;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
@@ -123,6 +124,20 @@ public class RouteFragmentTest {
     public void shouldHaveRoutesViewPager() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         assertThat(fragment.pager).isNotNull();
+    }
+
+    @Test
+    public void onLocationChange_shouldCenterMapOnLocation() throws Exception {
+        MapAnimator animator = Mockito.mock(MapAnimator.class);
+        ((TestMap) fragment.mapFragment.getMap()).setAnimator(animator);
+        fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
+        Route route = fragment.getRoute();
+        ArrayList<double[]> geometry = route.getGeometry();
+        double[] loc = route.snapToRoute(geometry.get(2));
+        Location testLocation = getTestLocation(loc[0], loc[1]);
+        fragment.onLocationChanged(testLocation);
+        GeoPoint expected = new GeoPoint(testLocation.getLatitude(), testLocation.getLongitude());
+        Mockito.verify(animator).animateTo(expected);
     }
 
     @Test
