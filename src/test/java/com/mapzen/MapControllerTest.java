@@ -10,7 +10,11 @@ import com.mapzen.support.TestHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
+import org.oscim.map.MapAnimator;
+import org.oscim.map.TestMap;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 
@@ -116,6 +120,24 @@ public class MapControllerTest {
         Location expected = new Location("expected");
         getMapController().setLocation(expected);
         assertThat(getMapController().getLocation()).isSameAs(expected);
+    }
+
+    @Test
+    public void setLocation_shouldReturnMapController() throws Exception {
+        Location expected = new Location("expected");
+        assertThat(getMapController().setLocation(expected)).isEqualTo(getMapController());
+    }
+
+    @Test
+    public void centerOn_shouldCallAnimateTo() throws Exception {
+        MapAnimator animator = Mockito.mock(MapAnimator.class);
+        TestMap map = (TestMap) getMapController().getMap();
+        map.setAnimator(animator);
+        Location location = new Location("expected");
+        location.setLatitude(21.0);
+        location.setLongitude(45.0);
+        getMapController().centerOn(location);
+        Mockito.verify(animator).animateTo(new GeoPoint(21.0, 45.0));
     }
 
     @Test

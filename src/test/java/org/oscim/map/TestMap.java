@@ -2,10 +2,12 @@ package org.oscim.map;
 
 public class TestMap extends Map {
     private TestViewport viewport;
+    MapAnimator mapAnimator;
 
     public TestMap() {
         super();
         this.viewport = new TestViewport(this);
+        mapAnimator = new MapAnimator(this, viewport);
     }
 
     @Override
@@ -34,6 +36,15 @@ public class TestMap extends Map {
     @Override
     public int getHeight() {
         return 0;
+    }
+
+    @Override
+    public MapAnimator animator() {
+        return mapAnimator;
+    }
+
+    public void setAnimator(MapAnimator animator) {
+        this.mapAnimator = animator;
     }
 
     @Override

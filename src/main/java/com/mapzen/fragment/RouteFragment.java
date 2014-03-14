@@ -260,7 +260,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void manageMap(Location location, Location originalLocation) {
         if (location != null) {
-            getMapController().setLocation(location);
+            getMapController().setLocation(location).centerOn(location);
             mapFragment.findMe();
             Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChange: Corrected: "
                     + location.toString());

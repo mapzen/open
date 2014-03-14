@@ -7,6 +7,7 @@ import android.location.Location;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
+import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 import org.oscim.map.Map;
 
@@ -47,9 +48,16 @@ public final class MapController {
         }
     }
 
-    public void setLocation(Location location) {
+    public MapController setLocation(Location location) {
         this.location = location;
         mapPosition.setPosition(location.getLatitude(), location.getLongitude());
+        return this;
+    }
+
+    public MapController centerOn(Location location) {
+        GeoPoint point = new GeoPoint(location.getLatitude(), location.getLongitude());
+        map.animator().animateTo(point);
+        return this;
     }
 
     public MapPosition getMapPosition() {
