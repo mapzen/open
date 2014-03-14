@@ -145,6 +145,41 @@
 
     <!-- amenity -->
     <m k="amenity">
+      <m select="first">
+        <m v="kindergarten|school|college|university">
+          <area fill="#cdabde" stroke="#e9dd72" stroke-width="0.2" />
+        </m>
+        <m v="grave_yard">
+          <area src="patterns/cemetery.png" stroke="#e4e4e4" stroke-width="0.2" />
+        </m>
+        <m v="parking">
+          <area fill="#ffffc0" stroke="#e9dd72" stroke-width="0.2" />
+          <m k="access" v="private" zoom-min="15">
+            <area src="patterns/access-private.png" />
+          </m>
+          <m zoom-min="17">
+            <symbol src="parking" />
+          </m>
+        </m>
+        <m v="fountain" closed="yes">
+          <area fill="#b5d6f1" stroke="#000080" stroke-width="0.15" />
+          <m zoom-min="17">
+            <symbol src="fountain" />
+          </m>
+        </m>
+        <m v="hospital" zoom-min="15">
+          <symbol src="hospital" />
+        </m>
+        <m v="theatre" zoom-min="17">
+          <symbol src="theatre" />
+        </m>
+        <m v="toilets" zoom-min="17">
+          <symbol src="toilets" />
+        </m>
+      </m>
+      <m k="name" zoom-min="17">
+        <text use="caption-small-blue" />
+      </m>
     </m>
 
 
@@ -1019,7 +1054,7 @@
       </m>
 
 
-      <m k="feature" v="locality" zoom-min="17">
+      <m k="place" v="locality" zoom-min="17">
       <caption k="name" style="bold" size="10" fill="#000000"
       stroke="#ffffff" width="2.0" />
       </m> -->
@@ -1038,7 +1073,104 @@
     </m>
 
     <m k="amenity">
-      <m zoom-min="18">
+      <m select="first">
+        <m v="atm" zoom-min="17">
+          <symbol src="atm" />
+        </m>
+        <m v="bank" zoom-min="17">
+          <symbol src="bank" />
+        </m>
+        <m v="bench" zoom-min="17">
+          <symbol src="bench" />
+        </m>
+        <m v="bicycle_rental" zoom-min="17">
+          <symbol src="bicycle_rental" />
+        </m>
+        <m v="bus_station" zoom-min="17">
+          <symbol src="bus_sta" />
+        </m>
+        <m v="cafe" zoom-min="17">
+          <symbol src="cafe" />
+        </m>
+        <m v="cinema" zoom-min="17">
+          <symbol src="cinema" />
+        </m>
+        <m v="drinking_water" zoom-min="17">
+          <symbol src="drinking_water" />
+        </m>
+        <m v="fast_food" zoom-min="17">
+          <symbol src="fastfood" />
+        </m>
+        <m v="fire_station" zoom-min="17">
+          <symbol src="firebrigade" />
+        </m>
+        <m v="fountain" zoom-min="17">
+          <symbol src="fountain" />
+        </m>
+        <m v="fuel" zoom-min="17">
+          <symbol src="petrolStation" />
+        </m>
+        <m v="hospital" zoom-min="15">
+          <symbol src="hospital" />
+        </m>
+        <m v="kindergarten" zoom-min="17">
+          <symbol src="kindergarten" />
+        </m>
+        <m v="library" zoom-min="17">
+          <symbol src="library" />
+        </m>
+        <m v="parking" zoom-min="17">
+          <symbol src="parking" />
+        </m>
+        <m v="pharmacy" zoom-min="17">
+          <symbol src="pharmacy" />
+        </m>
+        <m v="place_of_worship" zoom-min="17">
+          <m k="denomination|religion" v="jewish">
+            <symbol src="synagogue" />
+          </m>
+          <m k="denomination|religion" v="muslim|moslem">
+            <symbol src="mosque" />
+          </m>
+          <m k="denomination|religion" v="christian">
+            <symbol src="church" />
+          </m>
+        </m>
+        <m v="post_box" zoom-min="17">
+          <symbol src="postbox" />
+        </m>
+        <m v="post_office" zoom-min="17">
+          <symbol src="postoffice" />
+        </m>
+        <m v="pub|bar" zoom-min="17">
+          <symbol src="pub" />
+        </m>
+        <m v="recycling" zoom-min="17">
+          <symbol src="recycling" />
+        </m>
+        <m v="restaurant" zoom-min="17">
+          <symbol src="restaurant" />
+        </m>
+        <m v="school" zoom-min="17">
+          <symbol src="school" />
+        </m>
+        <m v="shelter" zoom-min="17">
+          <symbol src="shelter" />
+        </m>
+        <m v="telephone" zoom-min="17">
+          <symbol src="telephone" />
+        </m>
+        <m v="theatre" zoom-min="17">
+          <symbol src="theatre" />
+        </m>
+        <m v="toilets" zoom-min="17">
+          <symbol src="toilets" />
+        </m>
+        <m v="university|college" zoom-min="17">
+          <symbol src="university" />
+        </m>
+      </m>
+      <m zoom-min="17">
         <text use="caption-small-blue" />
       </m>
     </m>
@@ -1062,7 +1194,7 @@
 
 
     <m k="historic">
-      <circle radius="3" fill="#4040ff" stroke="#606060" width="1.5" />
+      <circle radius="3" fill="#4040ff" stroke="#606060" stroke-width="1.5" />
 
       <m zoom-min="17">
         <text use="caption-small-blue" />
@@ -1107,7 +1239,7 @@
     </m>
 
 
-    <m k="feature" firt="true">
+    <m k="place" select="first">
       <m v="hamlet" zoom-min="13">
         <caption k="name" style="bold" size="13" fill="#000000" stroke="#ffffff" stroke-width="2.0" />
       </m>
@@ -1145,17 +1277,46 @@
     </m>
 
 
-    <!--<m k="shop">-->
-      <!--<m zoom-min="17">-->
-        <!--<text use="caption-small-blue" />-->
-      <!--</m>-->
-    <!--</m>-->
+    <m k="shop">
+      <m v="bakery" zoom-min="17">
+        <symbol src="bakery" />
+      </m>
+      <m v="florist" zoom-min="17">
+        <symbol src="florist" />
+      </m>
+      <m v="supermarket|organic" zoom-min="17">
+        <symbol src="supermarket" />
+      </m>
+
+      <m zoom-min="17">
+        <text use="caption-small-blue" />
+      </m>
+    </m>
 
 
-    <!--<m k="tourism">-->
-      <!--<m zoom-min="17">-->
-        <!--<text use="caption-small-blue" />-->
-      <!--</m>-->
-    <!--</m>-->
+    <m k="tourism">
+      <m v="alpine_hut" zoom-min="16">
+        <symbol src="alpine_hut" />
+      </m>
+      <m v="camp_site" zoom-min="17">
+        <symbol src="campSite" />
+      </m>
+      <m v="hostel" zoom-min="17">
+        <symbol src="hostel" />
+      </m>
+      <m v="hotel" zoom-min="17">
+        <symbol src="hotel" />
+      </m>
+      <m v="information" zoom-min="17">
+        <symbol src="information" />
+      </m>
+      <m v="viewpoint" zoom-min="15">
+        <symbol src="viewpoint" />
+      </m>
+
+      <m zoom-min="17">
+        <text use="caption-small-blue" />
+      </m>
+    </m>
   </m>
 </rendertheme>
