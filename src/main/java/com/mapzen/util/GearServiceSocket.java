@@ -48,8 +48,6 @@ public class GearServiceSocket extends SASocket {
     protected void onServiceConnectionLost(int errorCode) {
         Logger.e(TAG + "onServiceConectionLost  for peer = " +
                 mConnectionId + "error code =" + errorCode);
-        if (GearAgentService.getConnection() != null) {
-            GearAgentService.setConnection(null);
-        }
+        GearAgentService.setConnection(null);
     }
 }
