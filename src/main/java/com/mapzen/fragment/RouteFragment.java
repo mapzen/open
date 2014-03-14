@@ -92,8 +92,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     Speakerbox speakerbox;
 
-    // FOR testing
-    private int itemIndex = 0;
     private Set<Instruction> flippedInstructions = new HashSet<Instruction>();
 
     public static RouteFragment newInstance(BaseActivity act, Feature feature) {
@@ -323,7 +321,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     + closestInstruction.toString());
             final int instructionIndex = instructions.indexOf(closestInstruction);
             pager.setCurrentItem(instructionIndex);
-            itemIndex = instructionIndex;
             if (!seenInstructions.contains(closestInstruction)) {
                 seenInstructions.add(closestInstruction);
             }
@@ -498,10 +495,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         map.setMapPosition(point[0], point[1], Math.pow(2, ROUTE_ZOOM_LEVEL));
         map.viewport().setRotation(instruction.getRotationBearing());
         map.updateMap(true);
-    }
-
-    public int getItemIndex() {
-        return itemIndex;
     }
 
     public Set<Instruction> getFlippedInstructions() {

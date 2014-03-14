@@ -472,18 +472,18 @@ public class RouteFragmentTest {
         fragment.onResume();
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
-        assertThat(fragment.getItemIndex()).isEqualTo(0);
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
         double[] point = instructions.get(2).getPoint();
         fragment.onLocationChanged(getTestLocation(point[0], point[1]));
-        assertThat(fragment.getItemIndex()).isEqualTo(2);
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(2);
     }
 
     @Test
     public void onLocationChange_shouldNotAdvance() throws Exception {
         fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
-        assertThat(fragment.getItemIndex()).isEqualTo(0);
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
         fragment.onLocationChanged(getTestLocation(1, 0));
-        assertThat(fragment.getItemIndex()).isEqualTo(0);
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
     }
 
     @Test
