@@ -1,5 +1,10 @@
 package com.mapzen;
 
+import android.content.SharedPreferences;
+import android.location.Location;
+import android.preference.PreferenceManager;
+
+import com.mapzen.osrm.Instruction;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.support.TestHelper;
@@ -10,17 +15,17 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
+import org.oscim.map.Map;
 import org.oscim.map.MapAnimator;
 import org.oscim.map.TestMap;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 
-import android.content.SharedPreferences;
-import android.location.Location;
-import android.preference.PreferenceManager;
+import java.util.ArrayList;
 
 import static com.mapzen.MapController.DEBUG_LOCATION;
 import static com.mapzen.MapController.getMapController;
+import static com.mapzen.support.TestHelper.getTestInstruction;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -194,6 +199,18 @@ public class MapControllerTest {
         getMapController().setZoomLevel(5);
         assertThat(getMapController().getZoomScale()).isEqualTo(Math.pow(2, 5));
     }
+
+    @Test
+    public void setMapPerspectiveForInstruction_shouldSetMapPosition() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction instruction = getTestInstruction(40.0, 100.0);
+        instructions.add(instruction);
+        getMapController().setMapPerspectiveForInstruction(instruction);
+        Map map = getMapController().getMap();
+        assertThat(Math.round(map.getMapPosition().getLatitude())).isEqualTo(40);
+        assertThat(Math.round(map.getMapPosition().getLongitude())).isEqualTo(100);
+    }
+
 
     private void enableFixedLocation() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
