@@ -320,7 +320,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: "
                     + closestInstruction.toString());
             final int instructionIndex = instructions.indexOf(closestInstruction);
-            pager.setCurrentItem(instructionIndex);
+            if (!shouldAdvancePagerAutomatically()) {
+                pager.setCurrentItem(instructionIndex);
+            }
             if (!seenInstructions.contains(closestInstruction)) {
                 seenInstructions.add(closestInstruction);
             }
@@ -611,6 +613,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean shouldAdvancePagerAutomatically() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
+        return prefs.getBoolean(getString(R.string.settings_key_disable_route_pager), true);
     }
 
 }

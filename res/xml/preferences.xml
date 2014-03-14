@@ -12,6 +12,12 @@
             android:summary="@string/settings_enable_fixed_location_summary"
             android:title="@string/settings_enable_fixed_location_title" />
 
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/settings_key_disable_route_pager"
+            android:summary="@string/settings_disable_route_pager_summary"
+            android:title="@string/settings_disable_route_pager_title" />
+
         <EditTextPreference
             android:defaultValue="@string/settings_fixed_location_default_value"
             android:dialogTitle="@string/settings_fixed_location_dialog_title"

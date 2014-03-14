@@ -468,6 +468,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldAdvance() throws Exception {
+        enableRoutePager();
         fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
         fragment.onResume();
         Route route = fragment.getRoute();
@@ -479,7 +480,20 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onLocationChange_shouldNotAdvanceWhenDisabled() throws Exception {
+        fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
+        fragment.onResume();
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
+        double[] point = instructions.get(2).getPoint();
+        fragment.onLocationChanged(getTestLocation(point[0], point[1]));
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
+    }
+
+    @Test
     public void onLocationChange_shouldNotAdvance() throws Exception {
+        enableRoutePager();
         fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
         fragment.onLocationChanged(getTestLocation(1, 0));
@@ -826,6 +840,14 @@ public class RouteFragmentTest {
         SharedPreferences.Editor prefEditor = prefs.edit();
         prefEditor.putString(act.getString(R.string.settings_key_walking_advance_radius),
                 Integer.toString(expected));
+        prefEditor.commit();
+    }
+
+    private void enableRoutePager() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
+        SharedPreferences.Editor prefEditor = prefs.edit();
+        prefEditor.putBoolean(act.getString(R.string.settings_key_disable_route_pager),
+                false);
         prefEditor.commit();
     }
 }
