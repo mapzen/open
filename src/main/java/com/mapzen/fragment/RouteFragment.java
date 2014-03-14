@@ -15,7 +15,6 @@ import com.mapzen.widget.DistanceView;
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.PathLayer;
-import org.oscim.map.Map;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
@@ -412,8 +411,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         setRoute(new Route(rawRoute));
         if (route.foundRoute()) {
             setInstructions(route.getRouteInstructions());
-            displayRoute();
-            setMapPerspectiveForInstruction(instructions.get(0));
+            act.getSupportFragmentManager().beginTransaction()
+                    .addToBackStack(null)
+                    .add(R.id.routes_container, this, RouteFragment.TAG)
+                    .commit();
+            getMapController().setMapPerspectiveForInstruction(instructions.get(0));
         } else {
             Toast.makeText(act, act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
             act.dismissProgressDialog();
@@ -449,13 +451,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return route;
     }
 
-    private void displayRoute() {
-        act.getSupportFragmentManager().beginTransaction()
-                .addToBackStack(null)
-                .add(R.id.routes_container, this, RouteFragment.TAG)
-                .commit();
-    }
-
     private void clearRoute() {
         PathLayer layer = mapFragment.getPathLayer();
         layer.clearPath();
@@ -480,7 +475,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             changeDistance(-instructions.get(previousPosition).getDistance());
         }
         previousPosition = i;
-        setMapPerspectiveForInstruction(instructions.get(i));
+        getMapController().setMapPerspectiveForInstruction(instructions.get(i));
         speakerbox.play(instructions.get(i).getFullInstruction());
     }
 

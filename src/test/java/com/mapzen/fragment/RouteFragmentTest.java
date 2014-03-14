@@ -14,7 +14,6 @@ import com.mapzen.util.GearAgentService;
 import com.mapzen.util.GearServiceSocket;
 import com.mapzen.widget.DistanceView;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,6 +52,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
 import static com.mapzen.geo.DistanceFormatter.METERS_IN_ONE_FOOT;
@@ -60,6 +60,8 @@ import static com.mapzen.geo.DistanceFormatter.METERS_IN_ONE_MILE;
 import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
 import static com.mapzen.support.TestHelper.enableDebugMode;
 import static com.mapzen.support.TestHelper.getTestFeature;
+import static com.mapzen.support.TestHelper.getTestInstruction;
+import static com.mapzen.support.TestHelper.getTestLocation;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static com.mapzen.support.TestHelper.initMapFragment;
 import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
@@ -307,6 +309,14 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onLocationChange_shouldReRouteWhenLost() throws Exception {
+        fragment.onRouteSuccess(new JSONObject(MOCK_ROUTE_JSON));
+        Location testLocation = getTestLocation(111.0, 111.0);
+        fragment.onLocationChanged(testLocation);
+
+    }
+
+    @Test
     public void shouldRegisterReceiver() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         assertThat(app.hasReceiverForIntent(new Intent(COM_MAPZEN_UPDATES_LOCATION))).isTrue();
@@ -541,22 +551,9 @@ public class RouteFragmentTest {
         instructions.add(instruction);
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
-        fragment.setMapPerspectiveForInstruction(instruction);
+        getMapController().setMapPerspectiveForInstruction(instruction);
         TestMap map = (TestMap) act.getMapFragment().getMap();
         assertThat(map.viewport().getRotation()).isEqualTo(instruction.getRotationBearing());
-    }
-
-    @Test
-    public void setMapPerspectiveForInstruction_shouldSetMapPosition() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        Instruction instruction = getTestInstruction(40.0, 100.0);
-        instructions.add(instruction);
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-        fragment.setMapPerspectiveForInstruction(instruction);
-        TestMap map = (TestMap) act.getMap();
-        assertThat(Math.round(map.getMapPosition().getLatitude())).isEqualTo(40);
-        assertThat(Math.round(map.getMapPosition().getLongitude())).isEqualTo(100);
     }
 
     @Test
@@ -809,30 +806,6 @@ public class RouteFragmentTest {
         testInstructions.add(getTestInstruction(1, 1));
         testInstructions.add(getTestInstruction(2, 2));
         fragment.setInstructions(testInstructions);
-    }
-
-    private Instruction getTestInstruction(double lat, double lng) throws Exception {
-        String raw = "        [\n" +
-                "            \"10\",\n" + // turn instruction
-                "            \"19th Street\",\n" + // way
-                "            160,\n" + // length in meters
-                "            0,\n" + // position?
-                "            0,\n" + // time in seconds
-                "            \"160m\",\n" + // length with unit
-                "            \"SE\",\n" + //earth direction
-                "            128\n" + // azimuth
-                "        ]\n";
-        Instruction instruction = new Instruction(new JSONArray(raw));
-        double[] point = {lat, lng};
-        instruction.setPoint(point);
-        return instruction;
-    }
-
-    private Location getTestLocation(double lat, double lng) {
-        Location testLocation = new Location("testing");
-        testLocation.setLatitude(lat);
-        testLocation.setLongitude(lng);
-        return testLocation;
     }
 
     private void setWalkingRadius(int expected) {
