@@ -32,13 +32,13 @@
             android:title="@string/settings_voice_navigation_title" />
 
         <com.mapzen.widget.EditIntPreference
-            android:dialogTitle="@string/settings_walking_advance_radius_dialog_title"
+            android:dialogTitle="@string/settings_advance_radius_dialog_title"
             android:inputType="number"
             android:key="@string/settings_key_walking_advance_radius"
             android:numeric="integer"
-            android:defaultValue="@integer/route_walking_advance_radius"
-            android:summary="@string/settings_walking_advance_radius_summary"
-            android:title="@string/settings_walking_advance_radius" />
+            android:defaultValue="@integer/route_advance_radius"
+            android:summary="@string/settings_advance_radius_summary"
+            android:title="@string/settings_advance_radius" />
 
         <ListPreference
             android:title="@string/settings_mapsource"

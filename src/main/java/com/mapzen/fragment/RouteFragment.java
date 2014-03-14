@@ -212,7 +212,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
         return prefs.getInt(
                 act.getString(R.string.settings_key_walking_advance_radius),
-                        act.getResources().getInteger(R.integer.route_walking_advance_radius));
+                        act.getResources().getInteger(R.integer.route_advance_radius));
     }
 
     public void setInstructions(ArrayList<Instruction> instructions) {

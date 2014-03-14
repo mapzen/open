@@ -562,7 +562,7 @@ public class RouteFragmentTest {
     @Test
     public void getWalkingAdvanceRadius_shouldHaveDefaultValue() {
         assertThat(fragment.getWalkingAdvanceRadius())
-            .isEqualTo(act.getResources().getInteger(R.integer.route_walking_advance_radius));
+            .isEqualTo(act.getResources().getInteger(R.integer.route_advance_radius));
     }
 
     @Test
