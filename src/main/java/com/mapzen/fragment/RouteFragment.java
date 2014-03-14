@@ -7,6 +7,8 @@ import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.speakerbox.Speakerbox;
 import com.mapzen.util.DisplayHelper;
+import com.mapzen.util.GearAgentService;
+import com.mapzen.util.GearServiceSocket;
 import com.mapzen.util.Logger;
 import com.mapzen.widget.DistanceView;
 
@@ -42,6 +44,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -119,6 +122,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         adapter.notifyDataSetChanged();
         previousPosition = pager.getCurrentItem();
         initSpeakerbox();
+        sendFirstInstructionToGear();
         return rootView;
     }
 
@@ -473,6 +477,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @Override
     public void onPageSelected(int i) {
+        sendToGear(i);
         if (previousPosition > i) {
             changeDistance(instructions.get(i + 1).getDistance());
         } else if (previousPosition < i) {
@@ -598,4 +603,21 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             onLocationChanged(location);
         }
     }
+
+    private void sendFirstInstructionToGear() {
+        sendToGear(0);
+    }
+
+    private void sendToGear(int index) {
+        try {
+            GearServiceSocket conn = GearAgentService.getConnection();
+            if (conn != null) {
+                int channelId = GearAgentService.CHANNEL_ID;
+                conn.send(channelId, instructions.get(index).getGearJson().toString().getBytes());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
