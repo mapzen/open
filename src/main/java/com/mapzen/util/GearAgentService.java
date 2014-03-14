@@ -37,16 +37,16 @@ public class GearAgentService extends SAAgent {
 
     @Override
     protected void onServiceConnectionResponse(SASocket socket, int result) {
-        Logger.d(TAG + "onServiceConnecxtionResponse: result: " + String.valueOf(result));
+        Logger.d(TAG + "onServiceConnectionResponse: result: " + String.valueOf(result));
         if (result == SERVICE_CONNECTION_RESULT_OK) {
-            Logger.d(TAG + "onServiceConnecxtionResponse: connection is ok");
+            Logger.d(TAG + "onServiceConnectionResponse: connection is ok");
             if (socket != null) {
                 mConnection = (GearServiceSocket) socket;
                 mConnection.setConnectionId((int) (System.currentTimeMillis() & 255));
                 Logger.d(TAG + "onServiceConnection connectionID = " +
                         String.valueOf(mConnection.getConnectionId()));
             } else {
-                Logger.d(TAG + "onServiceConnecxtionResponse: There SASocket object is null");
+                Logger.d(TAG + "onServiceConnectionResponse: There SASocket object is null");
             }
         } else {
             Logger.e(TAG + "onServiceConnectionResponse result error =" + result);
