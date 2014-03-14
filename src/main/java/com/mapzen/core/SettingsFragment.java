@@ -4,11 +4,9 @@ import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.util.MapzenTheme;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
