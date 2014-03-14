@@ -71,8 +71,6 @@ import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
         ViewPager.OnPageChangeListener {
     public static final String TAG = RouteFragment.class.getSimpleName();
-    public static final int WALKING_ADVANCE_DEFAULT_RADIUS = 15;
-    public static final int WALKING_LOST_THRESHOLD = 70;
     public static final int ROUTE_ZOOM_LEVEL = 17;
     public static final String ROUTE_TAG = "route";
 
@@ -212,10 +210,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     public int getWalkingAdvanceRadius() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
-        final String walkingAdvanceString =
-                prefs.getString(act.getString(R.string.settings_key_walking_advance_radius),
-                        Integer.toString(WALKING_ADVANCE_DEFAULT_RADIUS));
-        return Integer.valueOf(walkingAdvanceString);
+        return prefs.getInt(
+                act.getString(R.string.settings_key_walking_advance_radius),
+                        act.getResources().getInteger(R.integer.route_walking_advance_radius));
     }
 
     public void setInstructions(ArrayList<Instruction> instructions) {

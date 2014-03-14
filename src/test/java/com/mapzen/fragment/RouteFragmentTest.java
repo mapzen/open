@@ -562,7 +562,7 @@ public class RouteFragmentTest {
     @Test
     public void getWalkingAdvanceRadius_shouldHaveDefaultValue() {
         assertThat(fragment.getWalkingAdvanceRadius())
-            .isEqualTo(RouteFragment.WALKING_ADVANCE_DEFAULT_RADIUS);
+            .isEqualTo(act.getResources().getInteger(R.integer.route_walking_advance_radius));
     }
 
     @Test
@@ -838,8 +838,7 @@ public class RouteFragmentTest {
     private void setWalkingRadius(int expected) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
         SharedPreferences.Editor prefEditor = prefs.edit();
-        prefEditor.putString(act.getString(R.string.settings_key_walking_advance_radius),
-                Integer.toString(expected));
+        prefEditor.putInt(act.getString(R.string.settings_key_walking_advance_radius), expected);
         prefEditor.commit();
     }
 
