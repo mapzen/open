@@ -5,6 +5,7 @@ import com.mapzen.entity.Feature;
 import com.mapzen.geo.DistanceFormatter;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
+import com.mapzen.routing.RoutingListener;
 import com.mapzen.shadows.ShadowTextToSpeech;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
@@ -14,6 +15,9 @@ import com.mapzen.util.GearAgentService;
 import com.mapzen.util.GearServiceSocket;
 import com.mapzen.widget.DistanceView;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
+
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,12 +26,14 @@ import org.mockito.InOrder;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.oscim.core.GeoPoint;
+import org.oscim.layers.PathLayer;
 import org.oscim.map.MapAnimator;
 import org.oscim.map.TestMap;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowPopupMenu;
+import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.tester.android.view.TestMenuItem;
 import org.robolectric.util.FragmentTestUtil;
@@ -51,12 +57,17 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
 import static com.mapzen.geo.DistanceFormatter.METERS_IN_ONE_FOOT;
 import static com.mapzen.geo.DistanceFormatter.METERS_IN_ONE_MILE;
+import static com.mapzen.shadows.ShadowVolley.getMockRequestQueue;
+import static com.mapzen.support.TestHelper.MOCK_AROUND_THE_BLOCK;
+import static com.mapzen.support.TestHelper.MOCK_NO_ROUTE_JSON;
+import static com.mapzen.support.TestHelper.MOCK_NY_TO_VT;
 import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
 import static com.mapzen.support.TestHelper.enableDebugMode;
 import static com.mapzen.support.TestHelper.getTestFeature;
@@ -769,6 +780,86 @@ public class RouteFragmentTest {
         ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
         shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
         assertThat(shadowTextToSpeech.getLastSpokenText()).isNull();
+    }
+
+    @Test
+    public void onLost_shouldDisplayProgressDialog() throws Exception {
+        Location testLocation = getTestLocation(100.0, 100.0);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onLost(testLocation);
+        assertThat(act.getProgressDialogFragment()).isAdded();
+    }
+
+    @Test
+    public void onLost_shouldDismissProgressDialogOnError() throws Exception {
+        Location testLocation = getTestLocation(100.0, 100.0);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onLost(testLocation);
+        List<Request> requestSet = getMockRequestQueue().getRequests();
+        Request<JSONObject> request = requestSet.iterator().next();
+        request.deliverError(null);
+        assertThat(act.getProgressDialogFragment()).isNotAdded();
+    }
+
+    @Test
+    public void onLost_shouldToastIfNoRouteFound() throws Exception {
+        Location testLocation = getTestLocation(100.0, 100.0);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onLost(testLocation);
+        ShadowVolley.MockRequestQueue queue = getMockRequestQueue();
+        JsonObjectRequest request = (JsonObjectRequest) queue.getRequests().get(0);
+        queue.deliverResponse(request, new JSONObject(MOCK_NO_ROUTE_JSON));
+        assertThat(ShadowToast.getTextOfLatestToast())
+                .isEqualTo(act.getString(R.string.no_route_found));
+    }
+
+    @Test
+    public void onLost_shouldResetPager() throws Exception {
+        Location testLocation = getTestLocation(100.0, 100.0);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onLost(testLocation);
+        int previousCount = fragment.pager.getAdapter().getCount();
+        ShadowVolley.MockRequestQueue queue = getMockRequestQueue();
+        JsonObjectRequest request = (JsonObjectRequest) queue.getRequests().get(0);
+        queue.deliverResponse(request, new JSONObject(MOCK_NY_TO_VT));
+        assertThat(fragment.pager.getAdapter().getCount()).isNotEqualTo(previousCount);
+    }
+
+    @Test
+    public void onLost_shouldRedrawPath() throws Exception {
+        MapFragment mapFragmentMock =  Mockito.mock(MapFragment.class, Mockito.CALLS_REAL_METHODS);
+        PathLayer pathLayerMock = Mockito.mock(PathLayer.class);
+        Mockito.when(mapFragmentMock.getPathLayer()).thenReturn(pathLayerMock);
+        fragment.setMapFragment(mapFragmentMock);
+        Location testLocation = getTestLocation(100.0, 100.0);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onLost(testLocation);
+        ShadowVolley.MockRequestQueue queue = getMockRequestQueue();
+        JsonObjectRequest request = (JsonObjectRequest) queue.getRequests().get(0);
+        queue.deliverResponse(request, new JSONObject(MOCK_NY_TO_VT));
+        Mockito.verify(pathLayerMock, Mockito.times(2)).clearPath();
+        for (double[] pair : fragment.getRoute().getGeometry()) {
+            Mockito.verify(pathLayerMock).addPoint(new GeoPoint(pair[0], pair[1]));
+        }
+    }
+
+    @Test
+    public void onLost_shouldRequestNewRoute() throws Exception {
+        Location testLocation = getTestLocation(100.0, 100.0);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onLost(testLocation);
+        assertThat(getMockRequestQueue().getRequests()).hasSize(1);
+    }
+
+    @Test
+    public void onLocationChange_shouldBeLostWhenSnapToIsNull() throws Exception {
+        Location testLocation = getTestLocation(40.662046, -73.987089);
+        RoutingListener listenerMock = Mockito.mock(RoutingListener.class);
+        fragment.setRoutingListener(listenerMock);
+        fragment.setRoute(new JSONObject(MOCK_AROUND_THE_BLOCK));
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onLocationChanged(testLocation);
+        Mockito.verify(listenerMock).onLost(testLocation);
     }
 
     private void setVoiceNavigationEnabled(boolean enabled) {

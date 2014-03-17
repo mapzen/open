@@ -5,12 +5,17 @@ import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
+import com.mapzen.routing.RoutingListener;
 import com.mapzen.speakerbox.Speakerbox;
 import com.mapzen.util.DisplayHelper;
 import com.mapzen.util.GearAgentService;
 import com.mapzen.util.GearServiceSocket;
 import com.mapzen.util.Logger;
 import com.mapzen.widget.DistanceView;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
@@ -41,6 +46,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,6 +62,7 @@ import butterknife.OnClick;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.Feature.NAME;
+import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_POSITION;
@@ -67,7 +74,7 @@ import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
 import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
-        ViewPager.OnPageChangeListener {
+        ViewPager.OnPageChangeListener, RoutingListener {
     public static final String TAG = RouteFragment.class.getSimpleName();
     public static final int ROUTE_ZOOM_LEVEL = 17;
     public static final String ROUTE_TAG = "route";
@@ -89,12 +96,14 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     Speakerbox speakerbox;
 
     private Set<Instruction> flippedInstructions = new HashSet<Instruction>();
+    private RoutingListener routingListener;
 
     public static RouteFragment newInstance(BaseActivity act, Feature feature) {
         final RouteFragment fragment = new RouteFragment();
         fragment.setAct(act);
         fragment.setMapFragment(act.getMapFragment());
         fragment.setFeature(feature);
+        fragment.setRoutingListener(fragment);
         return fragment;
     }
 
@@ -202,6 +211,40 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         clearRoute();
     }
 
+    @Override
+    public void onLost(Location location) {
+        act.showProgressDialog();
+
+        final String url =  getRouteUrlForCar(getMapController().getZoomLevel(),
+                new GeoPoint(location.getLatitude(), location.getLongitude()),
+                getDestinationPoint());
+
+        final Response.Listener<JSONObject> successListener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                if (setRoute(response)) {
+                    pager.setAdapter(new RoutesAdapter(act, instructions));
+                    drawRoute();
+                } else {
+                    Toast.makeText(act,
+                            act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
+                }
+                act.dismissProgressDialog();
+            }
+        };
+
+        final Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                onServerError(volleyError);
+            }
+        };
+
+        JsonObjectRequest request =
+                new JsonObjectRequest(url, null, successListener, errorListener);
+        app.enqueueApiRequest(request);
+    }
+
     public long getRouteId() {
         return routeId;
     }
@@ -211,6 +254,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return prefs.getInt(
                 act.getString(R.string.settings_key_walking_advance_radius),
                         act.getResources().getInteger(R.integer.route_advance_radius));
+    }
+
+    public void setRoutingListener(RoutingListener routingListener) {
+        this.routingListener = routingListener;
     }
 
     public void setInstructions(ArrayList<Instruction> instructions) {
@@ -238,8 +285,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private Location snapTo(Location location) {
         double[] onRoadPoint;
+        double lat = location.getLatitude();
+        double lng = location.getLongitude();
         onRoadPoint = route.snapToRoute(
-            new double[] {location.getLatitude(), location.getLongitude()}
+            new double[] { lat, lng }
         );
 
         if (onRoadPoint != null) {
@@ -248,7 +297,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             correctedLocation.setLongitude(onRoadPoint[1]);
             return correctedLocation;
         }
-        return location;
+        return null;
     }
 
     private void manageMap(Location location, Location originalLocation) {
@@ -270,16 +319,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     public void onLocationChanged(Location location) {
         Location correctedLocation = snapTo(location);
+        if (correctedLocation == null) {
+            routingListener.onLost(location);
+            return;
+        }
         storeLocationInfo(location, correctedLocation);
         manageMap(correctedLocation, location);
         StringBuilder debugStringBuilder = new StringBuilder();
-
-        // No corrected location
-        if (correctedLocation == null) {
-            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                    "**correctedLocation** is null");
-            return;
-        }
 
         Instruction closestInstruction = null;
         int closestDistance = (int) 1e8;
@@ -598,5 +644,4 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
         return prefs.getBoolean(getString(R.string.settings_key_disable_route_pager), true);
     }
-
 }
