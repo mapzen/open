@@ -2,8 +2,6 @@ package com.mapzen.fragment;
 
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
-import com.mapzen.osrm.Instruction;
-import com.mapzen.osrm.Route;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -18,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
 import butterknife.ButterKnife;
@@ -77,12 +74,7 @@ public class ItemFragment extends BaseFragment {
         final Response.Listener<JSONObject> successListener = new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Route route = new Route(response);
-                if (route.foundRoute()) {
-                    routeFragment.setRoute(route);
-                    ArrayList<Instruction> instructions = route.getRouteInstructions();
-                    routeFragment.setInstructions(instructions);
-                    getMapController().setMapPerspectiveForInstruction(instructions.get(0));
+                if (routeFragment.setRoute(response)) {
                     act.getSupportFragmentManager().beginTransaction()
                             .addToBackStack(null)
                             .add(R.id.routes_container, routeFragment, RouteFragment.TAG)

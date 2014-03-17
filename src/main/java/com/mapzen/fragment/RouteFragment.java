@@ -41,7 +41,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -398,28 +397,24 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    public void setRoute(Route route) {
-        this.route = route;
+    public boolean setRoute(JSONObject rawRoute) {
+        storeRouteInDatabase(rawRoute);
+        Route route = new Route(rawRoute);
+        if (route.foundRoute()) {
+            this.route = route;
+            this.instructions = route.getRouteInstructions();
+            getMapController().setMapPerspectiveForInstruction(instructions.get(0));
+        } else {
+            return false;
+        }
+        return true;
     }
 
-    public void onRouteSuccess(JSONObject rawRoute) {
+    private void storeRouteInDatabase(JSONObject rawRoute) {
         if (act.isInDebugMode()) {
             ContentValues insertValues = new ContentValues();
             insertValues.put(COLUMN_RAW, rawRoute.toString());
             routeId = act.getDb().insert(TABLE_ROUTES, null, insertValues);
-        }
-        setRoute(new Route(rawRoute));
-        if (route.foundRoute()) {
-            setInstructions(route.getRouteInstructions());
-            act.getSupportFragmentManager().beginTransaction()
-                    .addToBackStack(null)
-                    .add(R.id.routes_container, this, RouteFragment.TAG)
-                    .commit();
-            getMapController().setMapPerspectiveForInstruction(instructions.get(0));
-        } else {
-            Toast.makeText(act, act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
-            act.dismissProgressDialog();
-            act.showActionBar();
         }
     }
 
