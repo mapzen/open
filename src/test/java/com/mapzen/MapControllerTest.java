@@ -211,7 +211,6 @@ public class MapControllerTest {
         assertThat(Math.round(map.getMapPosition().getLongitude())).isEqualTo(100);
     }
 
-
     private void enableFixedLocation() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         SharedPreferences.Editor prefEditor = prefs.edit();
