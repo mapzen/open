@@ -483,14 +483,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void onPageScrollStateChanged(int i) {
     }
 
-    public void setMapPerspectiveForInstruction(Instruction instruction) {
-        Map map = act.getMap();
-        double[] point = instruction.getPoint();
-        map.setMapPosition(point[0], point[1], Math.pow(2, ROUTE_ZOOM_LEVEL));
-        map.viewport().setRotation(instruction.getRotationBearing());
-        map.updateMap(true);
-    }
-
     public Set<Instruction> getFlippedInstructions() {
         return flippedInstructions;
     }
