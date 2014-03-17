@@ -272,7 +272,7 @@ public class RouteFragmentTest {
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
-                new String[]{ DatabaseHelper.COLUMN_INSTRUCTION_BEARING},
+                new String[] { DatabaseHelper.COLUMN_INSTRUCTION_BEARING },
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
         cursor.moveToNext();
@@ -823,6 +823,7 @@ public class RouteFragmentTest {
         JsonObjectRequest request = (JsonObjectRequest) queue.getRequests().get(0);
         queue.deliverResponse(request, new JSONObject(MOCK_NY_TO_VT));
         assertThat(fragment.pager.getAdapter().getCount()).isNotEqualTo(previousCount);
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
     }
 
     @Test
@@ -862,6 +863,44 @@ public class RouteFragmentTest {
         Mockito.verify(listenerMock).onLost(testLocation);
     }
 
+    @Test
+    public void onLocationChange_shouldDoNothingWhileRerouting() throws Exception {
+        Location testLocation = getTestLocation(40.662046, -73.987089);
+        fragment.setRoute(new JSONObject(MOCK_AROUND_THE_BLOCK));
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onLocationChanged(testLocation);
+        fragment.onLocationChanged(testLocation);
+        assertThat(getMockRequestQueue().getRequests()).hasSize(1);
+    }
+
+    @Test
+    public void onLocationChange_shouldBeReEnabledOnceReRoutingIsCompleted() throws Exception {
+        Location testLocation = getTestLocation(40.662046, -73.987089);
+        fragment.setRoute(new JSONObject(MOCK_AROUND_THE_BLOCK));
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onLocationChanged(testLocation);
+        ShadowVolley.MockRequestQueue queue = getMockRequestQueue();
+        JsonObjectRequest request = (JsonObjectRequest) queue.getRequests().get(0);
+        queue.deliverResponse(request, new JSONObject(MOCK_AROUND_THE_BLOCK));
+        ShadowVolley.clearMockRequestQueue();
+        fragment.onLocationChanged(testLocation);
+        assertThat(getMockRequestQueue().getRequests()).hasSize(1);
+    }
+
+    @Test
+    public void onLocationChange_shouldBeReEnabledOnceReRoutingHasError() throws Exception {
+        Location testLocation = getTestLocation(40.662046, -73.987089);
+        fragment.setRoute(new JSONObject(MOCK_AROUND_THE_BLOCK));
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onLocationChanged(testLocation);
+        List<Request> requestSet = getMockRequestQueue().getRequests();
+        Request<JSONObject> request = requestSet.iterator().next();
+        request.deliverError(null);
+        ShadowVolley.clearMockRequestQueue();
+        fragment.onLocationChanged(testLocation);
+        assertThat(getMockRequestQueue().getRequests()).hasSize(1);
+    }
+
     private void setVoiceNavigationEnabled(boolean enabled) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
         SharedPreferences.Editor prefEditor = prefs.edit();
@@ -884,6 +923,7 @@ public class RouteFragmentTest {
         fragment.setAct(act);
         fragment.setMapFragment(initMapFragment(act));
         fragment.setRoute(new JSONObject(MOCK_ROUTE_JSON));
+        fragment.setRoutingListener(fragment);
         testInstructions = new ArrayList<Instruction>();
         testInstructions.add(getTestInstruction(0, 0));
         testInstructions.add(getTestInstruction(1, 1));

@@ -97,6 +97,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private Set<Instruction> flippedInstructions = new HashSet<Instruction>();
     private RoutingListener routingListener;
+    private boolean isReRouting = false;
 
     public static RouteFragment newInstance(BaseActivity act, Feature feature) {
         final RouteFragment fragment = new RouteFragment();
@@ -213,6 +214,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @Override
     public void onLost(Location location) {
+        isReRouting = true;
         act.showProgressDialog();
 
         final String url =  getRouteUrlForCar(getMapController().getZoomLevel(),
@@ -229,6 +231,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     Toast.makeText(act,
                             act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
                 }
+                isReRouting = false;
                 act.dismissProgressDialog();
             }
         };
@@ -236,6 +239,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         final Response.ErrorListener errorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
+                isReRouting = false;
                 onServerError(volleyError);
             }
         };
@@ -253,7 +257,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
         return prefs.getInt(
                 act.getString(R.string.settings_key_walking_advance_radius),
-                        act.getResources().getInteger(R.integer.route_advance_radius));
+                act.getResources().getInteger(R.integer.route_advance_radius));
     }
 
     public void setRoutingListener(RoutingListener routingListener) {
@@ -318,6 +322,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public void onLocationChanged(Location location) {
+        if (isReRouting) {
+            return;
+        }
         Location correctedLocation = snapTo(location);
         if (correctedLocation == null) {
             routingListener.onLost(location);
