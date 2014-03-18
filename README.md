@@ -26,8 +26,9 @@ $ cd geojson && ./gradlew clean install
 ### Install VectorTileMap Library
 
 <pre><code>$ git clone --recursive https://github.com/mapzen/vtm.git
+$ cd vtm
 $ echo "ndk.dir=/path/to/ndk" >> vtm-android/local.properties
-$ cd vtm && ./gradlew clean install
+$ ./gradlew clean install
 </pre></code>
 
 ### Install VectorTileMap Native Libs
