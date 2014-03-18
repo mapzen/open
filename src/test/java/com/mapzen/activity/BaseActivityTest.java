@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
 
 import android.content.Context;
@@ -36,14 +37,17 @@ import android.widget.SearchView;
 
 import java.util.ArrayList;
 
+import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
+import static android.location.LocationManager.NETWORK_PROVIDER;
 import static com.mapzen.MapController.getMapController;
-import static com.mapzen.support.TestHelper.enableDebugMode;
 import static com.mapzen.location.LocationHelper.ConnectionCallbacks;
+import static com.mapzen.support.TestHelper.enableDebugMode;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
+import static org.robolectric.Robolectric.shadowOf;
 import static org.robolectric.util.FragmentTestUtil.startFragment;
 
 @Config(emulateSdk = 18)
@@ -337,6 +341,17 @@ public class BaseActivityTest {
         activity.disableActionbar();
         activity.showActionBar();
         assertThat(activity.getActionBar()).isNotShowing();
+    }
+
+    @Test
+    public void shouldNotifyUserIfLastLocationNotAvailable() throws Exception {
+        LocationManager locationManager = (LocationManager)
+                application.getSystemService(LOCATION_SERVICE);
+        shadowOf(locationManager).setLastKnownLocation(GPS_PROVIDER, null);
+        shadowOf(locationManager).setLastKnownLocation(NETWORK_PROVIDER, null);
+        shadowOf(locationManager).setLastKnownLocation(GPS_PROVIDER, null);
+        invokeOnConnected();
+        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo("Waiting for location");
     }
 
     private Location initLastLocation() {
