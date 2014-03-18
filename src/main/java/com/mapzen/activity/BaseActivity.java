@@ -28,6 +28,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
@@ -99,6 +100,7 @@ public class BaseActivity extends MapActivity {
         initMapController();
         initLocationClient();
         initDebugView();
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
     @Override
