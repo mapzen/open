@@ -164,7 +164,7 @@ public class BaseActivity extends MapActivity {
         public void onConnected(Bundle bundle) {
             getMapController().setZoomLevel(MapController.DEFAULT_ZOOMLEVEL);
             final Location location = locationHelper.getLastLocation();
-            Logger.d("Last location: " + location);
+            Logger.d("Last known location: " + location);
 
             if (location == null) {
                 Toast.makeText(BaseActivity.this, getString(R.string.waiting),
