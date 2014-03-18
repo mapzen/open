@@ -324,8 +324,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public void onLocationChanged(Location location) {
-        // This is for demo purposes
-        if (!shouldAdvancePagerAutomatically()) {
+        if (!shouldAdvancePagerAutomatically() || isReRouting) {
             return;
         }
         Location correctedLocation = snapTo(location);
