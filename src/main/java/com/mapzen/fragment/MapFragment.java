@@ -3,10 +3,9 @@ package com.mapzen.fragment;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
 import com.mapzen.search.OnPoiClickListener;
+import com.mapzen.util.MapzenTheme;
 
-import org.oscim.android.canvas.AndroidBitmap;
 import org.oscim.android.canvas.AndroidGraphics;
-import org.oscim.backend.canvas.Bitmap;
 import org.oscim.backend.canvas.Color;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
@@ -18,9 +17,6 @@ import org.oscim.layers.tile.vector.BuildingLayer;
 import org.oscim.layers.tile.vector.VectorTileLayer;
 import org.oscim.layers.tile.vector.labeling.LabelLayer;
 import org.oscim.map.Map;
-
-import com.mapzen.util.MapzenTheme;
-
 import org.oscim.renderer.MapRenderer;
 import org.oscim.theme.IRenderTheme;
 import org.oscim.theme.ThemeLoader;
@@ -35,7 +31,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
