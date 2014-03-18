@@ -99,6 +99,7 @@ public class RouteFragmentTest {
         ShadowVolley.clearMockRequestQueue();
         menu = new TestMenu();
         act = initBaseActivityWithMenu(menu);
+        disableRoutePager(false);
         initTestFragment();
         app = Robolectric.getShadowApplication();
         setVoiceNavigationEnabled(true);
@@ -494,11 +495,11 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldAdvance() throws Exception {
-        enableRoutePager();
-        fragment.setRoute(new JSONObject(MOCK_ROUTE_JSON));
-        FragmentTestUtil.startFragment(fragment);
+        disableRoutePager(false);
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
         double[] point = instructions.get(2).getPoint();
         fragment.onLocationChanged(getTestLocation(point[0], point[1]));
@@ -507,6 +508,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldNotAdvanceWhenDisabled() throws Exception {
+        disableRoutePager(true);
         FragmentTestUtil.startFragment(fragment);
         fragment.onResume();
         Route route = fragment.getRoute();
@@ -519,7 +521,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldNotAdvance() throws Exception {
-        enableRoutePager();
+        disableRoutePager(true);
         FragmentTestUtil.startFragment(fragment);
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
         fragment.onLocationChanged(getTestLocation(1, 0));
@@ -963,11 +965,11 @@ public class RouteFragmentTest {
         prefEditor.commit();
     }
 
-    private void enableRoutePager() {
+    private void disableRoutePager(boolean enable) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
         SharedPreferences.Editor prefEditor = prefs.edit();
         prefEditor.putBoolean(act.getString(R.string.settings_key_disable_route_pager),
-                false);
+                enable);
         prefEditor.commit();
     }
 }
