@@ -166,12 +166,12 @@ public class BaseActivity extends MapActivity {
             final Location location = locationHelper.getLastLocation();
             Logger.d("Last known location: " + location);
 
-            if (location == null) {
-                Toast.makeText(BaseActivity.this, getString(R.string.waiting),
-                        Toast.LENGTH_LONG).show();
-            } else {
+            if (location != null) {
                 getMapController().setLocation(location);
                 mapFragment.findMe();
+            } else {
+                Toast.makeText(BaseActivity.this, getString(R.string.waiting),
+                        Toast.LENGTH_LONG).show();
             }
 
             LocationRequest locationRequest = LocationRequest.create();
