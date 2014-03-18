@@ -799,6 +799,14 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void voiceNavigation_shouldBeEnabledByDefault() throws Exception {
+        PreferenceManager.getDefaultSharedPreferences(act).edit().clear().commit();
+        initTestFragment();
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(fragment.speakerbox.isMuted()).isFalse();
+    }
+
+    @Test
     public void onLost_shouldDisplayProgressDialog() throws Exception {
         Location testLocation = getTestLocation(100.0, 100.0);
         FragmentTestUtil.startFragment(fragment);

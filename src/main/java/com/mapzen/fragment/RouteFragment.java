@@ -144,9 +144,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void checkIfVoiceNavigationIsEnabled() {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
-        boolean voiceNavigationEnabled =
-                prefs.getBoolean(getString(R.string.settings_voice_navigation_key), false);
+        final boolean voiceNavigationEnabled =
+                PreferenceManager.getDefaultSharedPreferences(act)
+                        .getBoolean(getString(R.string.settings_voice_navigation_key), true);
 
         if (voiceNavigationEnabled) {
             speakerbox.unmute();
