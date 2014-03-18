@@ -176,7 +176,6 @@ public class BaseActivity extends MapActivity {
 
     private void initLocationClient() {
         locationHelper = new LocationHelper(this, connectionCallback);
-        locationHelper.connect();
     }
 
     private void initMapFragment() {
