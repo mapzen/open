@@ -31,9 +31,9 @@
     <string name="settings_key_debug">checkbox_debug</string>
     <string name="settings_key_walking_advance_radius">edittext_walking_advance_radius</string>
     <string name="settings_key_mapsource">edittext_mapsource</string>
-    <string name="settings_default_mapsource">http://vector.test.mapzen.com/vector/all</string>
+    <string name="settings_default_mapsource">http://vector.test.mapzen.com/vector/lite</string>
     <string name="settings_mapsource">Configure Tile server</string>
-    <string name="settings_mapsource_summary">This takes url of the tile service (remember to flush caches)</string>
+    <string name="settings_mapsource_summary">Restart required! And possibly flushing caches.</string>
     <string name="settings_voice_navigation_key">checkbox_voice_navigation</string>
     <string name="settings_voice_navigation_summary">Enable voice navigation</string>
     <string name="settings_voice_navigation_title">Voice navigation</string>
