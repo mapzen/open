@@ -3,9 +3,9 @@ package com.mapzen.fragment;
 import com.mapzen.R;
 import com.mapzen.entity.Feature;
 import com.mapzen.search.OnPoiClickListener;
+import com.mapzen.util.MapzenTheme;
 
-import org.oscim.android.canvas.AndroidBitmap;
-import org.oscim.backend.canvas.Bitmap;
+import org.oscim.android.canvas.AndroidGraphics;
 import org.oscim.backend.canvas.Color;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
@@ -17,9 +17,6 @@ import org.oscim.layers.tile.vector.BuildingLayer;
 import org.oscim.layers.tile.vector.VectorTileLayer;
 import org.oscim.layers.tile.vector.labeling.LabelLayer;
 import org.oscim.map.Map;
-
-import com.mapzen.util.MapzenTheme;
-
 import org.oscim.renderer.MapRenderer;
 import org.oscim.theme.IRenderTheme;
 import org.oscim.theme.ThemeLoader;
@@ -34,7 +31,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -235,7 +231,8 @@ public class MapFragment extends BaseFragment {
 
     private MarkerItem getUserLocationMarker() {
         MarkerItem markerItem = new MarkerItem("ME", "Current Location", getUserLocationPoint());
-        MarkerSymbol symbol = new MarkerSymbol(getMyLocationSymbol(),
+        MarkerSymbol symbol = AndroidGraphics.makeMarker(
+                getResources().getDrawable(R.drawable.ic_locate_me),
                 MarkerItem.HotspotPlace.BOTTOM_CENTER);
         markerItem.setMarker(symbol);
         return markerItem;
@@ -262,30 +259,14 @@ public class MapFragment extends BaseFragment {
         updateMap();
     }
 
-    private Bitmap getMyLocationSymbol() {
-        InputStream in = getResources().openRawResource(R.drawable.ic_locate_me);
-        AndroidBitmap bitmap = new AndroidBitmap(in);
-        return bitmap;
-    }
-
-    private Bitmap getPinDefault() {
-        InputStream in = getResources().openRawResource(R.drawable.ic_pin);
-        AndroidBitmap bitmap = new AndroidBitmap(in);
-        return bitmap;
-    }
-
-    private Bitmap getHighlightPin() {
-        InputStream in = getResources().openRawResource(R.drawable.ic_pin_active);
-        AndroidBitmap bitmap = new AndroidBitmap(in);
-        return bitmap;
-    }
-
     public MarkerSymbol getHighlightMarkerSymbol() {
-        return new MarkerSymbol(getHighlightPin(), MarkerItem.HotspotPlace.BOTTOM_CENTER);
+        return AndroidGraphics.makeMarker(getResources().getDrawable(R.drawable.ic_pin_active),
+                MarkerItem.HotspotPlace.BOTTOM_CENTER);
     }
 
     public MarkerSymbol getDefaultMarkerSymbol() {
-        return new MarkerSymbol(getPinDefault(), MarkerItem.HotspotPlace.BOTTOM_CENTER);
+        return AndroidGraphics.makeMarker(getResources().getDrawable(R.drawable.ic_pin),
+                MarkerItem.HotspotPlace.BOTTOM_CENTER);
     }
 
     public void updateMap() {
