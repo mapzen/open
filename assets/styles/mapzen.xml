@@ -73,7 +73,6 @@
 
   <style-text id="caption-small-blue" k="name" size="18" fill="#7b91a4" stroke="#e8ecd3" stroke-width="2.0" />
   <style-text id="park-label" k="name" size="18" fill="#7b91a4" stroke="#e8ecd3" stroke-width="3.0" />
-  <style-text id="country-label" k="name" style="bold" size="16" fill="#506c91" priority="0" />
   <style-text id="city-label" k="name" size="16" fill="#506c91" priority="1" />
   <style-text id="town-label" k="name" size="16" fill="#506c91" priority="2" />
   <style-text id="island-label" k="name" size="16" fill="#506c91" priority="1" />
@@ -1176,40 +1175,47 @@
 
     <!--  labels -->
     <m k="place" first="true">
-      <m v="continent" zoom-min="0">
-        <text use="country-label" />
+      <m v="continent" zoom-min="0" zoom-max="2">
+        <caption k="name" style="bold" size="18" fill="#38678F" priority="0" />
       </m>
-      <m v="country" zoom-min="0">
-        <text use="country-label" />
-      </m>
-      <m v="sea" zoom-min="0">
-        <text use="country-label" />
+      <m v="country">
+        <m zoom-min="3">
+          <caption k="name" style="bold" size="16" fill="#38678F" priority="0" />
+        </m>
+        <m zoom-min="5">
+          <caption k="name" style="bold" size="24" fill="#38678F" priority="0" />
+        </m>
       </m>
       <m v="ocean" zoom-min="0">
-        <text use="country-label" />
-      </m>
-      <m v="archipelago" zoom-min="0">
-        <text use="country-label" />
+        <caption k="name" style="italic" size="18" fill="#002d54" priority="1" />
       </m>
 
-      <m v="island" zoom-min="3">
-        <text use="island-label" />
+      <m v="archipelago" zoom-min="4">
+        <caption k="name" size="16" fill="#38678F" priority="0" />
       </m>
-      <m v="state" zoom-min="3">
-        <text use="country-label" />
-      </m>
-      <m v="bay" zoom-min="3">
-        <text use="country-label" />
+      <m v="sea" zoom-min="4">
+        <caption k="name" style="italic" size="14" fill="#002d54" priority="3" />
       </m>
 
+      <m v="state" zoom-min="5">
+        <caption k="name" size="16" fill="#38678F" priority="3" />
+      </m>
+
+      <m v="bay" zoom-min="6">
+        <text use="country-label" />
+      </m>
+      <m v="island" zoom-min="6">
+        <caption k="name" size="14" fill="#38678F" priority="0" />
+      </m>
+      
+      <m v="city" zoom-min="5">
+        <caption k="name" style="bold" size="16" fill="#38678F" priority="3" />
+      </m>
       <m v="hamlet" zoom-min="8">
         <text use="neighbourhood-label" />
       </m>
       <m v="town|village" zoom-min="8">
-        <text use="town-label" />
-      </m>
-      <m v="city" zoom-min="8">
-        <text use="city-label" />
+        <caption k="name" size="20" fill="#506c91" stroke="#ffffff" stroke-width="2.0" priority="4" />
       </m>
       <m v="region" zoom-min="8">
         <text use="city-label" />
@@ -1218,7 +1224,7 @@
         <text use="city-label" />
       </m>
       <m v="county" zoom-min="8">
-        <text use="city-label" />
+        <caption k="name" size="20" fill="#506c91" stroke="#ffffff" stroke-width="2.0" priority="4" />
       </m>
       <m v="district" zoom-min="8">
         <text use="city-label" />
@@ -1227,8 +1233,8 @@
         <text use="city-label" />
       </m>
 
-      <m v="suburb|neighbourhood|quarter|borough" zoom-min="12">
-        <text use="neighbourhood-label" />
+      <m v="suburb|neighbourhood|quarter|borough" >
+        <caption k="name" size="20" fill="#506c91" stroke="#ffffff" stroke-width="2.0" priority="4" />
       </m>
       <m v="lake" zoom-min="12">
         <text use="city-label" />
