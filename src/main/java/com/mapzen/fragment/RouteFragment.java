@@ -184,6 +184,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void onResume() {
         super.onResume();
         initLocationReceiver();
+        act.disableActionbar();
         act.hideActionBar();
         act.deactivateMapLocationUpdates();
         if (act.isInDebugMode()) {
@@ -208,6 +209,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onDetach() {
         super.onDetach();
+        act.enableActionbar();
         act.showActionBar();
         clearRoute();
     }
@@ -322,7 +324,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public void onLocationChanged(Location location) {
-        if (isReRouting) {
+        if (!shouldAdvancePagerAutomatically() || isReRouting) {
             return;
         }
         Location correctedLocation = snapTo(location);
@@ -368,9 +370,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: "
                     + closestInstruction.toString());
             final int instructionIndex = instructions.indexOf(closestInstruction);
-            if (!shouldAdvancePagerAutomatically()) {
-                pager.setCurrentItem(instructionIndex);
-            }
+            pager.setCurrentItem(instructionIndex);
             if (!seenInstructions.contains(closestInstruction)) {
                 seenInstructions.add(closestInstruction);
             }
@@ -649,6 +649,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private boolean shouldAdvancePagerAutomatically() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
-        return prefs.getBoolean(getString(R.string.settings_key_disable_route_pager), true);
+        return !prefs.getBoolean(getString(R.string.settings_key_disable_route_pager), true);
     }
 }

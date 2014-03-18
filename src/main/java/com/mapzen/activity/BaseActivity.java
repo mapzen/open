@@ -71,6 +71,7 @@ public class BaseActivity extends MapActivity {
     private SQLiteDatabase db;
     protected DatabaseHelper dbHelper;
     private TextView debugView;
+    private boolean enableActionbar = true;
 
     LocationHelper locationHelper;
 
@@ -335,8 +336,16 @@ public class BaseActivity extends MapActivity {
         }
     }
 
+    public void enableActionbar() {
+        enableActionbar = true;
+    }
+
+    public void disableActionbar() {
+        enableActionbar = false;
+    }
+
     public void showActionBar() {
-        if (!getActionBar().isShowing()) {
+        if (!getActionBar().isShowing() && enableActionbar) {
             getActionBar().show();
         }
     }
