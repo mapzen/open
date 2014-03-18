@@ -318,6 +318,21 @@ public class BaseActivityTest {
         assertThat(act.findViewById(R.id.debugging)).isVisible();
     }
 
+    @Test
+    public void showActionbar_shouldShowActionbar() throws Exception {
+        activity.hideActionBar();
+        activity.showActionBar();
+        assertThat(activity.getActionBar()).isShowing();
+    }
+
+    @Test
+    public void showActionbar_shouldNotShowActionbar() throws Exception {
+        activity.hideActionBar();
+        activity.disableActionbar();
+        activity.showActionBar();
+        assertThat(activity.getActionBar()).isNotShowing();
+    }
+
     private Location initLastLocation() {
         Location location = new Location(GPS_PROVIDER);
         location.setLatitude(1.0);

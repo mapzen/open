@@ -184,6 +184,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void onResume() {
         super.onResume();
         initLocationReceiver();
+        act.disableActionbar();
         act.hideActionBar();
         act.deactivateMapLocationUpdates();
         if (act.isInDebugMode()) {
@@ -208,6 +209,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onDetach() {
         super.onDetach();
+        act.enableActionbar();
         act.showActionBar();
         clearRoute();
     }
