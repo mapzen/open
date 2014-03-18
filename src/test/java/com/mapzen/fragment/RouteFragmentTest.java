@@ -802,6 +802,17 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onLost_shouldDismissProgressDialogOnSuccess() throws Exception {
+        Location testLocation = getTestLocation(100.0, 100.0);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onLost(testLocation);
+        List<Request> requestSet = getMockRequestQueue().getRequests();
+        JsonObjectRequest request = (JsonObjectRequest) requestSet.iterator().next();
+        getMockRequestQueue().deliverResponse(request, new JSONObject(MOCK_NO_ROUTE_JSON));
+        assertThat(act.getProgressDialogFragment()).isNotAdded();
+    }
+
+    @Test
     public void onLost_shouldToastIfNoRouteFound() throws Exception {
         Location testLocation = getTestLocation(100.0, 100.0);
         FragmentTestUtil.startFragment(fragment);
