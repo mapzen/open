@@ -171,6 +171,48 @@ public class LocationHelperTest {
     }
 
     @Test
+    public void requestLocationUpdates_shouldIgnoreNetworkWhenGpsIsMoreAccurate() throws Exception {
+        TestLocationListener listener = new TestLocationListener();
+        LocationRequest request = LocationRequest.create();
+        request.setFastestInterval(0);
+        request.setSmallestDisplacement(0);
+        locationHelper.requestLocationUpdates(request, listener);
+
+        final long time = System.currentTimeMillis();
+        Location gpsLocation = getTestLocation(GPS_PROVIDER, 0, 0, time);
+        Location networkLocation = getTestLocation(NETWORK_PROVIDER, 0, 0, time + 1);
+
+        gpsLocation.setAccuracy(10);
+        networkLocation.setAccuracy(20);
+
+        shadowLocationManager.simulateLocation(gpsLocation);
+        shadowLocationManager.simulateLocation(networkLocation);
+
+        assertThat(listener.location).isEqualTo(gpsLocation);
+    }
+
+    @Test
+    public void requestLocationUpdates_shouldIgnoreGpsWhenNetworkIsMoreAccurate() throws Exception {
+        TestLocationListener listener = new TestLocationListener();
+        LocationRequest request = LocationRequest.create();
+        request.setFastestInterval(0);
+        request.setSmallestDisplacement(0);
+        locationHelper.requestLocationUpdates(request, listener);
+
+        final long time = System.currentTimeMillis();
+        Location networkLocation = getTestLocation(NETWORK_PROVIDER, 0, 0, time);
+        Location gpsLocation = getTestLocation(GPS_PROVIDER, 0, 0, time + 1);
+
+        networkLocation.setAccuracy(10);
+        gpsLocation.setAccuracy(20);
+
+        shadowLocationManager.simulateLocation(networkLocation);
+        shadowLocationManager.simulateLocation(gpsLocation);
+
+        assertThat(listener.location).isEqualTo(networkLocation);
+    }
+
+    @Test
     public void removeLocationUpdates_shouldUnregisterAllListeners() throws Exception {
         TestLocationListener listener = new TestLocationListener();
         LocationRequest request = LocationRequest.create();

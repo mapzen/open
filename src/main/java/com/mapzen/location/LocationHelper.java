@@ -23,6 +23,9 @@ public class LocationHelper {
     private android.location.LocationListener gpsListener;
     private android.location.LocationListener networkListener;
 
+    private float gpsAccuracy = Float.MAX_VALUE;
+    private float networkAccuracy = Float.MAX_VALUE;
+
     public LocationHelper(Context context, ConnectionCallbacks connectionCallbacks) {
         this.context = context;
         this.connectionCallbacks = connectionCallbacks;
@@ -70,7 +73,10 @@ public class LocationHelper {
             @Override
             public void onLocationChanged(Location location) {
                 Logger.d("GPS Location: " + location);
-                LocationHelper.this.locationListener.onLocationChanged(location);
+                gpsAccuracy = location.getAccuracy();
+                if (gpsAccuracy <= networkAccuracy) {
+                    LocationHelper.this.locationListener.onLocationChanged(location);
+                }
             }
 
             @Override
@@ -94,7 +100,10 @@ public class LocationHelper {
             @Override
             public void onLocationChanged(Location location) {
                 Logger.d("Network Location: " + location);
-                LocationHelper.this.locationListener.onLocationChanged(location);
+                networkAccuracy = location.getAccuracy();
+                if (networkAccuracy <= gpsAccuracy) {
+                    LocationHelper.this.locationListener.onLocationChanged(location);
+                }
             }
 
             @Override
