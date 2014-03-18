@@ -1,5 +1,7 @@
 package com.mapzen.location;
 
+import com.mapzen.util.Logger;
+
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
@@ -67,6 +69,7 @@ public class LocationHelper {
         this.gpsListener = new android.location.LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
+                Logger.d("GPS Location: " + location);
                 LocationHelper.this.locationListener.onLocationChanged(location);
             }
 
@@ -90,6 +93,7 @@ public class LocationHelper {
         this.networkListener = new android.location.LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
+                Logger.d("Network Location: " + location);
                 LocationHelper.this.locationListener.onLocationChanged(location);
             }
 
