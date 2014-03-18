@@ -1,6 +1,7 @@
 package com.mapzen;
 
 import com.mapzen.activity.BaseActivity;
+import com.mapzen.osrm.Instruction;
 
 import android.content.SharedPreferences;
 import android.location.Location;
@@ -10,6 +11,8 @@ import android.widget.Toast;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 import org.oscim.map.Map;
+
+import static com.mapzen.fragment.RouteFragment.ROUTE_ZOOM_LEVEL;
 
 public final class MapController {
     public static final int DEFAULT_ZOOMLEVEL = 15;
@@ -75,6 +78,14 @@ public final class MapController {
     public void setZoomLevel(int zoomLevel) {
         mapPosition.setZoomLevel(zoomLevel);
     }
+
+    public void setMapPerspectiveForInstruction(Instruction instruction) {
+        double[] point = instruction.getPoint();
+        map.setMapPosition(point[0], point[1], Math.pow(2, ROUTE_ZOOM_LEVEL));
+        map.viewport().setRotation(instruction.getRotationBearing());
+        map.updateMap(true);
+    }
+
 
     public double getZoomScale() {
         return mapPosition.scale;

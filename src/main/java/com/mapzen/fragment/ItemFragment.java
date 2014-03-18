@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Locale;
 
@@ -73,7 +74,16 @@ public class ItemFragment extends BaseFragment {
         final Response.Listener<JSONObject> successListener = new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                routeFragment.onRouteSuccess(response);
+                if (routeFragment.setRoute(response)) {
+                    act.getSupportFragmentManager().beginTransaction()
+                            .addToBackStack(null)
+                            .add(R.id.routes_container, routeFragment, RouteFragment.TAG)
+                            .commit();
+                } else {
+                    Toast.makeText(act,
+                            act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
+                    act.showActionBar();
+                }
                 act.dismissProgressDialog();
             }
         };

@@ -4,8 +4,10 @@ import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.Feature;
 import com.mapzen.fragment.MapFragment;
+import com.mapzen.osrm.Instruction;
 
 import org.apache.commons.io.FileUtils;
+import org.json.JSONArray;
 import org.oscim.android.MapView;
 import org.oscim.map.TestMap;
 import org.robolectric.shadows.ShadowLocationManager;
@@ -32,6 +34,9 @@ import static org.robolectric.Robolectric.shadowOf;
 public final class TestHelper {
 
     public static final String MOCK_ROUTE_JSON = TestHelper.getFixture("basic_route");
+    public static final String MOCK_NO_ROUTE_JSON = TestHelper.getFixture("no_route_found");
+    public static final String MOCK_NY_TO_VT = TestHelper.getFixture("ny_to_vermount");
+    public static final String MOCK_AROUND_THE_BLOCK = TestHelper.getFixture("around_the_block");
 
     private TestHelper() {
     }
@@ -62,6 +67,13 @@ public final class TestHelper {
         return mapFragment;
     }
 
+    public static Location getTestLocation(double lat, double lng) {
+        Location location = new Location("testing");
+        location.setLatitude(lat);
+        location.setLongitude(lng);
+        return location;
+    }
+
     public static Location getTestLocation(String provider, float lat, float lng, long time) {
         Location location = new Location(provider);
         location.setLatitude(lat);
@@ -69,6 +81,24 @@ public final class TestHelper {
         location.setTime(time);
         return location;
     }
+
+    public static Instruction getTestInstruction(double lat, double lng) throws Exception {
+        String raw = "        [\n" +
+                "            \"10\",\n" + // turn instruction
+                "            \"19th Street\",\n" + // way
+                "            160,\n" + // length in meters
+                "            0,\n" + // position?
+                "            0,\n" + // time in seconds
+                "            \"160m\",\n" + // length with unit
+                "            \"SE\",\n" + //earth direction
+                "            128\n" + // azimuth
+                "        ]\n";
+        Instruction instruction = new Instruction(new JSONArray(raw));
+        double[] point = {lat, lng};
+        instruction.setPoint(point);
+        return instruction;
+    }
+
 
     public static Feature getTestFeature() {
         Feature feature = new Feature();
