@@ -7,6 +7,8 @@ import com.mapzen.core.SettingsFragment;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.location.LocationHelper;
+import com.mapzen.location.LocationListener;
+import com.mapzen.location.LocationRequest;
 import com.mapzen.search.AutoCompleteAdapter;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.search.PagerResultsFragment;
@@ -15,10 +17,6 @@ import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.location.LocationClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
 
 import org.oscim.android.MapActivity;
 import org.oscim.layers.marker.MarkerItem;
@@ -42,12 +40,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import static com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
-import static com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
-import static com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY;
 import static com.mapzen.MapController.getMapController;
+import static com.mapzen.location.LocationHelper.ConnectionCallbacks;
 
 public class BaseActivity extends MapActivity {
     public static final int LOCATION_INTERVAL = 1000;
@@ -58,8 +53,8 @@ public class BaseActivity extends MapActivity {
     private MapzenApplication app;
     private MapFragment mapFragment;
     private MapzenProgressDialogFragment progressDialogFragment;
-    private LocationClient locationClient;
     private boolean updateMapLocation = true;
+
     private LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
@@ -72,9 +67,12 @@ public class BaseActivity extends MapActivity {
             sendBroadcast(toBroadcast);
         }
     };
+
     private SQLiteDatabase db;
     protected DatabaseHelper dbHelper;
     private TextView debugView;
+
+    LocationHelper locationHelper;
 
     public void deactivateMapLocationUpdates() {
         updateMapLocation = false;
@@ -105,14 +103,14 @@ public class BaseActivity extends MapActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        locationClient.disconnect();
+        locationHelper.disconnect();
         db.close();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        locationClient.connect();
+        locationHelper.connect();
         db = dbHelper.getWritableDatabase();
     }
 
@@ -160,19 +158,6 @@ public class BaseActivity extends MapActivity {
     protected ConnectionCallbacks connectionCallback = new ConnectionCallbacks() {
         @Override
         public void onConnected(Bundle bundle) {
-            final LocationHelper locationHelper = new LocationHelper(BaseActivity.this,
-                    new LocationHelper.ConnectionCallbacks() {
-                @Override
-                public void onConnected(Bundle connectionHint) {
-                    Logger.d("LocationHelper connected.");
-                }
-                @Override
-                public void onDisconnected() {
-                    Logger.d("LocationHelper disconnected.");
-                }
-            });
-            locationHelper.connect();
-
             final Location location = locationHelper.getLastLocation();
             getMapController().setLocation(location);
             getMapController().setZoomLevel(MapController.DEFAULT_ZOOMLEVEL);
@@ -180,29 +165,17 @@ public class BaseActivity extends MapActivity {
             Logger.d("Location: last location: " + location.toString());
             LocationRequest locationRequest = LocationRequest.create();
             locationRequest.setInterval(LOCATION_INTERVAL);
-            locationRequest.setPriority(PRIORITY_HIGH_ACCURACY);
-            locationClient.requestLocationUpdates(locationRequest, locationListener);
+            locationHelper.requestLocationUpdates(locationRequest, locationListener);
         }
 
         @Override
         public void onDisconnected() {
-            locationClient.removeLocationUpdates(locationListener);
+            Logger.d("LocationHelper disconnected.");
         }
     };
 
-    private OnConnectionFailedListener onConnectionFailedListener =
-            new OnConnectionFailedListener() {
-                @Override
-                public void onConnectionFailed(ConnectionResult connectionResult) {
-                    Toast.makeText(getApplicationContext(),
-                            PLAY_SERVICE_FAIL_MESSAGE, Toast.LENGTH_LONG).show();
-                }
-            };
-
     private void initLocationClient() {
-        Logger.d("Location: initializing");
-        locationClient = new LocationClient(this, connectionCallback, onConnectionFailedListener);
-        locationClient.connect();
+        locationHelper = new LocationHelper(this, connectionCallback);
     }
 
     private void initMapFragment() {
@@ -366,10 +339,6 @@ public class BaseActivity extends MapActivity {
         if (!getActionBar().isShowing()) {
             getActionBar().show();
         }
-    }
-
-    public LocationClient getLocationClient() {
-        return locationClient;
     }
 
     public boolean executeSearchOnMap(String query) {

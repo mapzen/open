@@ -20,27 +20,31 @@ public final class LocationRequest {
         return interval;
     }
 
-    public void setInterval(long millis) {
+    public LocationRequest setInterval(long millis) {
         interval = millis;
 
         if (interval < fastestInterval) {
             fastestInterval = interval;
         }
+
+        return this;
     }
 
     public long getFastestInterval() {
         return fastestInterval;
     }
 
-    public void setFastestInterval(long millis) {
+    public LocationRequest setFastestInterval(long millis) {
         fastestInterval = millis;
+        return this;
     }
 
     public float getSmallestDisplacement() {
         return smallestDisplacement;
     }
 
-    public void setSmallestDisplacement(float meters) {
+    public LocationRequest setSmallestDisplacement(float meters) {
         smallestDisplacement = meters;
+        return this;
     }
 }

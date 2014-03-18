@@ -43,12 +43,6 @@ public class LocationHelperTest {
         assertThat(locationHelper).isNotNull();
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void getLastLocation_shouldThrowExceptionIfNotConnected() throws Exception {
-        locationHelper = new LocationHelper(application, connectionCallbacks);
-        locationHelper.getLastLocation();
-    }
-
     @Test
     public void connect_shouldCallOnConnected() throws Exception {
         assertThat(connectionCallbacks.connected).isTrue();
@@ -58,6 +52,12 @@ public class LocationHelperTest {
     public void disconnect_shouldCallOnDisconnected() throws Exception {
         locationHelper.disconnect();
         assertThat(connectionCallbacks.connected).isFalse();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void getLastLocation_shouldThrowExceptionIfNotConnected() throws Exception {
+        locationHelper = new LocationHelper(application, connectionCallbacks);
+        locationHelper.getLastLocation();
     }
 
     @Test
@@ -103,15 +103,21 @@ public class LocationHelperTest {
         assertThat(locationHelper.getLastLocation()).isEqualTo(passiveLocation);
     }
 
-    @Test
-    public void requestLocationUpdates_shouldRegisterGpsListener() throws Exception {
-        LocationListener listener = new TestLocationListener();
-        locationHelper.requestLocationUpdates(LocationRequest.create(), listener);
-        assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).hasSize(1);
+    @Test(expected = IllegalStateException.class)
+    public void requestLocationUpdates_shouldThrowExceptionIfNotConnected() throws Exception {
+        locationHelper = new LocationHelper(application, connectionCallbacks);
+        locationHelper.requestLocationUpdates(LocationRequest.create(), new TestLocationListener());
     }
 
     @Test
-    public void requestLocationUpdates_shouldInvokeListenerOnLocationChanged() throws Exception {
+    public void requestLocationUpdates_shouldRegisterGpsAndNetworkListener() throws Exception {
+        LocationListener listener = new TestLocationListener();
+        locationHelper.requestLocationUpdates(LocationRequest.create(), listener);
+        assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).hasSize(2);
+    }
+
+    @Test
+    public void requestLocationUpdates_shouldNotifyOnLocationChangedGps() throws Exception {
         TestLocationListener listener = new TestLocationListener();
         locationHelper.requestLocationUpdates(LocationRequest.create(), listener);
         Location location = new Location(GPS_PROVIDER);
@@ -120,7 +126,17 @@ public class LocationHelperTest {
     }
 
     @Test
-    public void requestLocationUpdates_shouldNotNotifyIfDoesNotExceedCriteria() throws Exception {
+    public void requestLocationUpdates_shouldNotifyOnLocationChangedNetwork() throws Exception {
+        TestLocationListener listener = new TestLocationListener();
+        locationHelper.requestLocationUpdates(LocationRequest.create(), listener);
+        Location location = new Location(NETWORK_PROVIDER);
+        shadowLocationManager.simulateLocation(location);
+        assertThat(listener.location).isEqualTo(location);
+    }
+
+    @Test
+    public void requestLocationUpdates_shouldNotNotifyIfDoesNotExceedCriteriaGps()
+            throws Exception {
         TestLocationListener listener = new TestLocationListener();
         LocationRequest request = LocationRequest.create();
         request.setFastestInterval(5000);
@@ -134,6 +150,96 @@ public class LocationHelperTest {
         shadowLocationManager.simulateLocation(location1);
         shadowLocationManager.simulateLocation(location2);
         assertThat(listener.location).isEqualTo(location1);
+    }
+
+    @Test
+    public void requestLocationUpdates_shouldNotNotifyIfDoesNotExceedCriteriaNetwork()
+            throws Exception {
+        TestLocationListener listener = new TestLocationListener();
+        LocationRequest request = LocationRequest.create();
+        request.setFastestInterval(5000);
+        request.setSmallestDisplacement(200000);
+        locationHelper.requestLocationUpdates(request, listener);
+
+        final long time = System.currentTimeMillis();
+        Location location1 = getTestLocation(NETWORK_PROVIDER, 0, 0, time);
+        Location location2 = getTestLocation(NETWORK_PROVIDER, 1, 1, time + 1000);
+
+        shadowLocationManager.simulateLocation(location1);
+        shadowLocationManager.simulateLocation(location2);
+        assertThat(listener.location).isEqualTo(location1);
+    }
+
+    @Test
+    public void requestLocationUpdates_shouldIgnoreNetworkWhenGpsIsMoreAccurate() throws Exception {
+        TestLocationListener listener = new TestLocationListener();
+        LocationRequest request = LocationRequest.create();
+        request.setFastestInterval(0);
+        request.setSmallestDisplacement(0);
+        locationHelper.requestLocationUpdates(request, listener);
+
+        final long time = System.currentTimeMillis();
+        Location gpsLocation = getTestLocation(GPS_PROVIDER, 0, 0, time);
+        Location networkLocation = getTestLocation(NETWORK_PROVIDER, 0, 0, time + 1);
+
+        gpsLocation.setAccuracy(10);
+        networkLocation.setAccuracy(20);
+
+        shadowLocationManager.simulateLocation(gpsLocation);
+        shadowLocationManager.simulateLocation(networkLocation);
+
+        assertThat(listener.location).isEqualTo(gpsLocation);
+    }
+
+    @Test
+    public void requestLocationUpdates_shouldIgnoreGpsWhenNetworkIsMoreAccurate() throws Exception {
+        TestLocationListener listener = new TestLocationListener();
+        LocationRequest request = LocationRequest.create();
+        request.setFastestInterval(0);
+        request.setSmallestDisplacement(0);
+        locationHelper.requestLocationUpdates(request, listener);
+
+        final long time = System.currentTimeMillis();
+        Location networkLocation = getTestLocation(NETWORK_PROVIDER, 0, 0, time);
+        Location gpsLocation = getTestLocation(GPS_PROVIDER, 0, 0, time + 1);
+
+        networkLocation.setAccuracy(10);
+        gpsLocation.setAccuracy(20);
+
+        shadowLocationManager.simulateLocation(networkLocation);
+        shadowLocationManager.simulateLocation(gpsLocation);
+
+        assertThat(listener.location).isEqualTo(networkLocation);
+    }
+
+    @Test
+    public void removeLocationUpdates_shouldUnregisterAllListeners() throws Exception {
+        TestLocationListener listener = new TestLocationListener();
+        LocationRequest request = LocationRequest.create();
+        locationHelper.requestLocationUpdates(request, listener);
+        locationHelper.removeLocationUpdates(listener);
+        assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).isEmpty();
+    }
+
+    @Test
+    public void disconnect_shouldUnregisterAllListeners() throws Exception {
+        TestLocationListener listener = new TestLocationListener();
+        LocationRequest request = LocationRequest.create();
+        locationHelper.requestLocationUpdates(request, listener);
+        locationHelper.disconnect();
+        assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).isEmpty();
+    }
+
+    @Test
+    public void isConnected_shouldReturnTrueWhenConnected() throws Exception {
+        locationHelper.connect();
+        assertThat(locationHelper.isConnected()).isTrue();
+    }
+
+    @Test
+    public void isConnected_shouldReturnFalseWhenDisconnected() throws Exception {
+        locationHelper.disconnect();
+        assertThat(locationHelper.isConnected()).isFalse();
     }
 
     class TestConnectionCallbacks implements LocationHelper.ConnectionCallbacks {

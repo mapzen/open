@@ -1,11 +1,13 @@
 package com.mapzen.support;
 
-import android.app.ActionBar;
-import android.database.sqlite.SQLiteDatabase;
-import com.google.android.gms.common.GooglePlayServicesClient;
 import com.mapzen.activity.BaseActivity;
+import com.mapzen.location.LocationHelper;
+
 import org.oscim.map.Map;
 import org.oscim.map.TestMap;
+
+import android.app.ActionBar;
+import android.database.sqlite.SQLiteDatabase;
 
 public class TestBaseActivity extends BaseActivity {
     private ActionBar actionBar = new TestActionBar();
@@ -47,7 +49,7 @@ public class TestBaseActivity extends BaseActivity {
         return dbHelper.getReadableDatabase();
     }
 
-    public GooglePlayServicesClient.ConnectionCallbacks getConnectionCallback() {
+    public LocationHelper.ConnectionCallbacks getConnectionCallback() {
         return connectionCallback;
     }
 }
