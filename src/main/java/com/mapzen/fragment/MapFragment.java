@@ -5,6 +5,7 @@ import com.mapzen.entity.Feature;
 import com.mapzen.search.OnPoiClickListener;
 
 import org.oscim.android.canvas.AndroidBitmap;
+import org.oscim.android.canvas.AndroidGraphics;
 import org.oscim.backend.canvas.Bitmap;
 import org.oscim.backend.canvas.Color;
 import org.oscim.core.GeoPoint;
@@ -235,7 +236,8 @@ public class MapFragment extends BaseFragment {
 
     private MarkerItem getUserLocationMarker() {
         MarkerItem markerItem = new MarkerItem("ME", "Current Location", getUserLocationPoint());
-        MarkerSymbol symbol = new MarkerSymbol(getMyLocationSymbol(),
+        MarkerSymbol symbol = AndroidGraphics.makeMarker(
+                getResources().getDrawable(R.drawable.ic_locate_me),
                 MarkerItem.HotspotPlace.BOTTOM_CENTER);
         markerItem.setMarker(symbol);
         return markerItem;
@@ -262,30 +264,14 @@ public class MapFragment extends BaseFragment {
         updateMap();
     }
 
-    private Bitmap getMyLocationSymbol() {
-        InputStream in = getResources().openRawResource(R.drawable.ic_locate_me);
-        AndroidBitmap bitmap = new AndroidBitmap(in);
-        return bitmap;
-    }
-
-    private Bitmap getPinDefault() {
-        InputStream in = getResources().openRawResource(R.drawable.ic_pin);
-        AndroidBitmap bitmap = new AndroidBitmap(in);
-        return bitmap;
-    }
-
-    private Bitmap getHighlightPin() {
-        InputStream in = getResources().openRawResource(R.drawable.ic_pin_active);
-        AndroidBitmap bitmap = new AndroidBitmap(in);
-        return bitmap;
-    }
-
     public MarkerSymbol getHighlightMarkerSymbol() {
-        return new MarkerSymbol(getHighlightPin(), MarkerItem.HotspotPlace.BOTTOM_CENTER);
+        return AndroidGraphics.makeMarker(getResources().getDrawable(R.drawable.ic_pin_active),
+                MarkerItem.HotspotPlace.BOTTOM_CENTER);
     }
 
     public MarkerSymbol getDefaultMarkerSymbol() {
-        return new MarkerSymbol(getPinDefault(), MarkerItem.HotspotPlace.BOTTOM_CENTER);
+        return AndroidGraphics.makeMarker(getResources().getDrawable(R.drawable.ic_pin),
+                MarkerItem.HotspotPlace.BOTTOM_CENTER);
     }
 
     public void updateMap() {
