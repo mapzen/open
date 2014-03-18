@@ -41,6 +41,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.location.LocationHelper.ConnectionCallbacks;
@@ -161,11 +162,18 @@ public class BaseActivity extends MapActivity {
     protected ConnectionCallbacks connectionCallback = new ConnectionCallbacks() {
         @Override
         public void onConnected(Bundle bundle) {
-            final Location location = locationHelper.getLastLocation();
-            getMapController().setLocation(location);
             getMapController().setZoomLevel(MapController.DEFAULT_ZOOMLEVEL);
-            mapFragment.findMe();
-            Logger.d("Location: last location: " + location.toString());
+            final Location location = locationHelper.getLastLocation();
+            Logger.d("Last location: " + location);
+
+            if (location == null) {
+                Toast.makeText(BaseActivity.this, getString(R.string.waiting),
+                        Toast.LENGTH_LONG).show();
+            } else {
+                getMapController().setLocation(location);
+                mapFragment.findMe();
+            }
+
             LocationRequest locationRequest = LocationRequest.create();
             locationRequest.setInterval(LOCATION_INTERVAL);
             locationHelper.requestLocationUpdates(locationRequest, locationListener);
