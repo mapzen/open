@@ -2,8 +2,21 @@
 <rendertheme xmlns="http://opensciencemap.org/rendertheme" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://opensciencemap.org/rendertheme ../../rendertheme.xsd" version="1" map-background="#ebf0d8" >
 
-  <atlas img="styles/osmarender.png">
-    <rect id="airport" pos="226 38 24 24" />
+  <atlas img="styles/poi_icons.png">
+    <rect id="airport" pos="0 0 32 32" />
+    <rect id="arts_ent" pos="-52 0 32 32" />
+    <rect id="bank" pos="-104 0 32 32" />
+    <rect id="bathroom" pos="-156 0 32 32" />
+    <rect id="education" pos="-208 0 32 32" />
+    <rect id="food" pos="-260 0 32 32" />
+    <rect id="gas_station" pos="-312 0 32 32" />
+    <rect id="hotel" pos="-364 0 32 32" />
+    <rect id="medical" pos="-416 0 32 32" />
+    <rect id="pizza" pos="-468 0 32 32" />
+    <rect id="post_office" pos="-520 0 32 32" />
+    <rect id="religious" pos="-572 0 32 32" />
+    <rect id="sports" pos="-624 0 32 32" />
+    <rect id="train" pos="-676 0 32 32" />
     <!--  <rect id="alpine_hut" pos="198 41 26 21" />
     <rect id="atm" pos="279 2 14 16" />
     <rect id="bakery" pos="305 46 22 16" />
@@ -181,18 +194,18 @@
         <m v="fountain" closed="yes">
           <area fill="#8db3b6" stroke="#243F3F" stroke-width="0.15" />
         </m>
-        <m v="hospital" zoom-min="15">
+        <m v="hospital" zoom-min="16">
           <symbol src="hospital" />
         </m>
-        <m v="theatre" zoom-min="17">
-          <symbol src="theatre" />
+        <m v="theatre" zoom-min="16">
+          <symbol src="arts-ent" />
         </m>
-        <m v="toilets" zoom-min="17">
-          <symbol src="toilets" />
+        <m v="toilets" zoom-min="16">
+          <symbol src="bathroom" />
         </m>
       </m>
-      <m k="name" zoom-min="16">
-        <text use="caption-small-blue" />
+      <m k="name" zoom-min="17">
+        <text use="poi-label" />
       </m>
     </m>
 
@@ -352,8 +365,8 @@
 
     <!-- sport -->
     <m k="sport">
-      <m v="soccer" zoom-min="17">
-        <symbol src="soccer-borderless" />
+      <m v="soccer" zoom-min="16">
+        <symbol src="sports" />
       </m>
       <m v="swimming|canoe|diving|scuba_diving">
         <area fill="#8db3b6" stroke="#243F3F" stroke-width="0.2" />
@@ -362,7 +375,7 @@
         <area src="patterns/park_texture.png" />
         <line stroke="#898b61" width="0.2" cap="butt" />
         <m zoom-min="17">
-          <symbol src="tennis" />
+          <symbol src="sports" />
         </m>
       </m>
     </m>
@@ -419,8 +432,8 @@
         </m>
 
         <!-- motorway labels -->
-        <m v="motorway">
-            <text use="street-label-lg" />
+        <m v="motorway" zoom-min="7">
+          <text use="street-label-lg" />
         </m>
 
 
@@ -691,9 +704,14 @@
                 <line use="trunk" />
                 <text use="street-label-sm" />
               </m>
-              <m v="motorway" zoom-min="9">
-                <line use="motorway" />
-                <text use="street-label" />
+              <m v="motorway">
+                <m zoom-min="7">
+                  <line use="tertiary" />
+                </m>
+                <m zoom-min="11">
+                  <line use="motorway" />
+                </m>
+                  <text use="street-label" />
               </m>
 
               <!-- <m zoom-min="16">
@@ -966,6 +984,7 @@
       </m>
       <m k="boundary" v="administrative">
         <m k="admin_level">
+          <!--
           <m k="admin_level" v="11">
             <line stroke="#f9574b" width="1.1" fix="true" dasharray="1, 5" />
           </m>
@@ -987,6 +1006,7 @@
           <m k="admin_level" v="5">
             <line stroke="#f9574b" width="1.25" fix="true" dasharray="15, 15" />
           </m>
+        -->
           <m k="admin_level" v="4">
             <line stroke="#00000000" width="1.25" fix="true" stipple="4" stipple-width="0.9" stipple-stroke="#f9574b"
               dasharray="15, 5, 5, 5" />
@@ -996,9 +1016,9 @@
           </m>
           <m k="admin_level" v="2">
             <!-- <line stroke="#80ffff00" width="0.75" />
-              <line stroke="#f9574b" width="1.25" fix="true" dasharray="15, 15" /> -->
+              <line stroke="#f9574b" width="1.25" fix="true" dasharray="15, 15" />
             <line stroke="#f9574b" width="1.25" fix="true" stipple="6" stipple-width="0.9" stipple-stroke="#80ffff00"
-              dasharray="15, 5, 5, 5" />
+              dasharray="15, 5, 5, 5" />  -->
           </m>
         </m>
       </m>
@@ -1009,11 +1029,11 @@
   <m e="node">
 
     <m k="aeroway">
-      <m k="aeroway" v="helipad" zoom-min="17">
-        <!-- <symbol src="helipad" /> -->
+      <m k="aeroway" v="helipad" zoom-min="16">
+        <symbol src="airport" /> 
       </m>
-      <m k="aeroway" v="aerodrome|airport" zoom-max="13">
-        <!-- <symbol src="airport" /> -->
+      <m k="aeroway" v="aerodrome|airport" zoom-min="16">
+        <symbol src="airport" /> 
       </m>
     </m>
 
@@ -1024,9 +1044,9 @@
 
     <m k="highway">
       <m k="highway" v="bus_stop" zoom-min="16">
-        <symbol src="bus" />
+        <!-- <symbol src="bus" /> -->
       </m>
-      <m k="highway" v="traffic_signals" zoom-min="17">
+      <m k="highway" v="traffic_signals" zoom-min="16">
         <!-- <symbol src="traffic_signal" /> -->
       </m>
       <m k="highway" v="turning_circle">
@@ -1036,12 +1056,13 @@
 
     <m k="amenity">
       <m select="first">
-        <m v="atm" zoom-min="17">
-          <symbol src="atm" />
-        </m>
-        <m v="bank" zoom-min="17">
+        <m v="atm" zoom-min="16">
           <symbol src="bank" />
         </m>
+        <m v="bank" zoom-min="16">
+          <symbol src="bank" />
+        </m>
+        <!--
         <m v="bench" zoom-min="17">
           <symbol src="bench" />
         </m>
@@ -1053,89 +1074,102 @@
         </m>
         <m v="cafe" zoom-min="17">
           <symbol src="cafe" />
+        -->
         </m>
+        <!--
         <m v="cinema" zoom-min="17">
-          <symbol src="cinema" />
+          <symbol src="arts_ent" />
         </m>
         <m v="drinking_water" zoom-min="17">
           <symbol src="drinking_water" />
         </m>
-        <m v="fast_food" zoom-min="17">
-          <symbol src="fastfood" />
+        -->
+        <m v="fast_food" zoom-min="16">
+          <symbol src="food" />
         </m>
+        <!--
         <m v="fire_station" zoom-min="17">
           <symbol src="firebrigade" />
         </m>
         <m v="fountain" zoom-min="17">
           <symbol src="fountain" />
         </m>
-        <m v="fuel" zoom-min="17">
-          <symbol src="petrolStation" />
+        -->
+        <m v="fuel" zoom-min="16">
+          <symbol src="gas_station" />
         </m>
-        <m v="hospital" zoom-min="15">
-          <!-- <symbol src="hospital" /> -->
+        <m v="hospital" zoom-min="16">
+          <symbol src="hospital" /> 
         </m>
+        <!--
         <m v="kindergarten" zoom-min="17">
           <symbol src="kindergarten" />
         </m>
-        <m v="library" zoom-min="17">
-          <symbol src="library" />
+        -->
+        <m v="library" zoom-min="16">
+          <symbol src="education" />
         </m>
+        <!--
         <m v="parking" zoom-min="17">
           <symbol src="parking" />
         </m>
-        <m v="pharmacy" zoom-min="17">
-          <symbol src="pharmacy" />
+      -->
+        <m v="pharmacy" zoom-min="16">
+          <symbol src="hospital" />
         </m>
-        <m v="place_of_worship" zoom-min="17">
+        <m v="place_of_worship" zoom-min="16">
           <m k="denomination|religion" v="jewish">
-            <symbol src="synagogue" />
+            <symbol src="religious" />
           </m>
           <m k="denomination|religion" v="muslim|moslem">
-            <symbol src="mosque" />
+            <symbol src="religious" />
           </m>
           <m k="denomination|religion" v="christian">
-            <symbol src="church" />
+            <symbol src="religious" />
           </m>
         </m>
-        <m v="post_box" zoom-min="17">
-          <symbol src="postbox" />
+        <m v="post_box" zoom-min="16">
+          <symbol src="post_office" />
         </m>
-        <m v="post_office" zoom-min="17">
-          <symbol src="postoffice" />
+        <m v="post_office" zoom-min="16">
+          <symbol src="post_office" />
         </m>
-        <m v="pub|bar" zoom-min="17">
-          <symbol src="pub" />
+        <m v="pub|bar" zoom-min="16">
+          <symbol src="food" />
         </m>
+        <!--
         <m v="recycling" zoom-min="17">
           <symbol src="recycling" />
         </m>
-        <m v="restaurant" zoom-min="17">
-          <symbol src="restaurant" />
+      -->
+        <m v="restaurant" zoom-min="16">
+          <symbol src="food" />
         </m>
-        <m v="school" zoom-min="17">
-          <symbol src="school" />
+        <m v="school" zoom-min="16">
+          <symbol src="education" />
         </m>
+        <!--
         <m v="shelter" zoom-min="17">
           <symbol src="shelter" />
         </m>
         <m v="telephone" zoom-min="17">
           <symbol src="telephone" />
         </m>
-        <m v="theatre" zoom-min="17">
-          <symbol src="theatre" />
+      -->
+        <m v="theatre" zoom-min="16">
+          <symbol src="arts_ent" />
         </m>
-        <m v="toilets" zoom-min="17">
-          <symbol src="toilets" />
+        <m v="toilets" zoom-min="16">
+          <symbol src="bathroom" />
         </m>
-        <m v="university|college" zoom-min="17">
-          <symbol src="university" />
+        <m v="university|college" zoom-min="16">
+          <symbol src="education" />
         </m>
       </m>
-      <m k="indoor_level" v="first" zoom-min="17">
+      <m k="indoor_level" v="first" zoom-min="16">
         <text use="poi-label" />
       </m>
-      <m k="indoor_level" v="second" zoom-min="17">
+      <m k="indoor_level" v="second" zoom-min="16">
         <text use="poi-label" />
       </m>
     </m>
@@ -1152,16 +1186,15 @@
       <caption k="addr:housenumber" style="bold" size="10" fill="#606060" stroke="#ffffff" stroke-width="2.0" />
     </m>
 
-
+    <!--
     <m k="leisure" v="playground" zoom-min="17">
       <symbol src="playground" />
     </m>
 
-
     <m k="man_made" v="windmill" zoom-min="17">
       <symbol src="windmill" />
     </m>
-
+  -->
 
     <m k="natural">
       <m select="first">
@@ -1218,10 +1251,10 @@
           <caption k="name" size="16" fill="#38678F" priority="3" />
         </m>
         <m zoom-min="7">
-          <caption k="name" size="20" fill="#38678F" priority="3" />
+          <caption k="name" size="22" fill="#38678F" priority="3" />
         </m>
         <m zoom-min="9" zoom-max="11">
-          <caption k="name" size="24" fill="#38678F" priority="3" />
+          <caption k="name" size="28" fill="#38678F" priority="3" />
         </m>
       </m>
 
@@ -1315,8 +1348,8 @@
 
 
     <m k="shop">
-      <m v="bakery" zoom-min="17">
-        <symbol src="bakery" />
+      <m v="bakery" zoom-min="16">
+        <symbol src="food" />
       </m>
       <m v="florist" zoom-min="17">
         <symbol src="florist" />
@@ -1330,7 +1363,7 @@
     </m>
 
 
-    <m k="tourism" zoom-min="17">
+    <m k="tourism" zoom-min="16">
       <m v="alpine_hut">
         <symbol src="alpine_hut" />
       </m>
@@ -1353,5 +1386,4 @@
         <text use="poi-label" />
       </m>
     </m>
-  </m>
 </rendertheme>
