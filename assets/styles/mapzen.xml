@@ -4,19 +4,19 @@
 
   <atlas img="styles/poi_icons.png">
     <rect id="airport" pos="0 0 32 32" />
-    <rect id="arts_ent" pos="-52 0 32 32" />
-    <rect id="bank" pos="-104 0 32 32" />
-    <rect id="bathroom" pos="-156 0 32 32" />
-    <rect id="education" pos="-208 0 32 32" />
-    <rect id="food" pos="-260 0 32 32" />
-    <rect id="gas_station" pos="-312 0 32 32" />
-    <rect id="hotel" pos="-364 0 32 32" />
-    <rect id="medical" pos="-416 0 32 32" />
-    <rect id="pizza" pos="-468 0 32 32" />
-    <rect id="post_office" pos="-520 0 32 32" />
-    <rect id="religious" pos="-572 0 32 32" />
-    <rect id="sports" pos="-624 0 32 32" />
-    <rect id="train" pos="-676 0 32 32" />
+    <rect id="arts_ent" pos="52 0 32 32" />
+    <rect id="bank" pos="104 0 32 32" />
+    <rect id="bathroom" pos="156 0 32 32" />
+    <rect id="education" pos="208 0 32 32" />
+    <rect id="food" pos="260 0 32 32" />
+    <rect id="gas_station" pos="312 0 32 32" />
+    <rect id="hotel" pos="364 0 32 32" />
+    <rect id="medical" pos="416 0 32 32" />
+    <rect id="pizza" pos="468 0 32 32" />
+    <rect id="post_office" pos="520 0 32 32" />
+    <rect id="religious" pos="572 0 32 32" />
+    <rect id="sports" pos="624 0 32 32" />
+    <rect id="train" pos="676 0 32 32" />
     <!--  <rect id="alpine_hut" pos="198 41 26 21" />
     <rect id="atm" pos="279 2 14 16" />
     <rect id="bakery" pos="305 46 22 16" />
@@ -86,11 +86,6 @@
 
   <style-text id="caption-small-blue" k="name" size="18" fill="#7b91a4" stroke="#e8ecd3" stroke-width="2.0" />
   <style-text id="park-label" k="name" size="18" fill="#7b91a4" stroke="#e8ecd3" stroke-width="3.0" />
-  <style-text id="city-label" k="name" size="16" fill="#506c91" priority="1" />
-  <style-text id="town-label" k="name" size="16" fill="#506c91" priority="2" />
-  <style-text id="island-label" k="name" size="16" fill="#506c91" priority="1" />
-  <style-text id="neighbourhood-label" k="name" size="16" fill="#506c91" priority="4" />
-
   <style-text id="street-label-sm" k="name" size="18" fill="#7b91a4" stroke="#e8ecd3" stroke-width="2.0" priority="3" />
   <style-text id="street-label" k="name" size="20" character-spacing="0.3" fill="#465b73" stroke="#e8ecd3" stroke-width="2.0" priority="2" />
   <style-text id="street-label-lg" k="name" size="28" fill="#7d8f9e" stroke="#e8ecd3" stroke-width="2.0" priority="1" />
@@ -103,11 +98,11 @@
     <!-- parks, playgrounds + labels -->
     <m k="landuse">
       <m select="first">
-        <m v="military">
+        <m v="military" fade="9">
           <area src="patterns/park_texture.png" />
           <line use="park-line" />
         </m>
-        <m v="residential|farmyard">
+        <m v="residential|farmyard" fade="9">
           <area src="patterns/park_texture.png" />
           <line use="park-line" />
         </m>
@@ -129,15 +124,15 @@
         <m v="landfill|quarry">
           <area fill="#ebf0d8" stroke="#d4d8c0" stroke-width="0.2" />
         </m>
-        <m v="cemetery">
+        <m v="cemetery" fade="9">
           <area src="patterns/park_texture.png" />
           <line use="park-line" />
         </m>
-        <m v="field|farm|farmland|meadow|grass">
+        <m v="field|farm|farmland|meadow|grass" fade="9">
           <area src="patterns/park_texture.png" />
           <line use="park-line" />
         </m>
-        <m v="allotments|village_green|recreation_ground">
+        <m v="allotments|village_green|recreation_ground" fade="9">
           <area src="patterns/park_texture.png" />
           <line use="park-line" />
         </m>
@@ -153,20 +148,20 @@
 
     <m k="natural|landuse" v="forest|wood|scrub">
       <m k="wood">
-        <m k="wood" v="coniferous">
+        <m k="wood" v="coniferous" fade="9">
           <area src="patterns/park_texture.png" />
           <line use="park-line" />
         </m>
-        <m k="wood" v="deciduous">
+        <m k="wood" v="deciduous" fade="9">
           <area src="patterns/park_texture.png" />
           <line use="park-line" />
         </m>
-        <m k="wood" v="mixed">
+        <m k="wood" v="mixed" fade="9">
           <area src="patterns/park_texture.png" />
           <line use="park-line" />
         </m>
       </m>
-      <m k="wood" v="~">
+      <m k="wood" v="~" fade="9">
         <area src="patterns/park_texture.png" />
       </m>
       <m zoom-min="15">
@@ -181,7 +176,7 @@
         <m v="kindergarten|school|college|university">
           <area fill="#ebf0d8" stroke="#d4d8c0" stroke-width="0.2" />
         </m>
-        <m v="grave_yard">
+        <m v="grave_yard" fade="9">
           <area src="patterns/park_texture.png" />
           <line use="park-line" />
         </m>
@@ -248,7 +243,7 @@
     <!-- leisure -->
     <m k="leisure">
         <!-- park labels -->
-        <m v="park|garden|golf_course|common|green">
+        <m v="park|garden|golf_course|common|green" fade="9">
           <m zoom-min="13">
             <area src="patterns/park_texture.png" />
             <line stroke="#898b61" width="0.3" cap="butt" />
@@ -257,7 +252,7 @@
             <text use="park-label" />
           </m>
         </m>
-        <m v="playground|playing_fields|pitch|dog_park">
+        <m v="playground|playing_fields|pitch|dog_park" fade="9">
           <m zoom-min="13">
             <area src="patterns/park_texture.png" />
           </m>
@@ -265,11 +260,11 @@
             <line stroke="#898b61" width="0.3" cap="butt" />
           </m>
         </m>
-        <m v="stadium">
+        <m v="stadium" fade="9">
           <area src="patterns/park_texture.png" />
           <line use="park-line" />
         </m>
-        <m v="sports_centre|water_park">
+        <m v="sports_centre|water_park" fade="9">
           <area src="patterns/park_texture.png" />
           <line use="park-line" /> />
         </m>
@@ -287,7 +282,7 @@
         </m>
     </m>
     <m k="leisure|landuse" zoom-min="14">
-      <m v="nature_reserve">
+      <m v="nature_reserve" fade="9">
         <area src="patterns/park_texture.png" />
         <line use="park-line" />
       </m>
@@ -300,7 +295,7 @@
         <area src="patterns/water_texture.png" fill="#8DB4B7" />
         <line stroke="#243F3F" width="0.25" cap="butt" />
         <m zoom-min="13">
-          <caption k="name" size="18" fill="#375455" />
+          <caption k="name" size="18" fill="#d6645c" />
         </m>
       </m>
 
@@ -316,7 +311,7 @@
         <area src="patterns/water_texture.png" fill="#8DB4B7"/>
         <line stroke="#243F3F" width="0.25" cap="butt" />
         <m zoom-min="14">
-          <caption k="name" size="18" fill="#375455" />
+          <caption k="name" size="18" fill="#d6645c" />
         </m>
       </m>
 
@@ -359,7 +354,7 @@
     <m k="military">
       <area src="patterns/park_texture.png" />
       <line stroke="#898b61" width="0.2" cap="butt" />
-      <caption k="name" size="16" fill="#375455" />
+      <caption k="name" size="18" fill="#d6645c" />
     </m>
 
 
@@ -575,8 +570,8 @@
       </m>
       <m zoom-min="17">
         <extrusion side-color="#d4d8c0" top-color="#e1e8c9" line-color="#f2d6d5" />
-        <caption k="name" style="bold" size="10" fill="#4040ff" stroke="#ffffff" stroke-width="2.0" />
-        <caption k="addr:housenumber" style="bold" size="10" fill="#606060" stroke="#ffffff" stroke-width="2.0" />
+        <caption k="name" size="18" fill="#d6645c" stroke="#ffffff" stroke-width="1.0"  />
+        <caption k="addr:housenumber" size="18" fill="#d6645c" stroke="#ffffff" stroke-width="1.0" />
       </m>
     </m>
 
@@ -666,15 +661,12 @@
                 <text use="street-label-sm" />
               </m>
               <m v="secondary_link">
-                <m zoom-min="14">
-                 <line use="secondary" />
-                </m>
                 <m zoom-min="13">
                   <line use="secondary" />
                   <text use="street-label-sm" />
                 </m>
               </m>
-              <m v="primary_link">
+              <m v="primary_link" zoom-min="9">
                 <line use="primary" />
                 <text use="street-label-sm" />
                 <m zoom-min="9">
@@ -710,8 +702,8 @@
                 </m>
                 <m zoom-min="11">
                   <line use="motorway" />
-                </m>
                   <text use="street-label" />
+                </m>
               </m>
 
               <!-- <m zoom-min="16">
@@ -1030,7 +1022,7 @@
 
     <m k="aeroway">
       <m k="aeroway" v="helipad" zoom-min="16">
-        <symbol src="airport" /> 
+        <symbol src="air" /> 
       </m>
       <m k="aeroway" v="aerodrome|airport" zoom-min="16">
         <symbol src="airport" /> 
@@ -1259,10 +1251,11 @@
       </m>
 
 
-      <m v="island" zoom-min="11">
+      <m v="island" zoom-min="14">
         <caption k="name" size="16" fill="#38678F" priority="3" />
       </m>
-      <m v="city" zoom-max="14">
+
+      <m v="city">
         <m zoom-min="9">
           <caption k="name" size="20" fill="#38678F" stroke="#ede3d6" stroke-width="1.5" priority="3" />
         </m>
@@ -1274,7 +1267,7 @@
         </m>
       </m>
 
-      <m v="bay" zoom-min="9">
+      <m v="bay" zoom-min="11">
         <caption k="name" style="italic" size="14" fill="#002d54" priority="3" />
       </m>
       
@@ -1291,7 +1284,7 @@
       <m v="province" zoom-min="11">
         <caption k="name" size="14" fill="#31536F" stroke="#ede3d6" stroke-width="2" priority="3" />
       </m>
-      <m v="county" zoom-min="11">
+      <m v="county" zoom-min="11" zoom-max="14">
         <caption k="name" size="14" fill="#31536F" stroke="#ede3d6" stroke-width="2" priority="3" />
       </m>
       <m v="district" zoom-min="11">
