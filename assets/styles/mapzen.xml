@@ -80,17 +80,18 @@
   <style-line id="motorway" stroke="#f3f7e6" width="3" cap="butt" priority="1"/>
   <style-line id="primary" stroke="#f3f7e6" width="2" cap="butt" />
   <style-line id="secondary" use="primary" width="-0.2" />
-  <style-line id="tertiary" use="primary" width="-0.8" />
+  <style-line id="tertiary" use="primary" width="-0.9" />
+  <style-line id="motorway:z7" stroke="#9f9f9f" width="0.8" cap="butt" faded="7" />
   <style-line id="fix" width="1.0" cap="butt" fix="true" />
   <style-line id="park-line" stroke="#898b61" width="0.2" cap="butt" />
 
   <style-text id="caption-small-blue" k="name" size="18" fill="#7b91a4" stroke="#e8ecd3" stroke-width="2.0" />
-  <style-text id="park-label" k="name" size="18" fill="#7b91a4" stroke="#e8ecd3" stroke-width="3.0" />
+  <style-text id="park-label" k="name" size="18" fill="#38678F" stroke="#e8ecd3" stroke-width="1.0" priority="4" />
   <style-text id="street-label-sm" k="name" size="18" fill="#7b91a4" stroke="#e8ecd3" stroke-width="2.0" priority="3" />
   <style-text id="street-label" k="name" size="20" character-spacing="0.3" fill="#465b73" stroke="#e8ecd3" stroke-width="2.0" priority="2" />
   <style-text id="street-label-lg" k="name" size="28" fill="#7d8f9e" stroke="#e8ecd3" stroke-width="2.0" priority="1" />
 
-  <style-text id="poi-label" k="name" size="16" fill="#465b73" stroke="#e8ecd3" stroke-width="1.5" />
+  <style-text id="poi-label" k="name" size="16" fill="#373737" stroke="#e8ecd3" stroke-width="0.25" />
   
 
   <!-- ways -->
@@ -140,7 +141,7 @@
           <area fill="#8db3b6" stroke="#243F3F" stroke-width="0.2" />
         </m>
       </m>
-      <m k="name" zoom-min="17">
+      <m k="name" zoom-min="18">
         <text use="caption-small-blue" />
       </m>
     </m>
@@ -291,11 +292,11 @@
     <!-- waterways -->
     <m k="waterway">
       <!-- waterway casings -->
-      <m v="water">
+      <m v="water" zoom-min="0">
         <area src="patterns/water_texture.png" fill="#8DB4B7" />
         <line stroke="#243F3F" width="0.25" cap="butt" />
         <m zoom-min="13">
-          <caption k="name" size="18" fill="#d6645c" />
+          <caption k="name" size="18" fill="#373737" />
         </m>
       </m>
 
@@ -307,11 +308,11 @@
         <line stroke="#243F3F" width="0.2" fix="true" fade="13" />
       </m>
       <!-- canal zoom levels -->
-      <m v="canal">
+      <m v="canal" zoom-min="0">
         <area src="patterns/water_texture.png" fill="#8DB4B7"/>
         <line stroke="#243F3F" width="0.25" cap="butt" />
         <m zoom-min="14">
-          <caption k="name" size="18" fill="#d6645c" />
+          <caption k="name" size="18" fill="#373737" />
         </m>
       </m>
 
@@ -354,7 +355,7 @@
     <m k="military">
       <area src="patterns/park_texture.png" />
       <line stroke="#898b61" width="0.2" cap="butt" />
-      <caption k="name" size="18" fill="#d6645c" />
+      <caption k="name" size="18" fill="#373737" />
     </m>
 
 
@@ -392,7 +393,7 @@
 
   <!-- water stroke at different zoom levels -->
     <m k="natural">
-      <m v="water">
+      <m v="water" zoom-min="0">
         <area src="patterns/water_texture.png"/>
         <line stroke="#243F3F" width="0.25" cap="butt" />
       </m>
@@ -426,12 +427,6 @@
           <line stipple-stroke="#A7A89B" width="2.6" stroke="#00A7A89B" stipple="2" stipple-width="1.5" cap="round" fix="true" />
         </m>
 
-        <!-- motorway labels -->
-        <m v="motorway" zoom-min="7">
-          <text use="street-label-lg" />
-        </m>
-
-
         <!-- highway tunnel cores -->
         <m v="steps|footway|path">
           <line stroke="#d6dac2" width="0.45" cap="round" />
@@ -459,9 +454,7 @@
         </m>
         <m v="motorway">
           <line use="motorway" />
-          <m zoom-min="11">
-            <text use="street-label" />
-          </m>
+          <text use="street-label" />
         </m>
       </m>
 
@@ -570,13 +563,13 @@
       </m>
       <m zoom-min="17">
         <extrusion side-color="#d4d8c0" top-color="#e1e8c9" line-color="#f2d6d5" />
-        <caption k="name" size="18" fill="#d6645c" stroke="#ffffff" stroke-width="1.0"  />
-        <caption k="addr:housenumber" size="18" fill="#d6645c" stroke="#ffffff" stroke-width="1.0" />
+        <caption k="name" size="16" fill="#373737" stroke="#ffffff" stroke-width="1.0"  />
+        <!--<caption k="addr:housenumber" size="18" fill="#373737" stroke="#ffffff" stroke-width="1.0" /> -->
       </m>
     </m>
 
 
-    <outline-layer id="casing" stroke="#707070" width="0.15" cap="round" />
+    <outline-layer id="casing" stroke="#9f9f9f" width="0.2" cap="round" />
     <outline-layer id="casing-bridge" stroke="#404040" width="0.25" cap="round" />
 
     <m k="highway">
@@ -585,15 +578,12 @@
 
           <m v="steps">
             <line stroke="#ebf0d8" width="0.45" dasharray="3,1" cap="round" />
-            <text use="street-label-sm" />
           </m>
           <m v="footway|platform|corridor">
             <line stroke="#ebf0d8" width="1.4" fix="true" cap="round" />
-            <text use="street-label-sm" />
           </m>
           <m v="cycleway">
             <line stroke="#56452e" dasharray="4,4" cap="round" />
-            <text use="street-label-sm" />
           </m>
           <m v="bridleway">
             <line stroke="#d3cb98" width="0.85" />
@@ -601,7 +591,6 @@
           </m>
           <m v="path">
             <line stroke="#f3f7e6" width="1.45" fix="true" />
-            <text use="street-label-sm" />
           </m>
           <m v="track" select="first">
             <m k="tracktype" v="grade1">
@@ -698,9 +687,12 @@
               </m>
               <m v="motorway">
                 <m zoom-min="7">
-                  <line use="tertiary" />
+                  <line use="motorway:z7" />
                 </m>
-                <m zoom-min="11">
+                <m zoom-min="9">
+                  <line use="motorway:z7" width="+0.5" />
+                </m>
+                <m zoom-min="11" fade="12">
                   <line use="motorway" />
                   <text use="street-label" />
                 </m>
@@ -972,7 +964,7 @@
 
     <m k="boundary">
       <m k="boundary" v="national_park">
-        <line stroke="#4ef94b" width="1.25" fix="true" dasharray="15, 5, 5, 5" />
+        <line stroke="#000000" width="0.75" fix="true" dasharray="15, 5, 5, 5" />
       </m>
       <m k="boundary" v="administrative">
         <m k="admin_level">
@@ -1000,17 +992,22 @@
           </m>
         -->
           <m k="admin_level" v="4">
-            <line stroke="#00000000" width="1.25" fix="true" stipple="4" stipple-width="0.9" stipple-stroke="#f9574b"
-              dasharray="15, 5, 5, 5" />
+            <m zoom-min="3" zoom-max="9">
+              <line stroke="#6da1a5" width="1.0" fix="true" stipple="4" stipple-width="0.9" stipple-stroke="#e8ecd3"
+              dasharray="10, 5, 5, 5" />
+            </m>
           </m>
           <m k="admin_level" v="3">
-            <line stroke="#f9574b" width="1.25" fix="true" />
+            <m zoom-min="1" zoom-max="4">
+              <line stroke="#465b73" width="0.75" fix="true" stipple="4" stipple-width="0.9" stipple-stroke="#e8ecd3"
+              dasharray="10, 5, 5, 5" />
+            </m>
           </m>
           <m k="admin_level" v="2">
-            <!-- <line stroke="#80ffff00" width="0.75" />
-              <line stroke="#f9574b" width="1.25" fix="true" dasharray="15, 15" />
-            <line stroke="#f9574b" width="1.25" fix="true" stipple="6" stipple-width="0.9" stipple-stroke="#80ffff00"
-              dasharray="15, 5, 5, 5" />  -->
+            <m zoom-min="1" zoom-max="2">
+              <line stroke="#000000" width="1.0" fix="true" stipple="6" stipple-width="0.6" stipple-stroke="#e8ecd3"
+              dasharray="10, 5, 5, 5" />
+            </m>
           </m>
         </m>
       </m>
@@ -1064,14 +1061,15 @@
         <m v="bus_station" zoom-min="17">
           <symbol src="bus_sta" />
         </m>
-        <m v="cafe" zoom-min="17">
-          <symbol src="cafe" />
+        <m v="cafe" zoom-min="16">
+          <symbol src="food" />
         -->
         </m>
-        <!--
-        <m v="cinema" zoom-min="17">
+        
+        <m v="cinema" zoom-min="18">
           <symbol src="arts_ent" />
         </m>
+        <!--
         <m v="drinking_water" zoom-min="17">
           <symbol src="drinking_water" />
         </m>
@@ -1087,7 +1085,7 @@
           <symbol src="fountain" />
         </m>
         -->
-        <m v="fuel" zoom-min="16">
+        <m v="fuel" zoom-min="18">
           <symbol src="gas_station" />
         </m>
         <m v="hospital" zoom-min="16">
@@ -1098,7 +1096,7 @@
           <symbol src="kindergarten" />
         </m>
         -->
-        <m v="library" zoom-min="16">
+        <m v="library" zoom-min="18">
           <symbol src="education" />
         </m>
         <!--
@@ -1106,10 +1104,10 @@
           <symbol src="parking" />
         </m>
       -->
-        <m v="pharmacy" zoom-min="16">
+        <m v="pharmacy" zoom-min="18">
           <symbol src="hospital" />
         </m>
-        <m v="place_of_worship" zoom-min="16">
+        <m v="place_of_worship" zoom-min="18">
           <m k="denomination|religion" v="jewish">
             <symbol src="religious" />
           </m>
@@ -1120,7 +1118,7 @@
             <symbol src="religious" />
           </m>
         </m>
-        <m v="post_box" zoom-min="16">
+        <m v="post_box" zoom-min="18">
           <symbol src="post_office" />
         </m>
         <m v="post_office" zoom-min="16">
@@ -1137,7 +1135,7 @@
         <m v="restaurant" zoom-min="16">
           <symbol src="food" />
         </m>
-        <m v="school" zoom-min="16">
+        <m v="school" zoom-min="18">
           <symbol src="education" />
         </m>
         <!--
@@ -1148,16 +1146,17 @@
           <symbol src="telephone" />
         </m>
       -->
-        <m v="theatre" zoom-min="16">
+        <m v="theatre" zoom-min="18">
           <symbol src="arts_ent" />
         </m>
-        <m v="toilets" zoom-min="16">
+        <m v="toilets" zoom-min="18">
           <symbol src="bathroom" />
         </m>
-        <m v="university|college" zoom-min="16">
+        <m v="university|college" zoom-min="18">
           <symbol src="education" />
         </m>
       </m>
+
       <m k="indoor_level" v="first" zoom-min="16">
         <text use="poi-label" />
       </m>
@@ -1168,44 +1167,37 @@
 
     <m k="historic">
       <circle radius="3" fill="#4040ff" stroke="#606060" width="1.5" />
-      <m zoom-min="17">
+      <m zoom-min="18">
         <text use="poi-label" />
       </m>
     </m>
-
 
     <m k="addr:housenumber" zoom-min="18">
       <caption k="addr:housenumber" style="bold" size="10" fill="#606060" stroke="#ffffff" stroke-width="2.0" />
     </m>
 
-    <!--
-    <m k="leisure" v="playground" zoom-min="17">
+    <m k="leisure" v="playground" zoom-min="18">
       <symbol src="playground" />
     </m>
 
-    <m k="man_made" v="windmill" zoom-min="17">
+    <m k="man_made" v="windmill" zoom-min="20">
       <symbol src="windmill" />
     </m>
-  -->
 
     <m k="natural">
       <m select="first">
-        <m v="cave_entrance" zoom-min="15">
+        <m v="cave_entrance" zoom-min="20">
           <symbol src="cave_entrance" />
         </m>
-        <m v="peak" zoom-min="12">
-          <symbol src="peak" />
-          <caption k="ele" dy="20" style="bold" size="10" fill="#000000" stroke="#ffffff" stroke-width="2.0" />
+        <m v="peak" zoom-min="20">
+          <symbol src="cave_entrance" />
         </m>
-        <m v="tree" zoom-min="16">
+        <m v="tree" zoom-min="20">
           <symbol src="tree" />
         </m>
-        <m v="volcano" zoom-min="12">
+        <m v="volcano" zoom-min="18">
           <symbol src="vulcan" />
         </m>
-      </m>
-      <m zoom-min="17">
-        <text use="poi-label" />
       </m>
     </m>
 
@@ -1214,6 +1206,7 @@
       <m v="continent" zoom-min="0" zoom-max="2">
         <caption k="name" style="bold" size="18" fill="#38678F" priority="0" />
       </m>
+
       <m v="country" zoom-max="7">
         <m zoom-min="3">
           <caption k="name" style="bold" size="16" fill="#38678F" priority="0" />
@@ -1222,6 +1215,7 @@
           <caption k="name" style="bold" size="22" fill="#38678F" priority="0" />
         </m>
       </m>
+
       <m v="ocean" >
         <m zoom-min="0">
           <caption k="name" style="italic" size="18" fill="#002d54" priority="1" />
@@ -1251,18 +1245,20 @@
       </m>
 
 
-      <m v="island" zoom-min="14">
-        <caption k="name" size="16" fill="#38678F" priority="3" />
+      <m v="island">
+        <m zoom-min="11">
+          <caption k="name" size="14" fill="#38678F" priority="3" />
+        </m>
+        <m zoom-min="14">
+          <caption k="name" size="16" fill="#38678F" priority="3" />
+        </m>
       </m>
 
-      <m v="city">
+      <m v="city" zoom-max="13">
         <m zoom-min="9">
           <caption k="name" size="20" fill="#38678F" stroke="#ede3d6" stroke-width="1.5" priority="3" />
         </m>
         <m zoom-min="11">
-          <caption k="name" size="22" fill="#38678F" stroke="#ede3d6" stroke-width="1.5" priority="3" />
-        </m>
-        <m zoom-min="13">
           <caption k="name" size="24" fill="#38678F" stroke="#ede3d6" stroke-width="1.5" priority="3" />
         </m>
       </m>
@@ -1272,22 +1268,22 @@
       </m>
       
       
-      <m v="hamlet" zoom-min="11">
+      <m v="hamlet" zoom-min="11" zoom-max="14">
         <caption k="name" size="14" fill="#31536F" stroke="#ede3d6" stroke-width="2" priority="3" />
       </m>
-      <m v="town|village" zoom-min="11">
+      <m v="town|village" zoom-min="11" zoom-max="14">
         <caption k="name" size="14" fill="#31536F" stroke="#ede3d6" stroke-width="2" priority="3" />
       </m>
-      <m v="region" zoom-min="11">
+      <m v="region" zoom-min="11" zoom-max="14">
         <caption k="name" size="14" fill="#31536F" stroke="#ede3d6" stroke-width="2" priority="3" />
       </m>
-      <m v="province" zoom-min="11">
+      <m v="province" zoom-min="11" zoom-max="14">
         <caption k="name" size="14" fill="#31536F" stroke="#ede3d6" stroke-width="2" priority="3" />
       </m>
       <m v="county" zoom-min="11" zoom-max="14">
         <caption k="name" size="14" fill="#31536F" stroke="#ede3d6" stroke-width="2" priority="3" />
       </m>
-      <m v="district" zoom-min="11">
+      <m v="district" zoom-min="11" zoom-max="14">
         <caption k="name" size="14" fill="#31536F" stroke="#ede3d6" stroke-width="2" priority="3" />
       </m>
       <m v="gulf" zoom-min="11">
@@ -1302,38 +1298,39 @@
           <caption k="name" size="24" fill="#6692B0" stroke="#ede3d6" stroke-width="1.5" priority="5" />
         </m>
       </m>
+
       <m v="lake" zoom-min="13">
         <caption k="name" style="italic" size="14" fill="#002d54" priority="3" />
       </m>
 
-      <m v="glacier" zoom-min="15">
+      <m v="glacier" zoom-min="16">
         <caption k="name" style="italic" size="14" fill="#002d54" priority="3" />
       </m>
-      <m v="pond" zoom-min="15">
+      <m v="pond" zoom-min="16">
         <caption k="name" style="italic" size="14" fill="#002d54" priority="3" />
       </m>
-      <m v="islet" zoom-min="15">
+      <m v="islet" zoom-min="16">
         <text use="city-label" />
       </m>
-      <m v="beach" zoom-min="15">
+      <m v="beach" zoom-min="16">
         <text use="city-label" />
       </m>
     </m>
 
 
     <m k="railway">
-      <m k="railway" v="crossing" zoom-min="16">
+      <m k="railway" v="crossing" zoom-min="18">
         <symbol src="railway-crossing-small" />
       </m>
       <!-- in Bremen this is also used for crossings between tram-lines and roads... -->
-      <m k="railway" v="level_crossing" zoom-min="14">
+      <m k="railway" v="level_crossing" zoom-min="18">
         <symbol src="railway-crossing" />
       </m>
-      <m k="railway" v="station" zoom-min="14">
+      <m k="railway" v="station" zoom-min="18">
         <circle r="6" fill="#ec2d2d" stroke="#606060" stroke-width="1.5" />
         <!-- <caption k="name" dy="-10" style="bold" size="13" fill="#ec2d2d" stroke="#ffffff" stroke-width="2.0" /> -->
       </m>
-      <m k="railway" v="halt|tram_stop" zoom-min="15">
+      <m k="railway" v="halt|tram_stop" zoom-min="18">
         <circle r="4" fill="#ec2d2d" stroke="#606060" stroke-width="1.5" />
         <!-- <caption k="name" dy="-15" style="bold" size="11" fill="#ec2d2d" stroke="#ffffff" stroke-width="2.0" /> -->
       </m>
@@ -1343,20 +1340,20 @@
     <m k="shop">
       <m v="bakery" zoom-min="16">
         <symbol src="food" />
+        <m zoom-min="19">
+          <text use="poi-label" />
+        </m>
       </m>
-      <m v="florist" zoom-min="17">
+      <m v="florist" zoom-min="18">
         <symbol src="florist" />
       </m>
-      <m v="supermarket|organic" zoom-min="17">
+      <m v="supermarket|organic" zoom-min="18">
         <symbol src="supermarket" />
-      </m>
-      <m zoom-min="17">
-        <text use="poi-label" />
       </m>
     </m>
 
 
-    <m k="tourism" zoom-min="16">
+    <m k="tourism" zoom-min="18">
       <m v="alpine_hut">
         <symbol src="alpine_hut" />
       </m>
@@ -1366,17 +1363,17 @@
       <m v="hostel">
         <symbol src="hostel" />
       </m>
-      <m v="hotel">
+      <m zoom-min="16" v="hotel">
         <symbol src="hotel" />
+        <m zoom-min="19">
+          <text use="poi-label" />
+        </m>
       </m>
       <m v="information">
         <symbol src="information" />
       </m>
       <m v="viewpoint">
         <symbol src="viewpoint" />
-      </m>
-      <m zoom-min="17">
-        <text use="poi-label" />
       </m>
     </m>
 </rendertheme>
