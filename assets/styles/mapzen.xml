@@ -2,6 +2,7 @@
 <rendertheme xmlns="http://opensciencemap.org/rendertheme" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://opensciencemap.org/rendertheme ../../rendertheme.xsd" version="1" map-background="#ebf0d8" >
 
+  <!-- icons 32 
   <atlas img="styles/poi_icons.png">
     <rect id="airport" pos="0 0 32 32" />
     <rect id="arts_ent" pos="52 0 32 32" />
@@ -17,7 +18,73 @@
     <rect id="religious" pos="572 0 32 32" />
     <rect id="sports" pos="624 0 32 32" />
     <rect id="train" pos="676 0 32 32" />
-    <!--  <rect id="alpine_hut" pos="198 41 26 21" />
+  </atlas> -->
+
+  <!-- icons 12 -->
+  <atlas img="styles/poi_icons_12.png">
+    <rect id="airport" pos="0 0 12 12" />
+    <rect id="arts_ent" pos="0 22 12 12" />
+    <rect id="bank" pos="0 44 12 12" />
+    <rect id="baseball" pos="0 66 12 12" />
+    <rect id="bathroom" pos="0 88 12 12" />
+    <rect id="church" pos="0 110 12 12" />
+    <rect id="education" pos="0 132 12 12" />
+    <rect id="food" pos="0 154 12 12" />
+    <rect id="gas_station" pos="0 176 12 12" />
+    <rect id="hotel" pos="0 198 12 12" />
+    <rect id="medical" pos="0 220 12 12" />
+    <rect id="pizza" pos="0 242 12 12" />
+    <rect id="post_office" pos="0 264 12 12" />
+    <rect id="religious" pos="0 286 12 12" />
+    <rect id="soccer" pos="0 308 12 12" />
+    <rect id="sports" pos="0 330 12 12" />
+    <rect id="train" pos="0 352 12 12" />
+  </atlas>
+
+  <!-- icons 16 
+  <atlas img="styles/poi_icons_16.png">
+    <rect id="airport" pos="0 0 16 16" />
+    <rect id="arts_ent" pos="0 26 16 16" />
+    <rect id="bank" pos="0 52 16 16" />
+    <rect id="baseball" pos="0 78 16 16" />
+    <rect id="bathroom" pos="0 104 16 16" />
+    <rect id="church" pos="0 130 16 16" />
+    <rect id="education" pos="0 156 16 16" />
+    <rect id="food" pos="0 182 16 16" />
+    <rect id="gas_station" pos="0 208 16 16" />
+    <rect id="hotel" pos="0 234 16 16" />
+    <rect id="medical" pos="0 260 16 16" />
+    <rect id="pizza" pos="0 286 16 16" />
+    <rect id="post_office" pos="0 312 16 16" />
+    <rect id="religious" pos="0 338 16 16" />
+    <rect id="soccer" pos="0 364 16 16" />
+    <rect id="sports" pos="0 390 16 16" />
+    <rect id="train" pos="0 416 16 16" />
+  </atlas>  -->
+
+    <!-- icons 32 
+  <atlas img="styles/poi_icons_32.png">
+    <rect id="airport" pos="0 0 32 32" />
+    <rect id="arts_ent" pos="0 42 32 32" />
+    <rect id="bank" pos="0 84 32 32" />
+    <rect id="baseball" pos="0 126 32 32" />
+    <rect id="bathroom" pos="0 168 32 32" />
+    <rect id="church" pos="0 210 32 32" />
+    <rect id="education" pos="0 252 32 32" />
+    <rect id="food" pos="0 294 32 32" />
+    <rect id="gas_station" pos="0 336 32 32" />
+    <rect id="hotel" pos="0 378 32 32" />
+    <rect id="medical" pos="0 420 32 32" />
+    <rect id="pizza" pos="0 462 32 32" />
+    <rect id="post_office" pos="0 504 32 32" />
+    <rect id="religious" pos="0 546 32 32" />
+    <rect id="soccer" pos="0 588 32 32" />
+    <rect id="sports" pos="0 630 32 32" />
+    <rect id="train" pos="0 672 32 32" />
+  </atlas>  -->
+
+    <!-- icons to add
+    <rect id="alpine_hut" pos="198 41 26 21" />
     <rect id="atm" pos="279 2 14 16" />
     <rect id="bakery" pos="305 46 22 16" />
     <rect id="bank" pos="395 43 19 19" />
@@ -74,20 +141,21 @@
     <rect id="viewpoint" pos="279 20 16 16" />
     <rect id="vulcan" pos="315 25 9 8" />
     <rect id="windmill" pos="310 2 13 19" /> -->
-  </atlas>
+  
 
   <style-line id="trunk" stroke="#ebf0d8" width="1.5" />
   <style-line id="motorway" stroke="#f3f7e6" width="3" cap="butt" priority="1"/>
   <style-line id="primary" stroke="#f3f7e6" width="2" cap="butt" />
   <style-line id="secondary" use="primary" width="-0.2" />
   <style-line id="tertiary" use="primary" width="-0.9" />
-  <style-line id="motorway:z7" stroke="#9f9f9f" width="0.8" cap="butt" faded="7" />
+  <style-line id="motorway:z7" stroke="#d6dac2" width="0.8" cap="butt" faded="7" />
   <style-line id="fix" width="1.0" cap="butt" fix="true" />
   <style-line id="park-line" stroke="#898b61" width="0.2" cap="butt" />
 
-  <style-text id="caption-small-blue" k="name" size="18" fill="#7b91a4" stroke="#e8ecd3" stroke-width="2.0" />
+  <style-text id="caption-tiny-blue" k="name" size="12" fill="#7b91a4" stroke="#e8ecd3" stroke-width="1.0" />
+  <style-text id="caption-small-blue" k="name" size="16" fill="#7b91a4" stroke="#e8ecd3" stroke-width="2.0" />
   <style-text id="park-label" k="name" size="18" fill="#38678F" stroke="#e8ecd3" stroke-width="1.0" priority="4" />
-  <style-text id="street-label-sm" k="name" size="18" fill="#7b91a4" stroke="#e8ecd3" stroke-width="2.0" priority="3" />
+  <style-text id="street-label-sm" k="name" size="16" fill="#7b91a4" stroke="#e8ecd3" stroke-width="2.0" priority="3" />
   <style-text id="street-label" k="name" size="20" character-spacing="0.3" fill="#465b73" stroke="#e8ecd3" stroke-width="2.0" priority="2" />
   <style-text id="street-label-lg" k="name" size="28" fill="#7d8f9e" stroke="#e8ecd3" stroke-width="2.0" priority="1" />
 
@@ -245,8 +313,8 @@
     <m k="leisure">
         <!-- park labels -->
         <m v="park|garden|golf_course|common|green" fade="9">
-          <m zoom-min="13">
-            <area src="patterns/park_texture.png" />
+          <area src="patterns/park_texture.png" />         
+          <m zoom-min="11">
             <line stroke="#898b61" width="0.3" cap="butt" />
           </m>
           <m zoom-min="15">
@@ -311,7 +379,7 @@
       <m v="canal" zoom-min="0">
         <area src="patterns/water_texture.png" fill="#8DB4B7"/>
         <line stroke="#243F3F" width="0.25" cap="butt" />
-        <m zoom-min="14">
+        <m zoom-min="16">
           <caption k="name" size="18" fill="#373737" />
         </m>
       </m>
@@ -326,7 +394,7 @@
       <m v="river" select="first">
         <area src="patterns/water_texture.png" fill="#8DB4B7"/>
         <line stroke="#243F3F" width="0.25" cap="butt" />
-        <m v="river" zoom-min="12">
+        <m v="river" zoom-min="14">
           <text use="street-label-sm" />
         </m>
       </m>
@@ -451,10 +519,6 @@
           <m zoom-min="11">
             <text use="street-label" />
           </m>
-        </m>
-        <m v="motorway">
-          <line use="motorway" />
-          <text use="street-label" />
         </m>
       </m>
 
@@ -647,21 +711,23 @@
               </m>
               <m v="tertiary|tertiary_link">
                 <line use="tertiary" />
-                <text use="street-label-sm" />
+                <m zoom-min="14">
+                  <text use="street-label-sm" />
+                </m>
               </m>
               <m v="secondary_link">
-                <m zoom-min="13">
+                <m zoom-min="14">
                   <line use="secondary" />
                   <text use="street-label-sm" />
                 </m>
               </m>
               <m v="primary_link" zoom-min="9">
                 <line use="primary" />
-                <text use="street-label-sm" />
-                <m zoom-min="9">
+                <m zoom-min="11">
                   <line width="+0.5" />
+                  <text use="street-label-sm" />
                 </m>
-                <m zoom-min="18">
+                <m zoom-min="16">
                   <line width="+1.5" />
                 </m>
               </m>
@@ -671,33 +737,49 @@
               </m>
               <m v="motorway_link">
                 <line use="motorway" />
-                <text use="street-label" />
               </m>
               <m v="secondary">
                 <line use="secondary" />
                 <text use="street-label-sm" />
               </m>
-              <m v="primary" zoom-min="9">
-                <line use="primary" outline="1" />
-                <text use="street-label" />
+              <m v="primary">
+                <m zoom-min="11">
+                  <line use="primary" />
+                </m>
+                <m zoom-min="14">
+                  <line use="primary" />
+                  <text use="caption-small-blue" />                
+                </m>
+                <m zoom-min="16">
+                  <line use="primary" outline="1" />
+                  <text use="street-label" />
+                </m>
               </m>
               <m v="trunk">
-                <line use="trunk" />
-                <text use="street-label-sm" />
+                <m zoom-min="14">
+                  <line use="primary" />
+                </m>
+                <m zoom-min="16">
+                  <line use="trunk" />
+                  <text use="street-label-sm" />
+                </m>
               </m>
-              <m v="motorway">
+              <m v="motorway" sort_key="0">
                 <m zoom-min="7">
                   <line use="motorway:z7" />
                 </m>
                 <m zoom-min="9">
                   <line use="motorway:z7" width="+0.5" />
                 </m>
-                <m zoom-min="11" fade="12">
+                <m zoom-min="11">
                   <line use="motorway" />
-                  <text use="street-label" />
+                  <text use="caption-small-blue"/>                
+                </m>
+                <m zoom-min="16">
+                  <line use="motorway" />
+                  <text use="street-label" />                
                 </m>
               </m>
-
               <!-- <m zoom-min="16">
 
                 <line width="1.0" stroke="#ff0000" />
@@ -832,17 +914,8 @@
                   <text k="ref" style="bold" size="12" stroke="#d6dac2" fill="#606060" stroke-width="2.0" />
                 </m>
               </m>
-              <m v="motorway">
-                <line use="motorway" cap="square" />
-                <m zoom-min="14">
-                  <text k="name" style="bold" size="10" stroke="#809bc0" stroke-width="2.0" />
-                  <text k="ref" style="bold" size="12" stroke="#d6dac2" fill="#606060" stroke-width="2.0" />
-                </m>
-              </m>
               <!-- add outline for all matches -->
               <outline use="casing-bridge" />
-              <m>
-              </m>
             </m>
           </m>
         </m>
@@ -1246,15 +1319,18 @@
 
 
       <m v="island">
-        <m zoom-min="11">
+        <m zoom-min="14">
           <caption k="name" size="14" fill="#38678F" priority="3" />
         </m>
-        <m zoom-min="14">
+        <m zoom-min="16">
           <caption k="name" size="16" fill="#38678F" priority="3" />
         </m>
       </m>
 
       <m v="city" zoom-max="13">
+        <m zoom-min="7">
+          <caption k="name" size="14" fill="#38678F" stroke="#ede3d6" stroke-width="0.75" priority="3" />
+        </m>
         <m zoom-min="9">
           <caption k="name" size="20" fill="#38678F" stroke="#ede3d6" stroke-width="1.5" priority="3" />
         </m>
@@ -1268,22 +1344,22 @@
       </m>
       
       
-      <m v="hamlet" zoom-min="11" zoom-max="14">
+      <m v="hamlet" zoom-min="11" zoom-max="13">
         <caption k="name" size="14" fill="#31536F" stroke="#ede3d6" stroke-width="2" priority="3" />
       </m>
-      <m v="town|village" zoom-min="11" zoom-max="14">
+      <m v="town|village" zoom-min="11" zoom-max="13">
         <caption k="name" size="14" fill="#31536F" stroke="#ede3d6" stroke-width="2" priority="3" />
       </m>
-      <m v="region" zoom-min="11" zoom-max="14">
+      <m v="region" zoom-min="11" zoom-max="13">
         <caption k="name" size="14" fill="#31536F" stroke="#ede3d6" stroke-width="2" priority="3" />
       </m>
-      <m v="province" zoom-min="11" zoom-max="14">
+      <m v="province" zoom-min="11" zoom-max="13">
         <caption k="name" size="14" fill="#31536F" stroke="#ede3d6" stroke-width="2" priority="3" />
       </m>
-      <m v="county" zoom-min="11" zoom-max="14">
+      <m v="county" zoom-min="11" zoom-max="13">
         <caption k="name" size="14" fill="#31536F" stroke="#ede3d6" stroke-width="2" priority="3" />
       </m>
-      <m v="district" zoom-min="11" zoom-max="14">
+      <m v="district" zoom-min="11" zoom-max="13">
         <caption k="name" size="14" fill="#31536F" stroke="#ede3d6" stroke-width="2" priority="3" />
       </m>
       <m v="gulf" zoom-min="11">
@@ -1295,7 +1371,7 @@
           <caption k="name" size="16" fill="#6692B0" stroke="#ede3d6" stroke-width="1" priority="5" />
         </m>
         <m zoom-min="14">
-          <caption k="name" size="24" fill="#6692B0" stroke="#ede3d6" stroke-width="1.5" priority="5" />
+          <caption k="name" size="22" fill="#6692B0" stroke="#ede3d6" stroke-width="1.5" priority="5" />
         </m>
       </m>
 
