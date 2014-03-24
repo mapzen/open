@@ -157,11 +157,14 @@ public class RouteFragmentTest {
     public void onLocationChange_shouldStoreOriginalLocationRecordInDatabase() throws Exception {
         enableDebugMode(act);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
+        double[] sample1 = fragment.getRoute().getGeometry().get(0);
+        double[] sample2 = fragment.getRoute().getGeometry().get(1);
+        double[] expected = fragment.getRoute().getGeometry().get(2);
+        instructions.add(getTestInstruction(sample1[0], sample1[1]));
+        instructions.add(getTestInstruction(sample2[0], sample2[1]));
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
-        Location testLocation = getTestLocation(20.0, 30.0);
+        Location testLocation = getTestLocation(expected[0], expected[1]);
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
@@ -169,15 +172,16 @@ public class RouteFragmentTest {
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
         cursor.moveToNext();
-        assertThat(cursor.getString(0)).isEqualTo("20.0");
-        assertThat(cursor.getString(1)).isEqualTo("30.0");
+        assertThat(cursor.getString(0)).isEqualTo(String.valueOf(expected[0]));
+        assertThat(cursor.getString(1)).isEqualTo(String.valueOf(expected[1]));
     }
 
     @Test
     public void onLocationChange_shouldStoreCorrectedLocationRecordInDatabase() throws Exception {
         enableDebugMode(act);
         FragmentTestUtil.startFragment(fragment);
-        Location testLocation = getTestLocation(20.0, 30.0);
+        double[] sample = fragment.getRoute().getGeometry().get(2);
+        Location testLocation = getTestLocation(sample[0], sample[1]);
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
@@ -196,24 +200,28 @@ public class RouteFragmentTest {
     public void onLocationChange_shouldStoreInstructionPointsRecordInDatabase() throws Exception {
         enableDebugMode(act);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(99.0, 89.0));
-        instructions.add(getTestInstruction(0, 0));
+        double[] expected = fragment.getRoute().getGeometry().get(0);
+        double[] sample1 = fragment.getRoute().getGeometry().get(1);
+        double[] sample2 = fragment.getRoute().getGeometry().get(2);
+        instructions.add(getTestInstruction(expected[0], expected[1]));
+        instructions.add(getTestInstruction(sample1[0], sample1[1]));
 
         FragmentTestUtil.startFragment(fragment);
         fragment.setInstructions(instructions);
 
-        Location testLocation = getTestLocation(20.0, 30.0);
+        Location testLocation = getTestLocation(sample2[0], sample2[1]);
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
-                new String[]{
+                new String[] {
                         DatabaseHelper.COLUMN_INSTRUCTION_LAT,
-                        DatabaseHelper.COLUMN_INSTRUCTION_LNG},
+                        DatabaseHelper.COLUMN_INSTRUCTION_LNG
+                },
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
         cursor.moveToNext();
-        assertThat(cursor.getString(0)).isEqualTo("99.0");
-        assertThat(cursor.getString(1)).isEqualTo("89.0");
+        assertThat(cursor.getString(0)).isEqualTo(String.valueOf(expected[0]));
+        assertThat(cursor.getString(1)).isEqualTo(String.valueOf(expected[1]));
     }
 
     @Test
@@ -269,7 +277,8 @@ public class RouteFragmentTest {
     public void onLocationChange_shouldStoreInstructionBearingRecordInDatabase() throws Exception {
         enableDebugMode(act);
         FragmentTestUtil.startFragment(fragment);
-        Location testLocation = getTestLocation(20.0, 30.0);
+        double[] sample = fragment.getRoute().getGeometry().get(2);
+        Location testLocation = getTestLocation(sample[0], sample[1]);
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
@@ -303,7 +312,8 @@ public class RouteFragmentTest {
     public void onLocationChange_shouldStoreAssociatedRoute() throws Exception {
         enableDebugMode(act);
         FragmentTestUtil.startFragment(fragment);
-        Location testLocation = getTestLocation(20.0, 30.0);
+        double[] sample = fragment.getRoute().getGeometry().get(2);
+        Location testLocation = getTestLocation(sample[0], sample[1]);
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
