@@ -20,7 +20,7 @@
     <rect id="train" pos="676 0 32 32" />
   </atlas> -->
 
-  <!-- icons 12 -->
+  <!-- icons 12 
   <atlas img="styles/poi_icons_12.png">
     <rect id="airport" pos="0 0 12 12" />
     <rect id="arts_ent" pos="0 22 12 12" />
@@ -39,9 +39,9 @@
     <rect id="soccer" pos="0 308 12 12" />
     <rect id="sports" pos="0 330 12 12" />
     <rect id="train" pos="0 352 12 12" />
-  </atlas>
+  </atlas> -->
 
-  <!-- icons 16 
+  <!-- icons 16 -->
   <atlas img="styles/poi_icons_16.png">
     <rect id="airport" pos="0 0 16 16" />
     <rect id="arts_ent" pos="0 26 16 16" />
@@ -60,7 +60,7 @@
     <rect id="soccer" pos="0 364 16 16" />
     <rect id="sports" pos="0 390 16 16" />
     <rect id="train" pos="0 416 16 16" />
-  </atlas>  -->
+  </atlas>  
 
     <!-- icons 32 
   <atlas img="styles/poi_icons_32.png">
@@ -430,7 +430,7 @@
     <!-- sport -->
     <m k="sport">
       <m v="soccer" zoom-min="16">
-        <symbol src="sports" />
+        <symbol src="soccer" />
       </m>
       <m v="swimming|canoe|diving|scuba_diving">
         <area fill="#8db3b6" stroke="#243F3F" stroke-width="0.2" />
@@ -626,7 +626,7 @@
         <area fill="#e1e8c9" stroke="#f2d6d5" stroke-width="0.75" />
       </m>
       <m zoom-min="17">
-        <extrusion side-color="#d4d8c0" top-color="#e1e8c9" line-color="#f2d6d5" />
+        <extrusion side-color="#c4c8b0" top-color="#e1e8c9" line-color="#e7c8c7" />
         <caption k="name" size="16" fill="#373737" stroke="#ffffff" stroke-width="1.0"  />
         <!--<caption k="addr:housenumber" size="18" fill="#373737" stroke="#ffffff" stroke-width="1.0" /> -->
       </m>
@@ -1092,7 +1092,7 @@
 
     <m k="aeroway">
       <m k="aeroway" v="helipad" zoom-min="16">
-        <symbol src="air" /> 
+        <symbol src="airport" /> 
       </m>
       <m k="aeroway" v="aerodrome|airport" zoom-min="16">
         <symbol src="airport" /> 
@@ -1134,10 +1134,11 @@
         <m v="bus_station" zoom-min="17">
           <symbol src="bus_sta" />
         </m>
+        -->
         <m v="cafe" zoom-min="16">
           <symbol src="food" />
-        -->
         </m>
+      </m>
         
         <m v="cinema" zoom-min="18">
           <symbol src="arts_ent" />
@@ -1188,7 +1189,7 @@
             <symbol src="religious" />
           </m>
           <m k="denomination|religion" v="christian">
-            <symbol src="religious" />
+            <symbol src="church" />
           </m>
         </m>
         <m v="post_box" zoom-min="18">
@@ -1248,7 +1249,7 @@
     <m k="addr:housenumber" zoom-min="18">
       <caption k="addr:housenumber" style="bold" size="10" fill="#606060" stroke="#ffffff" stroke-width="2.0" />
     </m>
-
+<!--
     <m k="leisure" v="playground" zoom-min="18">
       <symbol src="playground" />
     </m>
@@ -1256,7 +1257,7 @@
     <m k="man_made" v="windmill" zoom-min="20">
       <symbol src="windmill" />
     </m>
-
+-->
     <m k="natural">
       <m select="first">
         <m v="cave_entrance" zoom-min="20">
