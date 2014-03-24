@@ -25,7 +25,7 @@ $ cd geojson && ./gradlew clean install
 
 ### Install OnTheRoad
 <pre><code>$ git clone https://github.com/mapzen/OnTheRoad.git
-$ cd geojson && ./gradlew clean install
+$ cd OnTheRoad && ./gradlew clean install
 </pre></code>
 
 ### Install VectorTileMap Library
