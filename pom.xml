@@ -7,7 +7,7 @@
 
     <groupId>com.mapzen.android</groupId>
     <artifactId>mapzen</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.2-SNAPSHOT</version>
     <packaging>apk</packaging>
 
     <name>Mapzen</name>
@@ -107,6 +107,12 @@
         <dependency>
             <groupId>com.mapzen</groupId>
             <artifactId>geojson</artifactId>
+            <version>0.2-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mapzen</groupId>
+            <artifactId>on-the-road</artifactId>
             <version>0.1-SNAPSHOT</version>
         </dependency>
 

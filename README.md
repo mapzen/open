@@ -23,6 +23,11 @@ See [Maven Android SDK Deployer](https://github.com/mosabua/maven-android-sdk-de
 $ cd geojson && ./gradlew clean install
 </pre></code>
 
+### Install OnTheRoad
+<pre><code>$ git clone https://github.com/mapzen/OnTheRoad.git
+$ cd OnTheRoad && ./gradlew clean install
+</pre></code>
+
 ### Install VectorTileMap Library
 
 <pre><code>$ git clone --recursive https://github.com/mapzen/vtm.git
