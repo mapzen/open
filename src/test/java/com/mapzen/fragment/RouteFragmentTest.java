@@ -50,8 +50,10 @@ import android.text.SpannedString;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -168,7 +170,7 @@ public class RouteFragmentTest {
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
-                new String[]{ DatabaseHelper.COLUMN_LAT, DatabaseHelper.COLUMN_LNG},
+                new String[] { DatabaseHelper.COLUMN_LAT, DatabaseHelper.COLUMN_LNG },
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
         cursor.moveToNext();
@@ -243,7 +245,7 @@ public class RouteFragmentTest {
         fragment.onPause();
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(TABLE_ROUTES,
-                new String[]{ COLUMN_RAW},
+                new String[] { COLUMN_RAW },
                 null, null, null, null, null);
         assertThat(cursor).hasCount(0);
     }
@@ -267,9 +269,9 @@ public class RouteFragmentTest {
         fragment.onPause();
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(TABLE_ROUTE_GEOMETRY,
-                new String[]{COLUMN_ROUTE_ID},
+                new String[] { COLUMN_ROUTE_ID },
                 COLUMN_ROUTE_ID + " = ?",
-                new String[] {String.valueOf(fragment.getRouteId())}, null, null, null);
+                new String[] { String.valueOf(fragment.getRouteId()) }, null, null, null);
         assertThat(cursor).hasCount(0);
     }
 
@@ -317,9 +319,9 @@ public class RouteFragmentTest {
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
-                new String[]{ COLUMN_ROUTE_ID},
+                new String[] { COLUMN_ROUTE_ID },
                 COLUMN_ROUTE_ID + " = ?",
-                new String[] {String.valueOf(fragment.getRouteId())}, null, null, null);
+                new String[] { String.valueOf(fragment.getRouteId()) }, null, null, null);
         assertThat(cursor).hasCount(1);
     }
 
@@ -328,7 +330,6 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         Location testLocation = getTestLocation(111.0, 111.0);
         fragment.onLocationChanged(testLocation);
-
     }
 
     @Test
@@ -385,6 +386,33 @@ public class RouteFragmentTest {
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
         ImageButton overFlowMenu = (ImageButton) view.findViewById(R.id.overflow_menu);
         assertThat(overFlowMenu).isVisible();
+    }
+
+    @Test
+    public void onCreateView_shouldNotShowResumeButton() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
+        Button resume = (Button) view.findViewById(R.id.resume_button);
+        assertThat(resume).isNotVisible();
+    }
+
+    @Test
+    public void onTouch_shouldDisplayResumeButton() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
+        Button resume = (Button) view.findViewById(R.id.resume_button);
+        simulateUserPagerTouch();
+        assertThat(resume).isVisible();
+    }
+
+    @Test
+    public void onClickResume_shouldHideResumeButton() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
+        Button resume = (Button) view.findViewById(R.id.resume_button);
+        simulateUserPagerTouch();
+        resume.performClick();
+        assertThat(resume).isNotVisible();
     }
 
     @Test
@@ -517,6 +545,36 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onLocationChange_shouldNotAdvanceWhenUserHasPaged() throws Exception {
+        disableRoutePager(false);
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        simulateUserPagerTouch();
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
+        double[] point = instructions.get(2).getPoint();
+        fragment.onLocationChanged(getTestLocation(point[0], point[1]));
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
+    }
+
+    @Test
+    public void onLocationChange_shouldNotAdvanceWhenUserHasResumed() throws Exception {
+        disableRoutePager(false);
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        simulateUserPagerTouch();
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
+        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
+        view.findViewById(R.id.resume_button).performClick();
+        double[] point = instructions.get(2).getPoint();
+        fragment.onLocationChanged(getTestLocation(point[0], point[1]));
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(2);
+    }
+
+    @Test
     public void onLocationChange_shouldNotAdvanceWhenDisabled() throws Exception {
         disableRoutePager(true);
         FragmentTestUtil.startFragment(fragment);
@@ -588,7 +646,7 @@ public class RouteFragmentTest {
     @Test
     public void getWalkingAdvanceRadius_shouldHaveDefaultValue() {
         assertThat(fragment.getWalkingAdvanceRadius())
-            .isEqualTo(act.getResources().getInteger(R.integer.route_advance_radius));
+                .isEqualTo(act.getResources().getInteger(R.integer.route_advance_radius));
     }
 
     @Test
@@ -873,7 +931,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLost_shouldRedrawPath() throws Exception {
-        MapFragment mapFragmentMock =  Mockito.mock(MapFragment.class, Mockito.CALLS_REAL_METHODS);
+        MapFragment mapFragmentMock = Mockito.mock(MapFragment.class, Mockito.CALLS_REAL_METHODS);
         PathLayer pathLayerMock = Mockito.mock(PathLayer.class);
         Mockito.when(mapFragmentMock.getPathLayer()).thenReturn(pathLayerMock);
         fragment.setMapFragment(mapFragmentMock);
@@ -989,5 +1047,12 @@ public class RouteFragmentTest {
         prefEditor.putBoolean(act.getString(R.string.settings_key_disable_route_pager),
                 enable);
         prefEditor.commit();
+    }
+
+    private void simulateUserPagerTouch() {
+        MotionEvent motionEvent =
+                MotionEvent.obtain(0L, 0L, MotionEvent.ACTION_DOWN, 12f, 34f, 0);
+        View.OnTouchListener listener = shadowOf(fragment.pager).getOnTouchListener();
+        listener.onTouch(null, motionEvent);
     }
 }
