@@ -9,6 +9,7 @@ import org.oscim.android.canvas.AndroidGraphics;
 import org.oscim.backend.canvas.Color;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
+import org.oscim.event.Event;
 import org.oscim.layers.PathLayer;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
@@ -178,11 +179,10 @@ public class MapFragment extends BaseFragment {
         map.layers().add(meMarkerLayer);
 
         setTheme(MapzenTheme.valueOf(getString(R.string.settings_default_mapstyle)));
-        map.bind(new Map.UpdateListener() {
+        map.events.bind(new Map.UpdateListener() {
             @Override
-            public void onMapUpdate(MapPosition mapPosition, boolean positionChanged,
-                    boolean clear) {
-                if (positionChanged) {
+            public void onMapEvent(Event e, MapPosition mapPosition) {
+                if (e == Map.POSITION_EVENT) {
                     followMe = false;
                 }
                 getMapController().setMapPosition(mapPosition);

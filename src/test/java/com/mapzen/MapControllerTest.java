@@ -1,9 +1,5 @@
 package com.mapzen;
 
-import android.content.SharedPreferences;
-import android.location.Location;
-import android.preference.PreferenceManager;
-
 import com.mapzen.osrm.Instruction;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
@@ -15,11 +11,15 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
+import org.oscim.map.Animator;
 import org.oscim.map.Map;
-import org.oscim.map.MapAnimator;
 import org.oscim.map.TestMap;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
+
+import android.content.SharedPreferences;
+import android.location.Location;
+import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
 
@@ -136,7 +136,7 @@ public class MapControllerTest {
 
     @Test
     public void centerOn_shouldCallAnimateTo() throws Exception {
-        MapAnimator animator = Mockito.mock(MapAnimator.class);
+        Animator animator = Mockito.mock(Animator.class);
         TestMap map = (TestMap) getMapController().getMap();
         map.setAnimator(animator);
         Location location = new Location("expected");
