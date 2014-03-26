@@ -415,6 +415,22 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onClickResume_shouldStartAtPagerLocation() throws Exception {
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        double[] point = instructions.get(2).getPoint();
+        fragment.onLocationChanged(getTestLocation(point[0], point[1]));
+        simulateUserPagerTouch();
+        fragment.pager.setCurrentItem(0);
+        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
+        Button resume = (Button) view.findViewById(R.id.resume_button);
+        resume.performClick();
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(2);
+    }
+
+    @Test
     public void menuOnClick_shouldShowMenuOptions() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
@@ -556,7 +572,7 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onLocationChange_shouldNotAdvanceWhenUserHasResumed() throws Exception {
+    public void onLocationChange_shouldAdvanceWhenUserHasResumed() throws Exception {
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
         fragment.setInstructions(instructions);

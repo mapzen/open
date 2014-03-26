@@ -95,6 +95,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private long routeId;
     private Set<Instruction> proximityAlerts = new HashSet<Instruction>();
     private Set<Instruction> seenInstructions = new HashSet<Instruction>();
+    private int pagerPositionWhenPaused = 0;
 
     Speakerbox speakerbox;
 
@@ -134,7 +135,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                turnAutopageOff();
+                turnAutoPageOff();
                 return false;
             }
         });
@@ -583,12 +584,14 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    private void turnAutopageOff() {
+    private void turnAutoPageOff() {
+        pagerPositionWhenPaused = pager.getCurrentItem();
         autoPaging = false;
         resume.setVisibility(View.VISIBLE);
     }
 
     private void turnAutoPageOn() {
+        pager.setCurrentItem(pagerPositionWhenPaused);
         resume.setVisibility(View.GONE);
         autoPaging = true;
     }
