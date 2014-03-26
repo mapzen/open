@@ -1,11 +1,11 @@
 package com.mapzen.util;
 
 import org.oscim.backend.AssetAdapter;
-import org.oscim.theme.Theme;
+import org.oscim.theme.ThemeFile;
 
 import java.io.InputStream;
 
-public enum MapzenTheme implements Theme {
+public enum MapzenTheme implements ThemeFile {
 
     MAPZEN("styles/mapzen.xml"),
     VTM("styles/vtm.xml"),

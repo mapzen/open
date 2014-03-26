@@ -2,12 +2,12 @@ package org.oscim.map;
 
 public class TestMap extends Map {
     private TestViewport viewport;
-    MapAnimator mapAnimator;
+    Animator mapAnimator;
 
     public TestMap() {
         super();
-        this.viewport = new TestViewport(this);
-        mapAnimator = new MapAnimator(this, viewport);
+        this.viewport = new TestViewport();
+        mapAnimator = new Animator(this);
     }
 
     @Override
@@ -39,16 +39,16 @@ public class TestMap extends Map {
     }
 
     @Override
-    public MapAnimator animator() {
+    public Animator animator() {
         return mapAnimator;
     }
 
-    public void setAnimator(MapAnimator animator) {
+    public void setAnimator(Animator animator) {
         this.mapAnimator = animator;
     }
 
     @Override
-    public TestViewport viewport() {
+    public ViewController viewport() {
         return viewport;
     }
 }

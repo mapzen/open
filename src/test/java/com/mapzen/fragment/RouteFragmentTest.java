@@ -27,8 +27,9 @@ import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.PathLayer;
-import org.oscim.map.MapAnimator;
+import org.oscim.map.Animator;
 import org.oscim.map.TestMap;
+import org.oscim.map.TestViewport;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
@@ -143,7 +144,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldCenterMapOnLocation() throws Exception {
-        MapAnimator animator = Mockito.mock(MapAnimator.class);
+        Animator animator = Mockito.mock(Animator.class);
         ((TestMap) fragment.mapFragment.getMap()).setAnimator(animator);
         FragmentTestUtil.startFragment(fragment);
         ArrayList<double[]> geometry = fragment.getRoute().getGeometry();
@@ -638,7 +639,8 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         getMapController().setMapPerspectiveForInstruction(instruction);
         TestMap map = (TestMap) act.getMapFragment().getMap();
-        assertThat(map.viewport().getRotation()).isEqualTo(instruction.getRotationBearing());
+        assertThat(((TestViewport) map.viewport()).getRotation()).isEqualTo(
+                instruction.getRotationBearing());
     }
 
     @Test

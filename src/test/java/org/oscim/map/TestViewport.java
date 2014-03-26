@@ -1,11 +1,7 @@
 package org.oscim.map;
 
-public class TestViewport extends Viewport {
+public class TestViewport extends ViewController {
     private double rotation;
-
-    TestViewport(Map map) {
-        super(map);
-    }
 
     @Override
     public void setRotation(double rotation) {
