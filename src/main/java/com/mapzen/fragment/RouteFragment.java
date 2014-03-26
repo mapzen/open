@@ -40,8 +40,10 @@ import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -81,6 +83,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @InjectView(R.id.overflow_menu) ImageButton overflowMenu;
     @InjectView(R.id.routes) ViewPager pager;
+    @InjectView(R.id.resume_button) Button resume;
 
     private ArrayList<Instruction> instructions;
     private RoutesAdapter adapter;
@@ -92,12 +95,14 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private long routeId;
     private Set<Instruction> proximityAlerts = new HashSet<Instruction>();
     private Set<Instruction> seenInstructions = new HashSet<Instruction>();
+    private int pagerPositionWhenPaused = 0;
 
     Speakerbox speakerbox;
 
     private Set<Instruction> flippedInstructions = new HashSet<Instruction>();
     private RoutingListener routingListener;
     private boolean isReRouting = false;
+    private boolean autoPaging = true;
 
     public static RouteFragment newInstance(BaseActivity act, Feature feature) {
         final RouteFragment fragment = new RouteFragment();
@@ -127,6 +132,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         previousPosition = pager.getCurrentItem();
         initSpeakerbox();
         sendFirstInstructionToGear();
+        pager.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                turnAutoPageOff();
+                return false;
+            }
+        });
         return rootView;
     }
 
@@ -159,6 +171,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (instructions != null && instructions.size() > 0) {
             speakerbox.play(instructions.get(0).getFullInstruction());
         }
+    }
+
+    @OnClick(R.id.resume_button)
+    @SuppressWarnings("unused")
+    public void onClickResume() {
+        turnAutoPageOn();
     }
 
     @OnClick(R.id.overflow_menu)
@@ -219,7 +237,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         isReRouting = true;
         act.showProgressDialog();
 
-        final String url =  getRouteUrlForCar(getMapController().getZoomLevel(),
+        final String url = getRouteUrlForCar(getMapController().getZoomLevel(),
                 new GeoPoint(location.getLatitude(), location.getLongitude()),
                 getDestinationPoint());
 
@@ -324,7 +342,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public void onLocationChanged(Location location) {
-        if (!shouldAdvancePagerAutomatically() || isReRouting) {
+        if (!autoPaging || isReRouting) {
             return;
         }
         Location correctedLocation = snapTo(location);
@@ -550,6 +568,34 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
+    private void sendFirstInstructionToGear() {
+        sendToGear(0);
+    }
+
+    private void sendToGear(int index) {
+        try {
+            GearServiceSocket conn = GearAgentService.getConnection();
+            if (conn != null) {
+                int channelId = GearAgentService.CHANNEL_ID;
+                conn.send(channelId, instructions.get(index).getGearJson().toString().getBytes());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void turnAutoPageOff() {
+        pagerPositionWhenPaused = pager.getCurrentItem();
+        autoPaging = false;
+        resume.setVisibility(View.VISIBLE);
+    }
+
+    private void turnAutoPageOn() {
+        pager.setCurrentItem(pagerPositionWhenPaused);
+        resume.setVisibility(View.GONE);
+        autoPaging = true;
+    }
+
     private static class RoutesAdapter extends PagerAdapter {
         private List<Instruction> instructions = new ArrayList<Instruction>();
         private Context context;
@@ -629,26 +675,5 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             Location location = bundle.getParcelable("location");
             onLocationChanged(location);
         }
-    }
-
-    private void sendFirstInstructionToGear() {
-        sendToGear(0);
-    }
-
-    private void sendToGear(int index) {
-        try {
-            GearServiceSocket conn = GearAgentService.getConnection();
-            if (conn != null) {
-                int channelId = GearAgentService.CHANNEL_ID;
-                conn.send(channelId, instructions.get(index).getGearJson().toString().getBytes());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private boolean shouldAdvancePagerAutomatically() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
-        return !prefs.getBoolean(getString(R.string.settings_key_disable_route_pager), true);
     }
 }

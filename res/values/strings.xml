@@ -9,6 +9,7 @@
     <string name="no_internet">Device doesn\'t have connection</string>
     <string name="generic_error">something is up</string>
     <string name="route_description">Turn Icon</string>
+    <string name="route_resume_button">Resume</string>
     <string name="view_all">View All »</string>
     <string name="no_route_found">No Route Found</string>
     <string name="current_location">Current Location</string>
@@ -53,9 +54,5 @@
     <string name="settings_default_mapstyle">MAPZEN</string>
 
     <string name="toast_fixed_location_is_malformed">Your fixed location is malformed</string>
-
-    <string name="settings_disable_route_pager_title">Disable Route Auto Advancing</string>
-    <string name="settings_disable_route_pager_summary">This will keep make it so location changes will not affect the pager in routing fragment</string>
-    <string name="settings_key_disable_route_pager">checkbox_disable_route_pager</string>
 
 </resources>
