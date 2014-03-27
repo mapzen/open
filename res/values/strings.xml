@@ -34,6 +34,7 @@
     <string name="settings_key_walking_advance_radius">edittext_walking_advance_radius</string>
     <string name="settings_key_mapsource">edittext_mapsource</string>
     <string name="settings_default_mapsource">http://vector.test.mapzen.com/vector/lite</string>
+    <string name="settings_mapsource_dialog_title">Configure Map Tile source</string>
     <string name="settings_mapsource">Configure Tile server</string>
     <string name="settings_mapsource_summary">Restart required! And possibly flushing caches.</string>
     <string name="settings_voice_navigation_key">checkbox_voice_navigation</string>
