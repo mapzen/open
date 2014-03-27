@@ -34,13 +34,13 @@
             android:summary="@string/settings_advance_radius_summary"
             android:title="@string/settings_advance_radius" />
 
-        <ListPreference
-            android:title="@string/settings_mapsource"
-            android:entries="@array/vtm_source_titles"
-            android:entryValues="@array/vtm_source_values"
+        <EditTextPreference
+            android:defaultValue="@string/settings_default_mapsource"
+            android:dialogTitle="@string/settings_mapsource_dialog_title"
+            android:inputType="textUri"
             android:key="@string/settings_key_mapsource"
             android:summary="@string/settings_mapsource_summary"
-            android:defaultValue="@string/settings_default_mapsource" />
+            android:title="@string/settings_mapsource" />
 
         <ListPreference
             android:title="@string/settings_mapstyle"
