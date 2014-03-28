@@ -48,12 +48,6 @@ $ cd vtm-native-libs && ./install-dependencies.sh
 $ cd speakerbox && mvn clean install
 </pre></code>
 
-### Install Robolectric
-
-<pre><code>$ git clone https://github.com/mapzen/robolectric.git
-$ cd robolectric && mvn clean install
-</pre></code>
-
 ### Install Samsung Accessories
 
 <pre><code>
