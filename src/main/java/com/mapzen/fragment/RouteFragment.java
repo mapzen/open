@@ -7,7 +7,6 @@ import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.routing.RoutingListener;
 import com.mapzen.speakerbox.Speakerbox;
-import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.DisplayHelper;
 import com.mapzen.util.GearAgentService;
 import com.mapzen.util.GearServiceSocket;
@@ -315,7 +314,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         double lat = location.getLatitude();
         double lng = location.getLongitude();
         onRoadPoint = route.snapToRoute(
-            new double[] { lat, lng }
+                new double[] { lat, lng }
         );
 
         if (onRoadPoint != null) {
@@ -336,7 +335,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         } else {
             Logger.logToDatabase(act, ROUTE_TAG,
                     "RouteFragment::onLocationChange: Unable to Correct: location: "
-                    + originalLocation.toString());
+                            + originalLocation.toString());
         }
     }
 

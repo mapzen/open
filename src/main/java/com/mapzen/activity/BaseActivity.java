@@ -15,8 +15,10 @@ import com.mapzen.search.PagerResultsFragment;
 import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialogFragment;
+import com.mapzen.util.SubmitDebugData;
 
 import com.crashlytics.android.Crashlytics;
+import com.squareup.okhttp.OkHttpClient;
 
 import org.oscim.android.MapActivity;
 import org.oscim.layers.marker.MarkerItem;
@@ -43,6 +45,8 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.location.LocationHelper.ConnectionCallbacks;
 
@@ -50,13 +54,14 @@ public class BaseActivity extends MapActivity {
     public static final int LOCATION_INTERVAL = 1000;
     public static final String PLAY_SERVICE_FAIL_MESSAGE = "Your device cannot be located";
     public static final String COM_MAPZEN_UPDATES_LOCATION = "com.mapzen.updates.location";
+    protected DatabaseHelper dbHelper;
+    LocationHelper locationHelper;
     private AutoCompleteAdapter autoCompleteAdapter;
     private MenuItem menuItem;
     private MapzenApplication app;
     private MapFragment mapFragment;
     private MapzenProgressDialogFragment progressDialogFragment;
     private boolean updateMapLocation = true;
-
     private LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
@@ -69,13 +74,34 @@ public class BaseActivity extends MapActivity {
             sendBroadcast(toBroadcast);
         }
     };
+    protected ConnectionCallbacks connectionCallback = new ConnectionCallbacks() {
+        @Override
+        public void onConnected(Bundle bundle) {
+            getMapController().setZoomLevel(MapController.DEFAULT_ZOOMLEVEL);
+            final Location location = locationHelper.getLastLocation();
+            Logger.d("Last known location: " + location);
 
+            if (location != null) {
+                getMapController().setLocation(location);
+                mapFragment.findMe();
+            } else {
+                Toast.makeText(BaseActivity.this, getString(R.string.waiting),
+                        Toast.LENGTH_LONG).show();
+            }
+
+            LocationRequest locationRequest = LocationRequest.create();
+            locationRequest.setInterval(LOCATION_INTERVAL);
+            locationHelper.requestLocationUpdates(locationRequest, locationListener);
+        }
+
+        @Override
+        public void onDisconnected() {
+            Logger.d("LocationHelper disconnected.");
+        }
+    };
     private SQLiteDatabase db;
-    protected DatabaseHelper dbHelper;
     private TextView debugView;
     private boolean enableActionbar = true;
-
-    LocationHelper locationHelper;
 
     public void deactivateMapLocationUpdates() {
         updateMapLocation = false;
@@ -141,6 +167,8 @@ public class BaseActivity extends MapActivity {
                     .add(R.id.settings, fragment, SettingsFragment.TAG)
                     .addToBackStack(null)
                     .commit();
+        } else if (item.getItemId() == R.id.phone_home) {
+            submitDebugData();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -158,32 +186,6 @@ public class BaseActivity extends MapActivity {
     public MapzenProgressDialogFragment getProgressDialogFragment() {
         return progressDialogFragment;
     }
-
-    protected ConnectionCallbacks connectionCallback = new ConnectionCallbacks() {
-        @Override
-        public void onConnected(Bundle bundle) {
-            getMapController().setZoomLevel(MapController.DEFAULT_ZOOMLEVEL);
-            final Location location = locationHelper.getLastLocation();
-            Logger.d("Last known location: " + location);
-
-            if (location != null) {
-                getMapController().setLocation(location);
-                mapFragment.findMe();
-            } else {
-                Toast.makeText(BaseActivity.this, getString(R.string.waiting),
-                        Toast.LENGTH_LONG).show();
-            }
-
-            LocationRequest locationRequest = LocationRequest.create();
-            locationRequest.setInterval(LOCATION_INTERVAL);
-            locationHelper.requestLocationUpdates(locationRequest, locationListener);
-        }
-
-        @Override
-        public void onDisconnected() {
-            Logger.d("LocationHelper disconnected.");
-        }
-    };
 
     private void initLocationClient() {
         locationHelper = new LocationHelper(this, connectionCallback);
@@ -385,8 +387,15 @@ public class BaseActivity extends MapActivity {
     }
 
     public void appendToDebugView(String msg) {
-        String fullText = debugView.getText().toString() + "," +  msg;
+        String fullText = debugView.getText().toString() + "," + msg;
         debugView.setText(fullText);
     }
 
+    public void submitDebugData() {
+        SubmitDebugData submitter = new SubmitDebugData();
+        submitter.setClient(new OkHttpClient());
+        submitter.setEndpoint("http://snitchmedia.com/upload.php");
+        submitter.setFile(new File(getDb().getPath()));
+        submitter.run();
+    }
 }

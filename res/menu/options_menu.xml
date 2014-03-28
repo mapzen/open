@@ -11,4 +11,8 @@
           android:title="@string/settings"
           android:showAsAction="never" />
 
+    <item android:id="@+id/phone_home"
+        android:title="@string/submit_data"
+        android:showAsAction="never" />
+
 </menu>
