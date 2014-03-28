@@ -13,9 +13,9 @@ import com.mapzen.search.AutoCompleteAdapter;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.search.PagerResultsFragment;
 import com.mapzen.util.DatabaseHelper;
+import com.mapzen.util.DebugDataSubmitter;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialogFragment;
-import com.mapzen.util.SubmitDebugData;
 
 import com.crashlytics.android.Crashlytics;
 import com.squareup.okhttp.OkHttpClient;
@@ -54,7 +54,9 @@ public class BaseActivity extends MapActivity {
     public static final int LOCATION_INTERVAL = 1000;
     public static final String PLAY_SERVICE_FAIL_MESSAGE = "Your device cannot be located";
     public static final String COM_MAPZEN_UPDATES_LOCATION = "com.mapzen.updates.location";
+    public static final String DEBUG_DATA_ENDPOINT = "http://snitchmedia.com/upload.php";
     protected DatabaseHelper dbHelper;
+    protected DebugDataSubmitter debugDataSubmitter;
     LocationHelper locationHelper;
     private AutoCompleteAdapter autoCompleteAdapter;
     private MenuItem menuItem;
@@ -168,7 +170,8 @@ public class BaseActivity extends MapActivity {
                     .addToBackStack(null)
                     .commit();
         } else if (item.getItemId() == R.id.phone_home) {
-            submitDebugData();
+            initDebugDataSubmitter();
+            debugDataSubmitter.run();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -391,11 +394,10 @@ public class BaseActivity extends MapActivity {
         debugView.setText(fullText);
     }
 
-    public void submitDebugData() {
-        SubmitDebugData submitter = new SubmitDebugData();
-        submitter.setClient(new OkHttpClient());
-        submitter.setEndpoint("http://snitchmedia.com/upload.php");
-        submitter.setFile(new File(getDb().getPath()));
-        submitter.run();
+    public void initDebugDataSubmitter() {
+        debugDataSubmitter = new DebugDataSubmitter(this);
+        debugDataSubmitter.setClient(new OkHttpClient());
+        debugDataSubmitter.setEndpoint(DEBUG_DATA_ENDPOINT);
+        debugDataSubmitter.setFile(new File(getDb().getPath()));
     }
 }

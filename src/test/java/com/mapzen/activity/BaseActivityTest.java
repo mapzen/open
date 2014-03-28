@@ -12,6 +12,11 @@ import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.support.TestHelper;
 
+import com.google.common.io.Files;
+import com.squareup.okhttp.mockwebserver.MockResponse;
+import com.squareup.okhttp.mockwebserver.MockWebServer;
+import com.squareup.okhttp.mockwebserver.RecordedRequest;
+
 import org.fest.assertions.data.Offset;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,6 +40,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SearchView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import static android.content.Context.LOCATION_SERVICE;
@@ -341,6 +347,57 @@ public class BaseActivityTest {
         activity.disableActionbar();
         activity.showActionBar();
         assertThat(activity.getActionBar()).isNotShowing();
+    }
+
+    @Test
+    public void onOptionsItemSelected_shouldBeSuccessful() throws Exception {
+        TestBaseActivity testBaseActivity = (TestBaseActivity) activity;
+        String expected = "upload successful!";
+        MockWebServer server = new MockWebServer();
+        MockResponse response = new MockResponse().setBody(expected);
+        server.enqueue(response);
+        server.play();
+
+        testBaseActivity.setDebugDataEndpoint(server.getUrl("/upload.php").toString());
+        MenuItem menuItem = menu.findItem(R.id.phone_home);
+        testBaseActivity.onOptionsItemSelected(menuItem);
+
+        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(expected);
+        server.shutdown();
+    }
+
+    @Test
+    public void onOptionsItemSelected_shouldNotifyWhenUnsuccessful() throws Exception {
+        TestBaseActivity testBaseActivity = (TestBaseActivity) activity;
+        String expected = "Upload failed, please try again later!";
+        MockWebServer server = new MockWebServer();
+        MockResponse response = new MockResponse().setResponseCode(500);
+        server.enqueue(response);
+        server.play();
+
+        testBaseActivity.setDebugDataEndpoint(server.getUrl("/upload.php").toString());
+        MenuItem menuItem = menu.findItem(R.id.phone_home);
+        testBaseActivity.onOptionsItemSelected(menuItem);
+
+        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(expected);
+        server.shutdown();
+    }
+
+    @Test
+    public void onOptionsItemSelected_shouldPostDatabaseFile() throws Exception {
+        TestBaseActivity testBaseActivity = (TestBaseActivity) activity;
+        MockWebServer server = new MockWebServer();
+        MockResponse response = new MockResponse();
+        server.enqueue(response);
+        server.play();
+
+        testBaseActivity.setDebugDataEndpoint(server.getUrl("/upload.php").toString());
+        MenuItem menuItem = menu.findItem(R.id.phone_home);
+        testBaseActivity.onOptionsItemSelected(menuItem);
+        RecordedRequest request = server.takeRequest();
+        byte[] expected = Files.toByteArray(new File(testBaseActivity.getDb().getPath()));
+        assertThat(request.getBody()).isEqualTo(expected);
+        server.shutdown();
     }
 
     @Test
