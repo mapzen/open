@@ -7,6 +7,7 @@ import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.routing.RoutingListener;
 import com.mapzen.speakerbox.Speakerbox;
+import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.DisplayHelper;
 import com.mapzen.util.GearAgentService;
 import com.mapzen.util.GearServiceSocket;
@@ -56,6 +57,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -70,6 +72,7 @@ import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_POSITION;
 import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
 import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
+import static com.mapzen.util.DatabaseHelper.COLUMN_TABLE_ID;
 import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
@@ -92,7 +95,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private Feature feature;
     private DistanceView distanceLeftView;
     private int previousPosition;
-    private long routeId;
+    private String routeId;
     private Set<Instruction> proximityAlerts = new HashSet<Instruction>();
     private Set<Instruction> seenInstructions = new HashSet<Instruction>();
     private int pagerPositionWhenPaused = 0;
@@ -269,7 +272,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         app.enqueueApiRequest(request);
     }
 
-    public long getRouteId() {
+    public String getRouteId() {
         return routeId;
     }
 
@@ -484,8 +487,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private void storeRouteInDatabase(JSONObject rawRoute) {
         if (act.isInDebugMode()) {
             ContentValues insertValues = new ContentValues();
+            routeId = UUID.randomUUID().toString();
+            insertValues.put(COLUMN_TABLE_ID, routeId);
             insertValues.put(COLUMN_RAW, rawRoute.toString());
-            routeId = act.getDb().insert(TABLE_ROUTES, null, insertValues);
+            act.getDb().insert(TABLE_ROUTES, null, insertValues);
         }
     }
 
@@ -505,6 +510,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private void addCoordinateToDatabase(double[] pair, int pos) {
         if (act.isInDebugMode()) {
             ContentValues values = new ContentValues();
+            values.put(COLUMN_TABLE_ID, UUID.randomUUID().toString());
             values.put(COLUMN_ROUTE_ID, routeId);
             values.put(COLUMN_POSITION, pos);
             values.put(COLUMN_LAT, pair[0]);

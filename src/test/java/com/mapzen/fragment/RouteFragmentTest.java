@@ -157,7 +157,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreOriginalLocationRecordInDatabase() throws Exception {
-        enableDebugMode(act);
+        initFragmentInDebugMode();
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         double[] sample1 = fragment.getRoute().getGeometry().get(0);
         double[] sample2 = fragment.getRoute().getGeometry().get(1);
@@ -181,6 +181,7 @@ public class RouteFragmentTest {
     @Test
     public void onLocationChange_shouldStoreCorrectedLocationRecordInDatabase() throws Exception {
         enableDebugMode(act);
+        initTestFragment();
         FragmentTestUtil.startFragment(fragment);
         double[] sample = fragment.getRoute().getGeometry().get(2);
         Location testLocation = getTestLocation(sample[0], sample[1]);
@@ -201,6 +202,7 @@ public class RouteFragmentTest {
     @Test
     public void onLocationChange_shouldStoreInstructionPointsRecordInDatabase() throws Exception {
         enableDebugMode(act);
+        initTestFragment();
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         double[] expected = fragment.getRoute().getGeometry().get(0);
         double[] sample1 = fragment.getRoute().getGeometry().get(1);
@@ -253,6 +255,7 @@ public class RouteFragmentTest {
     @Test
     public void drawRoute_shouldStoreCoordinates() throws Exception {
         enableDebugMode(act);
+        initTestFragment();
         FragmentTestUtil.startFragment(fragment);
         fragment.onPause();
         SQLiteDatabase db = act.getReadableDb();
@@ -278,6 +281,7 @@ public class RouteFragmentTest {
     @Test
     public void onLocationChange_shouldStoreInstructionBearingRecordInDatabase() throws Exception {
         enableDebugMode(act);
+        initTestFragment();
         FragmentTestUtil.startFragment(fragment);
         double[] sample = fragment.getRoute().getGeometry().get(2);
         Location testLocation = getTestLocation(sample[0], sample[1]);
@@ -312,7 +316,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreAssociatedRoute() throws Exception {
-        enableDebugMode(act);
+        initFragmentInDebugMode();
         FragmentTestUtil.startFragment(fragment);
         double[] sample = fragment.getRoute().getGeometry().get(2);
         Location testLocation = getTestLocation(sample[0], sample[1]);
@@ -1047,4 +1051,10 @@ public class RouteFragmentTest {
         View.OnTouchListener listener = shadowOf(fragment.pager).getOnTouchListener();
         listener.onTouch(null, motionEvent);
     }
+
+    private void initFragmentInDebugMode() throws Exception {
+        enableDebugMode(act);
+        initTestFragment();
+    }
+
 }

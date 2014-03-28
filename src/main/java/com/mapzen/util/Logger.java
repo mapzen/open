@@ -5,7 +5,10 @@ import com.mapzen.activity.BaseActivity;
 import android.content.ContentValues;
 import android.util.Log;
 
+import java.util.UUID;
+
 import static com.mapzen.util.DatabaseHelper.COLUMN_MSG;
+import static com.mapzen.util.DatabaseHelper.COLUMN_TABLE_ID;
 import static com.mapzen.util.DatabaseHelper.COLUMN_TAG;
 
 public final class Logger {
@@ -33,6 +36,7 @@ public final class Logger {
             ContentValues values = new ContentValues();
             values.put(COLUMN_TAG, tag);
             values.put(COLUMN_MSG, msg);
+            values.put(COLUMN_TABLE_ID, UUID.randomUUID().toString());
             activity.getDb().insert(DatabaseHelper.TABLE_LOG_ENTRIES, null, values);
         }
     }
