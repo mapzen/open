@@ -14,6 +14,7 @@ public class TestBaseActivity extends BaseActivity {
     private boolean backPressed = false;
     private boolean optionsMenuInvalidated = false;
     private Map map = new TestMap();
+    private String debugDataEndpoint;
 
     @Override
     public ActionBar getActionBar() {
@@ -52,4 +53,17 @@ public class TestBaseActivity extends BaseActivity {
     public LocationHelper.ConnectionCallbacks getConnectionCallback() {
         return connectionCallback;
     }
+
+
+    @Override
+    public void initDebugDataSubmitter() {
+        super.initDebugDataSubmitter();
+        debugDataSubmitter.setEndpoint(debugDataEndpoint);
+        debugDataSubmitter.setRunInThread(false);
+    }
+
+    public void setDebugDataEndpoint(String debugDataEndpoint) {
+        this.debugDataEndpoint = debugDataEndpoint;
+    }
+
 }
