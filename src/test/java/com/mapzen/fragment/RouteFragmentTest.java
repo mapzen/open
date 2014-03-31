@@ -406,6 +406,23 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onTouch_shouldStoreCurrentItemWhenPagerWasFirstTouched() throws Exception {
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        double[] point = instructions.get(2).getPoint();
+        fragment.onLocationChanged(getTestLocation(point[0], point[1]));
+        simulateUserPagerTouch();
+        fragment.pager.setCurrentItem(0);
+        simulateUserPagerTouch();
+        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
+        Button resume = (Button) view.findViewById(R.id.resume_button);
+        resume.performClick();
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(2);
+    }
+
+    @Test
     public void onClickResume_shouldHideResumeButton() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);

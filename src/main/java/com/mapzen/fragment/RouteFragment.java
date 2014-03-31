@@ -585,7 +585,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void turnAutoPageOff() {
-        pagerPositionWhenPaused = pager.getCurrentItem();
+        if (autoPaging) {
+            pagerPositionWhenPaused = pager.getCurrentItem();
+        }
         autoPaging = false;
         resume.setVisibility(View.VISIBLE);
     }
