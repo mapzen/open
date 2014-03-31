@@ -16,7 +16,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.UUID;
 
 public class DebugDataSubmitter {
     OkHttpClient client = new OkHttpClient();
@@ -43,9 +42,25 @@ public class DebugDataSubmitter {
         this.file = file;
     }
 
+    public void setRunInThread(boolean runInThread) {
+        this.runInThread = runInThread;
+    }
+
+    public void run() {
+        if (runInThread) {
+            executeInThread();
+        } else {
+            execute();
+        }
+    }
+
+    public String readInputStream(InputStream in) throws IOException {
+        return CharStreams.toString(new InputStreamReader(in, Charsets.UTF_8));
+    }
+
     private void submit() throws IOException {
         try {
-            URL url = new URL(endpoint + "?filename=" + UUID.randomUUID().toString());
+            URL url = new URL(endpoint);
             HttpURLConnection connection = client.open(url);
             connection.setRequestMethod("POST");
             out = connection.getOutputStream();
@@ -93,22 +108,6 @@ public class DebugDataSubmitter {
                 execute();
             }
         }).start();
-    }
-
-    public void run() {
-        if (runInThread) {
-            executeInThread();
-        } else {
-            execute();
-        }
-    }
-
-    public String readInputStream(InputStream in) throws IOException {
-        return CharStreams.toString(new InputStreamReader(in, Charsets.UTF_8));
-    }
-
-    public void setRunInThread(boolean runInThread) {
-        this.runInThread = runInThread;
     }
 }
 
