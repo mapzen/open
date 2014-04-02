@@ -50,9 +50,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <meta-data android:name="com.crashlytics.ApiKey" android:value="5e00ab0747eb48d20d4aa1f96481b30fa1816784"/>
-        <meta-data android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
 
         <service android:name=".util.GearAgentService" />
 

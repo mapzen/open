@@ -13,7 +13,6 @@ $ cd maven-android-sdk-deployer
 $ mvn install -P 4.4 # Used for building production application
 $ mvn install -P 4.3 # Used for unit tests (Robolectric)
 $ mvn install -fextras/compatibility-v4/pom.xml
-$ mvn install -fextras/google-play-services/pom.xml
 </pre></code>
 
 See [Maven Android SDK Deployer](https://github.com/mosabua/maven-android-sdk-deployer) project for more information.
