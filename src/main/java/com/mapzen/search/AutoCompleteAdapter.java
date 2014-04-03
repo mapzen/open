@@ -103,7 +103,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         byte[] bytes = cursor.getBlob(blobIndex);
         SimpleFeature simpleFeature = ParcelableUtil.unmarshall(bytes, SimpleFeature.CREATOR);
         tv.setTag(simpleFeature);
-        tv.setText(simpleFeature.getProperty(NAME));
+        tv.setText(simpleFeature.getHint());
     }
 
     @Override
