@@ -21,6 +21,7 @@ import org.oscim.map.Map;
 import org.oscim.renderer.MapRenderer;
 import org.oscim.theme.IRenderTheme;
 import org.oscim.theme.ThemeLoader;
+import org.oscim.tiling.source.OkHttpEngine;
 import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 
 import android.content.SharedPreferences;
@@ -163,7 +164,10 @@ public class MapFragment extends BaseFragment {
     }
 
     private void setupMap() {
-        baseLayer = map.setBaseMap(new OSciMap4TileSource(getTileBaseSource()));
+        final OSciMap4TileSource tileSource = new OSciMap4TileSource(getTileBaseSource());
+        tileSource.setHttpEngine(new OkHttpEngine.OkHttpFactory());
+        baseLayer = map.setBaseMap(tileSource);
+
         map.layers().add(new BuildingLayer(map, baseLayer));
         map.layers().add(new LabelLayer(map, baseLayer));
 
