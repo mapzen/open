@@ -32,6 +32,7 @@ public class SimpleFeature implements Parcelable {
             };
     private HashMap<String, String> properties = new HashMap<String, String>();
     private double lat, lon;
+    private String hint;
 
     public static SimpleFeature readFromParcel(Parcel in) {
         SimpleFeature simpleFeature = new SimpleFeature();
@@ -43,6 +44,7 @@ public class SimpleFeature implements Parcelable {
         simpleFeature.setProperty(COUNTRY_NAME, in.readString());
         simpleFeature.setProperty(ADMIN1_ABBR, in.readString());
         simpleFeature.setProperty(ADMIN1_NAME, in.readString());
+        simpleFeature.setHint(in.readString());
         return simpleFeature;
     }
 
@@ -87,6 +89,7 @@ public class SimpleFeature implements Parcelable {
         out.writeString(getProperty(COUNTRY_NAME));
         out.writeString(getProperty(ADMIN1_ABBR));
         out.writeString(getProperty(ADMIN1_NAME));
+        out.writeString(getHint());
     }
 
     @Override
@@ -94,6 +97,7 @@ public class SimpleFeature implements Parcelable {
         SimpleFeature other = (SimpleFeature) o;
         return getLat() == other.getLat()
                 && getLon() == other.getLon()
+                && getHint() == other.getHint()
                 && getProperty(NAME).equals(other.getProperty(NAME));
     }
 
@@ -123,6 +127,14 @@ public class SimpleFeature implements Parcelable {
 
     public void setLat(double lat) {
         this.lat = lat;
+    }
+
+    public String getHint() {
+        return hint;
+    }
+
+    public void setHint(String hint) {
+        this.hint = hint;
     }
 
     public static class ViewHolder {

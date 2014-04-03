@@ -9,32 +9,39 @@ import org.robolectric.annotation.Config;
 import android.os.Parcel;
 
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
 public class SimpleFeatureTest {
-    private SimpleFeature simpleFeature = new SimpleFeature();
-    private double expectedLat = Double.parseDouble("51.4993491");
-    private double expectedLon = Double.parseDouble("-0.12739091");
+    SimpleFeature simpleFeature = new SimpleFeature();
+    double expectedLat = Double.parseDouble("51.4993491");
+    double expectedLon = Double.parseDouble("-0.12739091");
+    String expectedHint = "expected hint";
 
     @Before
     public void setUp() throws Exception {
         simpleFeature = getTestSimpleFeature();
         simpleFeature.setLat(expectedLat);
         simpleFeature.setLon(expectedLon);
+        simpleFeature.setHint(expectedHint);
     }
 
     @Test
     public void hasLatDouble() throws Exception {
-        assertThat(simpleFeature.getLat(), is(expectedLat));
+        assertThat(simpleFeature.getLat()).isEqualTo(expectedLat);
     }
 
     @Test
     public void hasLonDouble() throws Exception {
-        assertThat(simpleFeature.getLon(), is(expectedLon));
+        assertThat(simpleFeature.getLon()).isEqualTo(expectedLon);
+    }
+
+    @Test
+    public void hasHint() throws Exception {
+        assertThat(simpleFeature.getHint()).isEqualTo(expectedHint);
     }
 
     @Test
@@ -43,6 +50,6 @@ public class SimpleFeatureTest {
         simpleFeature.writeToParcel(parcel, 0);
         parcel.setDataPosition(0);
         SimpleFeature newSimpleFeature = SimpleFeature.readFromParcel(parcel);
-        assertThat(simpleFeature, equalTo(newSimpleFeature));
+        assertThat(simpleFeature).isEqualTo(newSimpleFeature);
     }
 }
