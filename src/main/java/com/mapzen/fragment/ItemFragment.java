@@ -1,7 +1,7 @@
 package com.mapzen.fragment;
 
 import com.mapzen.R;
-import com.mapzen.entity.GeoFeature;
+import com.mapzen.entity.SimpleFeature;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -26,7 +26,7 @@ import static com.mapzen.MapController.getMapController;
 import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
 
 public class ItemFragment extends BaseFragment {
-    private GeoFeature geoFeature;
+    private SimpleFeature simpleFeature;
 
     @InjectView(R.id.title)
     TextView title;
@@ -47,13 +47,13 @@ public class ItemFragment extends BaseFragment {
     }
 
     private void initTitle() {
-        title.setText(geoFeature.getProperty(GeoFeature.NAME));
+        title.setText(simpleFeature.getProperty(SimpleFeature.NAME));
     }
 
     private void initAddress() {
         address.setText(String.format(Locale.getDefault(), "%s, %s",
-                geoFeature.getProperty(GeoFeature.ADMIN1_NAME),
-                geoFeature.getProperty(GeoFeature.ADMIN1_ABBR)));
+                simpleFeature.getProperty(SimpleFeature.ADMIN1_NAME),
+                simpleFeature.getProperty(SimpleFeature.ADMIN1_ABBR)));
     }
 
     @OnClick(R.id.start)
@@ -66,7 +66,7 @@ public class ItemFragment extends BaseFragment {
     }
 
     private JsonObjectRequest getRouteRequest() {
-        final RouteFragment routeFragment = RouteFragment.newInstance(act, geoFeature);
+        final RouteFragment routeFragment = RouteFragment.newInstance(act, simpleFeature);
 
         final String url = getRouteUrlForCar(getMapController().getZoomLevel(),
                 mapFragment.getUserLocationPoint(), routeFragment.getDestinationPoint());
@@ -98,11 +98,11 @@ public class ItemFragment extends BaseFragment {
         return new JsonObjectRequest(url, null, successListener, errorListener);
     }
 
-    public void setGeoFeature(GeoFeature geoFeature) {
-        this.geoFeature = geoFeature;
+    public void setSimpleFeature(SimpleFeature simpleFeature) {
+        this.simpleFeature = simpleFeature;
     }
 
-    public GeoFeature getGeoFeature() {
-        return geoFeature;
+    public SimpleFeature getSimpleFeature() {
+        return simpleFeature;
     }
 }

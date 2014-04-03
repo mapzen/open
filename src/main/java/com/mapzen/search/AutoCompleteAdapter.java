@@ -18,7 +18,7 @@ import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.android.gson.Feature;
 import com.mapzen.android.gson.Result;
-import com.mapzen.entity.GeoFeature;
+import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.util.Logger;
 import com.mapzen.util.ParcelableUtil;
@@ -28,7 +28,7 @@ import retrofit.RetrofitError;
 
 import static com.mapzen.MapzenApplication.PELIAS_BLOB;
 import static com.mapzen.android.Pelias.getPelias;
-import static com.mapzen.entity.GeoFeature.NAME;
+import static com.mapzen.entity.SimpleFeature.NAME;
 
 public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQueryTextListener {
     public static final int AUTOCOMPLETE_THRESHOLD = 3;
@@ -63,20 +63,20 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
             @Override
             public void onClick(View view) {
                 TextView tv = (TextView) view;
-                GeoFeature geoFeature = (GeoFeature) tv.getTag();
+                SimpleFeature simpleFeature = (SimpleFeature) tv.getTag();
                 app.setCurrentSearchTerm("");
                 searchView.setQuery("", false);
                 searchView.clearFocus();
                 searchView.setQuery(tv.getText(), false);
                 mapFragment.clearMarkers();
                 mapFragment.updateMap();
-                mapFragment.centerOn(geoFeature);
+                mapFragment.centerOn(simpleFeature);
                 PagerResultsFragment pagerResultsFragment = PagerResultsFragment.newInstance(act);
                 fragmentManager.beginTransaction()
                         .replace(R.id.pager_results_container, pagerResultsFragment,
                                 PagerResultsFragment.TAG).commit();
                 fragmentManager.executePendingTransactions();
-                pagerResultsFragment.add(geoFeature);
+                pagerResultsFragment.add(simpleFeature);
                 pagerResultsFragment.displayResults(1, 0);
             }
         });
@@ -101,9 +101,9 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         TextView tv = (TextView) view;
         final int blobIndex = cursor.getColumnIndex(PELIAS_BLOB);
         byte[] bytes = cursor.getBlob(blobIndex);
-        GeoFeature geoFeature = ParcelableUtil.unmarshall(bytes, GeoFeature.CREATOR);
-        tv.setTag(geoFeature);
-        tv.setText(geoFeature.getProperty(NAME));
+        SimpleFeature simpleFeature = ParcelableUtil.unmarshall(bytes, SimpleFeature.CREATOR);
+        tv.setTag(simpleFeature);
+        tv.setText(simpleFeature.getProperty(NAME));
     }
 
     @Override
@@ -138,8 +138,8 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
             public void success(Result result, retrofit.client.Response response) {
                 int i = 0;
                 for (Feature feature : result.getFeatures()) {
-                    GeoFeature geoFeature = GeoFeature.fromFeature(feature);
-                    byte[] data = ParcelableUtil.marshall(geoFeature);
+                    SimpleFeature simpleFeature = SimpleFeature.fromFeature(feature);
+                    byte[] data = ParcelableUtil.marshall(simpleFeature);
                     cursor.addRow(new Object[]{i, data});
                     i++;
                 }

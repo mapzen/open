@@ -5,7 +5,7 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.android.gson.Feature;
 import com.mapzen.core.SettingsFragment;
-import com.mapzen.entity.GeoFeature;
+import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.search.PagerResultsFragment;
 import com.mapzen.shadows.ShadowVolley;
@@ -160,9 +160,9 @@ public class BaseActivityTest {
 
     @Test
     public void onPrepareOptionsMenu_shouldHideSearchWhenResultsVisible() throws Exception {
-        ArrayList<GeoFeature> geoFeatures = new ArrayList<GeoFeature>();
-        geoFeatures.add(new GeoFeature());
-        Fragment fragment = ListResultsFragment.newInstance(activity, geoFeatures);
+        ArrayList<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
+        simpleFeatures.add(new SimpleFeature());
+        Fragment fragment = ListResultsFragment.newInstance(activity, simpleFeatures);
         activity.getSupportFragmentManager().beginTransaction()
                 .add(fragment, ListResultsFragment.TAG)
                 .commit();

@@ -6,7 +6,7 @@ import com.mapzen.activity.BaseActivity;
 import com.mapzen.android.PeliasService;
 import com.mapzen.android.TestPelias;
 import com.mapzen.android.gson.Result;
-import com.mapzen.entity.GeoFeature;
+import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
@@ -114,15 +114,15 @@ public class PagerResultsFragmentTest {
 
     @Test
     public void displayResults_shouldShowMultiResultHeaderForMultipleResults() throws Exception {
-        fragment.add(new GeoFeature());
-        fragment.add(new GeoFeature());
+        fragment.add(new SimpleFeature());
+        fragment.add(new SimpleFeature());
         fragment.displayResults(2, 0);
         assertThat(fragment.multiResultHeader).isVisible();
     }
 
     @Test
     public void displayResults_shouldHideMultiResultHeaderForSingleResult() throws Exception {
-        fragment.add(new GeoFeature());
+        fragment.add(new SimpleFeature());
         fragment.displayResults(1, 0);
         assertThat(fragment.multiResultHeader).isGone();
     }

@@ -21,7 +21,7 @@ import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.SearchViewAdapter;
 import com.mapzen.android.gson.Feature;
 import com.mapzen.android.gson.Result;
-import com.mapzen.entity.GeoFeature;
+import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
 import com.mapzen.fragment.ItemFragment;
 import com.mapzen.fragment.ListResultsFragment;
@@ -42,7 +42,7 @@ import static com.mapzen.android.Pelias.getPelias;
 public class PagerResultsFragment extends BaseFragment {
     public static final String TAG = PagerResultsFragment.class.getSimpleName();
     private List<ItemFragment> currentCollection = new ArrayList<ItemFragment>();
-    private ArrayList<GeoFeature> geoFeatures = new ArrayList<GeoFeature>();
+    private ArrayList<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
     private static final String PAGINATE_TEMPLATE = "%2d of %2d RESULTS";
 
     @InjectView(R.id.multi_result_header)
@@ -84,7 +84,7 @@ public class PagerResultsFragment extends BaseFragment {
     @OnClick(R.id.view_all)
     @SuppressWarnings("unused")
     public void onClickViewAll() {
-        final Fragment fragment = ListResultsFragment.newInstance(act, geoFeatures);
+        final Fragment fragment = ListResultsFragment.newInstance(act, simpleFeatures);
         act.getSupportFragmentManager().beginTransaction()
                 .add(R.id.full_list, fragment, ListResultsFragment.TAG)
                 .addToBackStack(null)
@@ -122,12 +122,12 @@ public class PagerResultsFragment extends BaseFragment {
 
     private void centerOnPlace(int i, double zoom) {
         ItemFragment srf = currentCollection.get(i);
-        GeoFeature geoFeature = srf.getGeoFeature();
-        Logger.d("geoFeature: " + geoFeature.toString());
+        SimpleFeature simpleFeature = srf.getSimpleFeature();
+        Logger.d("simpleFeature: " + simpleFeature.toString());
         String indicatorText = String.format(Locale.getDefault(), PAGINATE_TEMPLATE, i + 1,
                 currentCollection.size());
         indicator.setText(indicatorText);
-        mapFragment.centerOn(geoFeature, zoom);
+        mapFragment.centerOn(simpleFeature, zoom);
     }
 
     private void hide() {
@@ -141,8 +141,8 @@ public class PagerResultsFragment extends BaseFragment {
         mapFragment.updateMap();
     }
 
-    public void flipTo(GeoFeature geoFeature) {
-        int pos = geoFeatures.indexOf(geoFeature);
+    public void flipTo(SimpleFeature simpleFeature) {
+        int pos = simpleFeatures.indexOf(simpleFeature);
         pager.setCurrentItem(pos);
     }
 
@@ -154,26 +154,26 @@ public class PagerResultsFragment extends BaseFragment {
             pager.setCurrentItem(0);
         }
         currentCollection.clear();
-        geoFeatures.clear();
+        simpleFeatures.clear();
     }
 
-    public void add(GeoFeature geoFeature) {
-        Logger.d(geoFeature.toString());
-        addMarker(geoFeature);
+    public void add(SimpleFeature simpleFeature) {
+        Logger.d(simpleFeature.toString());
+        addMarker(simpleFeature);
         ItemFragment itemFragment = new ItemFragment();
-        itemFragment.setGeoFeature(geoFeature);
+        itemFragment.setSimpleFeature(simpleFeature);
         itemFragment.setMapFragment(mapFragment);
         itemFragment.setAct(act);
         currentCollection.add(itemFragment);
-        geoFeatures.add(geoFeature);
+        simpleFeatures.add(simpleFeature);
     }
 
     public void setSearchResults(List<Feature> features) {
         clearAll();
         if (features.size() > 0) {
             for (Feature feature: features) {
-                GeoFeature geoFeature = GeoFeature.fromFeature(feature);
-                add(geoFeature);
+                SimpleFeature simpleFeature = SimpleFeature.fromFeature(feature);
+                add(simpleFeature);
             }
             displayResults(features.size(), pager.getCurrentItem());
         } else {
@@ -226,7 +226,7 @@ public class PagerResultsFragment extends BaseFragment {
         }
     }
 
-    private void addMarker(GeoFeature geoFeature) {
-        mapFragment.addPoi(geoFeature);
+    private void addMarker(SimpleFeature simpleFeature) {
+        mapFragment.addPoi(simpleFeature);
     }
 }

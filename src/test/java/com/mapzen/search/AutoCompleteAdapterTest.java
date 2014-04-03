@@ -7,7 +7,7 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.SearchViewAdapter;
-import com.mapzen.entity.GeoFeature;
+import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.ItemFragment;
 import com.mapzen.support.DummyActivity;
 import com.mapzen.support.MapzenTestRunner;
@@ -19,7 +19,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.tester.android.database.TestCursor;
 import org.robolectric.util.ActivityController;
 
-import static com.mapzen.support.TestHelper.getTestGeoFeature;
+import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -33,7 +33,7 @@ public class AutoCompleteAdapterTest {
     private BaseActivity baseActivity;
     private View view;
     private FragmentManager fragmentManager;
-    private GeoFeature geoFeature;
+    private SimpleFeature simpleFeature;
 
     @Before
     public void setUp() throws Exception {
@@ -46,8 +46,8 @@ public class AutoCompleteAdapterTest {
         adapter.setSearchView(baseActivity.getSearchView());
         adapter.setMapFragment(initMapFragment(baseActivity));
         view = adapter.newView(baseActivity, new TestCursor(), new FrameLayout(baseActivity));
-        geoFeature = getTestGeoFeature();
-        view.setTag(geoFeature);
+        simpleFeature = getTestSimpleFeature();
+        view.setTag(simpleFeature);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class AutoCompleteAdapterTest {
         SearchViewAdapter searchViewAdapter = (SearchViewAdapter)
                 pagerResultsFragment.pager.getAdapter();
         ItemFragment itemFragment = (ItemFragment) searchViewAdapter.getItem(0);
-        assertThat(itemFragment.getGeoFeature()).isSameAs(geoFeature);
+        assertThat(itemFragment.getSimpleFeature()).isSameAs(simpleFeature);
     }
 
     @Test
