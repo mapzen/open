@@ -11,9 +11,9 @@ import static android.provider.BaseColumns._ID;
 
 public class MapzenApplication extends Application {
     public static final int HTTP_REQUEST_TIMEOUT_MS = 500;
-    public static final String PELIAS_TEXT = "text";
+    public static final String PELIAS_BLOB = "text";
     private final String[] columns = {
-            _ID, PELIAS_TEXT
+            _ID, PELIAS_BLOB
     };
     public static final String LOG_TAG = "Mapzen: ";
     private String currentSearchTerm = "";

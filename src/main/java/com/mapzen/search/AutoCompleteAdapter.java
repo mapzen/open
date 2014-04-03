@@ -26,7 +26,7 @@ import com.mapzen.util.ParcelableUtil;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 
-import static com.mapzen.MapzenApplication.PELIAS_TEXT;
+import static com.mapzen.MapzenApplication.PELIAS_BLOB;
 import static com.mapzen.android.Pelias.getPelias;
 import static com.mapzen.entity.GeoFeature.NAME;
 
@@ -99,11 +99,11 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     @Override
     public void bindView(View view, Context c, Cursor cursor) {
         TextView tv = (TextView) view;
-        final int textIndex = cursor.getColumnIndex(PELIAS_TEXT);
-        byte[] bytes = cursor.getBlob(textIndex);
-        GeoFeature f = ParcelableUtil.unmarshall(bytes, GeoFeature.CREATOR);
-        tv.setTag(f);
-        tv.setText(f.getProperty(NAME));
+        final int blobIndex = cursor.getColumnIndex(PELIAS_BLOB);
+        byte[] bytes = cursor.getBlob(blobIndex);
+        GeoFeature geoFeature = ParcelableUtil.unmarshall(bytes, GeoFeature.CREATOR);
+        tv.setTag(geoFeature);
+        tv.setText(geoFeature.getProperty(NAME));
     }
 
     @Override
