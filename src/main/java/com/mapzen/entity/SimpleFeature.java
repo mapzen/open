@@ -1,7 +1,6 @@
 package com.mapzen.entity;
 
 import com.mapzen.android.gson.Feature;
-import com.mapzen.geo.Geometry;
 
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.marker.MarkerItem;
@@ -32,7 +31,7 @@ public class SimpleFeature implements Parcelable {
                 }
             };
     private HashMap<String, String> properties = new HashMap<String, String>();
-    private Geometry geometry = new Geometry();
+    private double lat, lon;
 
     public static SimpleFeature readFromParcel(Parcel in) {
         SimpleFeature simpleFeature = new SimpleFeature();
@@ -111,19 +110,19 @@ public class SimpleFeature implements Parcelable {
     }
 
     public double getLon() {
-        return geometry.getLon();
+        return lon;
     }
 
     public void setLon(double lon) {
-        geometry.setLon(lon);
+        this.lon = lon;
     }
 
     public double getLat() {
-        return geometry.getLat();
+        return lat;
     }
 
     public void setLat(double lat) {
-        geometry.setLat(lat);
+        this.lat = lat;
     }
 
     public static class ViewHolder {
