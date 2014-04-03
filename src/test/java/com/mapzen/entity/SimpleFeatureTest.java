@@ -10,8 +10,6 @@ import android.os.Parcel;
 
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)

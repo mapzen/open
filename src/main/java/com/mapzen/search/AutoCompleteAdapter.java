@@ -28,7 +28,6 @@ import retrofit.RetrofitError;
 
 import static com.mapzen.MapzenApplication.PELIAS_BLOB;
 import static com.mapzen.android.Pelias.getPelias;
-import static com.mapzen.entity.SimpleFeature.NAME;
 
 public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQueryTextListener {
     public static final int AUTOCOMPLETE_THRESHOLD = 3;
