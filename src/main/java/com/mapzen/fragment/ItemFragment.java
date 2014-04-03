@@ -16,8 +16,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Locale;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -26,16 +24,13 @@ import static com.mapzen.MapController.getMapController;
 import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
 
 public class ItemFragment extends BaseFragment {
-    private SimpleFeature simpleFeature;
-
     @InjectView(R.id.title)
     TextView title;
-
     @InjectView(R.id.address)
     TextView address;
-
     @InjectView(R.id.start)
     TextView startButton;
+    private SimpleFeature simpleFeature;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
@@ -94,11 +89,11 @@ public class ItemFragment extends BaseFragment {
         return new JsonObjectRequest(url, null, successListener, errorListener);
     }
 
-    public void setSimpleFeature(SimpleFeature simpleFeature) {
-        this.simpleFeature = simpleFeature;
-    }
-
     public SimpleFeature getSimpleFeature() {
         return simpleFeature;
+    }
+
+    public void setSimpleFeature(SimpleFeature simpleFeature) {
+        this.simpleFeature = simpleFeature;
     }
 }
