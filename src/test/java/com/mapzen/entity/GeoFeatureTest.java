@@ -14,45 +14,45 @@ import static org.junit.Assert.assertThat;
 
 @Config(emulateSdk = 18)
 @RunWith(RobolectricTestRunner.class)
-public class FeatureTest {
-    private Feature feature = new Feature();
+public class GeoFeatureTest {
+    private GeoFeature geoFeature = new GeoFeature();
     private double expectedLat = Double.parseDouble("51.4993491");
     private double expectedLon = Double.parseDouble("-0.12739091");
 
     @Before
     public void setUp() throws Exception {
         JSONObject json = new JSONObject("{\""
-                + "type\":\"Feature\","
+                + "type\":\"GeoFeature\","
                 + "\"geometry\":"
                 + "{\"type\":\"Point\","
                 + "\"coordinates\": [-0.12739091,51.4993491]},"
                 + "\"properties\":"
-                + "{\"name\":\"Feature Name to Display\","
+                + "{\"name\":\"GeoFeature Name to Display\","
                 + "\"type\":\"testDescription\","
                 + "\"country_code\":\"testUS\","
                 + "\"country_name\":\"testUnited States\","
                 + "\"admin1_abbr\":\"testNY\","
                 + "\"admin1_name\":\"testNew York\","
                 + "\"marker-color\":\"#F00\"}}");
-        feature.buildFromJSON(json);
+        geoFeature.buildFromJSON(json);
     }
 
     @Test
     public void hasLatDouble() throws Exception {
-        assertThat(feature.getLat(), is(expectedLat));
+        assertThat(geoFeature.getLat(), is(expectedLat));
     }
 
     @Test
     public void hasLonDouble() throws Exception {
-        assertThat(feature.getLon(), is(expectedLon));
+        assertThat(geoFeature.getLon(), is(expectedLon));
     }
 
     @Test
     public void isParcelable() throws Exception {
         Parcel parcel = Parcel.obtain();
-        feature.writeToParcel(parcel, 0);
+        geoFeature.writeToParcel(parcel, 0);
         parcel.setDataPosition(0);
-        Feature newFeature = Feature.readFromParcel(parcel);
-        assertThat(feature, equalTo(newFeature));
+        GeoFeature newGeoFeature = GeoFeature.readFromParcel(parcel);
+        assertThat(geoFeature, equalTo(newGeoFeature));
     }
 }

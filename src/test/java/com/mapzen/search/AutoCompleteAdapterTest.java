@@ -7,7 +7,7 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.SearchViewAdapter;
-import com.mapzen.entity.Feature;
+import com.mapzen.entity.GeoFeature;
 import com.mapzen.fragment.ItemFragment;
 import com.mapzen.support.DummyActivity;
 import com.mapzen.support.MapzenTestRunner;
@@ -19,7 +19,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.tester.android.database.TestCursor;
 import org.robolectric.util.ActivityController;
 
-import static com.mapzen.support.TestHelper.getTestFeature;
+import static com.mapzen.support.TestHelper.getTestGeoFeature;
 import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -33,7 +33,7 @@ public class AutoCompleteAdapterTest {
     private BaseActivity baseActivity;
     private View view;
     private FragmentManager fragmentManager;
-    private Feature feature;
+    private GeoFeature geoFeature;
 
     @Before
     public void setUp() throws Exception {
@@ -46,8 +46,8 @@ public class AutoCompleteAdapterTest {
         adapter.setSearchView(baseActivity.getSearchView());
         adapter.setMapFragment(initMapFragment(baseActivity));
         view = adapter.newView(baseActivity, new TestCursor(), new FrameLayout(baseActivity));
-        feature = getTestFeature();
-        view.setTag(feature);
+        geoFeature = getTestGeoFeature();
+        view.setTag(geoFeature);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class AutoCompleteAdapterTest {
         SearchViewAdapter searchViewAdapter = (SearchViewAdapter)
                 pagerResultsFragment.pager.getAdapter();
         ItemFragment itemFragment = (ItemFragment) searchViewAdapter.getItem(0);
-        assertThat(itemFragment.getFeature()).isSameAs(feature);
+        assertThat(itemFragment.getGeoFeature()).isSameAs(geoFeature);
     }
 
     @Test

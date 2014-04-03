@@ -12,7 +12,7 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.PlaceArrayAdapter;
-import com.mapzen.entity.Feature;
+import com.mapzen.entity.GeoFeature;
 import com.mapzen.search.PagerResultsFragment;
 
 import java.util.ArrayList;
@@ -80,10 +80,11 @@ public class ListResultsFragment extends ListFragment {
                 .getCurrentSearchTerm(), false);
     }
 
-    public static ListResultsFragment newInstance(BaseActivity act, ArrayList<Feature> features) {
+    public static ListResultsFragment newInstance(BaseActivity act,
+            ArrayList<GeoFeature> geoFeatures) {
         listResultsFragment = new ListResultsFragment();
         PlaceArrayAdapter placeArrayAdapter = new PlaceArrayAdapter(act,
-                android.R.layout.simple_list_item_1, features);
+                android.R.layout.simple_list_item_1, geoFeatures);
         listResultsFragment.setListAdapter(placeArrayAdapter);
         listResultsFragment.setAct(act);
         return listResultsFragment;

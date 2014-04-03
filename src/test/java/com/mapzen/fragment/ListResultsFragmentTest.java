@@ -2,7 +2,7 @@ package com.mapzen.fragment;
 
 import android.view.MenuItem;
 import com.mapzen.MapzenApplication;
-import com.mapzen.entity.Feature;
+import com.mapzen.entity.GeoFeature;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestActionBar;
 import com.mapzen.support.TestBaseActivity;
@@ -32,9 +32,9 @@ public class ListResultsFragmentTest {
     public void setUp() throws Exception {
         menu = new TestMenu();
         act = initBaseActivityWithMenu(menu);
-        Feature feature = new Feature();
-        ArrayList<Feature> list = new ArrayList<Feature>();
-        list.add(feature);
+        GeoFeature geoFeature = new GeoFeature();
+        ArrayList<GeoFeature> list = new ArrayList<GeoFeature>();
+        list.add(geoFeature);
         fragment = ListResultsFragment.newInstance(act, list);
         startFragment(fragment);
     }

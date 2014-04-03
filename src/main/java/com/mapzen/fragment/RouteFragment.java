@@ -2,7 +2,7 @@ package com.mapzen.fragment;
 
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
-import com.mapzen.entity.Feature;
+import com.mapzen.entity.GeoFeature;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.routing.RoutingListener;
@@ -64,7 +64,7 @@ import butterknife.OnClick;
 
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
-import static com.mapzen.entity.Feature.NAME;
+import static com.mapzen.entity.GeoFeature.NAME;
 import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
@@ -91,7 +91,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private RoutesAdapter adapter;
     private Route route;
     private LocationReceiver locationReceiver;
-    private Feature feature;
+    private GeoFeature geoFeature;
     private DistanceView distanceLeftView;
     private int previousPosition;
     private String routeId;
@@ -106,11 +106,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private boolean isReRouting = false;
     private boolean autoPaging = true;
 
-    public static RouteFragment newInstance(BaseActivity act, Feature feature) {
+    public static RouteFragment newInstance(BaseActivity act, GeoFeature geoFeature) {
         final RouteFragment fragment = new RouteFragment();
         fragment.setAct(act);
         fragment.setMapFragment(act.getMapFragment());
-        fragment.setFeature(feature);
+        fragment.setGeoFeature(geoFeature);
         fragment.setRoutingListener(fragment);
         return fragment;
     }
@@ -122,7 +122,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         ButterKnife.inject(this, rootView);
         adapter = new RoutesAdapter(act, instructions);
         TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
-        destinationName.setText(feature.getProperty(NAME));
+        destinationName.setText(geoFeature.getProperty(NAME));
         distanceLeftView = (DistanceView) rootView.findViewById(R.id.destination_distance);
         distanceLeftView.setRealTime(true);
         if (route != null) {
@@ -291,16 +291,16 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         this.instructions = instructions;
     }
 
-    public Feature getFeature() {
-        return feature;
+    public GeoFeature getGeoFeature() {
+        return geoFeature;
     }
 
-    public void setFeature(Feature feature) {
-        this.feature = feature;
+    public void setGeoFeature(GeoFeature geoFeature) {
+        this.geoFeature = geoFeature;
     }
 
     public GeoPoint getDestinationPoint() {
-        return feature.getGeoPoint();
+        return geoFeature.getGeoPoint();
     }
 
     private void initProximityAlerts() {

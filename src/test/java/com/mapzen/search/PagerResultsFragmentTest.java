@@ -1,37 +1,50 @@
 package com.mapzen.search;
 
-import android.widget.SearchView;
-import android.widget.Toast;
-import com.android.volley.Request;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
-import com.mapzen.entity.Feature;
+import com.mapzen.android.PeliasService;
+import com.mapzen.android.TestPelias;
+import com.mapzen.android.gson.Result;
+import com.mapzen.entity.GeoFeature;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.util.MapzenProgressDialogFragment;
-import org.json.JSONObject;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.util.FragmentTestUtil;
 
-import java.util.Iterator;
-import java.util.List;
+import android.widget.SearchView;
+import android.widget.Toast;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
 
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.verify;
 import static org.robolectric.Robolectric.application;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class PagerResultsFragmentTest {
+    PeliasService peliasServiceMock;
+    @Captor
+    @SuppressWarnings("unused")
+    ArgumentCaptor<Callback<Result>> peliasCallback;
     private PagerResultsFragment fragment;
     private MapzenApplication app;
     private BaseActivity act;
@@ -39,7 +52,9 @@ public class PagerResultsFragmentTest {
 
     @Before
     public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
         ShadowVolley.clearMockRequestQueue();
+        peliasServiceMock = TestPelias.getPeliasMock();
         menu = new TestMenu();
         act = initBaseActivityWithMenu(menu);
         initMapFragment(act);
@@ -69,27 +84,13 @@ public class PagerResultsFragmentTest {
     }
 
     @Test
-    public void executeSearchOnMap_shouldCancelOutstandingAutoCompleteRequests() throws Exception {
-        app.enqueueApiRequest(Feature.suggest("Empire", null, null));
-        app.enqueueApiRequest(Feature.suggest("Empire State", null, null));
-        fragment.executeSearchOnMap(new SearchView(app), "Empire State Building");
-        List<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
-        assertThat(requestSet).hasSize(3);
-
-        Iterator<Request> iterator = requestSet.iterator();
-        assertRequest(iterator.next());
-        assertRequest(iterator.next());
-        assertRequest(iterator.next());
-    }
-
-    @Test
     public void executeSearchOnMap_shouldDismissProgressDialogOnError() throws Exception {
         MapzenProgressDialogFragment dialogFragment = act.getProgressDialogFragment();
         fragment.executeSearchOnMap(new SearchView(app), "Empire State Building");
         assertThat(dialogFragment).isAdded();
-        List<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
-        Request<JSONObject> request = requestSet.iterator().next();
-        request.deliverError(null);
+        verify(peliasServiceMock).getSearch(eq("Empire State Building"), anyString(),
+                peliasCallback.capture());
+        peliasCallback.getValue().failure(RetrofitError.unexpectedError("", null));
         assertThat(dialogFragment).isNotAdded();
     }
 
@@ -97,9 +98,9 @@ public class PagerResultsFragmentTest {
     public void executeSearchOnMap_shouldToastAnError() {
         fragment.executeSearchOnMap(new SearchView(app), "Empire State Building");
         assertThat(act.getProgressDialogFragment()).isAdded();
-        List<Request> requestSet = ShadowVolley.getMockRequestQueue().getRequests();
-        Request<JSONObject> request = requestSet.iterator().next();
-        request.deliverError(null);
+        verify(peliasServiceMock).getSearch(eq("Empire State Building"), anyString(),
+                peliasCallback.capture());
+        peliasCallback.getValue().failure(RetrofitError.unexpectedError("", null));
         assertThat(ShadowToast.getTextOfLatestToast())
                 .isEqualTo(app.getString(R.string.generic_server_error));
         assertThat(ShadowToast.getLatestToast()).hasDuration(Toast.LENGTH_LONG);
@@ -113,24 +114,16 @@ public class PagerResultsFragmentTest {
 
     @Test
     public void displayResults_shouldShowMultiResultHeaderForMultipleResults() throws Exception {
-        fragment.add(new Feature());
-        fragment.add(new Feature());
+        fragment.add(new GeoFeature());
+        fragment.add(new GeoFeature());
         fragment.displayResults(2, 0);
         assertThat(fragment.multiResultHeader).isVisible();
     }
 
     @Test
     public void displayResults_shouldHideMultiResultHeaderForSingleResult() throws Exception {
-        fragment.add(new Feature());
+        fragment.add(new GeoFeature());
         fragment.displayResults(1, 0);
         assertThat(fragment.multiResultHeader).isGone();
-    }
-
-    private void assertRequest(Request request) {
-        if (request.getUrl().contains("Building")) {
-            assertThat(request.isCanceled()).isFalse();
-        } else {
-            assertThat(request.isCanceled()).isTrue();
-        }
     }
 }

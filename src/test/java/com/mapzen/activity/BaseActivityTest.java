@@ -3,8 +3,9 @@ package com.mapzen.activity;
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
+import com.mapzen.android.gson.Feature;
 import com.mapzen.core.SettingsFragment;
-import com.mapzen.entity.Feature;
+import com.mapzen.entity.GeoFeature;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.search.PagerResultsFragment;
 import com.mapzen.shadows.ShadowVolley;
@@ -18,8 +19,6 @@ import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
 import org.fest.assertions.data.Offset;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,6 +41,7 @@ import android.widget.SearchView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
@@ -49,6 +49,7 @@ import static android.location.LocationManager.NETWORK_PROVIDER;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.location.LocationHelper.ConnectionCallbacks;
 import static com.mapzen.support.TestHelper.enableDebugMode;
+import static com.mapzen.support.TestHelper.getTestFeature;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -159,9 +160,9 @@ public class BaseActivityTest {
 
     @Test
     public void onPrepareOptionsMenu_shouldHideSearchWhenResultsVisible() throws Exception {
-        ArrayList<Feature> features = new ArrayList<Feature>();
-        features.add(new Feature());
-        Fragment fragment = ListResultsFragment.newInstance(activity, features);
+        ArrayList<GeoFeature> geoFeatures = new ArrayList<GeoFeature>();
+        geoFeatures.add(new GeoFeature());
+        Fragment fragment = ListResultsFragment.newInstance(activity, geoFeatures);
         activity.getSupportFragmentManager().beginTransaction()
                 .add(fragment, ListResultsFragment.TAG)
                 .commit();
@@ -254,10 +255,10 @@ public class BaseActivityTest {
                         PagerResultsFragment.TAG)
                 .commit();
 
-        JSONArray jsonArray = new JSONArray();
-        jsonArray.put(new JSONObject());
-        jsonArray.put(new JSONObject());
-        pagerResultsFragment.setSearchResults(jsonArray);
+        List<Feature> features = new ArrayList<Feature>();
+        features.add(getTestFeature());
+        features.add(getTestFeature());
+        pagerResultsFragment.setSearchResults(features);
         pagerResultsFragment.setCurrentItem(0);
         activity.getMapFragment().getOnPoiClickListener().onPoiClick(1, null);
         assertThat(pagerResultsFragment.getCurrentItem()).isEqualTo(1);

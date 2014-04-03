@@ -25,7 +25,7 @@ import static com.mapzen.shadows.ShadowVolley.MockRequestQueue;
 import static com.mapzen.shadows.ShadowVolley.clearMockRequestQueue;
 import static com.mapzen.shadows.ShadowVolley.getMockRequestQueue;
 import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
-import static com.mapzen.support.TestHelper.getTestFeature;
+import static com.mapzen.support.TestHelper.getTestGeoFeature;
 import static com.mapzen.support.TestHelper.initBaseActivity;
 import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
@@ -50,7 +50,7 @@ public class ItemFragmentTest {
 
     private void initItemFragment() {
         itemFragment = new ItemFragment();
-        itemFragment.setFeature(getTestFeature());
+        itemFragment.setGeoFeature(getTestGeoFeature());
         itemFragment.setMapFragment(initMapFragment(act));
         itemFragment.setAct(act);
     }
@@ -62,7 +62,7 @@ public class ItemFragmentTest {
 
     @Test
     public void shouldHaveTitle() throws Exception {
-        assertThat(itemFragment.title).hasText("Test Feature");
+        assertThat(itemFragment.title).hasText("Test GeoFeature");
         assertThat(itemFragment.title).hasEllipsize(TextUtils.TruncateAt.END);
         assertThat(itemFragment.title).hasMaxLines(1);
     }
