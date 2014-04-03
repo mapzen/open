@@ -41,19 +41,15 @@ public class ItemFragment extends BaseFragment {
             Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.search_item, container, false);
         ButterKnife.inject(this, view);
-        initTitle();
-        initAddress();
+        initView();
         return view;
     }
 
-    private void initTitle() {
-        title.setText(simpleFeature.getProperty(SimpleFeature.NAME));
-    }
-
-    private void initAddress() {
-        address.setText(String.format(Locale.getDefault(), "%s, %s",
-                simpleFeature.getProperty(SimpleFeature.ADMIN1_NAME),
-                simpleFeature.getProperty(SimpleFeature.ADMIN1_ABBR)));
+    private void initView() {
+        SimpleFeature.ViewHolder holder = new SimpleFeature.ViewHolder();
+        holder.setTitle(title);
+        holder.setAddress(address);
+        holder.setFromFeature(simpleFeature);
     }
 
     @OnClick(R.id.start)

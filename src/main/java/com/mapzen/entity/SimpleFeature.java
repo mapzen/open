@@ -18,6 +18,7 @@ public class SimpleFeature implements Parcelable {
     public static final String COUNTRY_CODE = "country_code";
     public static final String COUNTRY_NAME = "country_name";
     public static final String ADMIN1_ABBR = "admin1_abbr";
+    public static final String ADMIN0_ABBR = "admin0_abbr";
     public static final String ADMIN1_NAME = "admin1_name";
     public static final Parcelable.Creator<SimpleFeature> CREATOR =
             new Parcelable.Creator<SimpleFeature>() {
@@ -44,6 +45,7 @@ public class SimpleFeature implements Parcelable {
         simpleFeature.setProperty(COUNTRY_NAME, in.readString());
         simpleFeature.setProperty(ADMIN1_ABBR, in.readString());
         simpleFeature.setProperty(ADMIN1_NAME, in.readString());
+        simpleFeature.setProperty(ADMIN0_ABBR, in.readString());
         simpleFeature.setHint(in.readString());
         return simpleFeature;
     }
@@ -53,6 +55,7 @@ public class SimpleFeature implements Parcelable {
         simpleFeature.setProperty(NAME, feature.getProperties().getName());
         simpleFeature.setProperty(ADMIN1_NAME, feature.getProperties().getAdmin1_name());
         simpleFeature.setProperty(ADMIN1_ABBR, feature.getProperties().getAdmin1_abbr());
+        simpleFeature.setProperty(ADMIN0_ABBR, feature.getProperties().getAdmin0_abbr());
         simpleFeature.setLon(feature.getGeometry().getCoordinates().get(0));
         simpleFeature.setLat(feature.getGeometry().getCoordinates().get(1));
         simpleFeature.setHint(feature.getProperties().getHint());
@@ -90,6 +93,7 @@ public class SimpleFeature implements Parcelable {
         out.writeString(getProperty(COUNTRY_NAME));
         out.writeString(getProperty(ADMIN1_ABBR));
         out.writeString(getProperty(ADMIN1_NAME));
+        out.writeString(getProperty(ADMIN0_ABBR));
         out.writeString(getHint());
     }
 
@@ -138,6 +142,14 @@ public class SimpleFeature implements Parcelable {
         this.hint = hint;
     }
 
+    public String getAbbr() {
+        if (getProperty(ADMIN1_ABBR) != null) {
+            return getProperty(ADMIN1_ABBR);
+        } else {
+            return getProperty(ADMIN0_ABBR);
+        }
+    }
+
     public static class ViewHolder {
         private TextView title;
         private TextView address;
@@ -155,7 +167,7 @@ public class SimpleFeature implements Parcelable {
                 title.setText(simpleFeature.getProperty(NAME));
                 address.setText(String.format(Locale.getDefault(), "%s, %s",
                         simpleFeature.getProperty(ADMIN1_NAME),
-                        simpleFeature.getProperty(ADMIN1_ABBR)));
+                        simpleFeature.getAbbr()));
             }
         }
     }
