@@ -136,11 +136,6 @@
         <!-- <module name="AvoidInlineConditionals"/> -->
         <module name="EmptyStatement"/>
         <module name="EqualsHashCode"/>
-        <module name="HiddenField">
-          <property name="ignoreConstructorParameter" value="true"/>
-          <property name="ignoreSetter" value="true"/>
-          <property name="severity" value="warning"/>
-        </module>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
         <module name="MagicNumber">
@@ -172,10 +167,6 @@
         <!-- See http://checkstyle.sf.net/config_misc.html -->
         <module name="ArrayTypeStyle"/>
         <!-- <module name="FinalParameters"/> -->
-        <module name="TodoComment">
-          <property name="format" value="TODO"/>
-          <property name="severity" value="info"/>
-        </module>
         <module name="UpperEll"/>
 
         <module name="FileContentsHolder"/> <!-- Required by comment suppression filters -->

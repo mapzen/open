@@ -13,21 +13,21 @@ import android.widget.Toast;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
+import retrofit.Callback;
+import retrofit.RetrofitError;
 
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.SearchViewAdapter;
-import com.mapzen.entity.Feature;
+import com.mapzen.android.gson.Feature;
+import com.mapzen.android.gson.Result;
+import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
 import com.mapzen.fragment.ItemFragment;
 import com.mapzen.fragment.ListResultsFragment;
+import com.mapzen.util.ApiHelper;
 import com.mapzen.util.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 
@@ -37,11 +37,12 @@ import java.util.Locale;
 
 import static com.mapzen.MapController.DEFAULT_ZOOMLEVEL;
 import static com.mapzen.MapController.getMapController;
+import static com.mapzen.android.Pelias.getPelias;
 
 public class PagerResultsFragment extends BaseFragment {
     public static final String TAG = PagerResultsFragment.class.getSimpleName();
     private List<ItemFragment> currentCollection = new ArrayList<ItemFragment>();
-    private ArrayList<Feature> features = new ArrayList<Feature>();
+    private ArrayList<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
     private static final String PAGINATE_TEMPLATE = "%2d of %2d RESULTS";
 
     @InjectView(R.id.multi_result_header)
@@ -83,7 +84,7 @@ public class PagerResultsFragment extends BaseFragment {
     @OnClick(R.id.view_all)
     @SuppressWarnings("unused")
     public void onClickViewAll() {
-        final Fragment fragment = ListResultsFragment.newInstance(act, features);
+        final Fragment fragment = ListResultsFragment.newInstance(act, simpleFeatures);
         act.getSupportFragmentManager().beginTransaction()
                 .add(R.id.full_list, fragment, ListResultsFragment.TAG)
                 .addToBackStack(null)
@@ -121,12 +122,12 @@ public class PagerResultsFragment extends BaseFragment {
 
     private void centerOnPlace(int i, double zoom) {
         ItemFragment srf = currentCollection.get(i);
-        Feature feature = srf.getFeature();
-        Logger.d("feature: " + feature.toString());
+        SimpleFeature simpleFeature = srf.getSimpleFeature();
+        Logger.d("simpleFeature: " + simpleFeature.toString());
         String indicatorText = String.format(Locale.getDefault(), PAGINATE_TEMPLATE, i + 1,
                 currentCollection.size());
         indicator.setText(indicatorText);
-        mapFragment.centerOn(feature, zoom);
+        mapFragment.centerOn(simpleFeature, zoom);
     }
 
     private void hide() {
@@ -140,8 +141,8 @@ public class PagerResultsFragment extends BaseFragment {
         mapFragment.updateMap();
     }
 
-    public void flipTo(Feature feature) {
-        int pos = features.indexOf(feature);
+    public void flipTo(SimpleFeature simpleFeature) {
+        int pos = simpleFeatures.indexOf(simpleFeature);
         pager.setCurrentItem(pos);
     }
 
@@ -149,35 +150,32 @@ public class PagerResultsFragment extends BaseFragment {
         Logger.d(String.format(Locale.US, "clearing all items: %d", currentCollection.size()));
         ItemizedLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
         poiLayer.removeAllItems();
-        pager.setCurrentItem(0);
+        if (pager != null) {
+            pager.setCurrentItem(0);
+        }
         currentCollection.clear();
-        features.clear();
+        simpleFeatures.clear();
     }
 
-    public void add(Feature feature) {
-        Logger.d(feature.toString());
-        addMarker(feature);
+    public void add(SimpleFeature simpleFeature) {
+        Logger.d(simpleFeature.toString());
+        addMarker(simpleFeature);
         ItemFragment itemFragment = new ItemFragment();
-        itemFragment.setFeature(feature);
+        itemFragment.setSimpleFeature(simpleFeature);
         itemFragment.setMapFragment(mapFragment);
         itemFragment.setAct(act);
         currentCollection.add(itemFragment);
-        features.add(feature);
+        simpleFeatures.add(simpleFeature);
     }
 
-    public void setSearchResults(JSONArray jsonArray) {
+    public void setSearchResults(List<Feature> features) {
         clearAll();
-        if (jsonArray.length() > 0) {
-            for (int i = 0; i < jsonArray.length(); i++) {
-                Feature feature = new Feature();
-                try {
-                    feature.buildFromJSON(jsonArray.getJSONObject(i));
-                } catch (JSONException e) {
-                    Logger.e(e.toString());
-                }
-                add(feature);
+        if (features.size() > 0) {
+            for (Feature feature: features) {
+                SimpleFeature simpleFeature = SimpleFeature.fromFeature(feature);
+                add(simpleFeature);
             }
-            displayResults(jsonArray.length(), pager.getCurrentItem());
+            displayResults(features.size(), pager.getCurrentItem());
         } else {
             hide();
             Toast.makeText(act, "No results where found for: " + act.getSearchView().getQuery(),
@@ -189,36 +187,23 @@ public class PagerResultsFragment extends BaseFragment {
         app.cancelAllApiRequests();
         act.showProgressDialog();
         app.setCurrentSearchTerm(query);
-        JsonObjectRequest jsonObjectRequest =
-                Feature.search(mapFragment.getMap(), query,
-                        getSearchListener(view), getErrorListener());
-        app.enqueueApiRequest(jsonObjectRequest);
+        getPelias().search(query, ApiHelper.getViewBox(mapFragment.getMap()),
+                getSearchCallback(view));
         return true;
     }
 
-    private Response.ErrorListener getErrorListener() {
-        return new Response.ErrorListener() {
+    private Callback<Result> getSearchCallback(final SearchView view) {
+        return new Callback<Result>() {
             @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                onServerError(volleyError);
-            }
-        };
-    }
-
-    private Response.Listener<JSONObject> getSearchListener(final SearchView view) {
-        return new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject jsonObject) {
-                Logger.d("Search Results: " + jsonObject.toString());
-                JSONArray jsonArray = new JSONArray();
-                try {
-                    jsonArray = jsonObject.getJSONArray("features");
-                } catch (JSONException e) {
-                    Logger.e(e.toString());
-                }
-                setSearchResults(jsonArray);
+            public void success(Result result, retrofit.client.Response response) {
+                setSearchResults(result.getFeatures());
                 act.dismissProgressDialog();
                 view.clearFocus();
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                onServerError(error);
             }
         };
     }
@@ -241,7 +226,7 @@ public class PagerResultsFragment extends BaseFragment {
         }
     }
 
-    private void addMarker(Feature feature) {
-        mapFragment.addPoi(feature);
+    private void addMarker(SimpleFeature simpleFeature) {
+        mapFragment.addPoi(simpleFeature);
     }
 }

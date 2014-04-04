@@ -1,7 +1,7 @@
 package com.mapzen.fragment;
 
 import com.mapzen.R;
-import com.mapzen.entity.Feature;
+import com.mapzen.entity.SimpleFeature;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -16,8 +16,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Locale;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -26,34 +24,27 @@ import static com.mapzen.MapController.getMapController;
 import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
 
 public class ItemFragment extends BaseFragment {
-    private Feature feature;
-
     @InjectView(R.id.title)
     TextView title;
-
     @InjectView(R.id.address)
     TextView address;
-
     @InjectView(R.id.start)
     TextView startButton;
+    private SimpleFeature simpleFeature;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.search_item, container, false);
         ButterKnife.inject(this, view);
-        initTitle();
-        initAddress();
+        initView();
         return view;
     }
 
-    private void initTitle() {
-        title.setText(feature.getProperty(Feature.NAME));
-    }
-
-    private void initAddress() {
-        address.setText(String.format(Locale.getDefault(), "%s, %s",
-                feature.getProperty(Feature.ADMIN1_NAME),
-                feature.getProperty(Feature.ADMIN1_ABBR)));
+    private void initView() {
+        SimpleFeature.ViewHolder holder = new SimpleFeature.ViewHolder();
+        holder.setTitle(title);
+        holder.setAddress(address);
+        holder.setFromFeature(simpleFeature);
     }
 
     @OnClick(R.id.start)
@@ -66,7 +57,7 @@ public class ItemFragment extends BaseFragment {
     }
 
     private JsonObjectRequest getRouteRequest() {
-        final RouteFragment routeFragment = RouteFragment.newInstance(act, feature);
+        final RouteFragment routeFragment = RouteFragment.newInstance(act, simpleFeature);
 
         final String url = getRouteUrlForCar(getMapController().getZoomLevel(),
                 mapFragment.getUserLocationPoint(), routeFragment.getDestinationPoint());
@@ -98,11 +89,11 @@ public class ItemFragment extends BaseFragment {
         return new JsonObjectRequest(url, null, successListener, errorListener);
     }
 
-    public void setFeature(Feature feature) {
-        this.feature = feature;
+    public SimpleFeature getSimpleFeature() {
+        return simpleFeature;
     }
 
-    public Feature getFeature() {
-        return feature;
+    public void setSimpleFeature(SimpleFeature simpleFeature) {
+        this.simpleFeature = simpleFeature;
     }
 }

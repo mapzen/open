@@ -89,9 +89,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.mapzen</groupId>
-            <artifactId>geojson</artifactId>
-            <version>0.2-SNAPSHOT</version>
+            <groupId>com.mapzen.android</groupId>
+            <artifactId>pelias-android-sdk</artifactId>
+            <version>0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>

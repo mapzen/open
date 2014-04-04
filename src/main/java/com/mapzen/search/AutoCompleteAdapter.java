@@ -12,23 +12,22 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CursorAdapter;
 import android.widget.SearchView;
 import android.widget.TextView;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
+
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
-import com.mapzen.entity.Feature;
+import com.mapzen.android.gson.Feature;
+import com.mapzen.android.gson.Result;
+import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.util.Logger;
-import com.mapzen.util.VolleyHelper;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.mapzen.util.ParcelableUtil;
 
-import static com.mapzen.MapzenApplication.PELIAS_TEXT;
-import static com.mapzen.entity.Feature.FEATURES;
-import static com.mapzen.entity.Feature.NAME;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+
+import static com.mapzen.MapzenApplication.PELIAS_BLOB;
+import static com.mapzen.android.Pelias.getPelias;
 
 public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQueryTextListener {
     public static final int AUTOCOMPLETE_THRESHOLD = 3;
@@ -63,20 +62,20 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
             @Override
             public void onClick(View view) {
                 TextView tv = (TextView) view;
-                Feature feature = (Feature) tv.getTag();
+                SimpleFeature simpleFeature = (SimpleFeature) tv.getTag();
                 app.setCurrentSearchTerm("");
                 searchView.setQuery("", false);
                 searchView.clearFocus();
                 searchView.setQuery(tv.getText(), false);
                 mapFragment.clearMarkers();
                 mapFragment.updateMap();
-                mapFragment.centerOn(feature);
+                mapFragment.centerOn(simpleFeature);
                 PagerResultsFragment pagerResultsFragment = PagerResultsFragment.newInstance(act);
                 fragmentManager.beginTransaction()
                         .replace(R.id.pager_results_container, pagerResultsFragment,
                                 PagerResultsFragment.TAG).commit();
                 fragmentManager.executePendingTransactions();
-                pagerResultsFragment.add(feature);
+                pagerResultsFragment.add(simpleFeature);
                 pagerResultsFragment.displayResults(1, 0);
             }
         });
@@ -99,15 +98,11 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     @Override
     public void bindView(View view, Context c, Cursor cursor) {
         TextView tv = (TextView) view;
-        final int textIndex = cursor.getColumnIndex(PELIAS_TEXT);
-        Feature feature = new Feature();
-        try {
-            feature.buildFromJSON(new JSONObject(cursor.getString(textIndex)));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        tv.setTag(feature);
-        tv.setText(feature.getProperty(NAME));
+        final int blobIndex = cursor.getColumnIndex(PELIAS_BLOB);
+        byte[] bytes = cursor.getBlob(blobIndex);
+        SimpleFeature simpleFeature = ParcelableUtil.unmarshall(bytes, SimpleFeature.CREATOR);
+        tv.setTag(simpleFeature);
+        tv.setText(simpleFeature.getHint());
     }
 
     @Override
@@ -129,47 +124,31 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         Logger.d("search: term newText: " + newText);
         if (!newText.isEmpty()) {
             Logger.d("search: autocomplete starts");
-            JsonObjectRequest jsonObjectRequest = Feature.suggest(newText,
-                    getAutoCompleteSuccessResponseListener(),
-                    getAutoCompleteErrorResponseListener());
-            app.enqueueApiRequest(jsonObjectRequest);
+            getPelias().suggest(newText, getPeliasCallback());
             Logger.d("search: autocomplete request enqueued");
         }
         return true;
     }
 
-    private Response.Listener<JSONObject> getAutoCompleteSuccessResponseListener() {
+    private Callback<Result> getPeliasCallback() {
         final MatrixCursor cursor = new MatrixCursor(app.getColumns());
-        return new Response.Listener<JSONObject>() {
+        return new Callback<Result>() {
             @Override
-            public void onResponse(JSONObject jsonObject) {
-                Logger.d("search: autocomplete request returned");
-                Logger.d("request: success" + jsonObject.toString());
-                JSONArray jsonArray = new JSONArray();
-                try {
-                    jsonArray = jsonObject.getJSONArray(FEATURES);
-                } catch (JSONException e) {
-                    Logger.e(e.toString());
-                }
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    try {
-                        cursor.addRow(new Object[]{i, jsonArray.getJSONObject(i)});
-                    } catch (JSONException e) {
-                        Logger.e(e.toString());
-                    }
+            public void success(Result result, retrofit.client.Response response) {
+                int i = 0;
+                for (Feature feature : result.getFeatures()) {
+                    SimpleFeature simpleFeature = SimpleFeature.fromFeature(feature);
+                    byte[] data = ParcelableUtil.marshall(simpleFeature);
+                    cursor.addRow(new Object[]{i, data});
+                    i++;
                 }
                 Logger.d("search: swapping cursor");
                 swapCursor(cursor);
             }
-        };
-    }
 
-    private Response.ErrorListener getAutoCompleteErrorResponseListener() {
-        return new Response.ErrorListener() {
             @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                String errorMsg = VolleyHelper.Error.getMessage(volleyError, act);
-                Logger.e("request: error: " + errorMsg);
+            public void failure(RetrofitError error) {
+                Logger.e("request: error: " + error.toString());
             }
         };
     }

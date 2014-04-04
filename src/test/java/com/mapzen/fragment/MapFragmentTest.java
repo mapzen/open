@@ -25,7 +25,7 @@ import org.robolectric.shadows.ShadowLog;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import static com.mapzen.support.TestHelper.getTestFeature;
+import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initBaseActivity;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -109,8 +109,8 @@ public class MapFragmentTest {
 
     @Test
     public void onPause_shouldEmptyPoiMarkers() throws Exception {
-        mapFragment.addPoi(getTestFeature());
-        mapFragment.addPoi(getTestFeature());
+        mapFragment.addPoi(getTestSimpleFeature());
+        mapFragment.addPoi(getTestSimpleFeature());
         ItemizedLayer<MarkerItem> poiMarkerLayer = mapFragment.getPoiLayer();
         mapFragment.onPause();
         assertThat(poiMarkerLayer.size()).isEqualTo(0);
@@ -118,8 +118,8 @@ public class MapFragmentTest {
 
     @Test
     public void onResume_shouldRepopulatePoiMarkers() throws Exception {
-        mapFragment.addPoi(getTestFeature());
-        mapFragment.addPoi(getTestFeature());
+        mapFragment.addPoi(getTestSimpleFeature());
+        mapFragment.addPoi(getTestSimpleFeature());
         ItemizedLayer<MarkerItem> poiMarkerLayer = mapFragment.getPoiLayer();
         mapFragment.onPause();
         mapFragment.onResume();
@@ -128,8 +128,8 @@ public class MapFragmentTest {
 
     @Test
     public void clearMarkers_shouldEmptyMapPois() throws Exception {
-        mapFragment.addPoi(getTestFeature());
-        mapFragment.addPoi(getTestFeature());
+        mapFragment.addPoi(getTestSimpleFeature());
+        mapFragment.addPoi(getTestSimpleFeature());
         ItemizedLayer<MarkerItem> poiMarkerLayer = mapFragment.getPoiLayer();
         mapFragment.clearMarkers();
         assertThat(poiMarkerLayer.size()).isZero();
@@ -137,8 +137,8 @@ public class MapFragmentTest {
 
     @Test
     public void clearMarkers_shouldEmptyStoredPois() throws Exception {
-        mapFragment.addPoi(getTestFeature());
-        mapFragment.addPoi(getTestFeature());
+        mapFragment.addPoi(getTestSimpleFeature());
+        mapFragment.addPoi(getTestSimpleFeature());
         mapFragment.clearMarkers();
         mapFragment.onPause();
         mapFragment.onResume();

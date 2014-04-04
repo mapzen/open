@@ -1,7 +1,7 @@
 package com.mapzen.fragment;
 
 import com.mapzen.R;
-import com.mapzen.entity.Feature;
+import com.mapzen.entity.SimpleFeature;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.util.MapzenTheme;
 
@@ -88,23 +88,23 @@ public class MapFragment extends BaseFragment {
         return view;
     }
 
-    public void centerOn(Feature feature) {
-        centerOn(feature, Math.pow(2, DEFAULT_ZOOMLEVEL));
+    public void centerOn(SimpleFeature simpleFeature) {
+        centerOn(simpleFeature, Math.pow(2, DEFAULT_ZOOMLEVEL));
     }
 
-    public void centerOn(Feature feature, double zoom) {
+    public void centerOn(SimpleFeature simpleFeature, double zoom) {
         MarkerItem focused = poiMarkersLayer.getFocus();
         if (focused != null) {
             focused.setMarker(null);
         }
 
-        focused = poiMarkersLayer.getByUid(feature);
+        focused = poiMarkersLayer.getByUid(simpleFeature);
 
         if (focused != null) {
             focused.setMarker(highlightMarker);
             poiMarkersLayer.setFocus(focused);
         }
-        GeoPoint geoPoint = feature.getGeoPoint();
+        GeoPoint geoPoint = simpleFeature.getGeoPoint();
         map.animator().animateTo(DURATION, geoPoint, zoom, false);
     }
 
@@ -115,8 +115,8 @@ public class MapFragment extends BaseFragment {
         return null;
     }
 
-    public void addPoi(Feature feature) {
-        MarkerItem markerItem = feature.getMarker();
+    public void addPoi(SimpleFeature simpleFeature) {
+        MarkerItem markerItem = simpleFeature.getMarker();
         poiMarkersLayer.addItem(markerItem);
     }
 

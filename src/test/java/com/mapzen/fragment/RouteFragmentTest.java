@@ -1,7 +1,7 @@
 package com.mapzen.fragment;
 
 import com.mapzen.R;
-import com.mapzen.entity.Feature;
+import com.mapzen.entity.SimpleFeature;
 import com.mapzen.helpers.DistanceFormatter;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
@@ -64,7 +64,7 @@ import java.util.List;
 
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
-import static com.mapzen.entity.Feature.NAME;
+import static com.mapzen.entity.SimpleFeature.NAME;
 import static com.mapzen.helpers.DistanceFormatter.METERS_IN_ONE_FOOT;
 import static com.mapzen.helpers.DistanceFormatter.METERS_IN_ONE_MILE;
 import static com.mapzen.shadows.ShadowVolley.getMockRequestQueue;
@@ -73,7 +73,7 @@ import static com.mapzen.support.TestHelper.MOCK_NO_ROUTE_JSON;
 import static com.mapzen.support.TestHelper.MOCK_NY_TO_VT;
 import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
 import static com.mapzen.support.TestHelper.enableDebugMode;
-import static com.mapzen.support.TestHelper.getTestFeature;
+import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.getTestInstruction;
 import static com.mapzen.support.TestHelper.getTestLocation;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
@@ -348,24 +348,24 @@ public class RouteFragmentTest {
 
     @Test
     public void setFeature_shouldGenerateDestinationPoint() throws Exception {
-        Feature feature = new Feature();
-        fragment.setFeature(feature);
-        assertThat(fragment.getDestinationPoint()).isEqualTo(feature.getGeoPoint());
+        SimpleFeature simpleFeature = new SimpleFeature();
+        fragment.setSimpleFeature(simpleFeature);
+        assertThat(fragment.getDestinationPoint()).isEqualTo(simpleFeature.getGeoPoint());
     }
 
     @Test
     public void setDestination_shouldSetFeature() throws Exception {
-        Feature feature = getTestFeature();
-        fragment.setFeature(feature);
-        assertThat(fragment.getFeature()).isEqualTo(feature);
+        SimpleFeature simpleFeature = getTestSimpleFeature();
+        fragment.setSimpleFeature(simpleFeature);
+        assertThat(fragment.getSimpleFeature()).isEqualTo(simpleFeature);
     }
 
     @Test
     public void onCreateView_shouldShowNameOfDestination() throws Exception {
         FragmentTestUtil.startFragment(fragment);
-        Feature feature = getTestFeature();
+        SimpleFeature simpleFeature = getTestSimpleFeature();
         TextView view = (TextView) fragment.getView().findViewById(R.id.destination_name);
-        assertThat(view.getText()).isEqualTo(feature.getProperty(NAME));
+        assertThat(view.getText()).isEqualTo(simpleFeature.getProperty(NAME));
         assertThat(view).hasEllipsize(TextUtils.TruncateAt.END);
         assertThat(view).hasMaxLines(1);
     }
@@ -1040,7 +1040,7 @@ public class RouteFragmentTest {
 
     private void initTestFragment() throws Exception {
         fragment = new RouteFragment();
-        fragment.setFeature(getTestFeature());
+        fragment.setSimpleFeature(getTestSimpleFeature());
         fragment.setAct(act);
         fragment.setMapFragment(initMapFragment(act));
         fragment.setRoute(new JSONObject(MOCK_ROUTE_JSON));

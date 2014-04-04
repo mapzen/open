@@ -2,7 +2,10 @@ package com.mapzen.support;
 
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
-import com.mapzen.entity.Feature;
+import com.mapzen.android.gson.Feature;
+import com.mapzen.android.gson.Geometry;
+import com.mapzen.android.gson.Properties;
+import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.osrm.Instruction;
 
@@ -21,12 +24,14 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
-import static com.mapzen.entity.Feature.ADMIN1_ABBR;
-import static com.mapzen.entity.Feature.ADMIN1_NAME;
-import static com.mapzen.entity.Feature.NAME;
+import static com.mapzen.entity.SimpleFeature.ADMIN1_ABBR;
+import static com.mapzen.entity.SimpleFeature.ADMIN1_NAME;
+import static com.mapzen.entity.SimpleFeature.NAME;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.buildActivity;
 import static org.robolectric.Robolectric.shadowOf;
@@ -100,13 +105,29 @@ public final class TestHelper {
     }
 
 
+    public static SimpleFeature getTestSimpleFeature() {
+        SimpleFeature simpleFeature = new SimpleFeature();
+        simpleFeature.setLat(1.0);
+        simpleFeature.setLon(1.0);
+        simpleFeature.setProperty(NAME, "Test SimpleFeature");
+        simpleFeature.setProperty(ADMIN1_NAME, "New York");
+        simpleFeature.setProperty(ADMIN1_ABBR, "NY");
+        return simpleFeature;
+    }
+
     public static Feature getTestFeature() {
         Feature feature = new Feature();
-        feature.setLat(1.0);
-        feature.setLon(1.0);
-        feature.setProperty(NAME, "Test Feature");
-        feature.setProperty(ADMIN1_NAME, "New York");
-        feature.setProperty(ADMIN1_ABBR, "NY");
+        Properties properties = new Properties();
+        properties.setName("test");
+        properties.setAdmin0_name("test");
+        properties.setAdmin0_abbr("test");
+        feature.setProperties(properties);
+        Geometry geometry = new Geometry();
+        List<Double> coordinates = new ArrayList<Double>();
+        coordinates.add(0.0);
+        coordinates.add(0.0);
+        geometry.setCoordinates(coordinates);
+        feature.setGeometry(geometry);
         return feature;
     }
 
