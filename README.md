@@ -23,8 +23,8 @@ $ cd pelias-android-sdk && ./gradlew clean install
 </pre></code>
 
 ### Install OnTheRoad
-<pre><code>$ git clone https://github.com/mapzen/OnTheRoad.git
-$ cd OnTheRoad && ./gradlew clean install
+<pre><code>$ git clone https://github.com/mapzen/on-the-road.git
+$ cd on-the-road && ./gradlew clean install
 </pre></code>
 
 ### Install VectorTileMap Library
