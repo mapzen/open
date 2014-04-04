@@ -17,9 +17,9 @@ $ mvn install -fextras/compatibility-v4/pom.xml
 
 See [Maven Android SDK Deployer](https://github.com/mosabua/maven-android-sdk-deployer) project for more information.
 
-### Install GeoJson
-<pre><code>$ git clone https://github.com/mapzen/simple-geojson.git geojson
-$ cd geojson && ./gradlew clean install
+### Install pelias-android-sdk
+<pre><code>$ git clone https://github.com/mapzen/pelias-android-sdk
+$ cd pelias-android-sdk && ./gradlew clean install
 </pre></code>
 
 ### Install OnTheRoad
