@@ -5,6 +5,7 @@ import com.mapzen.activity.BaseActivity;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.support.FakeMotionEvent;
 import com.mapzen.support.MapzenTestRunner;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +13,12 @@ import org.oscim.core.GeoPoint;
 import org.oscim.event.Gesture;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
+import org.oscim.layers.tile.vector.VectorTileLayer;
+import org.oscim.map.Map;
 import org.oscim.map.TestMap;
+import org.oscim.tiling.TileSource;
+import org.oscim.tiling.source.HttpEngine;
+import org.oscim.tiling.source.OkHttpEngine;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLog;
 
@@ -23,6 +29,7 @@ import static com.mapzen.support.TestHelper.getTestFeature;
 import static com.mapzen.support.TestHelper.initBaseActivity;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.reflect.core.Reflection.field;
 import static org.robolectric.util.FragmentTestUtil.startFragment;
 
 @Config(emulateSdk = 18)
@@ -151,6 +158,17 @@ public class MapFragmentTest {
         String expected = "http://test.com";
         setTileSourceConfiguration(expected);
         assertThat(mapFragment.getTileBaseSource()).isEqualTo(expected);
+    }
+
+    @Test
+    public void shouldUseOkHttp() throws Exception {
+        Map map = mapFragment.getMap();
+        VectorTileLayer baseLayer = field("mBaseLayer").ofType(VectorTileLayer.class).in(map).get();
+        TileSource tileSource = field("mTileSource").ofType(TileSource.class).in(baseLayer).get();
+        HttpEngine.Factory factory = field("mHttpFactory").ofType(HttpEngine.Factory.class)
+                .in(tileSource).get();
+
+        assertThat(factory).isInstanceOf(OkHttpEngine.OkHttpFactory.class);
     }
 
     private void setTileSourceConfiguration(String source) {
