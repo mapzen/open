@@ -1,7 +1,7 @@
 package com.mapzen.support;
 
 import com.mapzen.activity.BaseActivity;
-import com.mapzen.location.LocationHelper;
+import com.mapzen.android.ps.location.LocationClient;
 
 import org.oscim.map.Map;
 import org.oscim.map.TestMap;
@@ -50,7 +50,7 @@ public class TestBaseActivity extends BaseActivity {
         return dbHelper.getReadableDatabase();
     }
 
-    public LocationHelper.ConnectionCallbacks getConnectionCallback() {
+    public LocationClient.ConnectionCallbacks getConnectionCallback() {
         return connectionCallback;
     }
 
