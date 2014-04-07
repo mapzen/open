@@ -3,19 +3,16 @@ package com.mapzen.fragment;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
+import com.mapzen.osrm.Callback;
+import com.mapzen.osrm.Direction;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
-import com.mapzen.routing.RoutingListener;
 import com.mapzen.speakerbox.Speakerbox;
 import com.mapzen.util.DisplayHelper;
 import com.mapzen.util.GearAgentService;
 import com.mapzen.util.GearServiceSocket;
 import com.mapzen.util.Logger;
 import com.mapzen.widget.DistanceView;
-
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
@@ -65,7 +62,6 @@ import butterknife.OnClick;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.SimpleFeature.NAME;
-import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_POSITION;
@@ -78,7 +74,7 @@ import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
 import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
-        ViewPager.OnPageChangeListener, RoutingListener {
+        ViewPager.OnPageChangeListener, Callback {
     public static final String TAG = RouteFragment.class.getSimpleName();
     public static final int ROUTE_ZOOM_LEVEL = 17;
     public static final String ROUTE_TAG = "route";
@@ -102,16 +98,16 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     Speakerbox speakerbox;
 
     private Set<Instruction> flippedInstructions = new HashSet<Instruction>();
-    private RoutingListener routingListener;
-    private boolean isReRouting = false;
+    private boolean isRouting = false;
     private boolean autoPaging = true;
+
+    public static Direction.Router router = Direction.getRouter();
 
     public static RouteFragment newInstance(BaseActivity act, SimpleFeature simpleFeature) {
         final RouteFragment fragment = new RouteFragment();
         fragment.setAct(act);
         fragment.setMapFragment(act.getMapFragment());
         fragment.setSimpleFeature(simpleFeature);
-        fragment.setRoutingListener(fragment);
         return fragment;
     }
 
@@ -210,7 +206,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (act.isInDebugMode()) {
             act.getDb().beginTransaction();
         }
-        drawRoute();
         initProximityAlerts();
     }
 
@@ -223,7 +218,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             act.getDb().setTransactionSuccessful();
             act.getDb().endTransaction();
         }
-        clearRoute();
+        //clearRoute();
     }
 
     @Override
@@ -234,41 +229,19 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         clearRoute();
     }
 
-    @Override
-    public void onLost(Location location) {
-        isReRouting = true;
+    public void createRouteTo(Location location) {
+        mapFragment.clearMarkers();
+        mapFragment.updateMap();
+        isRouting = true;
         act.showProgressDialog();
-
-        final String url = getRouteUrlForCar(getMapController().getZoomLevel(),
-                new GeoPoint(location.getLatitude(), location.getLongitude()),
-                getDestinationPoint());
-
-        final Response.Listener<JSONObject> successListener = new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                if (setRoute(response)) {
-                    pager.setAdapter(new RoutesAdapter(act, instructions));
-                    drawRoute();
-                } else {
-                    Toast.makeText(act,
-                            act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
-                }
-                isReRouting = false;
-                act.dismissProgressDialog();
-            }
-        };
-
-        final Response.ErrorListener errorListener = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                isReRouting = false;
-                onServerError(volleyError);
-            }
-        };
-
-        JsonObjectRequest request =
-                new JsonObjectRequest(url, null, successListener, errorListener);
-        app.enqueueApiRequest(request);
+        double[] loc1 = new double[] { location.getLatitude(), location.getLongitude() };
+        double[] loc2 = new double[] { simpleFeature.getLat(), simpleFeature.getLon() };
+        router.setLocation(loc1)
+                .setLocation(loc2)
+                .setZoomLevel(getMapController().getZoomLevel())
+                .setDriving()
+                .setCallback(this)
+                .fetch();
     }
 
     public String getRouteId() {
@@ -280,10 +253,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return prefs.getInt(
                 act.getString(R.string.settings_key_walking_advance_radius),
                 act.getResources().getInteger(R.integer.route_advance_radius));
-    }
-
-    public void setRoutingListener(RoutingListener routingListener) {
-        this.routingListener = routingListener;
     }
 
     public void setInstructions(ArrayList<Instruction> instructions) {
@@ -344,12 +313,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public void onLocationChanged(Location location) {
-        if (!autoPaging || isReRouting) {
+        if (!autoPaging || isRouting) {
             return;
         }
         Location correctedLocation = snapTo(location);
         if (correctedLocation == null) {
-            routingListener.onLost(location);
+            createRouteTo(location);
             return;
         }
         storeLocationInfo(location, correctedLocation);
@@ -470,9 +439,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    public boolean setRoute(JSONObject rawRoute) {
-        storeRouteInDatabase(rawRoute);
-        Route route = new Route(rawRoute);
+    public boolean setRoute(Route route) {
         if (route.foundRoute()) {
             this.route = route;
             this.instructions = route.getRouteInstructions();
@@ -480,6 +447,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         } else {
             return false;
         }
+        return true;
+    }
+
+    public boolean setRoute(JSONObject rawRoute) {
+        storeRouteInDatabase(rawRoute);
+        Route route = new Route(rawRoute);
+        setRoute(route);
         return true;
     }
 
@@ -683,4 +657,36 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             onLocationChanged(location);
         }
     }
+
+    @Override
+    public void success(Route route) {
+        if (setRoute(route)) {
+            act.dismissProgressDialog();
+            isRouting = false;
+            if (!isAdded()) {
+                act.getSupportFragmentManager().beginTransaction()
+                        .addToBackStack(null)
+                        .add(R.id.routes_container, this, TAG)
+                        .commit();
+            } else {
+                act.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        pager.setAdapter(new RoutesAdapter(act, instructions));
+                    }
+                });
+            }
+            drawRoute();
+        } else {
+            Toast.makeText(act,
+                    act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void failure(int statusCode) {
+        isRouting = false;
+        onServerError(statusCode);
+    }
+
 }

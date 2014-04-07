@@ -27,11 +27,14 @@ public abstract class BaseFragment extends Fragment {
         this.mapFragment = mapFragment;
     }
 
-    protected void onServerError(VolleyError error) {
-        Toast.makeText(act, act.getString(R.string.generic_server_error), Toast.LENGTH_LONG).show();
+    protected void onServerError(int status) {
+        if (status == 207) {
+            Toast.makeText(act, act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(act, act.getString(R.string.generic_server_error), Toast.LENGTH_LONG).show();
+        }
         act.dismissProgressDialog();
-        String errorMsg = VolleyHelper.Error.getMessage(error, act);
-        Log.e(MapzenApplication.LOG_TAG, "request: error: " + errorMsg);
+        Log.e(MapzenApplication.LOG_TAG, "request: error: " + String.valueOf(status));
     }
 
     protected void onServerError(RetrofitError error) {

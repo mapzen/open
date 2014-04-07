@@ -3,6 +3,9 @@ package com.mapzen.fragment;
 import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
+import com.mapzen.osrm.Callback;
+import com.mapzen.osrm.Direction;
+import com.mapzen.osrm.Route;
 import com.mapzen.support.MapzenTestRunner;
 
 import com.android.volley.Request;
@@ -12,6 +15,11 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.mockito.internal.configuration.MockAnnotationProcessor;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 
@@ -25,6 +33,7 @@ import static com.mapzen.shadows.ShadowVolley.MockRequestQueue;
 import static com.mapzen.shadows.ShadowVolley.clearMockRequestQueue;
 import static com.mapzen.shadows.ShadowVolley.getMockRequestQueue;
 import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
+import static com.mapzen.support.TestHelper.getFixture;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initBaseActivity;
 import static com.mapzen.support.TestHelper.initMapFragment;
@@ -38,9 +47,13 @@ import static org.robolectric.util.FragmentTestUtil.startFragment;
 public class ItemFragmentTest {
     private ItemFragment itemFragment;
     private BaseActivity act;
+    @Captor
+    @SuppressWarnings("unused")
+    ArgumentCaptor<Callback> callback;
 
     @Before
     public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
         clearMockRequestQueue();
         act = initBaseActivity();
         initItemFragment();
@@ -83,43 +96,21 @@ public class ItemFragmentTest {
 
     @Test
     public void shouldNotStartRouteFragment() throws Exception {
+        Direction.Router router = Mockito.spy(Direction.getRouter());
+        RouteFragment.router = router;
         itemFragment.startButton.performClick();
+        Mockito.verify(router).setCallback(callback.capture());
+        callback.getValue().failure(500);
         assertThat(act.getSupportFragmentManager()).doesNotHaveFragmentWithTag(RouteFragment.TAG);
     }
 
     @Test
-    public void shouldShowDialog() throws Exception {
-        itemFragment.startButton.performClick();
-        assertThat(act.getProgressDialogFragment()).isAdded();
-    }
-
-    @Test
-    public void shouldDismissProgressDialogOnError() throws Exception {
-        itemFragment.startButton.performClick();
-        assertThat(act.getProgressDialogFragment()).isAdded();
-        List<Request> requestSet = getMockRequestQueue().getRequests();
-        Request<JSONObject> request = requestSet.iterator().next();
-        request.deliverError(null);
-        assertThat(act.getProgressDialogFragment()).isNotAdded();
-    }
-
-    @Test
-    public void shouldToastOnError() throws Exception {
-        itemFragment.startButton.performClick();
-        List<Request> requestSet = getMockRequestQueue().getRequests();
-        Request<JSONObject> request = requestSet.iterator().next();
-        request.deliverError(null);
-        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(
-                act.getString(R.string.generic_server_error));
-        assertThat(ShadowToast.getLatestToast()).hasDuration(Toast.LENGTH_LONG);
-    }
-
-    @Test
     public void shouldStartRouteFragment() throws Exception {
+        Direction.Router router = Mockito.spy(Direction.getRouter());
+        RouteFragment.router = router;
         itemFragment.startButton.performClick();
-        MockRequestQueue queue = getMockRequestQueue();
-        JsonObjectRequest request = (JsonObjectRequest) queue.getRequests().get(0);
-        queue.deliverResponse(request, new JSONObject(MOCK_ROUTE_JSON));
+        Mockito.verify(router).setCallback(callback.capture());
+        callback.getValue().success(new Route(getFixture("around_the_block")));
         assertThat(act.getSupportFragmentManager()).hasFragmentWithTag(RouteFragment.TAG);
     }
 }
