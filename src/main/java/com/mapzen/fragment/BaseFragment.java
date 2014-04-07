@@ -29,7 +29,8 @@ public abstract class BaseFragment extends Fragment {
         if (status == 207) {
             Toast.makeText(act, act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(act, act.getString(R.string.generic_server_error), Toast.LENGTH_LONG).show();
+            Toast.makeText(act, act.getString(R.string.generic_server_error),
+                    Toast.LENGTH_LONG).show();
         }
         act.dismissProgressDialog();
         Log.e(MapzenApplication.LOG_TAG, "request: error: " + String.valueOf(status));

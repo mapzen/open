@@ -101,7 +101,7 @@ public class RouteFragmentTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        RouteFragment.router = router;
+        RouteFragment.setRouter(router);
         menu = new TestMenu();
         act = initBaseActivityWithMenu(menu);
         initTestFragment();
@@ -956,7 +956,8 @@ public class RouteFragmentTest {
         Mockito.verify(router).setCallback(callback.capture());
         Route newRoute = new Route(MOCK_NY_TO_VT);
         callback.getValue().success(newRoute);
-        assertThat(fragment.pager.getAdapter().getCount()).isEqualTo(newRoute.getRouteInstructions().size());
+        assertThat(fragment.pager.getAdapter().getCount())
+                .isEqualTo(newRoute.getRouteInstructions().size());
     }
 
     @Test

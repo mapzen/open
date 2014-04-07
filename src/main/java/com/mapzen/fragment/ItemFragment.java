@@ -2,26 +2,18 @@ package com.mapzen.fragment;
 
 import com.mapzen.R;
 import com.mapzen.entity.SimpleFeature;
-import com.mapzen.osrm.Callback;
-import com.mapzen.osrm.Direction;
-import com.mapzen.osrm.Route;
 
-import org.oscim.core.GeoPoint;
-
-import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
 import static com.mapzen.MapController.getMapController;
-import static com.mapzen.util.ApiHelper.getRouteUrlForCar;
 
 public class ItemFragment extends BaseFragment {
     @InjectView(R.id.title)

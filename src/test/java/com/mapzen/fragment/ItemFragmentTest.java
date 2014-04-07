@@ -8,7 +8,6 @@ import com.mapzen.osrm.Direction;
 import com.mapzen.osrm.Route;
 import com.mapzen.support.MapzenTestRunner;
 
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,17 +15,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.internal.configuration.MockAnnotationProcessor;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowToast;
 
 import android.location.Location;
 import android.text.TextUtils;
-import android.widget.Toast;
 
-import java.util.List;
-
-import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
 import static com.mapzen.support.TestHelper.getFixture;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initBaseActivity;
@@ -39,11 +32,11 @@ import static org.robolectric.util.FragmentTestUtil.startFragment;
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class ItemFragmentTest {
-    private ItemFragment itemFragment;
-    private BaseActivity act;
     @Captor
     @SuppressWarnings("unused")
     ArgumentCaptor<Callback> callback;
+    private ItemFragment itemFragment;
+    private BaseActivity act;
 
     @Before
     public void setUp() throws Exception {
@@ -90,7 +83,7 @@ public class ItemFragmentTest {
     @Test
     public void shouldNotStartRouteFragment() throws Exception {
         Direction.Router router = Mockito.spy(Direction.getRouter());
-        RouteFragment.router = router;
+        RouteFragment.setRouter(router);
         itemFragment.startButton.performClick();
         Mockito.verify(router).setCallback(callback.capture());
         callback.getValue().failure(500);
@@ -100,7 +93,7 @@ public class ItemFragmentTest {
     @Test
     public void shouldStartRouteFragment() throws Exception {
         Direction.Router router = Mockito.spy(Direction.getRouter());
-        RouteFragment.router = router;
+        RouteFragment.setRouter(router);
         itemFragment.startButton.performClick();
         Mockito.verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(getFixture("around_the_block")));
