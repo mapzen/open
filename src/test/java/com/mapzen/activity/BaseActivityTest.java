@@ -8,7 +8,6 @@ import com.mapzen.core.SettingsFragment;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.search.PagerResultsFragment;
-import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.support.TestHelper;
@@ -65,7 +64,6 @@ public class BaseActivityTest {
 
     @Before
     public void setUp() throws Exception {
-        ShadowVolley.clearMockRequestQueue();
         menu = new TestMenu();
         activity = initBaseActivityWithMenu(menu);
     }

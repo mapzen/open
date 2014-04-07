@@ -8,9 +8,6 @@ import com.mapzen.osrm.Direction;
 import com.mapzen.osrm.Route;
 import com.mapzen.support.MapzenTestRunner;
 
-import com.android.volley.Request;
-import com.android.volley.toolbox.JsonObjectRequest;
-
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,9 +26,6 @@ import android.widget.Toast;
 
 import java.util.List;
 
-import static com.mapzen.shadows.ShadowVolley.MockRequestQueue;
-import static com.mapzen.shadows.ShadowVolley.clearMockRequestQueue;
-import static com.mapzen.shadows.ShadowVolley.getMockRequestQueue;
 import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
 import static com.mapzen.support.TestHelper.getFixture;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
@@ -54,7 +48,6 @@ public class ItemFragmentTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        clearMockRequestQueue();
         act = initBaseActivity();
         initItemFragment();
         startFragment(itemFragment);

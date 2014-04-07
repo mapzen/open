@@ -1,9 +1,7 @@
 package com.mapzen;
 
 import android.app.Activity;
-import com.android.volley.Request;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.mapzen.shadows.ShadowVolley;
+
 import com.mapzen.support.MapzenTestRunner;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +18,6 @@ public class MapzenApplicationTest {
 
     @Before
     public void setUp() throws Exception {
-        ShadowVolley.clearMockRequestQueue();
         app = (MapzenApplication) Robolectric.application;
     }
 
@@ -32,20 +29,5 @@ public class MapzenApplicationTest {
     @Test
     public void shouldReturnSameInstance() throws Exception {
         assertThat(app).isSameAs((MapzenApplication) new Activity().getApplication());
-    }
-
-    @Test
-    public void shouldEnqueueRequest() throws Exception {
-        Request request = new JsonObjectRequest(null, null, null, null);
-        app.enqueueApiRequest(request);
-        assertThat(ShadowVolley.getMockRequestQueue().getRequests()).hasSize(1);
-    }
-
-    @Test
-    public void shouldCancelRequest() throws Exception {
-        Request request = new JsonObjectRequest(null, null, null, null);
-        app.enqueueApiRequest(request);
-        app.cancelAllApiRequests();
-        assertThat(request.isCanceled()).isTrue();
     }
 }

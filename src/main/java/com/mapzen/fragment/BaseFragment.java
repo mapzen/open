@@ -3,11 +3,9 @@ package com.mapzen.fragment;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.widget.Toast;
-import com.android.volley.VolleyError;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
-import com.mapzen.util.VolleyHelper;
 import org.oscim.map.Map;
 
 import retrofit.RetrofitError;

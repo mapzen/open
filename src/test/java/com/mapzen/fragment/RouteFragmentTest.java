@@ -8,16 +8,12 @@ import com.mapzen.osrm.Direction;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.shadows.ShadowTextToSpeech;
-import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.GearAgentService;
 import com.mapzen.util.GearServiceSocket;
 import com.mapzen.widget.DistanceView;
-
-import com.android.volley.Request;
-import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
 import org.junit.Before;
@@ -64,20 +60,16 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.SimpleFeature.NAME;
 import static com.mapzen.helpers.DistanceFormatter.METERS_IN_ONE_FOOT;
 import static com.mapzen.helpers.DistanceFormatter.METERS_IN_ONE_MILE;
-import static com.mapzen.shadows.ShadowVolley.getMockRequestQueue;
 import static com.mapzen.support.TestHelper.MOCK_AROUND_THE_BLOCK;
-import static com.mapzen.support.TestHelper.MOCK_NO_ROUTE_JSON;
 import static com.mapzen.support.TestHelper.MOCK_NY_TO_VT;
 import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
 import static com.mapzen.support.TestHelper.enableDebugMode;
-import static com.mapzen.support.TestHelper.getFixture;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.getTestInstruction;
 import static com.mapzen.support.TestHelper.getTestLocation;
@@ -110,7 +102,6 @@ public class RouteFragmentTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         RouteFragment.router = router;
-        ShadowVolley.clearMockRequestQueue();
         menu = new TestMenu();
         act = initBaseActivityWithMenu(menu);
         initTestFragment();
