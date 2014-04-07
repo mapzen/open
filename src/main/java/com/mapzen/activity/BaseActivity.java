@@ -3,12 +3,12 @@ package com.mapzen.activity;
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
+import com.mapzen.android.ps.location.LocationClient;
+import com.mapzen.android.ps.location.LocationListener;
+import com.mapzen.android.ps.location.LocationRequest;
 import com.mapzen.core.SettingsFragment;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.fragment.MapFragment;
-import com.mapzen.location.LocationHelper;
-import com.mapzen.location.LocationListener;
-import com.mapzen.location.LocationRequest;
 import com.mapzen.search.AutoCompleteAdapter;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.search.PagerResultsFragment;
@@ -48,7 +48,7 @@ import android.widget.Toast;
 import java.io.File;
 
 import static com.mapzen.MapController.getMapController;
-import static com.mapzen.location.LocationHelper.ConnectionCallbacks;
+import static com.mapzen.android.ps.location.LocationClient.ConnectionCallbacks;
 
 public class BaseActivity extends MapActivity {
     public static final int LOCATION_INTERVAL = 1000;
@@ -57,7 +57,7 @@ public class BaseActivity extends MapActivity {
     public static final String DEBUG_DATA_ENDPOINT = "http://snitchmedia.com/upload.php";
     protected DatabaseHelper dbHelper;
     protected DebugDataSubmitter debugDataSubmitter;
-    LocationHelper locationHelper;
+    LocationClient locationHelper;
     private AutoCompleteAdapter autoCompleteAdapter;
     private MenuItem menuItem;
     private MapzenApplication app;
@@ -191,7 +191,7 @@ public class BaseActivity extends MapActivity {
     }
 
     private void initLocationClient() {
-        locationHelper = new LocationHelper(this, connectionCallback);
+        locationHelper = new LocationClient(this, connectionCallback);
     }
 
     private void initMapFragment() {

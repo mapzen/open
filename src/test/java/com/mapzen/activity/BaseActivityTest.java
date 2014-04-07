@@ -47,7 +47,7 @@ import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 import static com.mapzen.MapController.getMapController;
-import static com.mapzen.location.LocationHelper.ConnectionCallbacks;
+import static com.mapzen.android.ps.location.LocationClient.ConnectionCallbacks;
 import static com.mapzen.support.TestHelper.enableDebugMode;
 import static com.mapzen.support.TestHelper.getTestFeature;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
