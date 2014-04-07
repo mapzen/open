@@ -4,7 +4,7 @@ import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.osrm.Callback;
-import com.mapzen.osrm.Direction;
+import com.mapzen.osrm.Router;
 import com.mapzen.osrm.Route;
 import com.mapzen.support.MapzenTestRunner;
 
@@ -20,6 +20,7 @@ import org.robolectric.annotation.Config;
 import android.location.Location;
 import android.text.TextUtils;
 
+import static com.mapzen.osrm.Router.getRouter;
 import static com.mapzen.support.TestHelper.getFixture;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initBaseActivity;
@@ -82,7 +83,7 @@ public class ItemFragmentTest {
 
     @Test
     public void shouldNotStartRouteFragment() throws Exception {
-        Direction.Router router = Mockito.spy(Direction.getRouter());
+        Router router = Mockito.spy(getRouter());
         RouteFragment.setRouter(router);
         itemFragment.startButton.performClick();
         Mockito.verify(router).setCallback(callback.capture());
@@ -92,7 +93,7 @@ public class ItemFragmentTest {
 
     @Test
     public void shouldStartRouteFragment() throws Exception {
-        Direction.Router router = Mockito.spy(Direction.getRouter());
+        Router router = Mockito.spy(getRouter());
         RouteFragment.setRouter(router);
         itemFragment.startButton.performClick();
         Mockito.verify(router).setCallback(callback.capture());

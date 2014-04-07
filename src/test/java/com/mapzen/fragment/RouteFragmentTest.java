@@ -4,7 +4,7 @@ import com.mapzen.R;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.helpers.DistanceFormatter;
 import com.mapzen.osrm.Callback;
-import com.mapzen.osrm.Direction;
+import com.mapzen.osrm.Router;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.shadows.ShadowTextToSpeech;
@@ -92,7 +92,7 @@ public class RouteFragmentTest {
     ShadowApplication app;
     TestMenu menu;
     ArrayList<Instruction> testInstructions;
-    Direction.Router router = Mockito.spy(Direction.getRouter());
+    Router router = Mockito.spy(Router.getRouter());
 
     @Captor
     @SuppressWarnings("unused")

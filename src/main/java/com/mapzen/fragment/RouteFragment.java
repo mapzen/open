@@ -4,7 +4,7 @@ import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.osrm.Callback;
-import com.mapzen.osrm.Direction;
+import com.mapzen.osrm.Router;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.speakerbox.Speakerbox;
@@ -102,8 +102,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private boolean autoPaging = true;
 
     /* used for testing */
-    private static Direction.Router router = Direction.getRouter();
-    public static void setRouter(Direction.Router router) {
+    private static Router router = Router.getRouter();
+    public static void setRouter(Router router) {
         RouteFragment.router = router;
     }
 
