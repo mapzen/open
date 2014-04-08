@@ -237,7 +237,7 @@
                         <goals>
                             <goal>lint</goal>
                         </goals>
-                        <phase>install</phase>
+                        <phase>verify</phase>
                     </execution>
                 </executions>
             </plugin>
