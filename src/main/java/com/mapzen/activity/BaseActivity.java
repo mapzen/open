@@ -3,9 +3,9 @@ package com.mapzen.activity;
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
-import com.mapzen.android.ps.location.LocationClient;
-import com.mapzen.android.ps.location.LocationListener;
-import com.mapzen.android.ps.location.LocationRequest;
+import com.mapzen.android.lost.LocationClient;
+import com.mapzen.android.lost.LocationListener;
+import com.mapzen.android.lost.LocationRequest;
 import com.mapzen.core.SettingsFragment;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.fragment.MapFragment;
@@ -48,7 +48,7 @@ import android.widget.Toast;
 import java.io.File;
 
 import static com.mapzen.MapController.getMapController;
-import static com.mapzen.android.ps.location.LocationClient.ConnectionCallbacks;
+import static com.mapzen.android.lost.LocationClient.ConnectionCallbacks;
 
 public class BaseActivity extends MapActivity {
     public static final int LOCATION_INTERVAL = 1000;
