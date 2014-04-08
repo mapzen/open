@@ -222,7 +222,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             act.getDb().setTransactionSuccessful();
             act.getDb().endTransaction();
         }
-        //clearRoute();
     }
 
     @Override
