@@ -8,7 +8,6 @@ import com.mapzen.android.TestPelias;
 import com.mapzen.android.gson.Result;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.ListResultsFragment;
-import com.mapzen.shadows.ShadowVolley;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
@@ -53,7 +52,6 @@ public class PagerResultsFragmentTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        ShadowVolley.clearMockRequestQueue();
         peliasServiceMock = TestPelias.getPeliasMock();
         menu = new TestMenu();
         act = initBaseActivityWithMenu(menu);

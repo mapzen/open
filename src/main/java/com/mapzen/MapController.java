@@ -27,6 +27,14 @@ public final class MapController {
         mapController = new MapController();
     }
 
+    public static double[] locationToPair(Location loc) {
+        return new double[] { loc.getLatitude(), loc.getLongitude() };
+    }
+
+    public static double[] geoPointToPair(GeoPoint point) {
+        return new double[] { point.getLatitude(), point.getLongitude() };
+    }
+
     private MapController() {
     }
 
