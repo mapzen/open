@@ -59,7 +59,9 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
+import static com.mapzen.MapController.geoPointToPair;
 import static com.mapzen.MapController.getMapController;
+import static com.mapzen.MapController.locationToPair;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.SimpleFeature.NAME;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
@@ -238,11 +240,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         mapFragment.updateMap();
         isRouting = true;
         act.showProgressDialog();
-        double[] loc1 = new double[] { location.getLatitude(), location.getLongitude() };
-        double[] loc2 = new double[] { simpleFeature.getLat(), simpleFeature.getLon() };
         router.clearLocations()
-                .setLocation(loc1)
-                .setLocation(loc2)
+                .setLocation(locationToPair(location))
+                .setLocation(geoPointToPair(simpleFeature.getGeoPoint()))
                 .setZoomLevel(getMapController().getZoomLevel())
                 .setDriving()
                 .setCallback(this)
