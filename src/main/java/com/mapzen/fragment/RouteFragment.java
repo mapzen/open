@@ -102,9 +102,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private boolean isRouting = false;
     private boolean autoPaging = true;
 
-    /* used for testing */
     private static Router router = Router.getRouter();
-    public static void setRouter(Router router) {
+    protected static void setRouter(Router router) {
         RouteFragment.router = router;
     }
 
