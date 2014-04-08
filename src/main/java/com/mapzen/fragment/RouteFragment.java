@@ -3,7 +3,6 @@ package com.mapzen.fragment;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
-import com.mapzen.osrm.Callback;
 import com.mapzen.osrm.Router;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
@@ -76,7 +75,7 @@ import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
 import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
-        ViewPager.OnPageChangeListener, Callback {
+        ViewPager.OnPageChangeListener, Router.Callback {
     public static final String TAG = RouteFragment.class.getSimpleName();
     public static final int ROUTE_ZOOM_LEVEL = 17;
     public static final String ROUTE_TAG = "route";
@@ -445,6 +444,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public boolean setRoute(Route route) {
+        storeRouteInDatabase(route.getRawRoute());
         if (route.foundRoute()) {
             this.route = route;
             this.instructions = route.getRouteInstructions();
@@ -454,14 +454,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
         return true;
     }
-
-    public boolean setRoute(JSONObject rawRoute) {
-        storeRouteInDatabase(rawRoute);
-        Route route = new Route(rawRoute);
-        setRoute(route);
-        return true;
-    }
-
     private void storeRouteInDatabase(JSONObject rawRoute) {
         if (act.isInDebugMode()) {
             ContentValues insertValues = new ContentValues();

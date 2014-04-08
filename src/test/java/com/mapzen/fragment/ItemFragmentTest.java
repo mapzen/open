@@ -3,7 +3,6 @@ package com.mapzen.fragment;
 import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
-import com.mapzen.osrm.Callback;
 import com.mapzen.osrm.Router;
 import com.mapzen.osrm.Route;
 import com.mapzen.support.MapzenTestRunner;
@@ -35,7 +34,7 @@ import static org.robolectric.util.FragmentTestUtil.startFragment;
 public class ItemFragmentTest {
     @Captor
     @SuppressWarnings("unused")
-    ArgumentCaptor<Callback> callback;
+    ArgumentCaptor<Router.Callback> callback;
     private ItemFragment itemFragment;
     private BaseActivity act;
 

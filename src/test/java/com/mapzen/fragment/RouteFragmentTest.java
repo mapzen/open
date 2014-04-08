@@ -3,7 +3,6 @@ package com.mapzen.fragment;
 import com.mapzen.R;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.helpers.DistanceFormatter;
-import com.mapzen.osrm.Callback;
 import com.mapzen.osrm.Router;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
@@ -99,7 +98,7 @@ public class RouteFragmentTest {
 
     @Captor
     @SuppressWarnings("unused")
-    ArgumentCaptor<Callback> callback;
+    ArgumentCaptor<Router.Callback> callback;
 
     @Before
     public void setUp() throws Exception {
@@ -234,7 +233,7 @@ public class RouteFragmentTest {
     @Test
     public void onRouteSuccess_shouldStoreRawJson() throws Exception {
         enableDebugMode(act);
-        fragment.setRoute(new JSONObject(MOCK_ROUTE_JSON));
+        fragment.setRoute(new Route(MOCK_ROUTE_JSON));
         FragmentTestUtil.startFragment(fragment);
         fragment.onPause();
         SQLiteDatabase db = act.getReadableDb();
@@ -629,7 +628,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldFlipToPostInstructionLanguage() throws Exception {
-        fragment.setRoute(new JSONObject(MOCK_ROUTE_JSON));
+        fragment.setRoute(new Route(MOCK_ROUTE_JSON));
         FragmentTestUtil.startFragment(fragment);
         fragment.onResume();
         Route route = fragment.getRoute();
@@ -995,7 +994,6 @@ public class RouteFragmentTest {
         assertThat(router.getRouteUrl().toString()).doesNotContain("100.0,200.0");
     }
 
-
     @Test
     public void createRouteTo_shouldRequestNewRoute() throws Exception {
         Location testLocation = getTestLocation(100.0, 100.0);
@@ -1008,7 +1006,7 @@ public class RouteFragmentTest {
     public void onLocationChange_shouldBeLostWhenSnapToIsNull() throws Exception {
         Location testLocation = getTestLocation(40.662046, -73.987089);
         RouteFragment spyFragment = Mockito.spy(fragment);
-        spyFragment.setRoute(new JSONObject(MOCK_AROUND_THE_BLOCK));
+        spyFragment.setRoute(new Route(MOCK_AROUND_THE_BLOCK));
         FragmentTestUtil.startFragment(spyFragment);
         spyFragment.onLocationChanged(testLocation);
         Mockito.verify(spyFragment).createRouteTo(testLocation);
@@ -1018,7 +1016,7 @@ public class RouteFragmentTest {
     public void onLocationChange_shouldDoNothingWhileRerouting() throws Exception {
         Location testLocation = getTestLocation(40.662046, -73.987089);
         RouteFragment spyFragment = Mockito.spy(fragment);
-        spyFragment.setRoute(new JSONObject(MOCK_AROUND_THE_BLOCK));
+        spyFragment.setRoute(new Route(MOCK_AROUND_THE_BLOCK));
         FragmentTestUtil.startFragment(spyFragment);
         spyFragment.onLocationChanged(testLocation);
         spyFragment.onLocationChanged(testLocation);
@@ -1029,7 +1027,7 @@ public class RouteFragmentTest {
     public void onLocationChange_shouldBeReEnabledOnceReRoutingIsCompleted() throws Exception {
         Location testLocation = getTestLocation(40.662046, -73.987089);
         RouteFragment spyFragment = Mockito.spy(fragment);
-        spyFragment.setRoute(new JSONObject(MOCK_AROUND_THE_BLOCK));
+        spyFragment.setRoute(new Route(MOCK_AROUND_THE_BLOCK));
         FragmentTestUtil.startFragment(spyFragment);
         spyFragment.onLocationChanged(testLocation);
         Mockito.verify(router).setCallback(callback.capture());
@@ -1042,7 +1040,7 @@ public class RouteFragmentTest {
     public void onLocationChange_shouldBeReEnabledOnceReRoutingHasError() throws Exception {
         Location testLocation = getTestLocation(40.662046, -73.987089);
         RouteFragment spyFragment = Mockito.spy(fragment);
-        spyFragment.setRoute(new JSONObject(MOCK_AROUND_THE_BLOCK));
+        spyFragment.setRoute(new Route(MOCK_AROUND_THE_BLOCK));
         FragmentTestUtil.startFragment(spyFragment);
         spyFragment.onLocationChanged(testLocation);
         Mockito.verify(router).setCallback(callback.capture());
@@ -1072,7 +1070,7 @@ public class RouteFragmentTest {
         fragment.setSimpleFeature(getTestSimpleFeature());
         fragment.setAct(act);
         fragment.setMapFragment(initMapFragment(act));
-        fragment.setRoute(new JSONObject(MOCK_ROUTE_JSON));
+        fragment.setRoute(new Route(MOCK_ROUTE_JSON));
         testInstructions = new ArrayList<Instruction>();
         testInstructions.add(getTestInstruction(0, 0));
         testInstructions.add(getTestInstruction(1, 1));
