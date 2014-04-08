@@ -234,13 +234,15 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public void createRouteTo(Location location) {
+        clearRoute();
         mapFragment.clearMarkers();
         mapFragment.updateMap();
         isRouting = true;
         act.showProgressDialog();
         double[] loc1 = new double[] { location.getLatitude(), location.getLongitude() };
         double[] loc2 = new double[] { simpleFeature.getLat(), simpleFeature.getLon() };
-        router.setLocation(loc1)
+        router.clearLocations()
+                .setLocation(loc1)
                 .setLocation(loc2)
                 .setZoomLevel(getMapController().getZoomLevel())
                 .setDriving()

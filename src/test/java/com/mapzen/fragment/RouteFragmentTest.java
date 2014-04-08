@@ -81,6 +81,9 @@ import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.robolectric.Robolectric.shadowOf;
 import static org.robolectric.Robolectric.shadowOf_;
 
@@ -146,7 +149,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldCenterMapOnLocation() throws Exception {
-        Animator animator = Mockito.mock(Animator.class);
+        Animator animator = mock(Animator.class);
         ((TestMap) fragment.mapFragment.getMap()).setAnimator(animator);
         FragmentTestUtil.startFragment(fragment);
         ArrayList<double[]> geometry = fragment.getRoute().getGeometry();
@@ -764,7 +767,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onCreateView_shouldSendFirstInstructionToGear() throws Exception {
-        GearServiceSocket mockSocket = Mockito.mock(GearServiceSocket.class);
+        GearServiceSocket mockSocket = mock(GearServiceSocket.class);
         GearAgentService.setConnection(mockSocket);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction instruction = getTestInstruction(3, 3);
@@ -779,7 +782,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onCreateView_shouldNotSendFirstInstructionToGear() throws Exception {
-        GearServiceSocket mockSocket = Mockito.mock(GearServiceSocket.class);
+        GearServiceSocket mockSocket = mock(GearServiceSocket.class);
         GearAgentService.setConnection(null);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction instruction = getTestInstruction(3, 3);
@@ -793,7 +796,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onPageSelected_shouldSendInstructionToGear() throws Exception {
-        GearServiceSocket mockSocket = Mockito.mock(GearServiceSocket.class);
+        GearServiceSocket mockSocket = mock(GearServiceSocket.class);
         InOrder inOrder = Mockito.inOrder(mockSocket);
         GearAgentService.setConnection(mockSocket);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
@@ -816,7 +819,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onPageSelected_shouldNotSendInstructionToGear() throws Exception {
-        GearServiceSocket mockSocket = Mockito.mock(GearServiceSocket.class);
+        GearServiceSocket mockSocket = mock(GearServiceSocket.class);
         GearAgentService.setConnection(null);
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction firstInstruction = getTestInstruction(0, 0);
@@ -962,20 +965,36 @@ public class RouteFragmentTest {
 
     @Test
     public void createRouteTo_shouldRedrawPath() throws Exception {
-        MapFragment mapFragmentMock = Mockito.mock(MapFragment.class, Mockito.CALLS_REAL_METHODS);
-        PathLayer pathLayerMock = Mockito.mock(PathLayer.class);
-        Mockito.when(mapFragmentMock.getPathLayer()).thenReturn(pathLayerMock);
+        MapFragment mapFragmentMock = mock(MapFragment.class, Mockito.CALLS_REAL_METHODS);
+        PathLayer pathLayerMock = mock(PathLayer.class);
+        when(mapFragmentMock.getPathLayer()).thenReturn(pathLayerMock);
         fragment.setMapFragment(mapFragmentMock);
         Location testLocation = getTestLocation(100.0, 100.0);
         FragmentTestUtil.startFragment(fragment);
         fragment.createRouteTo(testLocation);
         Mockito.verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(MOCK_NY_TO_VT));
-        Mockito.verify(pathLayerMock).clearPath();
+        Mockito.verify(pathLayerMock, Mockito.times(2)).clearPath();
         for (double[] pair : fragment.getRoute().getGeometry()) {
             Mockito.verify(pathLayerMock).addPoint(new GeoPoint(pair[0], pair[1]));
         }
     }
+
+    @Test
+    public void createRouteTo_shouldRedoUrl() throws Exception {
+        MapFragment mapFragmentMock = mock(MapFragment.class, Mockito.CALLS_REAL_METHODS);
+        PathLayer pathLayerMock = mock(PathLayer.class);
+        when(mapFragmentMock.getPathLayer()).thenReturn(pathLayerMock);
+        fragment.setMapFragment(mapFragmentMock);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.createRouteTo(getTestLocation(100.0, 200.0));
+        fragment.createRouteTo(getTestLocation(200.0, 300.0));
+        Mockito.verify(router, atLeastOnce()).setCallback(callback.capture());
+        callback.getValue().success(new Route(MOCK_NY_TO_VT));
+        assertThat(router.getRouteUrl().toString()).contains("200.0,300.0");
+        assertThat(router.getRouteUrl().toString()).doesNotContain("100.0,200.0");
+    }
+
 
     @Test
     public void createRouteTo_shouldRequestNewRoute() throws Exception {
