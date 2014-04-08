@@ -189,7 +189,7 @@
 
         <dependency>
             <groupId>com.mapzen.android</groupId>
-            <artifactId>player-services</artifactId>
+            <artifactId>lost</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 

@@ -1,7 +1,7 @@
 package com.mapzen.support;
 
 import com.mapzen.activity.BaseActivity;
-import com.mapzen.android.ps.location.LocationClient;
+import com.mapzen.android.lost.LocationClient;
 
 import org.oscim.map.Map;
 import org.oscim.map.TestMap;
