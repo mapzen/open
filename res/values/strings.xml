@@ -4,9 +4,6 @@
     <string name="application_name">Mapzen</string>
     <string name="results_title">Results</string>
     <string name="search_title">Search</string>
-    <string name="generic_server_down">Server is down</string>
-    <string name="request_timed_out">Timeout error</string>
-    <string name="no_internet">Device doesn\'t have connection</string>
     <string name="generic_error">something is up</string>
     <string name="route_description">Turn Icon</string>
     <string name="route_resume_button">Resume</string>
