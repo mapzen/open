@@ -160,10 +160,19 @@
   <style-text id="street-label-lg" k="name" size="28" fill="#7d8f9e" stroke="#e8ecd3" stroke-width="2.0" priority="1" />
 
   <style-text id="poi-label" k="name" size="16" fill="#373737" stroke="#e8ecd3" stroke-width="0.25" />
-  
+
 
   <!-- ways -->
   <m e="way">
+
+    <!-- land base -->
+    <m k="land">
+      <m v="base" zoom-min="0">
+        <area src="patterns/dotsv4.png"/>
+      </m>
+    </m>
+
+
     <!-- parks, playgrounds + labels -->
     <m k="landuse">
       <m select="first">
