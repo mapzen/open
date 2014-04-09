@@ -1,6 +1,7 @@
 # Mapzen
 
-Start where you are
+This project is a simple mobile mapping application built using the Mapzen SDKs and other open source projects. 
+
 
 ## Setup notes
 
