@@ -19,6 +19,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.io.File;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static com.mapzen.support.TestHelper.initBaseActivity;
 import static com.mapzen.support.TestHelper.populateDatabase;
@@ -32,15 +34,16 @@ public class DebugDataSubmitterTest {
     DebugDataSubmitter submitter;
     MockWebServer server;
     BaseActivity activity;
+    ExecutorService executorService;
 
     @Before
     public void setUp() throws Exception {
+        executorService = Executors.newSingleThreadExecutor();
         server = new MockWebServer();
         server.play();
         activity = initBaseActivity();
         populateDatabase(activity);
         submitter = new DebugDataSubmitter(activity);
-        submitter.setRunInThread(false);
         submitter.setFile(new File(activity.getDb().getPath()));
         submitter.setEndpoint(server.getUrl("/fake").toString());
     }
@@ -81,89 +84,129 @@ public class DebugDataSubmitterTest {
 
     @Test
     public void run_shouldTruncateRoutesTable() throws Exception {
-        server.enqueue(new MockResponse());
-        submitter.run();
-        SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
-        Cursor cursor = db.query(DatabaseHelper.TABLE_ROUTES,
-                new String[] { DatabaseHelper.COLUMN_TABLE_ID },
-                null, null, null, null, null);
-        assertThat(cursor).hasCount(0);
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                server.enqueue(new MockResponse());
+                submitter.run();
+                SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
+                Cursor cursor = db.query(DatabaseHelper.TABLE_ROUTES,
+                        new String[] { DatabaseHelper.COLUMN_TABLE_ID },
+                        null, null, null, null, null);
+                assertThat(cursor).hasCount(0);
+            }
+        });
     }
 
     @Test
     public void run_shouldTruncateRouteGeometryTable() throws Exception {
-        server.enqueue(new MockResponse());
-        submitter.run();
-        SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
-        Cursor cursor = db.query(DatabaseHelper.TABLE_ROUTE_GEOMETRY,
-                new String[] { DatabaseHelper.COLUMN_TABLE_ID },
-                null, null, null, null, null);
-        assertThat(cursor).hasCount(0);
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                server.enqueue(new MockResponse());
+                submitter.run();
+                SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
+                Cursor cursor = db.query(DatabaseHelper.TABLE_ROUTE_GEOMETRY,
+                        new String[] { DatabaseHelper.COLUMN_TABLE_ID },
+                        null, null, null, null, null);
+                assertThat(cursor).hasCount(0);
+            }
+        });
     }
 
     @Test
     public void run_shouldTruncateLocations() throws Exception {
-        server.enqueue(new MockResponse());
-        submitter.run();
-        SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
-        Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
-                new String[] { DatabaseHelper.COLUMN_TABLE_ID },
-                null, null, null, null, null);
-        assertThat(cursor).hasCount(0);
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                server.enqueue(new MockResponse());
+                submitter.run();
+                SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
+                Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
+                        new String[] { DatabaseHelper.COLUMN_TABLE_ID },
+                        null, null, null, null, null);
+                assertThat(cursor).hasCount(0);
+            }
+        });
     }
 
     @Test
     public void run_shouldTruncateLogEntries() throws Exception {
-        server.enqueue(new MockResponse());
-        submitter.run();
-        SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
-        Cursor cursor = db.query(DatabaseHelper.TABLE_LOG_ENTRIES,
-                new String[] { DatabaseHelper.COLUMN_TABLE_ID },
-                null, null, null, null, null);
-        assertThat(cursor).hasCount(0);
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                server.enqueue(new MockResponse());
+                submitter.run();
+                SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
+                Cursor cursor = db.query(DatabaseHelper.TABLE_LOG_ENTRIES,
+                        new String[] { DatabaseHelper.COLUMN_TABLE_ID },
+                        null, null, null, null, null);
+                assertThat(cursor).hasCount(0);
+            }
+        });
     }
 
     @Test
     public void run_shouldNotTruncateRoutesTable() throws Exception {
-        server.enqueue(new MockResponse().setResponseCode(500));
-        submitter.run();
-        SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
-        Cursor cursor = db.query(DatabaseHelper.TABLE_ROUTES,
-                new String[] { DatabaseHelper.COLUMN_TABLE_ID },
-                null, null, null, null, null);
-        assertThat(cursor.getCount()).isGreaterThan(0);
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                server.enqueue(new MockResponse().setResponseCode(500));
+                submitter.run();
+                SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
+                Cursor cursor = db.query(DatabaseHelper.TABLE_ROUTES,
+                        new String[] { DatabaseHelper.COLUMN_TABLE_ID },
+                        null, null, null, null, null);
+                assertThat(cursor.getCount()).isGreaterThan(0);
+            }
+        });
     }
 
     @Test
     public void run_shouldNotTruncateRouteGeometryTable() throws Exception {
-        server.enqueue(new MockResponse().setResponseCode(500));
-        submitter.run();
-        SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
-        Cursor cursor = db.query(DatabaseHelper.TABLE_ROUTE_GEOMETRY,
-                new String[] { DatabaseHelper.COLUMN_TABLE_ID },
-                null, null, null, null, null);
-        assertThat(cursor.getCount()).isGreaterThan(0);
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                server.enqueue(new MockResponse().setResponseCode(500));
+                submitter.run();
+                SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
+                Cursor cursor = db.query(DatabaseHelper.TABLE_ROUTE_GEOMETRY,
+                        new String[] { DatabaseHelper.COLUMN_TABLE_ID },
+                        null, null, null, null, null);
+                assertThat(cursor.getCount()).isGreaterThan(0);
+            }
+        });
     }
 
     @Test
     public void run_shouldNotTruncateLocations() throws Exception {
-        server.enqueue(new MockResponse().setResponseCode(500));
-        submitter.run();
-        SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
-        Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
-                new String[] { DatabaseHelper.COLUMN_TABLE_ID },
-                null, null, null, null, null);
-        assertThat(cursor.getCount()).isGreaterThan(0);
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                server.enqueue(new MockResponse().setResponseCode(500));
+                submitter.run();
+                SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
+                Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
+                        new String[] { DatabaseHelper.COLUMN_TABLE_ID },
+                        null, null, null, null, null);
+                assertThat(cursor.getCount()).isGreaterThan(0);
+            }
+        });
     }
 
     @Test
     public void run_shouldNotTruncateLogEntries() throws Exception {
-        server.enqueue(new MockResponse().setResponseCode(500));
-        submitter.run();
-        SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
-        Cursor cursor = db.query(DatabaseHelper.TABLE_LOG_ENTRIES,
-                new String[] { DatabaseHelper.COLUMN_TABLE_ID },
-                null, null, null, null, null);
-        assertThat(cursor.getCount()).isGreaterThan(0);
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                server.enqueue(new MockResponse().setResponseCode(500));
+                submitter.run();
+                SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
+                Cursor cursor = db.query(DatabaseHelper.TABLE_LOG_ENTRIES,
+                        new String[] { DatabaseHelper.COLUMN_TABLE_ID },
+                        null, null, null, null, null);
+                assertThat(cursor.getCount()).isGreaterThan(0);
+            }
+        });
     }
 }
