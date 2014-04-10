@@ -34,7 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_POSITION = "position";
     public static final String TABLE_ROUTE_GEOMETRY = "route_geometry";
     public static final String COLUMN_TABLE_ID = "_id";
-    public static final int VERSION = 4;
+    public static final int VERSION = 5;
 
     private final String createLocationsSql = "create table " + TABLE_LOCATIONS + " ("
             + COLUMN_TABLE_ID + " text primary key,"
@@ -70,7 +70,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private final String createRouteGeometryIndexSql = "CREATE UNIQUE INDEX route_lat_lng "
                 + "on " + TABLE_ROUTE_GEOMETRY
-                + " (" + COLUMN_ROUTE_ID + "," + COLUMN_LAT + ", " + COLUMN_LAT + ");";
+                + " (" + COLUMN_ROUTE_ID + "," + COLUMN_LAT + ", " + COLUMN_LNG + ");";
 
     public DatabaseHelper(Context context) {
         super(context, context.getExternalFilesDir(null).getAbsolutePath() + "/" + DB_NAME,
