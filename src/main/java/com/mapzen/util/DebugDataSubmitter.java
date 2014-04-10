@@ -63,6 +63,7 @@ public class DebugDataSubmitter {
             URL url = new URL(endpoint);
             HttpURLConnection connection = client.open(url);
             connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/octet-stream");
             out = connection.getOutputStream();
             out.write(Files.toByteArray(file));
             out.close();

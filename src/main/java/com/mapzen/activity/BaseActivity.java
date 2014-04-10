@@ -54,7 +54,8 @@ public class BaseActivity extends MapActivity {
     public static final int LOCATION_INTERVAL = 1000;
     public static final String PLAY_SERVICE_FAIL_MESSAGE = "Your device cannot be located";
     public static final String COM_MAPZEN_UPDATES_LOCATION = "com.mapzen.updates.location";
-    public static final String DEBUG_DATA_ENDPOINT = "http://snitchmedia.com/upload.php";
+    public static final String
+            DEBUG_DATA_ENDPOINT = "http://ec2-107-21-132-241.compute-1.amazonaws.com:8080/upload";
     protected DatabaseHelper dbHelper;
     protected DebugDataSubmitter debugDataSubmitter;
     LocationClient locationHelper;
