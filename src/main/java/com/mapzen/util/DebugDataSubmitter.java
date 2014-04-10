@@ -17,6 +17,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static com.mapzen.util.DatabaseHelper.truncateDatabase;
+
 public class DebugDataSubmitter {
     OkHttpClient client = new OkHttpClient();
     BaseActivity activity;
@@ -79,6 +81,7 @@ public class DebugDataSubmitter {
                         + connection.getResponseCode() + " " + connection.getResponseMessage());
             }
             final String responseText = readInputStream(connection.getInputStream());
+            truncateDatabase(activity);
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

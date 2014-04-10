@@ -390,11 +390,11 @@ public class BaseActivityTest {
         server.enqueue(response);
         server.play();
 
+        byte[] expected = Files.toByteArray(new File(testBaseActivity.getDb().getPath()));
         testBaseActivity.setDebugDataEndpoint(server.getUrl("/upload.php").toString());
         MenuItem menuItem = menu.findItem(R.id.phone_home);
         testBaseActivity.onOptionsItemSelected(menuItem);
         RecordedRequest request = server.takeRequest();
-        byte[] expected = Files.toByteArray(new File(testBaseActivity.getDb().getPath()));
         assertThat(request.getBody()).isEqualTo(expected);
         server.shutdown();
     }

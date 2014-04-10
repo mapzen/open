@@ -1,5 +1,6 @@
 package com.mapzen.util;
 
+import com.mapzen.activity.BaseActivity;
 import com.mapzen.osrm.Instruction;
 
 import android.content.ContentValues;
@@ -119,4 +120,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_TABLE_ID, UUID.randomUUID().toString());
         return values;
     }
+
+    public static void truncateDatabase(BaseActivity activity) {
+        activity.getDb().beginTransaction();
+        activity.getDb().delete(TABLE_ROUTES, null, null);
+        activity.getDb().delete(TABLE_LOCATIONS, null, null);
+        activity.getDb().delete(TABLE_ROUTE_GEOMETRY, null, null);
+        activity.getDb().delete(TABLE_LOG_ENTRIES, null, null);
+        activity.getDb().setTransactionSuccessful();
+        activity.getDb().endTransaction();
+    }
+
 }
