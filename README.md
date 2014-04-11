@@ -5,45 +5,55 @@ This project is a simple mobile mapping application built using the Mapzen SDKs 
 
 ## Setup notes
 
-The following dependencies must be installed locally prior to building/running the project.
+The following dependencies must be installed locally prior to building the project.
 
-### Install Android SDK, Support Library, and Google Play Services
+### Install Android SDK and Support Library
 
-<pre><code>$ git clone https://github.com/mapzen/maven-android-sdk-deployer.git
+```bash
+$ git clone https://github.com/mapzen/maven-android-sdk-deployer.git
 $ cd maven-android-sdk-deployer
-$ mvn install -P 4.4 # Used for building production application
-$ mvn install -P 4.3 # Used for unit tests (Robolectric)
+$ mvn install -P 4.4
+$ mvn install -P 4.3
 $ mvn install -fextras/compatibility-v4/pom.xml
-</pre></code>
+```
 
 See [Maven Android SDK Deployer](https://github.com/mosabua/maven-android-sdk-deployer) project for more information.
 
 ### Install VectorTileMap Library
 
-<pre><code>$ git clone --recursive https://github.com/mapzen/vtm.git
-$ cd vtm
-$ echo "ndk.dir=/path/to/ndk" >> vtm-android/local.properties
-$ ./gradlew clean install
-</pre></code>
+```bash
+$ git clone --recursive https://github.com/mapzen/vtm.git
+$ cd vtm && ./gradlew clean install
+```
 
 ### Install VectorTileMap Native Libs
 
-<pre><code>$ git clone https://github.com/mapzen/vtm-native-libs.git
+```bash
+$ git clone https://github.com/mapzen/vtm-native-libs.git
 $ cd vtm-native-libs && ./install-dependencies.sh
-</pre></code>
+```
 
 ### Install Samsung Accessories
 
-<pre><code>$ mvn install:install-file -Dpackaging=jar -Dfile=<path to>/accessory-v1.0.9.jar -DgroupId=com.samsung -DartifactId=samsung-accessory -Dversion=1.0.9
-</pre></code>
+```bash
+$ mvn install:install-file \
+    -Dpackaging=jar \
+    -Dfile=<path to>/accessory-v1.0.9.jar \
+    -DgroupId=com.samsung \
+    -DartifactId=samsung-accessory \
+    -Dversion=1.0.9
+```
 
-## Build Mapzen Application
+## Mapzen Android Demo
 
-<pre><code>$ git clone https://github.com/mapzen/android.git mapzen-android
-$ cd mapzen-android
+Install and run Mapzen demo application.
+
+```bash
+$ git clone https://github.com/mapzen/mapzen-android-demo.git
+$ cd mapzen-android-demo
 $ mvn clean install
 $ mvn android:deploy android:run
-</pre></code>
+```
 
 ## Contributions
 We appreciate pull requests. Please run <code>$ mvn clean verify</code>
