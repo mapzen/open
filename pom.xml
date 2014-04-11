@@ -5,7 +5,7 @@
 
     <groupId>com.mapzen.android</groupId>
     <artifactId>mapzen</artifactId>
-    <version>0.2</version>
+    <version>0.3-SNAPSHOT</version>
     <packaging>apk</packaging>
 
     <name>Mapzen</name>
@@ -33,7 +33,7 @@
         <url>http://github.com/mapzen/android</url>
         <connection>scm:git:git://github.com/mapzen/android.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/mapzen/android.git</developerConnection>
-        <tag>mapzen-0.2</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <distributionManagement>
