@@ -18,16 +18,6 @@ $ mvn install -fextras/compatibility-v4/pom.xml
 
 See [Maven Android SDK Deployer](https://github.com/mosabua/maven-android-sdk-deployer) project for more information.
 
-### Install pelias-android-sdk
-<pre><code>$ git clone https://github.com/mapzen/pelias-android-sdk
-$ cd pelias-android-sdk && ./gradlew clean install
-</pre></code>
-
-### Install OnTheRoad
-<pre><code>$ git clone https://github.com/mapzen/on-the-road.git
-$ cd on-the-road && ./gradlew clean install
-</pre></code>
-
 ### Install VectorTileMap Library
 
 <pre><code>$ git clone --recursive https://github.com/mapzen/vtm.git
@@ -42,16 +32,9 @@ $ ./gradlew clean install
 $ cd vtm-native-libs && ./install-dependencies.sh
 </pre></code>
 
-### Install Speakerbox
-
-<pre><code>$ git clone https://github.com/mapzen/speakerbox.git
-$ cd speakerbox && mvn clean install
-</pre></code>
-
 ### Install Samsung Accessories
 
-<pre><code>
-$ mvn install:install-file -Dpackaging=jar -Dfile=<path to>/accessory-v1.0.9.jar -DgroupId=com.samsung -DartifactId=samsung-accessory -Dversion=1.0.9
+<pre><code>$ mvn install:install-file -Dpackaging=jar -Dfile=<path to>/accessory-v1.0.9.jar -DgroupId=com.samsung -DartifactId=samsung-accessory -Dversion=1.0.9
 </pre></code>
 
 ## Build Mapzen Application
