@@ -17,6 +17,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static com.mapzen.util.DatabaseHelper.truncateDatabase;
+
 public class DebugDataSubmitter {
     OkHttpClient client = new OkHttpClient();
     BaseActivity activity;
@@ -24,7 +26,6 @@ public class DebugDataSubmitter {
     File file;
     OutputStream out;
     InputStream in;
-    boolean runInThread = true;
 
     public DebugDataSubmitter(BaseActivity activity) {
         this.activity = activity;
@@ -42,16 +43,16 @@ public class DebugDataSubmitter {
         this.file = file;
     }
 
-    public void setRunInThread(boolean runInThread) {
-        this.runInThread = runInThread;
-    }
-
     public void run() {
-        if (runInThread) {
-            executeInThread();
-        } else {
-            execute();
-        }
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    submit();
+                } catch (IOException e) {
+                    Logger.e("Error: " + e.toString());
+                }
+            }
+        }).start();
     }
 
     public String readInputStream(InputStream in) throws IOException {
@@ -79,6 +80,7 @@ public class DebugDataSubmitter {
                         + connection.getResponseCode() + " " + connection.getResponseMessage());
             }
             final String responseText = readInputStream(connection.getInputStream());
+            truncateDatabase(activity);
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -93,22 +95,6 @@ public class DebugDataSubmitter {
                 in.close();
             }
         }
-    }
-
-    private void execute() {
-        try {
-            submit();
-        } catch (IOException e) {
-            Logger.e("Error: " + e.toString());
-        }
-    }
-
-    private void executeInThread() {
-        new Thread(new Runnable() {
-            public void run() {
-                execute();
-            }
-        }).start();
     }
 }
 

@@ -41,6 +41,8 @@ import android.widget.SearchView;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
@@ -350,35 +352,47 @@ public class BaseActivityTest {
 
     @Test
     public void onOptionsItemSelected_shouldBeSuccessful() throws Exception {
-        TestBaseActivity testBaseActivity = (TestBaseActivity) activity;
-        String expected = "upload successful!";
-        MockWebServer server = new MockWebServer();
+        final TestBaseActivity testBaseActivity = (TestBaseActivity) activity;
+        final String expected = "upload successful!";
+        final MockWebServer server = new MockWebServer();
         MockResponse response = new MockResponse().setBody(expected);
         server.enqueue(response);
         server.play();
 
-        testBaseActivity.setDebugDataEndpoint(server.getUrl("/upload.php").toString());
-        MenuItem menuItem = menu.findItem(R.id.phone_home);
-        testBaseActivity.onOptionsItemSelected(menuItem);
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                testBaseActivity.setDebugDataEndpoint(server.getUrl("/upload.php").toString());
+                MenuItem menuItem = menu.findItem(R.id.phone_home);
+                testBaseActivity.onOptionsItemSelected(menuItem);
 
-        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(expected);
+                assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(expected);
+            }
+        });
         server.shutdown();
     }
 
     @Test
     public void onOptionsItemSelected_shouldNotifyWhenUnsuccessful() throws Exception {
-        TestBaseActivity testBaseActivity = (TestBaseActivity) activity;
-        String expected = "Upload failed, please try again later!";
-        MockWebServer server = new MockWebServer();
+        final TestBaseActivity testBaseActivity = (TestBaseActivity) activity;
+        final String expected = "Upload failed, please try again later!";
+        final MockWebServer server = new MockWebServer();
         MockResponse response = new MockResponse().setResponseCode(500);
         server.enqueue(response);
         server.play();
 
-        testBaseActivity.setDebugDataEndpoint(server.getUrl("/upload.php").toString());
-        MenuItem menuItem = menu.findItem(R.id.phone_home);
-        testBaseActivity.onOptionsItemSelected(menuItem);
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                testBaseActivity.setDebugDataEndpoint(server.getUrl("/upload.php").toString());
+                MenuItem menuItem = menu.findItem(R.id.phone_home);
+                testBaseActivity.onOptionsItemSelected(menuItem);
 
-        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(expected);
+                assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(expected);
+            }
+        });
         server.shutdown();
     }
 
@@ -390,11 +404,11 @@ public class BaseActivityTest {
         server.enqueue(response);
         server.play();
 
+        byte[] expected = Files.toByteArray(new File(testBaseActivity.getDb().getPath()));
         testBaseActivity.setDebugDataEndpoint(server.getUrl("/upload.php").toString());
         MenuItem menuItem = menu.findItem(R.id.phone_home);
         testBaseActivity.onOptionsItemSelected(menuItem);
         RecordedRequest request = server.takeRequest();
-        byte[] expected = Files.toByteArray(new File(testBaseActivity.getDb().getPath()));
         assertThat(request.getBody()).isEqualTo(expected);
         server.shutdown();
     }

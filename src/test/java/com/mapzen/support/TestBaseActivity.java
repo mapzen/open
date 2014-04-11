@@ -59,7 +59,6 @@ public class TestBaseActivity extends BaseActivity {
     public void initDebugDataSubmitter() {
         super.initDebugDataSubmitter();
         debugDataSubmitter.setEndpoint(debugDataEndpoint);
-        debugDataSubmitter.setRunInThread(false);
     }
 
     public void setDebugDataEndpoint(String debugDataEndpoint) {

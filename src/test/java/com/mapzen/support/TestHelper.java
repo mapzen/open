@@ -8,6 +8,7 @@ import com.mapzen.android.gson.Properties;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.osrm.Instruction;
+import com.mapzen.util.DatabaseHelper;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
@@ -16,6 +17,7 @@ import org.oscim.map.TestMap;
 import org.robolectric.shadows.ShadowLocationManager;
 import org.robolectric.tester.android.view.TestMenu;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
@@ -26,6 +28,7 @@ import android.support.v4.app.FragmentManager;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
@@ -155,6 +158,46 @@ public final class TestHelper {
                 application.getSystemService(LOCATION_SERVICE);
         ShadowLocationManager shadowLocationManager = shadowOf(locationManager);
         shadowLocationManager.setLastKnownLocation(GPS_PROVIDER, new Location(GPS_PROVIDER));
+    }
+
+    public static void populateDatabase(BaseActivity act) throws Exception {
+        populateRoutesTable(act);
+        populateLocationsTable(act);
+        populateRoutesGeometryTable(act);
+        populateLogEntriesTable(act);
+    }
+
+    private static void populateLogEntriesTable(BaseActivity act) {
+        ContentValues logValues = new ContentValues();
+        logValues.put(DatabaseHelper.COLUMN_TAG, "tag");
+        logValues.put(DatabaseHelper.COLUMN_MSG, "log message");
+        logValues.put(DatabaseHelper.COLUMN_TABLE_ID, UUID.randomUUID().toString());
+        act.getDb().insert(DatabaseHelper.TABLE_LOG_ENTRIES, null, logValues);
+    }
+
+    private static void populateRoutesGeometryTable(BaseActivity act) {
+        String routeId = UUID.randomUUID().toString();
+        ContentValues values = new ContentValues();
+        values.put(DatabaseHelper.COLUMN_TABLE_ID, UUID.randomUUID().toString());
+        values.put(DatabaseHelper.COLUMN_ROUTE_ID, routeId);
+        values.put(DatabaseHelper.COLUMN_POSITION, 0);
+        values.put(DatabaseHelper.COLUMN_LAT, 0);
+        values.put(DatabaseHelper.COLUMN_LNG, 0);
+        act.getDb().insert(DatabaseHelper.TABLE_ROUTE_GEOMETRY, null, values);
+    }
+
+    public static void populateRoutesTable(BaseActivity act) {
+        ContentValues insertValues = new ContentValues();
+        String routeId = UUID.randomUUID().toString();
+        insertValues.put(DatabaseHelper.COLUMN_TABLE_ID, routeId);
+        insertValues.put(DatabaseHelper.COLUMN_RAW, "blabla");
+        act.getDb().insert(DatabaseHelper.TABLE_ROUTES, null, insertValues);
+    }
+
+    private static void populateLocationsTable(BaseActivity act) throws Exception {
+        act.getDb().insert(DatabaseHelper.TABLE_LOCATIONS, null,
+                DatabaseHelper.valuesForLocationCorrection(TestHelper.getTestLocation(0.0, 0.0),
+                        getTestLocation(1.0, 1.0), getTestInstruction(0.0, 0.0), "random-id"));
     }
 
     public static class TestLocation extends Location {
