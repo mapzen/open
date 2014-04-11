@@ -85,13 +85,13 @@
         <dependency>
             <groupId>com.mapzen.android</groupId>
             <artifactId>pelias-android-sdk</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>0.1</version>
         </dependency>
 
         <dependency>
             <groupId>com.mapzen</groupId>
             <artifactId>on-the-road</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>0.1</version>
         </dependency>
 
         <dependency>
@@ -152,7 +152,7 @@
         <dependency>
             <groupId>com.mapzen.android</groupId>
             <artifactId>speakerbox</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -190,7 +190,7 @@
         <dependency>
             <groupId>com.mapzen.android</groupId>
             <artifactId>lost</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>0.1</version>
         </dependency>
 
     </dependencies>
