@@ -37,7 +37,7 @@
     <rect id="31_information" pos="0 1110 32 32" />
   </atlas> -->  
 
-<!-- icons 20 
+<!-- icons 20 -->
   <atlas img="styles/poi_icons_20.png">
     <rect id="1_airport" pos="0 0 20 20" />
     <rect id="2_taxi " pos="0 25 20 20" />
@@ -70,9 +70,9 @@
     <rect id="29_basketball" pos="0 700 20 20" />
     <rect id="30_parking" pos="0 725 20 20" />
     <rect id="31_information" pos="0 750 20 20" />
-  </atlas> --> 
+  </atlas>  
 
-  <!-- icons 16 -->
+  <!-- icons 16 
   <atlas img="styles/poi_icons_16.png">
     <rect id="1_airport" pos="0 0 16 16" />
     <rect id="2_taxi " pos="0 21 16 16" />
@@ -105,7 +105,7 @@
     <rect id="29_basketball" pos="0 588 16 16" />
     <rect id="30_parking" pos="0 609 16 16" />
     <rect id="31_information" pos="0 630 16 16" />
-  </atlas> 
+  </atlas> -->
 
   <style-line id="trunk" stroke="#ebf0d8" width="1.5" />
   <style-line id="motorway" stroke="#f3f7e6" width="3" cap="butt" priority="1"/>
@@ -123,7 +123,7 @@
   <style-text id="street-label" k="name" size="20" character-spacing="0.3" fill="#465b73" stroke="#e8ecd3" stroke-width="2.0" priority="2" />
   <style-text id="street-label-lg" k="name" size="28" fill="#7d8f9e" stroke="#e8ecd3" stroke-width="2.0" priority="1" />
 
-  <style-text id="poi-label" k="name" size="16" fill="#373737" stroke="#e8ecd3" stroke-width="0.25" />
+  <style-text id="poi-label" k="name" size="16" fill="#38678f" stroke="#e8ecd3" stroke-width="0.5" dy="2" />
   
 
   <!-- ways -->
