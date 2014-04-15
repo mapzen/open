@@ -37,6 +37,76 @@
     <rect id="31_information" pos="0 1110 32 32" />
   </atlas>  
 
+<!-- icons 24 
+  <atlas img="styles/poi_icons_24.png">
+    <rect id="1_airport" pos="0 0 24 24" />
+    <rect id="2_taxi " pos="0 29 24 24" />
+    <rect id="3_train" pos="0 58 24 24" />
+    <rect id="4_boat" pos="0 87 24 24" />
+    <rect id="5_bus" pos="0 116 24 24" />
+    <rect id="6_park" pos="0 145 24 24" />
+    <rect id="7_gas_station" pos="0 174 24 24" />
+    <rect id="8_hotel" pos="0 203 24 24" />
+    <rect id="9_bank" pos="0 232 24 24" />
+    <rect id="10_library" pos="0 261 24 24" />
+    <rect id="11_school" pos="0 290 24 24" />
+    <rect id="12_post_office" pos="0 319 24 24" />
+    <rect id="13_hospital" pos="0 348 24 24" />
+    <rect id="14_pharmacy" pos="0 377 24 24" />
+    <rect id="15_museum" pos="0 406 24 24" />
+    <rect id="16_building" pos="0 435 24 24" />
+    <rect id="17_movie_theatre" pos="0 464 24 28" />
+    <rect id="18_spiritual_center" pos="0 493 24 24" />
+    <rect id="19_temple" pos="0 522 24 24" />
+    <rect id="20_church" pos="0 551 24 24" />
+    <rect id="21_toilet" pos="0 580 24 24" />
+    <rect id="22_restaurant" pos="0 609 24 24" />
+    <rect id="23_cafe" pos="0 638 24 24" />
+    <rect id="24_coffee_shop" pos="0 667 24 24" />
+    <rect id="25_bar" pos="0 696 24 24" />
+    <rect id="26_sports" pos="0 725 24 24" />
+    <rect id="27_soccer" pos="0 754 24 24" />
+    <rect id="28_baseball" pos="0 783 24 24" />
+    <rect id="29_basketball" pos="0 812 24 24" />
+    <rect id="30_parking" pos="0 841 24 24" />
+    <rect id="31_information" pos="0 870 24 24" />
+  </atlas>  -->
+
+  <!-- icons 28 
+  <atlas img="styles/poi_icons_28.png">
+    <rect id="1_airport" pos="0 0 24 24" />
+    <rect id="2_taxi " pos="0 33 24 24" />
+    <rect id="3_train" pos="0 66 24 24" />
+    <rect id="4_boat" pos="0 99 24 24" />
+    <rect id="5_bus" pos="0 132 24 24" />
+    <rect id="6_park" pos="0 165 24 24" />
+    <rect id="7_gas_station" pos="0 198 24 24" />
+    <rect id="8_hotel" pos="0 231 24 24" />
+    <rect id="9_bank" pos="0 264 24 24" />
+    <rect id="10_library" pos="0 297 24 24" />
+    <rect id="11_school" pos="0 330 24 24" />
+    <rect id="12_post_office" pos="0 363 24 24" />
+    <rect id="13_hospital" pos="0 396 24 24" />
+    <rect id="14_pharmacy" pos="0 429 24 24" />
+    <rect id="15_museum" pos="0 462 24 24" />
+    <rect id="16_building" pos="0 495 24 24" />
+    <rect id="17_movie_theatre" pos="0 524 24 28" />
+    <rect id="18_spiritual_center" pos="0 561 24 24" />
+    <rect id="19_temple" pos="0 594 24 24" />
+    <rect id="20_church" pos="0 627 24 24" />
+    <rect id="21_toilet" pos="0 660 24 24" />
+    <rect id="22_restaurant" pos="0 683 24 24" />
+    <rect id="23_cafe" pos="0 726 24 24" />
+    <rect id="24_coffee_shop" pos="0 759 24 24" />
+    <rect id="25_bar" pos="0 792 24 24" />
+    <rect id="26_sports" pos="0 825 24 24" />
+    <rect id="27_soccer" pos="0 858 24 24" />
+    <rect id="28_baseball" pos="0 891 24 24" />
+    <rect id="29_basketball" pos="0 924 24 24" />
+    <rect id="30_parking" pos="0 957 24 24" />
+    <rect id="31_information" pos="0 990 24 24" />
+  </atlas>  --> 
+
   <!-- icons 20 
   <atlas img="styles/poi_icons_20.png">
     <rect id="1_airport" pos="0 0 20 20" />
