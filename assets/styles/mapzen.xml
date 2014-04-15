@@ -3,145 +3,109 @@
   xsi:schemaLocation="http://opensciencemap.org/rendertheme ../../rendertheme.xsd" version="1" map-background="#ebf0d8" >
 
   <!-- icons 32 
-  <atlas img="styles/poi_icons.png">
-    <rect id="airport" pos="0 0 32 32" />
-    <rect id="arts_ent" pos="52 0 32 32" />
-    <rect id="bank" pos="104 0 32 32" />
-    <rect id="bathroom" pos="156 0 32 32" />
-    <rect id="education" pos="208 0 32 32" />
-    <rect id="food" pos="260 0 32 32" />
-    <rect id="gas_station" pos="312 0 32 32" />
-    <rect id="hotel" pos="364 0 32 32" />
-    <rect id="medical" pos="416 0 32 32" />
-    <rect id="pizza" pos="468 0 32 32" />
-    <rect id="post_office" pos="520 0 32 32" />
-    <rect id="religious" pos="572 0 32 32" />
-    <rect id="sports" pos="624 0 32 32" />
-    <rect id="train" pos="676 0 32 32" />
-  </atlas> -->
+  <atlas img="styles/poi_icons_32.png">
+    <rect id="1_airport" pos="0 0 32 32" />
+    <rect id="2_taxi " pos="0 37 32 32" />
+    <rect id="3_train" pos="0 54 32 32" />
+    <rect id="4_boat" pos="0 111 32 32" />
+    <rect id="5_bus" pos="0 148 32 32" />
+    <rect id="6_park" pos="0 185 32 32" />
+    <rect id="7_gas_station" pos="0 222 32 32" />
+    <rect id="8_hotel" pos="0 259 32 32" />
+    <rect id="9_bank" pos="0 296 32 32" />
+    <rect id="10_library" pos="0 333 32 32" />
+    <rect id="11_school" pos="0 370 32 32" />
+    <rect id="12_post_office" pos="0 407 32 32" />
+    <rect id="13_hospital" pos="0 444 32 32" />
+    <rect id="14_pharmacy" pos="0 481 32 32" />
+    <rect id="15_museum" pos="0 518 32 32" />
+    <rect id="16_building" pos="0 555 32 32" />
+    <rect id="17_movie_theatre" pos="0 592 32 32" />
+    <rect id="18_spiritual_center" pos="0 629 32 32" />
+    <rect id="19_temple" pos="0 629 32 32" />
+    <rect id="20_church" pos="0 666 32 32" />
+    <rect id="21_toilet" pos="0 703 32 32" />
+    <rect id="22_restaurant" pos="0 777 32 32" />
+    <rect id="23_cafe" pos="0 814 32 32" />
+    <rect id="24_coffee_shop" pos="0 851 32 32" />
+    <rect id="25_bar" pos="0 888 32 32" />
+    <rect id="26_sports" pos="0 925 32 32" />
+    <rect id="27_soccer" pos="0 962 32 32" />
+    <rect id="28_baseball" pos="0 999 32 32" />
+    <rect id="29_basketball" pos="0 1036 32 32" />
+    <rect id="30_parking" pos="0 1073 32 32" />
+    <rect id="31_information" pos="0 1110 32 32" />
+  </atlas> -->  
 
-  <!-- icons 12 
-  <atlas img="styles/poi_icons_12.png">
-    <rect id="airport" pos="0 0 12 12" />
-    <rect id="arts_ent" pos="0 22 12 12" />
-    <rect id="bank" pos="0 44 12 12" />
-    <rect id="baseball" pos="0 66 12 12" />
-    <rect id="bathroom" pos="0 88 12 12" />
-    <rect id="church" pos="0 110 12 12" />
-    <rect id="education" pos="0 132 12 12" />
-    <rect id="food" pos="0 154 12 12" />
-    <rect id="gas_station" pos="0 176 12 12" />
-    <rect id="hotel" pos="0 198 12 12" />
-    <rect id="medical" pos="0 220 12 12" />
-    <rect id="pizza" pos="0 242 12 12" />
-    <rect id="post_office" pos="0 264 12 12" />
-    <rect id="religious" pos="0 286 12 12" />
-    <rect id="soccer" pos="0 308 12 12" />
-    <rect id="sports" pos="0 330 12 12" />
-    <rect id="train" pos="0 352 12 12" />
-  </atlas> -->
+<!-- icons 20 
+  <atlas img="styles/poi_icons_20.png">
+    <rect id="1_airport" pos="0 0 20 20" />
+    <rect id="2_taxi " pos="0 25 20 20" />
+    <rect id="3_train" pos="0 50 20 20" />
+    <rect id="4_boat" pos="0 75 20 20" />
+    <rect id="5_bus" pos="0 100 20 20" />
+    <rect id="6_park" pos="0 125 20 20" />
+    <rect id="7_gas_station" pos="0 150 20 20" />
+    <rect id="8_hotel" pos="0 175 20 20" />
+    <rect id="9_bank" pos="0 200 20 20" />
+    <rect id="10_library" pos="0 225 20 20" />
+    <rect id="11_school" pos="0 250 20 20" />
+    <rect id="12_post_office" pos="0 275 20 20" />
+    <rect id="13_hospital" pos="0 300 20 20" />
+    <rect id="14_pharmacy" pos="0 325 20 20" />
+    <rect id="15_museum" pos="0 350 20 20" />
+    <rect id="16_building" pos="0 375 20 20" />
+    <rect id="17_movie_theatre" pos="0 400 20 20" />
+    <rect id="18_spiritual_center" pos="0 425 20 20" />
+    <rect id="19_temple" pos="0 450 20 20" />
+    <rect id="20_church" pos="0 475 20 20" />
+    <rect id="21_toilet" pos="0 500 20 20" />
+    <rect id="22_restaurant" pos="0 525 20 20" />
+    <rect id="23_cafe" pos="0 550 20 20" />
+    <rect id="24_coffee_shop" pos="0 575 20 20" />
+    <rect id="25_bar" pos="0 600 20 20" />
+    <rect id="26_sports" pos="0 625 20 20" />
+    <rect id="27_soccer" pos="0 650 20 20" />
+    <rect id="28_baseball" pos="0 675 20 20" />
+    <rect id="29_basketball" pos="0 700 20 20" />
+    <rect id="30_parking" pos="0 725 20 20" />
+    <rect id="31_information" pos="0 750 20 20" />
+  </atlas> --> 
 
   <!-- icons 16 -->
   <atlas img="styles/poi_icons_16.png">
-    <rect id="airport" pos="0 0 16 16" />
-    <rect id="arts_ent" pos="0 26 16 16" />
-    <rect id="bank" pos="0 52 16 16" />
-    <rect id="baseball" pos="0 78 16 16" />
-    <rect id="bathroom" pos="0 104 16 16" />
-    <rect id="church" pos="0 130 16 16" />
-    <rect id="education" pos="0 156 16 16" />
-    <rect id="food" pos="0 182 16 16" />
-    <rect id="gas_station" pos="0 208 16 16" />
-    <rect id="hotel" pos="0 234 16 16" />
-    <rect id="medical" pos="0 260 16 16" />
-    <rect id="pizza" pos="0 286 16 16" />
-    <rect id="post_office" pos="0 312 16 16" />
-    <rect id="religious" pos="0 338 16 16" />
-    <rect id="soccer" pos="0 364 16 16" />
-    <rect id="sports" pos="0 390 16 16" />
-    <rect id="train" pos="0 416 16 16" />
-  </atlas>  
-
-    <!-- icons 32 
-  <atlas img="styles/poi_icons_32.png">
-    <rect id="airport" pos="0 0 32 32" />
-    <rect id="arts_ent" pos="0 42 32 32" />
-    <rect id="bank" pos="0 84 32 32" />
-    <rect id="baseball" pos="0 126 32 32" />
-    <rect id="bathroom" pos="0 168 32 32" />
-    <rect id="church" pos="0 210 32 32" />
-    <rect id="education" pos="0 252 32 32" />
-    <rect id="food" pos="0 294 32 32" />
-    <rect id="gas_station" pos="0 336 32 32" />
-    <rect id="hotel" pos="0 378 32 32" />
-    <rect id="medical" pos="0 420 32 32" />
-    <rect id="pizza" pos="0 462 32 32" />
-    <rect id="post_office" pos="0 504 32 32" />
-    <rect id="religious" pos="0 546 32 32" />
-    <rect id="soccer" pos="0 588 32 32" />
-    <rect id="sports" pos="0 630 32 32" />
-    <rect id="train" pos="0 672 32 32" />
-  </atlas>  -->
-
-    <!-- icons to add
-    <rect id="alpine_hut" pos="198 41 26 21" />
-    <rect id="atm" pos="279 2 14 16" />
-    <rect id="bakery" pos="305 46 22 16" />
-    <rect id="bank" pos="395 43 19 19" />
-    <rect id="bench" pos="213 29 8 10" />
-    <rect id="bicycle_rental" pos="295 2 13 16" />
-    <rect id="bus" pos="130 32 23 9" />
-    <rect id="bus_sta" pos="36 30 31 32" />
-    <rect id="cable_car" pos="2 2 29 26" />
-    <rect id="cafe" pos="216 2 14 14" />
-    <rect id="campSite" pos="329 42 20 20" />
-    <rect id="cave_entrance" pos="297 23 16 10" />
-    <rect id="chair_lift" pos="130 2 13 28" />
-    <rect id="church" pos="61 9 9 19" />
-    <rect id="cinema" pos="145 8 16 22" />
-    <rect id="drinking_water" pos="416 43 19 19" />
-    <rect id="fastfood" pos="351 42 20 20" />
-    <rect id="firebrigade" pos="130 43 36 19" />
-    <rect id="florist" pos="342 24 12 16" />
-    <rect id="fountain" pos="500 46 10 16" />
-    <rect id="gondola" pos="252 38 21 24" />
-    <rect id="helipad" pos="69 31 31 31" />
-    <rect id="hospital" pos="437 43 19 19" />
-    <rect id="hostel" pos="168 44 28 18" />
-    <rect id="hotel" pos="93 11 18 17" />
-    <rect id="information" pos="458 43 19 19" />
-    <rect id="kindergarten" pos="184 2 14 19" />
-    <rect id="library" pos="372 22 9 18" />
-    <rect id="mosque" pos="248 2 17 15" />
-    <rect id="oneway" pos="275 38 25 7" />
-    <rect id="parking" pos="373 42 20 20" />
-    <rect id="peak" pos="267 9 9 8" />
-    <rect id="petrolStation" pos="263 19 14 17" />
-    <rect id="pharmacy" pos="479 43 19 19" />
-    <rect id="playground" pos="223 18 18 18" />
-    <rect id="postbox" pos="232 2 14 14" />
-    <rect id="postoffice" pos="172 23 19 19" />
-    <rect id="pub" pos="326 26 14 14" />
-    <rect id="railway-crossing" pos="275 47 28 15" />
-    <rect id="railway-crossing-small" pos="155 32 15 9" />
-    <rect id="recycling" pos="72 11 19 18" />
-    <rect id="restaurant" pos="356 28 14 12" />
-    <rect id="school" pos="200 2 14 19" />
-    <rect id="shelter" pos="33 4 26 24" />
-    <rect id="soccer-borderless" pos="102 30 26 32" />
-    <rect id="supermarket" pos="193 23 18 16" />
-    <rect id="synagogue" pos="113 11 15 17" />
-    <rect id="telephone" pos="383 21 7 19" />
-    <rect id="tennis" pos="2 30 32 32" />
-    <rect id="theatre" pos="243 19 18 17" />
-    <rect id="toilets" pos="163 2 19 19" />
-    <rect id="traffic_signal" pos="392 21 7 19" /> 
-    <rect id="tree" pos="145 2 4 4" />
-    <rect id="university" pos="302 35 19 9" />
-    <rect id="viewpoint" pos="279 20 16 16" />
-    <rect id="vulcan" pos="315 25 9 8" />
-    <rect id="windmill" pos="310 2 13 19" /> -->
-  
+    <rect id="1_airport" pos="0 0 16 16" />
+    <rect id="2_taxi " pos="0 21 16 16" />
+    <rect id="3_train" pos="0 42 16 16" />
+    <rect id="4_boat" pos="0 63 16 16" />
+    <rect id="5_bus" pos="0 84 16 16" />
+    <rect id="6_park" pos="0 105 16 16" />
+    <rect id="7_gas_station" pos="0 126 16 16" />
+    <rect id="8_hotel" pos="0 147 16 16" />
+    <rect id="9_bank" pos="0 168 16 16" />
+    <rect id="10_library" pos="0 189 16 16" />
+    <rect id="11_school" pos="0 210 16 16" />
+    <rect id="12_post_office" pos="0 231 16 16" />
+    <rect id="13_hospital" pos="0 252 16 16" />
+    <rect id="14_pharmacy" pos="0 273 16 16" />
+    <rect id="15_museum" pos="0 294 16 16" />
+    <rect id="16_building" pos="0 315 16 16" />
+    <rect id="17_movie_theatre" pos="0 336 16 16" />
+    <rect id="18_spiritual_center" pos="0 357 16 16" />
+    <rect id="19_temple" pos="0 378 16 16" />
+    <rect id="20_church" pos="0 399 16 16" />
+    <rect id="21_toilet" pos="0 420 16 16" />
+    <rect id="22_restaurant" pos="0 441 16 16" />
+    <rect id="23_cafe" pos="0 462 16 16" />
+    <rect id="24_coffee_shop" pos="0 483 16 16" />
+    <rect id="25_bar" pos="0 504 16 16" />
+    <rect id="26_sports" pos="0 525 16 16" />
+    <rect id="27_soccer" pos="0 546 16 16" />
+    <rect id="28_baseball" pos="0 567 16 16" />
+    <rect id="29_basketball" pos="0 588 16 16" />
+    <rect id="30_parking" pos="0 609 16 16" />
+    <rect id="31_information" pos="0 630 16 16" />
+  </atlas> 
 
   <style-line id="trunk" stroke="#ebf0d8" width="1.5" />
   <style-line id="motorway" stroke="#f3f7e6" width="3" cap="butt" priority="1"/>
@@ -259,13 +223,13 @@
           <area fill="#8db3b6" stroke="#243F3F" stroke-width="0.15" />
         </m>
         <m v="hospital" zoom-min="16">
-          <symbol src="hospital" />
+          <symbol src="13_hospital" />
         </m>
         <m v="theatre" zoom-min="16">
-          <symbol src="arts-ent" />
+          <symbol src="17_movie_theatre" />
         </m>
         <m v="toilets" zoom-min="16">
-          <symbol src="bathroom" />
+          <symbol src="21_toilet" />
         </m>
       </m>
       <m k="name" zoom-min="17">
@@ -278,9 +242,9 @@
     <m k="natural">
       <m select="first">
         <m v="coastline">
-          <!-- <m closed="no">
+          <m closed="no">
             <line stroke="#708599" fix="true" cap="butt" width="2.0" />
-            </m> -->
+            </m>
           <m closed="yes">
             <area fill="#8db3b6" stroke="#243F3F" stroke-width="0.4" />
           </m>
@@ -430,7 +394,7 @@
     <!-- sport -->
     <m k="sport">
       <m v="soccer" zoom-min="16">
-        <symbol src="soccer" />
+        <symbol src="27_soccer" />
       </m>
       <m v="swimming|canoe|diving|scuba_diving">
         <area fill="#8db3b6" stroke="#243F3F" stroke-width="0.2" />
@@ -439,7 +403,7 @@
         <area src="patterns/park_texture.png" />
         <line stroke="#898b61" width="0.2" cap="butt" />
         <m zoom-min="17">
-          <symbol src="sports" />
+          <symbol src="26_sports" />
         </m>
       </m>
     </m>
@@ -456,6 +420,7 @@
       </m>
       <m k="name" zoom-min="16">
         <text use="caption-small-blue" />
+        <symbol src="6_park" />
       </m>
     </m>
 
@@ -964,30 +929,17 @@
     </m>
 
 
-    <!-- highway one-way markers -->
-    <!-- <m k="tunnel" v="~|false|no">
-      <m k="area" v="~|false|no">
-      <m k="highway">
-      <m k="oneway" v="yes|true" zoom-min="16">
-      <lineSymbol src="oneway" align-center="true"
-      repeat="true" />
-      </m>
-      </m>
-      </m>
-      </m> -->
-
-
     <m k="aerialway">
       <line stroke="#202020" width="0.4" cap="round" />
       <line stroke="#202020" width="4.0" dasharray="2,200" cap="round" />
       <m k="aerialway" v="cable_car">
-        <lineSymbol src="cable_car" />
+        <symbol src="" />
       </m>
       <m k="aerialway" v="chair_lift">
-        <lineSymbol src="chair_lift_2" />
+        <symbol src="" />
       </m>
       <m k="aerialway" v="gondola">
-        <lineSymbol src="gondola" />
+        <symbol src="" />
       </m>
       <m zoom-min="14">
         <text k="name" style="bold" size="10" fill="#606060" stroke="#ffffff" stroke-width="2.0" />
@@ -1092,16 +1044,17 @@
 
     <m k="aeroway">
       <m k="aeroway" v="helipad" zoom-min="16">
-        <symbol src="airport" /> 
+        <symbol src="1_airport" /> 
       </m>
       <m k="aeroway" v="aerodrome|airport" zoom-min="16">
-        <symbol src="airport" /> 
+        <symbol src="1_airport" /> 
       </m>
     </m>
 
     <m k="barrier" v="bollard">
       <circle radius="1.5" fill="#707070" />
     </m>
+  </m>
 
 
     <m k="highway">
@@ -1119,10 +1072,10 @@
     <m k="amenity">
       <m select="first">
         <m v="atm" zoom-min="16">
-          <symbol src="bank" />
+          <symbol src="9_bank" />
         </m>
         <m v="bank" zoom-min="16">
-          <symbol src="bank" />
+          <symbol src="9_bank" />
         </m>
         <!--
         <m v="bench" zoom-min="17">
@@ -1131,17 +1084,17 @@
         <m v="bicycle_rental" zoom-min="17">
           <symbol src="bicycle_rental" />
         </m>
-        <m v="bus_station" zoom-min="17">
-          <symbol src="bus_sta" />
-        </m>
         -->
-        <m v="cafe" zoom-min="16">
-          <symbol src="food" />
+        <m v="bus_station" zoom-min="17">
+          <symbol src="5_bus" />
         </m>
-      </m>
-        
+
+        <m v="cafe" zoom-min="16">
+          <symbol src="23_cafe" />
+        </m>
+     
         <m v="cinema" zoom-min="18">
-          <symbol src="arts_ent" />
+          <symbol src="17_movie_theatre" />
         </m>
         <!--
         <m v="drinking_water" zoom-min="17">
@@ -1149,7 +1102,7 @@
         </m>
         -->
         <m v="fast_food" zoom-min="16">
-          <symbol src="food" />
+          <symbol src="22_restaurant" />
         </m>
         <!--
         <m v="fire_station" zoom-min="17">
@@ -1160,10 +1113,10 @@
         </m>
         -->
         <m v="fuel" zoom-min="18">
-          <symbol src="gas_station" />
+          <symbol src="7_gas_station" />
         </m>
         <m v="hospital" zoom-min="16">
-          <symbol src="hospital" /> 
+          <symbol src="13_hospital" /> 
         </m>
         <!--
         <m v="kindergarten" zoom-min="17">
@@ -1171,35 +1124,33 @@
         </m>
         -->
         <m v="library" zoom-min="18">
-          <symbol src="education" />
+          <symbol src="10_library" />
         </m>
-        <!--
         <m v="parking" zoom-min="17">
-          <symbol src="parking" />
+          <symbol src="30_parking" />
         </m>
-      -->
         <m v="pharmacy" zoom-min="18">
-          <symbol src="hospital" />
+          <symbol src="14_pharmacy" />
         </m>
         <m v="place_of_worship" zoom-min="18">
           <m k="denomination|religion" v="jewish">
-            <symbol src="religious" />
+            <symbol src="18_spiritual_center" />
           </m>
           <m k="denomination|religion" v="muslim|moslem">
-            <symbol src="religious" />
+            <symbol src="18_spiritual_center" />
           </m>
           <m k="denomination|religion" v="christian">
-            <symbol src="church" />
+            <symbol src="20_church" />
           </m>
         </m>
         <m v="post_box" zoom-min="18">
-          <symbol src="post_office" />
+          <symbol src="12_post_office" />
         </m>
         <m v="post_office" zoom-min="16">
-          <symbol src="post_office" />
+          <symbol src="12_post_office" />
         </m>
         <m v="pub|bar" zoom-min="16">
-          <symbol src="food" />
+          <symbol src="23_bar" />
         </m>
         <!--
         <m v="recycling" zoom-min="17">
@@ -1207,10 +1158,10 @@
         </m>
       -->
         <m v="restaurant" zoom-min="16">
-          <symbol src="food" />
+          <symbol src="22_restaurant" />
         </m>
         <m v="school" zoom-min="18">
-          <symbol src="education" />
+          <symbol src="11_school" />
         </m>
         <!--
         <m v="shelter" zoom-min="17">
@@ -1221,13 +1172,13 @@
         </m>
       -->
         <m v="theatre" zoom-min="18">
-          <symbol src="arts_ent" />
+          <symbol src="17_movie_theatre" />
         </m>
         <m v="toilets" zoom-min="18">
-          <symbol src="bathroom" />
+          <symbol src="21_toilet" />
         </m>
         <m v="university|college" zoom-min="18">
-          <symbol src="education" />
+          <symbol src="11_school" />
         </m>
       </m>
 
@@ -1261,16 +1212,16 @@
     <m k="natural">
       <m select="first">
         <m v="cave_entrance" zoom-min="20">
-          <symbol src="cave_entrance" />
+          <symbol src="" />
         </m>
         <m v="peak" zoom-min="20">
-          <symbol src="cave_entrance" />
+          <symbol src="" />
         </m>
         <m v="tree" zoom-min="20">
-          <symbol src="tree" />
+          <symbol src="" />
         </m>
         <m v="volcano" zoom-min="18">
-          <symbol src="vulcan" />
+          <symbol src="" />
         </m>
       </m>
     </m>
@@ -1416,7 +1367,7 @@
 
     <m k="shop">
       <m v="bakery" zoom-min="16">
-        <symbol src="food" />
+        <symbol src="22_restaurant" />
         <m zoom-min="19">
           <text use="poi-label" />
         </m>
@@ -1432,25 +1383,25 @@
 
     <m k="tourism" zoom-min="18">
       <m v="alpine_hut">
-        <symbol src="alpine_hut" />
+        <symbol src="" />
       </m>
       <m v="camp_site">
         <symbol src="campSite" />
       </m>
       <m v="hostel">
-        <symbol src="hostel" />
+        <symbol src="" />
       </m>
       <m zoom-min="16" v="hotel">
-        <symbol src="hotel" />
+        <symbol src="8_hotel" />
         <m zoom-min="19">
           <text use="poi-label" />
         </m>
       </m>
       <m v="information">
-        <symbol src="information" />
+        <symbol src="31_information" />
       </m>
       <m v="viewpoint">
-        <symbol src="viewpoint" />
+        <symbol src="" />
       </m>
     </m>
 </rendertheme>
