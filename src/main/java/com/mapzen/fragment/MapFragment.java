@@ -182,7 +182,9 @@ public class MapFragment extends BaseFragment {
         meMarkerLayer = buildMyPositionLayer();
         map.layers().add(meMarkerLayer);
 
-        setTheme(MapzenTheme.valueOf(getString(R.string.settings_default_mapstyle)));
+        MapzenTheme theme = MapzenTheme.valueOf(getString(R.string.settings_default_mapstyle));
+        theme.setContext(act);
+        setTheme(theme);
         map.events.bind(new Map.UpdateListener() {
             @Override
             public void onMapEvent(Event e, MapPosition mapPosition) {
