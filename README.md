@@ -5,7 +5,7 @@ This project is a simple mobile mapping application built using the Mapzen SDKs 
 
 ## Setup notes
 
-The following dependencies must be installed locally prior to building the project.
+The following dependencies must be installed locally prior to building the project. [Maven 3.1+](http://maven.apache.org/download.cgi) is required.
 
 ### Install Android SDK and Support Library
 
