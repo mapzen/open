@@ -7,6 +7,20 @@ This project is a simple mobile mapping application built using the Mapzen SDKs 
 
 The following dependencies must be installed locally prior to building the project.
 
+### Maven on Ubuntu
+As of Ubuntu 14.04 the version of maven in the repositories are not up to date enough. Maven 3.1+ is required. You can either build Maven from source at http://maven.apache.org/ or use the PPA available at https://launchpad.net/~natecarlson/+archive/maven3
+
+#### Maven with the PPA
+```bash
+$ sudo apt-get remove maven
+$ sudo add-apt-repository https://launchpad.net/~natecarlson/+archive/maven3
+$ sudo apt-get update
+$ sudo apt-get install maven3
+$ sudo ln -s /usr/bin/mvn3 /usr/bin/mvn
+```
+
+If you are running Ubuntu Saucy or Trusty, after running add-apt-repository you will need to change the source to Precise. You can either do this by running Software & Updates and updating the entry in the Other Software tab changing the Distribution property, or by editing /etc/apt/sources.list.d/natecarlson-maven3-saucy.list and changing saucy or trusty to precise.
+
 ### Install Android SDK and Support Library
 
 ```bash
