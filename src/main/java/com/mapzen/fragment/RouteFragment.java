@@ -278,18 +278,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private Location snapTo(Location location) {
-        double[] onRoadPoint;
-        double lat = location.getLatitude();
-        double lng = location.getLongitude();
-        onRoadPoint = route.snapToRoute(
-                new double[] { lat, lng }
-        );
+        Location onRoadPoint = route.snapToRoute(location);
 
         if (onRoadPoint != null) {
-            Location correctedLocation = new Location("Corrected");
-            correctedLocation.setLatitude(onRoadPoint[0]);
-            correctedLocation.setLongitude(onRoadPoint[1]);
-            return correctedLocation;
+            return onRoadPoint;
         }
         return null;
     }
@@ -327,9 +319,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         Instruction closestInstruction = null;
         int closestDistance = (int) 1e8;
         for (Instruction instruction : proximityAlerts) {
-            Location temporaryLocationObj = new Location("tmp");
-            temporaryLocationObj.setLatitude(instruction.getPoint()[0]);
-            temporaryLocationObj.setLongitude(instruction.getPoint()[1]);
+            Location temporaryLocationObj = (Location) instruction.getLocation();
             final int distanceToTurn =
                     (int) Math.floor(correctedLocation.distanceTo(temporaryLocationObj));
             Logger.logToDatabase(act, ROUTE_TAG, String.valueOf(distanceToTurn)
@@ -368,8 +358,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         while (it.hasNext()) {
             Instruction instruction = (Instruction) it.next();
             final Location l = new Location("temp");
-            l.setLatitude(instruction.getPoint()[0]);
-            l.setLongitude(instruction.getPoint()[1]);
+            l.setLatitude(instruction.getLocation().getLatitude());
+            l.setLongitude(instruction.getLocation().getLongitude());
             final int distance = (int) Math.floor(l.distanceTo(correctedLocation));
             debugStringBuilder.append("\n");
             debugStringBuilder.append("seen instruction: " + instruction.getName());
@@ -463,23 +453,23 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         PathLayer layer = mapFragment.getPathLayer();
         layer.clearPath();
         if (route != null) {
-            ArrayList<double[]> geometry = route.getGeometry();
+            ArrayList<Location> geometry = route.getGeometry();
             for (int index = 0; index < geometry.size(); index++) {
-                double[] pair = geometry.get(index);
-                addCoordinateToDatabase(pair, index);
-                layer.addPoint(new GeoPoint(pair[0], pair[1]));
+                Location location = geometry.get(index);
+                addCoordinateToDatabase(location, index);
+                layer.addPoint(new GeoPoint(location.getLatitude(), location.getLongitude()));
             }
         }
     }
 
-    private void addCoordinateToDatabase(double[] pair, int pos) {
+    private void addCoordinateToDatabase(Location location, int pos) {
         if (act.isInDebugMode()) {
             ContentValues values = new ContentValues();
             values.put(COLUMN_TABLE_ID, UUID.randomUUID().toString());
             values.put(COLUMN_ROUTE_ID, routeId);
             values.put(COLUMN_POSITION, pos);
-            values.put(COLUMN_LAT, pair[0]);
-            values.put(COLUMN_LNG, pair[1]);
+            values.put(COLUMN_LAT, location.getLatitude());
+            values.put(COLUMN_LNG, location.getLongitude());
             act.getDb().insert(TABLE_ROUTE_GEOMETRY, null, values);
         }
     }

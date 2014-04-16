@@ -147,9 +147,8 @@ public class RouteFragmentTest {
         Animator animator = mock(Animator.class);
         ((TestMap) fragment.mapFragment.getMap()).setAnimator(animator);
         FragmentTestUtil.startFragment(fragment);
-        ArrayList<double[]> geometry = fragment.getRoute().getGeometry();
-        double[] loc = fragment.getRoute().snapToRoute(geometry.get(2));
-        Location testLocation = getTestLocation(loc[0], loc[1]);
+        ArrayList<Location> geometry = fragment.getRoute().getGeometry();
+        Location testLocation = fragment.getRoute().snapToRoute(geometry.get(2));
         fragment.onLocationChanged(testLocation);
         GeoPoint expected = new GeoPoint(testLocation.getLatitude(), testLocation.getLongitude());
         Mockito.verify(animator).animateTo(expected);
@@ -159,31 +158,29 @@ public class RouteFragmentTest {
     public void onLocationChange_shouldStoreOriginalLocationRecordInDatabase() throws Exception {
         initFragmentInDebugMode();
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        double[] sample1 = fragment.getRoute().getGeometry().get(0);
-        double[] sample2 = fragment.getRoute().getGeometry().get(1);
-        double[] expected = fragment.getRoute().getGeometry().get(2);
-        instructions.add(getTestInstruction(sample1[0], sample1[1]));
-        instructions.add(getTestInstruction(sample2[0], sample2[1]));
+        Location sample1 = fragment.getRoute().getGeometry().get(0);
+        Location sample2 = fragment.getRoute().getGeometry().get(1);
+        Location expected = fragment.getRoute().getGeometry().get(2);
+        instructions.add(getTestInstruction(sample1.getLatitude(), sample1.getLongitude()));
+        instructions.add(getTestInstruction(sample2.getLatitude(), sample2.getLongitude()));
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
-        Location testLocation = getTestLocation(expected[0], expected[1]);
-        fragment.onLocationChanged(testLocation);
+        fragment.onLocationChanged(expected);
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
                 new String[] { DatabaseHelper.COLUMN_LAT, DatabaseHelper.COLUMN_LNG },
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
         cursor.moveToNext();
-        assertThat(cursor.getString(0)).isEqualTo(String.valueOf(expected[0]));
-        assertThat(cursor.getString(1)).isEqualTo(String.valueOf(expected[1]));
+        assertThat(cursor.getString(0)).isEqualTo(String.valueOf(expected.getLatitude()));
+        assertThat(cursor.getString(1)).isEqualTo(String.valueOf(expected.getLongitude()));
     }
 
     @Test
     public void onLocationChange_shouldStoreCorrectedLocationRecordInDatabase() throws Exception {
         initFragmentInDebugMode();
         FragmentTestUtil.startFragment(fragment);
-        double[] sample = fragment.getRoute().getGeometry().get(2);
-        Location testLocation = getTestLocation(sample[0], sample[1]);
+        Location testLocation = fragment.getRoute().getGeometry().get(2);
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
@@ -202,16 +199,16 @@ public class RouteFragmentTest {
     public void onLocationChange_shouldStoreInstructionPointsRecordInDatabase() throws Exception {
         initFragmentInDebugMode();
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        double[] expected = fragment.getRoute().getGeometry().get(0);
-        double[] sample1 = fragment.getRoute().getGeometry().get(1);
-        double[] sample2 = fragment.getRoute().getGeometry().get(2);
-        instructions.add(getTestInstruction(expected[0], expected[1]));
-        instructions.add(getTestInstruction(sample1[0], sample1[1]));
+        Location expected = fragment.getRoute().getGeometry().get(0);
+        Location sample1 = fragment.getRoute().getGeometry().get(1);
+        Location sample2 = fragment.getRoute().getGeometry().get(2);
+        instructions.add(getTestInstruction(expected.getLatitude(), expected.getLongitude()));
+        instructions.add(getTestInstruction(sample1.getLatitude(), sample1.getLongitude()));
 
         FragmentTestUtil.startFragment(fragment);
         fragment.setInstructions(instructions);
 
-        Location testLocation = getTestLocation(sample2[0], sample2[1]);
+        Location testLocation = getTestLocation(sample2.getLatitude(), sample2.getLongitude());
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
@@ -222,8 +219,8 @@ public class RouteFragmentTest {
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
         cursor.moveToNext();
-        assertThat(cursor.getString(0)).isEqualTo(String.valueOf(expected[0]));
-        assertThat(cursor.getString(1)).isEqualTo(String.valueOf(expected[1]));
+        assertThat(cursor.getString(0)).isEqualTo(String.valueOf(expected.getLatitude()));
+        assertThat(cursor.getString(1)).isEqualTo(String.valueOf(expected.getLongitude()));
     }
 
     @Test
@@ -283,8 +280,7 @@ public class RouteFragmentTest {
     public void onLocationChange_shouldStoreInstructionBearingRecordInDatabase() throws Exception {
         initFragmentInDebugMode();
         FragmentTestUtil.startFragment(fragment);
-        double[] sample = fragment.getRoute().getGeometry().get(2);
-        Location testLocation = getTestLocation(sample[0], sample[1]);
+        Location testLocation = fragment.getRoute().getGeometry().get(2);
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
@@ -318,8 +314,7 @@ public class RouteFragmentTest {
     public void onLocationChange_shouldStoreAssociatedRoute() throws Exception {
         initFragmentInDebugMode();
         FragmentTestUtil.startFragment(fragment);
-        double[] sample = fragment.getRoute().getGeometry().get(2);
-        Location testLocation = getTestLocation(sample[0], sample[1]);
+        Location testLocation = fragment.getRoute().getGeometry().get(2);
         fragment.onLocationChanged(testLocation);
         SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
@@ -415,8 +410,7 @@ public class RouteFragmentTest {
         ArrayList<Instruction> instructions = route.getRouteInstructions();
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
-        double[] point = instructions.get(2).getPoint();
-        fragment.onLocationChanged(getTestLocation(point[0], point[1]));
+        fragment.onLocationChanged(instructions.get(2).getLocation());
         simulateUserPagerTouch();
         fragment.pager.setCurrentItem(0);
         simulateUserPagerTouch();
@@ -442,8 +436,7 @@ public class RouteFragmentTest {
         ArrayList<Instruction> instructions = route.getRouteInstructions();
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
-        double[] point = instructions.get(2).getPoint();
-        fragment.onLocationChanged(getTestLocation(point[0], point[1]));
+        fragment.onLocationChanged(instructions.get(2).getLocation());
         simulateUserPagerTouch();
         fragment.pager.setCurrentItem(0);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
@@ -575,8 +568,7 @@ public class RouteFragmentTest {
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
-        double[] point = instructions.get(2).getPoint();
-        fragment.onLocationChanged(getTestLocation(point[0], point[1]));
+        fragment.onLocationChanged(instructions.get(2).getLocation());
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(2);
     }
 
@@ -588,8 +580,7 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         simulateUserPagerTouch();
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
-        double[] point = instructions.get(2).getPoint();
-        fragment.onLocationChanged(getTestLocation(point[0], point[1]));
+        fragment.onLocationChanged(instructions.get(2).getLocation());
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
     }
 
@@ -603,8 +594,7 @@ public class RouteFragmentTest {
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
         view.findViewById(R.id.resume_button).performClick();
-        double[] point = instructions.get(2).getPoint();
-        fragment.onLocationChanged(getTestLocation(point[0], point[1]));
+        fragment.onLocationChanged(instructions.get(2).getLocation());
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(2);
     }
 
@@ -629,12 +619,9 @@ public class RouteFragmentTest {
         fragment.onResume();
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
-        double[] point0 = instructions.get(0).getPoint();
-        fragment.onLocationChanged(getTestLocation(point0[0], point0[1]));
-        double[] point1 = instructions.get(1).getPoint();
-        fragment.onLocationChanged(getTestLocation(point1[0], point1[1]));
-        double[] point2 = instructions.get(2).getPoint();
-        fragment.onLocationChanged(getTestLocation(point2[0], point2[1]));
+        fragment.onLocationChanged(instructions.get(0).getLocation());
+        fragment.onLocationChanged(instructions.get(1).getLocation());
+        fragment.onLocationChanged(instructions.get(2).getLocation());
         assertThat(fragment.getFlippedInstructions().contains(instructions.get(0))).isTrue();
         assertThat(fragment.getFlippedInstructions().contains(instructions.get(1))).isTrue();
         assertThat(fragment.getFlippedInstructions().contains(instructions.get(2))).isFalse();
@@ -867,6 +854,7 @@ public class RouteFragmentTest {
     @Test
     public void createRouteTo_shouldAddFragment() throws Exception {
         Location testLocation = getTestLocation(100.0, 100.0);
+        FragmentTestUtil.startFragment(fragment);
         fragment.createRouteTo(testLocation);
         Mockito.verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(MOCK_NY_TO_VT));
@@ -900,8 +888,9 @@ public class RouteFragmentTest {
         Mockito.verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(MOCK_NY_TO_VT));
         Mockito.verify(pathLayerMock, Mockito.times(2)).clearPath();
-        for (double[] pair : fragment.getRoute().getGeometry()) {
-            Mockito.verify(pathLayerMock).addPoint(new GeoPoint(pair[0], pair[1]));
+        for (Location location : fragment.getRoute().getGeometry()) {
+            Mockito.verify(pathLayerMock).addPoint(
+                    new GeoPoint(location.getLatitude(), location.getLongitude()));
         }
     }
 

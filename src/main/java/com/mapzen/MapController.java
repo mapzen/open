@@ -88,8 +88,9 @@ public final class MapController {
     }
 
     public void setMapPerspectiveForInstruction(Instruction instruction) {
-        double[] point = instruction.getPoint();
-        map.setMapPosition(point[0], point[1], Math.pow(2, ROUTE_ZOOM_LEVEL));
+        Location location = instruction.getLocation();
+        map.setMapPosition(location.getLatitude(), location.getLongitude(),
+                Math.pow(2, ROUTE_ZOOM_LEVEL));
         map.viewport().setRotation(instruction.getRotationBearing());
         map.updateMap(true);
     }
