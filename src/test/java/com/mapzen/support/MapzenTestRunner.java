@@ -2,7 +2,6 @@ package com.mapzen.support;
 
 import com.mapzen.shadows.ShadowGLMatrix;
 import com.mapzen.shadows.ShadowMapView;
-import com.mapzen.shadows.ShadowTextToSpeech;
 
 import org.junit.runners.model.InitializationError;
 import org.robolectric.RobolectricTestRunner;
@@ -28,7 +27,7 @@ import java.util.List;
  * <li>Add the original class name to the {@link #CUSTOM_SHADOW_TARGETS} list.</li>
  * <li>Bind the shadow class by calling
  * {@link ShadowMap.Builder#addShadowClass(Class)} in {@link #createShadowMap()}.</li>
- * <li>Be sure to use {@code @RunWith(CustomTestRunner.class)} at the top of your tests.</li>
+ * <li>Be sure to use {@code @RunWith(MapzenTestRunner.class)} at the top of your tests.</li>
  * </ol>
  */
 public class MapzenTestRunner extends RobolectricTestRunner {
@@ -55,7 +54,6 @@ public class MapzenTestRunner extends RobolectricTestRunner {
                 .newBuilder()
                 .addShadowClass(ShadowMapView.class)
                 .addShadowClass(ShadowGLMatrix.class)
-                .addShadowClass(ShadowTextToSpeech.class)
                 .build();
     }
 
