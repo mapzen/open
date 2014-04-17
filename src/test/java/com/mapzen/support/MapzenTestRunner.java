@@ -1,6 +1,5 @@
 package com.mapzen.support;
 
-import com.mapzen.shadows.ShadowCrashlytics;
 import com.mapzen.shadows.ShadowGLMatrix;
 import com.mapzen.shadows.ShadowMapView;
 import com.mapzen.shadows.ShadowTextToSpeech;
@@ -39,7 +38,6 @@ public class MapzenTestRunner extends RobolectricTestRunner {
      */
     private static final List<String> CUSTOM_SHADOW_TARGETS =
             Collections.unmodifiableList(Arrays.asList(
-                    "com.crashlytics.android.Crashlytics",
                     "org.oscim.android.MapView",
                     "org.oscim.renderer.GLMatrix",
                     "com.android.volley.toolbox.Volley"
@@ -56,7 +54,6 @@ public class MapzenTestRunner extends RobolectricTestRunner {
     protected ShadowMap createShadowMap() {
         return super.createShadowMap()
                 .newBuilder()
-                .addShadowClass(ShadowCrashlytics.class)
                 .addShadowClass(ShadowMapView.class)
                 .addShadowClass(ShadowGLMatrix.class)
                 .addShadowClass(ShadowTextToSpeech.class)

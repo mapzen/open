@@ -17,7 +17,6 @@ import com.mapzen.util.DebugDataSubmitter;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
-import com.crashlytics.android.Crashlytics;
 import com.squareup.okhttp.OkHttpClient;
 
 import org.oscim.android.MapActivity;
@@ -121,7 +120,6 @@ public class BaseActivity extends MapActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Crashlytics.start(this);
         app = (MapzenApplication) getApplication();
         setContentView(R.layout.base);
         initMapFragment();
