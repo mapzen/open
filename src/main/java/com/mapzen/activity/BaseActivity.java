@@ -52,7 +52,6 @@ import static com.mapzen.android.lost.LocationClient.ConnectionCallbacks;
 
 public class BaseActivity extends MapActivity {
     public static final int LOCATION_INTERVAL = 1000;
-    public static final String PLAY_SERVICE_FAIL_MESSAGE = "Your device cannot be located";
     public static final String COM_MAPZEN_UPDATES_LOCATION = "com.mapzen.updates.location";
     public static final String
             DEBUG_DATA_ENDPOINT = "http://on-the-road.dev.mapzen.com/upload";
