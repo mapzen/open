@@ -39,8 +39,7 @@ public class MapzenTestRunner extends RobolectricTestRunner {
     private static final List<String> CUSTOM_SHADOW_TARGETS =
             Collections.unmodifiableList(Arrays.asList(
                     "org.oscim.android.MapView",
-                    "org.oscim.renderer.GLMatrix",
-                    "com.android.volley.toolbox.Volley"
+                    "org.oscim.renderer.GLMatrix"
             ));
 
     public MapzenTestRunner(Class<?> testClass) throws InitializationError {
