@@ -10,6 +10,14 @@
 
     <name>Mapzen</name>
 
+    <repositories>
+        <repository>
+            <id>bugsense-repo</id>
+            <name>The BugSense Repository</name>
+            <url>http://www.bugsense.com/maven/</url>
+        </repository>
+    </repositories>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -173,6 +181,11 @@
             <version>0.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.bugsense.trace</groupId>
+            <artifactId>bugsense</artifactId>
+            <version>3.6.1</version>
+        </dependency>
     </dependencies>
 
     <build>

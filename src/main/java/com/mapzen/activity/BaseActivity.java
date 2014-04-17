@@ -17,6 +17,7 @@ import com.mapzen.util.DebugDataSubmitter;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
+import com.bugsense.trace.BugSenseHandler;
 import com.squareup.okhttp.OkHttpClient;
 
 import org.oscim.android.MapActivity;
@@ -31,6 +32,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -120,6 +122,8 @@ public class BaseActivity extends MapActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BugSenseHandler.initAndStartSession(this, "ebfa8fd7");
+        BugSenseHandler.addCrashExtraData("OEM", Build.MANUFACTURER);
         app = (MapzenApplication) getApplication();
         setContentView(R.layout.base);
         initMapFragment();
