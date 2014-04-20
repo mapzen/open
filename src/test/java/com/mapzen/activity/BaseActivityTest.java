@@ -30,7 +30,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
-import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -78,11 +77,6 @@ public class BaseActivityTest {
     @Test
     public void onCreate_shouldInitializeMapController() throws Exception {
         assertThat(MapController.getMapController().getMap()).isNotNull();
-    }
-
-    @Test
-    public void onCreate_shouldSetVolumeControlStream() throws Exception {
-        assertThat(activity.getVolumeControlStream()).isEqualTo(AudioManager.STREAM_MUSIC);
     }
 
     @Test

@@ -17,7 +17,7 @@ import com.mapzen.util.DebugDataSubmitter;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
-import com.crashlytics.android.Crashlytics;
+import com.bugsense.trace.BugSenseHandler;
 import com.squareup.okhttp.OkHttpClient;
 
 import org.oscim.android.MapActivity;
@@ -30,8 +30,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
-import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -52,7 +52,6 @@ import static com.mapzen.android.lost.LocationClient.ConnectionCallbacks;
 
 public class BaseActivity extends MapActivity {
     public static final int LOCATION_INTERVAL = 1000;
-    public static final String PLAY_SERVICE_FAIL_MESSAGE = "Your device cannot be located";
     public static final String COM_MAPZEN_UPDATES_LOCATION = "com.mapzen.updates.location";
     public static final String
             DEBUG_DATA_ENDPOINT = "http://on-the-road.dev.mapzen.com/upload";
@@ -121,7 +120,8 @@ public class BaseActivity extends MapActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Crashlytics.start(this);
+        BugSenseHandler.initAndStartSession(this, "ebfa8fd7");
+        BugSenseHandler.addCrashExtraData("OEM", Build.MANUFACTURER);
         app = (MapzenApplication) getApplication();
         setContentView(R.layout.base);
         initMapFragment();
@@ -130,7 +130,6 @@ public class BaseActivity extends MapActivity {
         initMapController();
         initLocationClient();
         initDebugView();
-        setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
     @Override
