@@ -89,8 +89,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private DistanceView distanceLeftView;
     private int previousPosition;
     private String routeId;
-    private Set<Instruction> proximityAlerts = new HashSet<Instruction>();
-    private Set<Instruction> seenInstructions = new HashSet<Instruction>();
     private int pagerPositionWhenPaused = 0;
 
     Speakerbox speakerbox;
@@ -206,7 +204,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (act.isInDebugMode()) {
             act.getDb().beginTransaction();
         }
-        initProximityAlerts();
     }
 
     @Override
@@ -271,29 +268,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return simpleFeature.getGeoPoint();
     }
 
-    private void initProximityAlerts() {
-        for (Instruction instruction : instructions) {
-            proximityAlerts.add(instruction);
-        }
-    }
-
-    private Location snapTo(Location location) {
-        double[] onRoadPoint;
-        double lat = location.getLatitude();
-        double lng = location.getLongitude();
-        onRoadPoint = route.snapToRoute(
-                new double[] { lat, lng }
-        );
-
-        if (onRoadPoint != null) {
-            Location correctedLocation = new Location("Corrected");
-            correctedLocation.setLatitude(onRoadPoint[0]);
-            correctedLocation.setLongitude(onRoadPoint[1]);
-            return correctedLocation;
-        }
-        return null;
-    }
-
     private void manageMap(Location location, Location originalLocation) {
         if (location != null) {
             getMapController().setLocation(location).centerOn(location);
@@ -307,15 +281,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    public Set<Instruction> getProximityAlerts() {
-        return proximityAlerts;
-    }
-
     public void onLocationChanged(Location location) {
         if (!autoPaging || isRouting) {
             return;
         }
-        Location correctedLocation = snapTo(location);
+        Location correctedLocation = route.snapToRoute(location);
         if (correctedLocation == null) {
             createRouteTo(location);
             return;
@@ -324,30 +294,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         manageMap(correctedLocation, location);
         StringBuilder debugStringBuilder = new StringBuilder();
 
-        Instruction closestInstruction = null;
-        int closestDistance = (int) 1e8;
-        for (Instruction instruction : proximityAlerts) {
-            Location temporaryLocationObj = new Location("tmp");
-            temporaryLocationObj.setLatitude(instruction.getPoint()[0]);
-            temporaryLocationObj.setLongitude(instruction.getPoint()[1]);
-            final int distanceToTurn =
-                    (int) Math.floor(correctedLocation.distanceTo(temporaryLocationObj));
-            Logger.logToDatabase(act, ROUTE_TAG, String.valueOf(distanceToTurn)
-                    + " distance to instruction: " + instruction.toString()
-                    + " threshold is: " + String.valueOf(getWalkingAdvanceRadius()));
-            Logger.logToDatabase(act, ROUTE_TAG, "current closest distance: "
-                    + String.valueOf(closestDistance));
-            if (closestInstruction != null) {
-                Logger.logToDatabase(act, ROUTE_TAG, "current closest instruction: "
-                        + closestInstruction.toString());
-            } else {
-                Logger.logToDatabase(act, ROUTE_TAG, "current closest instruction: null");
-            }
-            if (distanceToTurn < closestDistance) {
-                closestDistance = distanceToTurn;
-                closestInstruction = instruction;
-            }
-        }
+        Instruction closestInstruction = route.getClosestInstruction(correctedLocation);
+        int closestDistance =
+                (int) Math.floor(correctedLocation.distanceTo(closestInstruction.getLocation()));
 
         if (closestInstruction != null) {
             debugStringBuilder.append("Closest instruction is: " + closestInstruction.getName());
@@ -359,17 +308,17 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     + closestInstruction.toString());
             final int instructionIndex = instructions.indexOf(closestInstruction);
             pager.setCurrentItem(instructionIndex);
-            if (!seenInstructions.contains(closestInstruction)) {
-                seenInstructions.add(closestInstruction);
+            if (!route.getSeenInstructions().contains(closestInstruction)) {
+                route.addSeenInstruction(closestInstruction);
             }
         }
 
-        final Iterator it = seenInstructions.iterator();
+        final Iterator it = route.getSeenInstructions().iterator();
         while (it.hasNext()) {
             Instruction instruction = (Instruction) it.next();
             final Location l = new Location("temp");
-            l.setLatitude(instruction.getPoint()[0]);
-            l.setLongitude(instruction.getPoint()[1]);
+            l.setLatitude(instruction.getLocation().getLatitude());
+            l.setLongitude(instruction.getLocation().getLongitude());
             final int distance = (int) Math.floor(l.distanceTo(correctedLocation));
             debugStringBuilder.append("\n");
             debugStringBuilder.append("seen instruction: " + instruction.getName());
@@ -463,23 +412,23 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         PathLayer layer = mapFragment.getPathLayer();
         layer.clearPath();
         if (route != null) {
-            ArrayList<double[]> geometry = route.getGeometry();
+            ArrayList<Location> geometry = route.getGeometry();
             for (int index = 0; index < geometry.size(); index++) {
-                double[] pair = geometry.get(index);
-                addCoordinateToDatabase(pair, index);
-                layer.addPoint(new GeoPoint(pair[0], pair[1]));
+                Location location = geometry.get(index);
+                addCoordinateToDatabase(location, index);
+                layer.addPoint(new GeoPoint(location.getLatitude(), location.getLongitude()));
             }
         }
     }
 
-    private void addCoordinateToDatabase(double[] pair, int pos) {
+    private void addCoordinateToDatabase(Location location, int pos) {
         if (act.isInDebugMode()) {
             ContentValues values = new ContentValues();
             values.put(COLUMN_TABLE_ID, UUID.randomUUID().toString());
             values.put(COLUMN_ROUTE_ID, routeId);
             values.put(COLUMN_POSITION, pos);
-            values.put(COLUMN_LAT, pair[0]);
-            values.put(COLUMN_LNG, pair[1]);
+            values.put(COLUMN_LAT, location.getLatitude());
+            values.put(COLUMN_LNG, location.getLongitude());
             act.getDb().insert(TABLE_ROUTE_GEOMETRY, null, values);
         }
     }

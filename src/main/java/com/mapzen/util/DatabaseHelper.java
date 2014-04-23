@@ -113,8 +113,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_TIME, System.currentTimeMillis());
         values.put(COLUMN_CORRECTED_LAT, correctedLocation.getLatitude());
         values.put(COLUMN_CORRECTED_LNG, correctedLocation.getLongitude());
-        values.put(COLUMN_INSTRUCTION_LAT, instruction.getPoint()[0]);
-        values.put(COLUMN_INSTRUCTION_LNG, instruction.getPoint()[1]);
+        values.put(COLUMN_INSTRUCTION_LAT, instruction.getLocation().getLatitude());
+        values.put(COLUMN_INSTRUCTION_LNG, instruction.getLocation().getLongitude());
         values.put(COLUMN_INSTRUCTION_BEARING, instruction.getBearing());
         values.put(COLUMN_ROUTE_ID, routeId);
         values.put(COLUMN_TABLE_ID, UUID.randomUUID().toString());

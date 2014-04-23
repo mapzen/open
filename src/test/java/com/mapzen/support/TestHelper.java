@@ -102,8 +102,7 @@ public final class TestHelper {
                 "            128\n" + // azimuth
                 "        ]\n";
         Instruction instruction = new Instruction(new JSONArray(raw));
-        double[] point = {lat, lng};
-        instruction.setPoint(point);
+        instruction.setLocation(getTestLocation(lat, lng));
         return instruction;
     }
 
