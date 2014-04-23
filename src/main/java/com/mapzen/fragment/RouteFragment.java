@@ -89,7 +89,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private DistanceView distanceLeftView;
     private int previousPosition;
     private String routeId;
-    private Set<Instruction> seenInstructions = new HashSet<Instruction>();
     private int pagerPositionWhenPaused = 0;
 
     Speakerbox speakerbox;
@@ -337,12 +336,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     + closestInstruction.toString());
             final int instructionIndex = instructions.indexOf(closestInstruction);
             pager.setCurrentItem(instructionIndex);
-            if (!seenInstructions.contains(closestInstruction)) {
-                seenInstructions.add(closestInstruction);
+            if (!route.getSeenInstructions().contains(closestInstruction)) {
+                route.addSeenInstruction(closestInstruction);
             }
         }
 
-        final Iterator it = seenInstructions.iterator();
+        final Iterator it = route.getSeenInstructions().iterator();
         while (it.hasNext()) {
             Instruction instruction = (Instruction) it.next();
             final Location l = new Location("temp");
