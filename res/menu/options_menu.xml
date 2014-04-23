@@ -15,4 +15,13 @@
         android:title="@string/submit_data"
         android:showAsAction="never" />
 
+    <item android:id="@+id/login"
+        android:title="@string/osm_login"
+        android:showAsAction="never" />
+
+    <item android:id="@+id/logout"
+        android:title="@string/osm_logout"
+        android:visible="false"
+        android:showAsAction="never" />
+
 </menu>

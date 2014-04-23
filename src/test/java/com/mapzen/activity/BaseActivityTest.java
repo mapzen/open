@@ -4,6 +4,7 @@ import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.android.gson.Feature;
+import com.mapzen.core.OSMOauthFragment;
 import com.mapzen.core.SettingsFragment;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.ListResultsFragment;
@@ -25,6 +26,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
+import org.scribe.model.Token;
 
 import android.content.Context;
 import android.content.Intent;
@@ -416,6 +418,78 @@ public class BaseActivityTest {
         shadowOf(locationManager).setLastKnownLocation(GPS_PROVIDER, null);
         invokeOnConnected();
         assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo("Waiting for location");
+    }
+
+    @Test
+    public void shouldHaveOSMLoginOption() throws Exception {
+        Menu menu = new TestMenu();
+        activity.onCreateOptionsMenu(menu);
+        MenuItem menuItem = menu.findItem(R.id.login);
+        assertThat(menuItem).isVisible();
+    }
+
+    @Test
+    public void shouldNotHaveOSMLoginOption() throws Exception {
+        Token token = new Token("stuff", "fun");
+        Menu menu = new TestMenu();
+        activity.onCreateOptionsMenu(menu);
+        activity.setAccessToken(token);
+        MenuItem menuItem = menu.findItem(R.id.login);
+        assertThat(menuItem).isNotVisible();
+    }
+
+    @Test
+    public void shouldHaveOSMLogoutOption() throws Exception {
+        Token token = new Token("stuff", "fun");
+        Menu menu = new TestMenu();
+        activity.onCreateOptionsMenu(menu);
+        activity.setAccessToken(token);
+        MenuItem menuItem = menu.findItem(R.id.logout);
+        assertThat(menuItem).isVisible();
+    }
+
+    @Test
+    public void shouldNotHaveOSMLogoutOption() throws Exception {
+        Menu menu = new TestMenu();
+        activity.onCreateOptionsMenu(menu);
+        MenuItem menuItem = menu.findItem(R.id.logout);
+        assertThat(menuItem).isNotVisible();
+    }
+
+    @Test
+    public void onOptionsItemSelected_shouldLogout() throws Exception {
+        Token token = new Token("stuff", "fun");
+        Menu menu = new TestMenu();
+        activity.onCreateOptionsMenu(menu);
+        activity.setAccessToken(token);
+        MenuItem menuItem = menu.findItem(R.id.logout);
+        assertThat(activity.getAccessToken()).isNotNull();
+        activity.onOptionsItemSelected(menuItem);
+        assertThat(activity.getAccessToken()).isNull();
+    }
+
+    @Test
+    public void onOptionsItemSelected_shouldToggleLoginLogout() throws Exception {
+        Token token = new Token("stuff", "fun");
+        Menu menu = new TestMenu();
+        activity.onCreateOptionsMenu(menu);
+        activity.setAccessToken(token);
+        MenuItem logoutItem = menu.findItem(R.id.logout);
+        activity.onOptionsItemSelected(logoutItem);
+        assertThat(logoutItem).isNotVisible();
+        MenuItem loginItem = menu.findItem(R.id.login);
+        assertThat(loginItem).isVisible();
+    }
+
+    @Test
+    public void onOptionsItemSelected_shouldStartOSMOauthFragment() throws Exception {
+        Menu menu = new TestMenu();
+        activity.onCreateOptionsMenu(menu);
+        MenuItem loginItem = menu.findItem(R.id.login);
+        activity.onOptionsItemSelected(loginItem);
+
+        assertThat(activity.getSupportFragmentManager())
+                .hasFragmentWithTag(OSMOauthFragment.TAG);
     }
 
     private Location initLastLocation() {

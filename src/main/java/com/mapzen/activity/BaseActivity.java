@@ -6,6 +6,8 @@ import com.mapzen.R;
 import com.mapzen.android.lost.LocationClient;
 import com.mapzen.android.lost.LocationListener;
 import com.mapzen.android.lost.LocationRequest;
+import com.mapzen.core.OSMOauthFragment;
+import com.mapzen.core.OSMApi;
 import com.mapzen.core.SettingsFragment;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.fragment.MapFragment;
@@ -18,11 +20,23 @@ import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
 import com.bugsense.trace.BugSenseHandler;
+import com.google.common.io.CharStreams;
 import com.squareup.okhttp.OkHttpClient;
 
+import org.apache.http.Header;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.oscim.android.MapActivity;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.Map;
+import org.scribe.builder.ServiceBuilder;
+import org.scribe.model.OAuthRequest;
+import org.scribe.model.Response;
+import org.scribe.model.Token;
+import org.scribe.model.Verb;
+import org.scribe.model.Verifier;
+import org.scribe.oauth.OAuthService;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -31,12 +45,15 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -45,7 +62,11 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.android.lost.LocationClient.ConnectionCallbacks;
@@ -58,12 +79,16 @@ public class BaseActivity extends MapActivity {
     protected DatabaseHelper dbHelper;
     protected DebugDataSubmitter debugDataSubmitter;
     LocationClient locationHelper;
+    private Menu activityMenu;
     private AutoCompleteAdapter autoCompleteAdapter;
     private MenuItem menuItem;
     private MapzenApplication app;
     private MapFragment mapFragment;
     private MapzenProgressDialogFragment progressDialogFragment;
     private boolean updateMapLocation = true;
+    private OAuthService service = null;
+    private Token requestToken = null;
+    private Verifier verifier = null;
     private LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
@@ -130,6 +155,12 @@ public class BaseActivity extends MapActivity {
         initMapController();
         initLocationClient();
         initDebugView();
+        service = new ServiceBuilder()
+                        .provider(OSMApi.class)
+                        .apiKey(OSMApi.KEY)
+                        .debug()
+                        .callback("http://mapzen.com")
+                        .apiSecret(OSMApi.SECRET).build();
     }
 
     @Override
@@ -172,8 +203,68 @@ public class BaseActivity extends MapActivity {
         } else if (item.getItemId() == R.id.phone_home) {
             initDebugDataSubmitter();
             debugDataSubmitter.run();
+        } else if (item.getItemId() == R.id.login) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            Fragment prev = getSupportFragmentManager().findFragmentByTag(OSMOauthFragment.TAG);
+            if (prev != null) {
+                ft.remove(prev);
+            }
+            ft.addToBackStack(null);
+            DialogFragment newFragment = OSMOauthFragment.newInstance(this);
+            newFragment.show(ft, OSMOauthFragment.TAG);
+        } else if (item.getItemId() == R.id.logout) {
+            SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.remove("token");
+            editor.commit();
+            toggleOSMLogin();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void submitTrace(final String fileName) {
+        (new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                OAuthRequest request =
+                        new OAuthRequest(Verb.POST, OSMApi.BASE_URL + "/api/0.6/gpx/create");
+
+                MultipartEntity reqEntity = new MultipartEntity();
+                try {
+                    reqEntity.addPart("description", new StringBody("testing"));
+                    reqEntity.addPart("visibility", new StringBody("private"));
+                    reqEntity.addPart("public", new StringBody("0"));
+                } catch (UnsupportedEncodingException e) {
+                    Logger.e(e.getMessage());
+                }
+
+                String path = getExternalFilesDir(null).getAbsolutePath() + "/" + fileName;
+                reqEntity.addPart("file", new FileBody(new File(path)));
+
+                ByteArrayOutputStream bos =
+                        new ByteArrayOutputStream((int) reqEntity.getContentLength());
+                try {
+                    reqEntity.writeTo(bos);
+                } catch (IOException e) {
+                    Logger.e("IOException: " + e.getMessage());
+                }
+                request.addPayload(bos.toByteArray());
+
+                Header contentType = reqEntity.getContentType();
+                request.addHeader(contentType.getName(), contentType.getValue());
+                service.signRequest(getAccessToken(), request);
+                Response response = request.send();
+                String payload = "";
+                try {
+                    payload = CharStreams.toString(
+                            new InputStreamReader(response.getStream(), "UTF-8"));
+                } catch (IOException e) {
+                    Logger.e("IOException: " + e.getMessage());
+                }
+                Logger.d("OAUTH response: " + payload);
+                return null;
+            }
+        }).execute();
     }
 
     public void showProgressDialog() {
@@ -219,6 +310,7 @@ public class BaseActivity extends MapActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        activityMenu = menu;
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.options_menu, menu);
         SearchManager searchManager =
@@ -265,8 +357,22 @@ public class BaseActivity extends MapActivity {
                 handleMapsIntent(searchView, data);
             }
         }
+        toggleOSMLogin();
 
         return true;
+    }
+
+    private void toggleOSMLogin() {
+        MenuItem loginMenu = activityMenu.findItem(R.id.login);
+        MenuItem logoutMenu = activityMenu.findItem(R.id.logout);
+
+        if (getAccessToken() != null) {
+            loginMenu.setVisible(false);
+            logoutMenu.setVisible(true);
+        } else {
+            loginMenu.setVisible(true);
+            logoutMenu.setVisible(false);
+        }
     }
 
     @Override
@@ -400,4 +506,42 @@ public class BaseActivity extends MapActivity {
         debugDataSubmitter.setEndpoint(DEBUG_DATA_ENDPOINT);
         debugDataSubmitter.setFile(new File(getDb().getPath()));
     }
+
+    public Token getAccessToken() {
+        Token accessToken = null;
+        SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
+        if (!prefs.getString("token", "").isEmpty()) {
+            accessToken = new Token(prefs.getString("token", ""), prefs.getString("secret", ""));
+        }
+        return accessToken;
+    }
+
+    public void setAccessToken(Token accessToken) {
+        SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("token", accessToken.getToken());
+        editor.putString("secret", accessToken.getSecret());
+        editor.commit();
+        toggleOSMLogin();
+    }
+
+    public OAuthService getService() {
+        return service;
+    }
+    public Verifier getVerifier() {
+        return verifier;
+    }
+
+    public void setVerifier(Verifier verifier) {
+        this.verifier = verifier;
+    }
+
+    public Token getRequestToken() {
+        return requestToken;
+    }
+
+    public void setRequestToken(Token requestToken) {
+        this.requestToken = requestToken;
+    }
+
 }

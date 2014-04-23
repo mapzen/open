@@ -52,5 +52,7 @@
     <string name="settings_default_mapstyle">MAPZEN</string>
 
     <string name="toast_fixed_location_is_malformed">Your fixed location is malformed</string>
+    <string name="osm_login">OpenStreetMap Login</string>
+    <string name="osm_logout">OpenStreetMap Logout</string>
 
 </resources>
