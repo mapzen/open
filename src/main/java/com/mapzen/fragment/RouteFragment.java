@@ -294,28 +294,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         manageMap(correctedLocation, location);
         StringBuilder debugStringBuilder = new StringBuilder();
 
-        Instruction closestInstruction = null;
-        int closestDistance = (int) 1e8;
-        for (Instruction instruction : instructions) {
-            Location temporaryLocationObj = instruction.getLocation();
-            final int distanceToTurn =
-                    (int) Math.floor(correctedLocation.distanceTo(temporaryLocationObj));
-            Logger.logToDatabase(act, ROUTE_TAG, String.valueOf(distanceToTurn)
-                    + " distance to instruction: " + instruction.toString()
-                    + " threshold is: " + String.valueOf(getWalkingAdvanceRadius()));
-            Logger.logToDatabase(act, ROUTE_TAG, "current closest distance: "
-                    + String.valueOf(closestDistance));
-            if (closestInstruction != null) {
-                Logger.logToDatabase(act, ROUTE_TAG, "current closest instruction: "
-                        + closestInstruction.toString());
-            } else {
-                Logger.logToDatabase(act, ROUTE_TAG, "current closest instruction: null");
-            }
-            if (distanceToTurn < closestDistance) {
-                closestDistance = distanceToTurn;
-                closestInstruction = instruction;
-            }
-        }
+        Instruction closestInstruction = route.getClosestInstruction(correctedLocation);
+        int closestDistance =
+                (int) Math.floor(correctedLocation.distanceTo(closestInstruction.getLocation()));
 
         if (closestInstruction != null) {
             debugStringBuilder.append("Closest instruction is: " + closestInstruction.getName());
