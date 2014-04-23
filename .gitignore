@@ -17,4 +17,3 @@ classes
 tmp/
 *.*~
 *.apk
-com_crashlytics_export_strings.xml

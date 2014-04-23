@@ -9,8 +9,6 @@ import com.mapzen.osrm.Router;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.util.DatabaseHelper;
-import com.mapzen.util.GearAgentService;
-import com.mapzen.util.GearServiceSocket;
 import com.mapzen.widget.DistanceView;
 
 import org.json.JSONObject;
@@ -19,8 +17,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.InOrder;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.oscim.core.GeoPoint;
@@ -762,76 +758,6 @@ public class RouteFragmentTest {
         shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
         assertThat(shadowTextToSpeech.getLastSpokenText())
                 .isEqualTo("Head on 19th Street for 0.1 miles");
-    }
-
-    @Test
-    public void onCreateView_shouldSendFirstInstructionToGear() throws Exception {
-        GearServiceSocket mockSocket = mock(GearServiceSocket.class);
-        GearAgentService.setConnection(mockSocket);
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        Instruction instruction = getTestInstruction(3, 3);
-        instructions.add(instruction);
-
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-
-        Mockito.verify(mockSocket).send(Matchers.eq(GearAgentService.CHANNEL_ID),
-                Matchers.eq(instruction.getGearJson().toString().getBytes()));
-    }
-
-    @Test
-    public void onCreateView_shouldNotSendFirstInstructionToGear() throws Exception {
-        GearServiceSocket mockSocket = mock(GearServiceSocket.class);
-        GearAgentService.setConnection(null);
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        Instruction instruction = getTestInstruction(3, 3);
-        instructions.add(instruction);
-
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-
-        Mockito.verifyZeroInteractions(mockSocket);
-    }
-
-    @Test
-    public void onPageSelected_shouldSendInstructionToGear() throws Exception {
-        GearServiceSocket mockSocket = mock(GearServiceSocket.class);
-        InOrder inOrder = Mockito.inOrder(mockSocket);
-        GearAgentService.setConnection(mockSocket);
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        Instruction firstInstruction = getTestInstruction(0, 0);
-        firstInstruction.setDistance(100);
-        instructions.add(firstInstruction);
-        Instruction secondInstruction = getTestInstruction(0, 0);
-        secondInstruction.setDistance(200);
-        instructions.add(secondInstruction);
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-
-        fragment.onPageSelected(1);
-
-        inOrder.verify(mockSocket).send(Matchers.eq(GearAgentService.CHANNEL_ID),
-                Matchers.eq(instructions.get(0).getGearJson().toString().getBytes()));
-        inOrder.verify(mockSocket).send(Matchers.eq(GearAgentService.CHANNEL_ID),
-                Matchers.eq(instructions.get(1).getGearJson().toString().getBytes()));
-    }
-
-    @Test
-    public void onPageSelected_shouldNotSendInstructionToGear() throws Exception {
-        GearServiceSocket mockSocket = mock(GearServiceSocket.class);
-        GearAgentService.setConnection(null);
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        Instruction firstInstruction = getTestInstruction(0, 0);
-        firstInstruction.setDistance(100);
-        instructions.add(firstInstruction);
-        Instruction secondInstruction = getTestInstruction(0, 0);
-        secondInstruction.setDistance(200);
-        instructions.add(secondInstruction);
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-
-        fragment.onPageSelected(1);
-        Mockito.verifyZeroInteractions(mockSocket);
     }
 
     @Test

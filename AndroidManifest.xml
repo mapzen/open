@@ -51,23 +51,5 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-        <meta-data android:name="com.crashlytics.ApiKey" android:value="5e00ab0747eb48d20d4aa1f96481b30fa1816784"/>
-
-        <service android:name=".util.GearAgentService" />
-
-        <receiver android:name="com.samsung.android.sdk.accessory.ServiceConnectionIndicationBroadcastReceiver" >
-            <intent-filter>
-                <action android:name="android.accessory.service.action.ACCESSORY_SERVICE_CONNECTION_IND" />
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name="com.samsung.android.sdk.accessory.RegisterUponInstallReceiver" >
-            <intent-filter>
-                <action android:name="android.accessory.device.action.REGISTER_AFTER_INSTALL" />
-            </intent-filter>
-        </receiver>
-        <meta-data android:name="AccessoryServicesLocation" android:value="/res/xml/accessoryservices.xml" />
     </application>
-
 </manifest>
