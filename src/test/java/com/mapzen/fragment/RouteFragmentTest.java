@@ -607,12 +607,6 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onResume_shouldAddProximityAlertsForEveryInstruction() throws Exception {
-        FragmentTestUtil.startFragment(fragment);
-        assertThat(fragment.getProximityAlerts().size()).isEqualTo(testInstructions.size());
-    }
-
-    @Test
     public void onLocationChange_shouldFlipToPostInstructionLanguage() throws Exception {
         fragment.setRoute(new Route(MOCK_ROUTE_JSON));
         FragmentTestUtil.startFragment(fragment);

@@ -89,7 +89,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private DistanceView distanceLeftView;
     private int previousPosition;
     private String routeId;
-    private Set<Instruction> proximityAlerts = new HashSet<Instruction>();
     private Set<Instruction> seenInstructions = new HashSet<Instruction>();
     private int pagerPositionWhenPaused = 0;
 
@@ -206,7 +205,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (act.isInDebugMode()) {
             act.getDb().beginTransaction();
         }
-        initProximityAlerts();
     }
 
     @Override
@@ -271,12 +269,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return simpleFeature.getGeoPoint();
     }
 
-    private void initProximityAlerts() {
-        for (Instruction instruction : instructions) {
-            proximityAlerts.add(instruction);
-        }
-    }
-
     private Location snapTo(Location location) {
         Location onRoadPoint = route.snapToRoute(location);
 
@@ -299,10 +291,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    public Set<Instruction> getProximityAlerts() {
-        return proximityAlerts;
-    }
-
     public void onLocationChanged(Location location) {
         if (!autoPaging || isRouting) {
             return;
@@ -318,8 +306,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
         Instruction closestInstruction = null;
         int closestDistance = (int) 1e8;
-        for (Instruction instruction : proximityAlerts) {
-            Location temporaryLocationObj = (Location) instruction.getLocation();
+        for (Instruction instruction : instructions) {
+            Location temporaryLocationObj = instruction.getLocation();
             final int distanceToTurn =
                     (int) Math.floor(correctedLocation.distanceTo(temporaryLocationObj));
             Logger.logToDatabase(act, ROUTE_TAG, String.valueOf(distanceToTurn)
