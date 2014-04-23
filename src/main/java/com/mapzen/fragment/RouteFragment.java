@@ -268,15 +268,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return simpleFeature.getGeoPoint();
     }
 
-    private Location snapTo(Location location) {
-        Location onRoadPoint = route.snapToRoute(location);
-
-        if (onRoadPoint != null) {
-            return onRoadPoint;
-        }
-        return null;
-    }
-
     private void manageMap(Location location, Location originalLocation) {
         if (location != null) {
             getMapController().setLocation(location).centerOn(location);
@@ -294,7 +285,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (!autoPaging || isRouting) {
             return;
         }
-        Location correctedLocation = snapTo(location);
+        Location correctedLocation = route.snapToRoute(location);
         if (correctedLocation == null) {
             createRouteTo(location);
             return;
