@@ -33,17 +33,6 @@ $ git clone https://github.com/mapzen/vtm-native-libs.git
 $ cd vtm-native-libs && ./install-dependencies.sh
 ```
 
-### Install Samsung Accessories
-
-```bash
-$ mvn install:install-file \
-    -Dpackaging=jar \
-    -Dfile=<path to>/accessory-v1.0.9.jar \
-    -DgroupId=com.samsung \
-    -DartifactId=samsung-accessory \
-    -Dversion=1.0.9
-```
-
 ## Mapzen Android Demo
 
 Install and run Mapzen demo application.
