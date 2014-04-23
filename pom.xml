@@ -83,7 +83,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.mapzen.android</groupId>
+            <groupId>com.mapzen</groupId>
             <artifactId>on-the-road</artifactId>
             <version>0.2-SNAPSHOT</version>
         </dependency>
