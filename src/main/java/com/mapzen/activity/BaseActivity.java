@@ -133,7 +133,7 @@ public class BaseActivity extends MapActivity {
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         locationHelper.disconnect();
         db.close();

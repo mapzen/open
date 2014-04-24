@@ -2,6 +2,7 @@ package com.mapzen.support;
 
 import com.mapzen.shadows.ShadowGLMatrix;
 import com.mapzen.shadows.ShadowMapView;
+import com.mapzen.shadows.ShadowVectorTileLayer;
 
 import org.junit.runners.model.InitializationError;
 import org.robolectric.RobolectricTestRunner;
@@ -38,6 +39,7 @@ public class MapzenTestRunner extends RobolectricTestRunner {
     private static final List<String> CUSTOM_SHADOW_TARGETS =
             Collections.unmodifiableList(Arrays.asList(
                     "org.oscim.android.MapView",
+                    "org.oscim.layers.tile.vector.VectorTileLayer",
                     "org.oscim.renderer.GLMatrix"
             ));
 
@@ -53,6 +55,7 @@ public class MapzenTestRunner extends RobolectricTestRunner {
         return super.createShadowMap()
                 .newBuilder()
                 .addShadowClass(ShadowMapView.class)
+                .addShadowClass(ShadowVectorTileLayer.class)
                 .addShadowClass(ShadowGLMatrix.class)
                 .build();
     }
