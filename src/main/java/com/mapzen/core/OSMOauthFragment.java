@@ -2,7 +2,6 @@ package com.mapzen.core;
 
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
-import com.mapzen.util.Logger;
 
 import org.scribe.model.Verifier;
 

@@ -968,11 +968,10 @@ public class RouteFragmentTest {
     public void toString_shouldIncludeReturnBeginningAndEnd() throws Exception {
         testInstructions = new ArrayList<Instruction>();
         testInstructions.add(getTestInstruction(0, 0));
-        testInstructions.add(getTestInstruction(1, 1));
         fragment.setInstructions(testInstructions);
         String actual = fragment.toString();
         assertThat(actual).contains(getTestInstruction(0, 0).toString());
-        assertThat(actual).contains(getTestInstruction(1, 1).toString());
+        assertThat(actual).contains(getTestSimpleFeature().toString());
     }
 
     @Test

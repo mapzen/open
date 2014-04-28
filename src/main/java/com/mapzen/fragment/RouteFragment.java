@@ -642,11 +642,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @Override
     public String toString() {
-        if (instructions.size() > 1) {
+        if (instructions.size() >= 1) {
             Instruction firstInstruction = instructions.get(0);
-            Instruction lastInstruction = instructions.get(instructions.size() - 1);
-            return new StringBuilder().append("Route between: ").append(firstInstruction.toString())
-                    .append(lastInstruction.toString()).toString();
+            String destination = simpleFeature.toString();
+            return new StringBuilder().append("Route between: ")
+                    .append(firstInstruction.toString())
+                    .append(" -> ")
+                    .append(destination).toString();
         } else {
             return "Route without instructions";
         }
