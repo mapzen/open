@@ -28,6 +28,8 @@
     </repositories>
 
     <properties>
+        <osm_oauth.key>bogus_key</osm_oauth.key>
+        <osm_oauth.secret>bogus_secret</osm_oauth.secret>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
@@ -321,6 +323,33 @@
                 <version>2.5</version>
             </plugin>
 
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.2</version>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <file>${project.basedir}/res/values/secrets.xml</file>
+                    <regex>true</regex>
+                    <replacements>
+                        <replacement>
+                            <token>REPLACE_KEY</token>
+                            <value>${osm_oauth.key}</value>
+                        </replacement>
+                        <replacement>
+                            <token>REPLACE_SECRET</token>
+                            <value>${osm_oauth.secret}</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
