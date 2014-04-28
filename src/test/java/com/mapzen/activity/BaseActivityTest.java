@@ -22,11 +22,13 @@ import org.fest.assertions.data.Offset;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
 import org.scribe.model.Token;
+import org.scribe.oauth.OAuthService;
 
 import android.content.Context;
 import android.content.Intent;
@@ -484,11 +486,14 @@ public class BaseActivityTest {
     @Test
     public void onOptionsItemSelected_shouldStartOSMOauthFragment() throws Exception {
         Menu menu = new TestMenu();
-        activity.onCreateOptionsMenu(menu);
+        final TestBaseActivity testBaseActivity = (TestBaseActivity) activity;
+        testBaseActivity.onCreateOptionsMenu(menu);
+        OAuthService serviceMock = Mockito.mock(OAuthService.class);
+        testBaseActivity.setOsmOauthService(serviceMock);
         MenuItem loginItem = menu.findItem(R.id.login);
-        activity.onOptionsItemSelected(loginItem);
+        testBaseActivity.onOptionsItemSelected(loginItem);
 
-        assertThat(activity.getSupportFragmentManager())
+        assertThat(testBaseActivity.getSupportFragmentManager())
                 .hasFragmentWithTag(OSMOauthFragment.TAG);
     }
 

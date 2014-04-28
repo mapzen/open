@@ -20,6 +20,8 @@ import android.widget.Button;
 
 public class OSMOauthFragment extends DialogFragment {
     public static final String TAG = OSMOauthFragment.class.getSimpleName();
+    public static final String OSM_VERIFIER_KEY = "oauth_verifier";
+    public static final String OSM_MAPZEN_URL_MATCH = "mapzen.com";
 
     private BaseActivity act;
 
@@ -33,17 +35,14 @@ public class OSMOauthFragment extends DialogFragment {
         return fragment;
     }
 
-    public void setTokens(Uri uri) {
-        Logger.d("OAUTH: " + uri.toString());
-        Logger.d("OAUTH oauth_token: ||" + uri.getQueryParameter("oauth_token") + "||");
-        Logger.d("OAUTH oauth_verifier: ||" + uri.getQueryParameter("oauth_verifier") + "||");
-        act.setVerifier(new Verifier(uri.getQueryParameter("oauth_verifier")));
+    public void setVerifier(Uri uri) {
+        act.setVerifier(new Verifier(uri.getQueryParameter(OSM_VERIFIER_KEY)));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        getDialog().setTitle("Please Authorize");
+        getDialog().setTitle(act.getString(R.string.osm_login_title));
 
         final View view = inflater.inflate(R.layout.fragment_login, container, false);
 
@@ -58,36 +57,26 @@ public class OSMOauthFragment extends DialogFragment {
         final WebView webview = (WebView) view.findViewById(R.id.webview);
         webview.setWebViewClient(new WebViewClient() {
             public void onPageStarted(WebView view, final String url, Bitmap favicon) {
-                if (url.contains("mapzen.com")) {
+                if (url.contains(OSM_MAPZEN_URL_MATCH)) {
                     Uri uri = Uri.parse(url);
-                    setTokens(uri);
-                    (new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(Void... params) {
-                            if (act.getAccessToken() == null) {
-                                act.setAccessToken(act.getService().getAccessToken(
-                                        act.getRequestToken(), act.getVerifier()));
-                            }
-                            act.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    dismiss();
-                                }
-                            });
-                            return null;
-                        }
-                    }).execute();
+                    setVerifier(uri);
+                    setAccessToken();
                 }
             }
-         });
+        });
 
+        loadAuthorizationUrl(webview);
+        return view;
+    }
+
+    private void loadAuthorizationUrl(final WebView webview) {
         (new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
                 String url = "";
                 if (act.getAccessToken() == null) {
-                    act.setRequestToken(act.getService().getRequestToken());
-                    url = act.getService().getAuthorizationUrl(act.getRequestToken());
+                    act.setRequestToken(act.getOsmOauthService().getRequestToken());
+                    url = act.getOsmOauthService().getAuthorizationUrl(act.getRequestToken());
                 } else {
                     act.runOnUiThread(new Runnable() {
                         @Override
@@ -104,6 +93,24 @@ public class OSMOauthFragment extends DialogFragment {
                 webview.loadUrl(url);
             }
         }).execute();
-        return view;
+    }
+
+    private void setAccessToken() {
+        (new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                if (act.getAccessToken() == null) {
+                    act.setAccessToken(act.getOsmOauthService().getAccessToken(
+                            act.getRequestToken(), act.getVerifier()));
+                }
+                act.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dismiss();
+                    }
+                });
+                return null;
+            }
+        }).execute();
     }
 }

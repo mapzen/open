@@ -5,6 +5,7 @@ import com.mapzen.android.lost.LocationClient;
 
 import org.oscim.map.Map;
 import org.oscim.map.TestMap;
+import org.scribe.oauth.OAuthService;
 
 import android.app.ActionBar;
 import android.database.sqlite.SQLiteDatabase;
@@ -65,4 +66,7 @@ public class TestBaseActivity extends BaseActivity {
         this.debugDataEndpoint = debugDataEndpoint;
     }
 
+    public void setOsmOauthService(OAuthService service) {
+        this.osmOauthService = service;
+    }
 }

@@ -640,6 +640,18 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         onServerError(statusCode);
     }
 
+    @Override
+    public String toString() {
+        if (instructions.size() > 1) {
+            Instruction firstInstruction = instructions.get(0);
+            Instruction lastInstruction = instructions.get(instructions.size() - 1);
+            return new StringBuilder().append("Route between: ").append(firstInstruction.toString())
+                    .append(lastInstruction.toString()).toString();
+        } else {
+            return "Route without instructions";
+        }
+    }
+
     public void generateXml() {
         if (routeId == null) {
             return;
@@ -715,7 +727,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     act.getExternalFilesDir(null).getAbsolutePath() + "/" + routeId + ".gpx"),
                     Charsets.UTF_8);
             if (act.getAccessToken() != null) {
-                act.submitTrace(routeId + ".gpx");
+                act.submitTrace(toString(), routeId + ".gpx");
             }
         } catch (IOException e) {
             e.printStackTrace();

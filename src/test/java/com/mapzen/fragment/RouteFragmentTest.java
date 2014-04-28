@@ -964,6 +964,25 @@ public class RouteFragmentTest {
         Mockito.verify(spyFragment, Mockito.times(2)).createRouteTo(testLocation);
     }
 
+    @Test
+    public void toString_shouldIncludeReturnBeginningAndEnd() throws Exception {
+        testInstructions = new ArrayList<Instruction>();
+        testInstructions.add(getTestInstruction(0, 0));
+        testInstructions.add(getTestInstruction(1, 1));
+        fragment.setInstructions(testInstructions);
+        String actual = fragment.toString();
+        assertThat(actual).contains(getTestInstruction(0, 0).toString());
+        assertThat(actual).contains(getTestInstruction(1, 1).toString());
+    }
+
+    @Test
+    public void toString_shouldDisplay() throws Exception {
+        String expected = "Route without instructions";
+        fragment.setInstructions(new ArrayList<Instruction>());
+        String actual = fragment.toString();
+        assertThat(actual).contains(expected);
+    }
+
     private void setVoiceNavigationEnabled(boolean enabled) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
         SharedPreferences.Editor prefEditor = prefs.edit();

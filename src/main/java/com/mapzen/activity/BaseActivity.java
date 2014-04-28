@@ -27,6 +27,7 @@ import org.apache.http.Header;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.protocol.HTTP;
 import org.oscim.android.MapActivity;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.Map;
@@ -70,6 +71,7 @@ import java.io.UnsupportedEncodingException;
 
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.android.lost.LocationClient.ConnectionCallbacks;
+import static org.scribe.model.Verb.POST;
 
 public class BaseActivity extends MapActivity {
     public static final int LOCATION_INTERVAL = 1000;
@@ -86,7 +88,7 @@ public class BaseActivity extends MapActivity {
     private MapFragment mapFragment;
     private MapzenProgressDialogFragment progressDialogFragment;
     private boolean updateMapLocation = true;
-    private OAuthService service = null;
+    protected OAuthService osmOauthService = null;
     private Token requestToken = null;
     private Verifier verifier = null;
     private LocationListener locationListener = new LocationListener() {
@@ -155,7 +157,7 @@ public class BaseActivity extends MapActivity {
         initMapController();
         initLocationClient();
         initDebugView();
-        service = new ServiceBuilder()
+        osmOauthService = new ServiceBuilder()
                         .provider(OSMApi.class)
                         .apiKey(getString(R.string.osm_key))
                         .debug()
@@ -222,16 +224,16 @@ public class BaseActivity extends MapActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void submitTrace(final String fileName) {
+    public void submitTrace(final String description, final String fileName) {
         (new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 OAuthRequest request =
-                        new OAuthRequest(Verb.POST, OSMApi.BASE_URL + "/api/0.6/gpx/create");
+                        new OAuthRequest(POST, OSMApi.BASE_URL + OSMApi.CREATE_GPX);
 
                 MultipartEntity reqEntity = new MultipartEntity();
                 try {
-                    reqEntity.addPart("description", new StringBody("testing"));
+                    reqEntity.addPart("description", new StringBody(description));
                     reqEntity.addPart("visibility", new StringBody("private"));
                     reqEntity.addPart("public", new StringBody("0"));
                 } catch (UnsupportedEncodingException e) {
@@ -252,12 +254,12 @@ public class BaseActivity extends MapActivity {
 
                 Header contentType = reqEntity.getContentType();
                 request.addHeader(contentType.getName(), contentType.getValue());
-                service.signRequest(getAccessToken(), request);
+                osmOauthService.signRequest(getAccessToken(), request);
                 Response response = request.send();
                 String payload = "";
                 try {
                     payload = CharStreams.toString(
-                            new InputStreamReader(response.getStream(), "UTF-8"));
+                            new InputStreamReader(response.getStream(), HTTP.UTF_8));
                 } catch (IOException e) {
                     Logger.e("IOException: " + e.getMessage());
                 }
@@ -530,8 +532,8 @@ public class BaseActivity extends MapActivity {
         toggleOSMLogin();
     }
 
-    public OAuthService getService() {
-        return service;
+    public OAuthService getOsmOauthService() {
+        return osmOauthService;
     }
     public Verifier getVerifier() {
         return verifier;
