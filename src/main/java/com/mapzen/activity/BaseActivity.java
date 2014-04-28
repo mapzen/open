@@ -363,16 +363,21 @@ public class BaseActivity extends MapActivity {
     }
 
     private void toggleOSMLogin() {
-        MenuItem loginMenu = activityMenu.findItem(R.id.login);
-        MenuItem logoutMenu = activityMenu.findItem(R.id.logout);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                MenuItem loginMenu = activityMenu.findItem(R.id.login);
+                MenuItem logoutMenu = activityMenu.findItem(R.id.logout);
 
-        if (getAccessToken() != null) {
-            loginMenu.setVisible(false);
-            logoutMenu.setVisible(true);
-        } else {
-            loginMenu.setVisible(true);
-            logoutMenu.setVisible(false);
-        }
+                if (getAccessToken() != null) {
+                    loginMenu.setVisible(false);
+                    logoutMenu.setVisible(true);
+                } else {
+                    loginMenu.setVisible(true);
+                    logoutMenu.setVisible(false);
+                }
+            }
+        });
     }
 
     @Override
