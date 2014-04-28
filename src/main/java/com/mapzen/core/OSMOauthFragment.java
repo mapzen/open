@@ -19,9 +19,6 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 
 public class OSMOauthFragment extends DialogFragment {
-    public static final String OAUTH_URL = "http://www.openstreetmap.org/oauth/authorize";
-    public static final String CLIENT_ID = "LlswDE4hErhnWWIlX0JRASLHQvtsC7lOjUVqg7w3";
-    public static final String CLIENT_SECRET = "DWsEIHPrWFELsOnJUWDX1EYZXVBC7EvtjObDhAAl";
     public static final String TAG = OSMOauthFragment.class.getSimpleName();
 
     private BaseActivity act;
@@ -48,7 +45,6 @@ public class OSMOauthFragment extends DialogFragment {
             Bundle savedInstanceState) {
         getDialog().setTitle("Please Authorize");
 
-        String url = OAUTH_URL + "?client_id=" + CLIENT_ID;
         final View view = inflater.inflate(R.layout.fragment_login, container, false);
 
         Button closer = (Button) view.findViewById(R.id.closer);

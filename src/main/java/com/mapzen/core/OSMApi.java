@@ -5,8 +5,6 @@ import org.scribe.model.Token;
 
 public class OSMApi extends DefaultApi10a {
 
-    public static final String KEY = "LlswDE4hErhnWWIlX0JRASLHQvtsC7lOjUVqg7w3";
-    public static final String SECRET = "DWsEIHPrWFELsOnJUWDX1EYZXVBC7EvtjObDhAAl";
     public static final String BASE_URL = "http://www.openstreetmap.org";
     private static final String OAUTH_URL = BASE_URL + "/oauth/";
     private static final String AUTHORIZATION_URL = OAUTH_URL + "authorize?oauth_token=%s";

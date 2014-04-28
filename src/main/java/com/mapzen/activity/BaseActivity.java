@@ -157,10 +157,10 @@ public class BaseActivity extends MapActivity {
         initDebugView();
         service = new ServiceBuilder()
                         .provider(OSMApi.class)
-                        .apiKey(OSMApi.KEY)
+                        .apiKey(getString(R.string.osm_key))
                         .debug()
                         .callback("http://mapzen.com")
-                        .apiSecret(OSMApi.SECRET).build();
+                        .apiSecret(getString(R.string.osm_secret)).build();
     }
 
     @Override
