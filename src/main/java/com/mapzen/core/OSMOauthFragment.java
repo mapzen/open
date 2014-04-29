@@ -43,17 +43,9 @@ public class OSMOauthFragment extends DialogFragment {
             Bundle savedInstanceState) {
         getDialog().setTitle(act.getString(R.string.osm_login_title));
 
-        final View view = inflater.inflate(R.layout.fragment_login, container, false);
+        final View view = inflater.inflate(R.layout.fragment_osm_oauth_login, container, false);
 
-        Button closer = (Button) view.findViewById(R.id.closer);
-        closer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
-
-        final WebView webview = (WebView) view.findViewById(R.id.webview);
+        final WebView webview = (WebView) view.findViewById(R.id.oauth_login_screen);
         webview.setWebViewClient(new WebViewClient() {
             public void onPageStarted(WebView view, final String url, Bitmap favicon) {
                 if (url.contains(OSM_MAPZEN_URL_MATCH)) {
