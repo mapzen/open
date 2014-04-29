@@ -223,7 +223,7 @@ public class BaseActivity extends MapActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void submitTrace(final String description, final String fileName) {
+    public void submitTrace(final String description, final String path) {
         (new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
@@ -239,7 +239,6 @@ public class BaseActivity extends MapActivity {
                     Logger.e(e.getMessage());
                 }
 
-                String path = getExternalFilesDir(null).getAbsolutePath() + "/" + fileName;
                 reqEntity.addPart("file", new FileBody(new File(path)));
 
                 ByteArrayOutputStream bos =

@@ -241,7 +241,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.activateMapLocationUpdates();
         act.getDb().setTransactionSuccessful();
         act.getDb().endTransaction();
-        generateGpxXml();
     }
 
     @Override
@@ -249,6 +248,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         super.onDetach();
         act.enableActionbar();
         act.showActionBar();
+        generateGpxXml();
         clearRoute();
     }
 
@@ -670,10 +670,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void writeToFileAndSubmit(ByteArrayOutputStream output) {
         try {
-            Files.write(output.toByteArray(), new File(
-                    act.getExternalFilesDir(null).getAbsolutePath() + "/" + routeId + ".gpx"));
+            String fullPath = act.getExternalFilesDir(null).getAbsolutePath()
+                    + "/" + routeId + ".gpx";
+            Files.write(output.toByteArray(), new File(fullPath));
             if (act.getAccessToken() != null) {
-                act.submitTrace(toString(), routeId + ".gpx");
+                act.submitTrace(toString(), fullPath);
             }
         } catch (IOException e) {
             Logger.e("IOException occurred " + e.getMessage());

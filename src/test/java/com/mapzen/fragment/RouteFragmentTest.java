@@ -1,6 +1,7 @@
 package com.mapzen.fragment;
 
 import com.mapzen.R;
+import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.helpers.DistanceFormatter;
 import com.mapzen.osrm.Instruction;
@@ -34,6 +35,8 @@ import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.tester.android.view.TestMenuItem;
 import org.robolectric.util.FragmentTestUtil;
+import org.scribe.model.Token;
+import org.scribe.oauth.OAuthService;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -55,6 +58,7 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import static com.mapzen.MapController.getMapController;
@@ -75,8 +79,12 @@ import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.robolectric.Robolectric.shadowOf;
 import static org.robolectric.Robolectric.shadowOf_;
@@ -89,7 +97,7 @@ public class RouteFragmentTest {
     ShadowApplication app;
     TestMenu menu;
     ArrayList<Instruction> testInstructions;
-    Router router = Mockito.spy(Router.getRouter());
+    Router router = spy(Router.getRouter());
 
     @Captor
     @SuppressWarnings("unused")
@@ -155,7 +163,7 @@ public class RouteFragmentTest {
         Location testLocation = fragment.getRoute().snapToRoute(geometry.get(2));
         fragment.onLocationChanged(testLocation);
         GeoPoint expected = new GeoPoint(testLocation.getLatitude(), testLocation.getLongitude());
-        Mockito.verify(animator).animateTo(expected);
+        verify(animator).animateTo(expected);
     }
 
     @Test
@@ -233,7 +241,7 @@ public class RouteFragmentTest {
         initTestFragment();
         FragmentTestUtil.startFragment(fragment);
         fragment.createRouteTo(getTestLocation(100.0, 100.0));
-        Mockito.verify(router).setCallback(callback.capture());
+        verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(MOCK_ROUTE_JSON));
         fragment.onPause();
         SQLiteDatabase db = act.getReadableDb();
@@ -507,6 +515,42 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         fragment.onDetach();
         assertThat(act.getActionBar()).isShowing();
+    }
+
+    @Test
+    public void onDetach_shouldSubmitTrace() throws Exception {
+        act.setAccessToken(new Token("fake", "stuff"));
+        OAuthService mockService = mock(OAuthService.class);
+        act.setOsmOauthService(mockService);
+        BaseActivity spy = spy(act);
+        fragment.setAct(spy);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onDetach();
+        verify(spy).submitTrace(anyString(), contains(fragment.getRouteId() + ".gpx"));
+    }
+
+    @Test
+    public void onDetach_shouldNotSubmitTrace() throws Exception {
+        OAuthService mockService = Mockito.mock(OAuthService.class);
+        act.setOsmOauthService(mockService);
+        BaseActivity spy = spy(act);
+        fragment.setAct(spy);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onDetach();
+        verify(spy, Mockito.never()).submitTrace(anyString(), anyString());
+    }
+
+    @Test
+    public void onDetach_shouldStoreGPXtrace() throws Exception {
+        OAuthService mockService = Mockito.mock(OAuthService.class);
+        act.setOsmOauthService(mockService);
+        BaseActivity spy = spy(act);
+        fragment.setAct(spy);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onDetach();
+        File expectedFile = new File(act.getExternalFilesDir(null).getAbsolutePath()
+                + "/" + fragment.getRouteId() + ".gpx");
+        assertThat(expectedFile.exists()).isTrue();
     }
 
     @Test
@@ -793,7 +837,7 @@ public class RouteFragmentTest {
         Location testLocation = getTestLocation(100.0, 100.0);
         FragmentTestUtil.startFragment(fragment);
         fragment.createRouteTo(testLocation);
-        Mockito.verify(router).setCallback(callback.capture());
+        verify(router).setCallback(callback.capture());
         callback.getValue().failure(500);
         assertThat(act.getProgressDialogFragment()).isNotAdded();
     }
@@ -803,7 +847,7 @@ public class RouteFragmentTest {
         Location testLocation = getTestLocation(100.0, 100.0);
         FragmentTestUtil.startFragment(fragment);
         fragment.createRouteTo(testLocation);
-        Mockito.verify(router).setCallback(callback.capture());
+        verify(router).setCallback(callback.capture());
         callback.getValue().failure(207);
         assertThat(act.getProgressDialogFragment()).isNotAdded();
     }
@@ -813,7 +857,7 @@ public class RouteFragmentTest {
         Location testLocation = getTestLocation(100.0, 100.0);
         FragmentTestUtil.startFragment(fragment);
         fragment.createRouteTo(testLocation);
-        Mockito.verify(router).setCallback(callback.capture());
+        verify(router).setCallback(callback.capture());
         callback.getValue().failure(207);
         assertThat(ShadowToast.getTextOfLatestToast())
                 .isEqualTo(act.getString(R.string.no_route_found));
@@ -824,7 +868,7 @@ public class RouteFragmentTest {
         Location testLocation = getTestLocation(100.0, 100.0);
         FragmentTestUtil.startFragment(fragment);
         fragment.createRouteTo(testLocation);
-        Mockito.verify(router).setCallback(callback.capture());
+        verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(MOCK_NY_TO_VT));
         assertThat(fragment).isAdded();
     }
@@ -837,7 +881,7 @@ public class RouteFragmentTest {
         assertThat(previousCount).isEqualTo(3);
         Location testLocation = getTestLocation(100.0, 100.0);
         fragment.createRouteTo(testLocation);
-        Mockito.verify(router).setCallback(callback.capture());
+        verify(router).setCallback(callback.capture());
         Route newRoute = new Route(MOCK_NY_TO_VT);
         callback.getValue().success(newRoute);
         assertThat(fragment.pager.getAdapter().getCount())
@@ -853,11 +897,11 @@ public class RouteFragmentTest {
         Location testLocation = getTestLocation(100.0, 100.0);
         FragmentTestUtil.startFragment(fragment);
         fragment.createRouteTo(testLocation);
-        Mockito.verify(router).setCallback(callback.capture());
+        verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(MOCK_NY_TO_VT));
-        Mockito.verify(pathLayerMock, Mockito.times(2)).clearPath();
+        verify(pathLayerMock, Mockito.times(2)).clearPath();
         for (Location location : fragment.getRoute().getGeometry()) {
-            Mockito.verify(pathLayerMock).addPoint(
+            verify(pathLayerMock).addPoint(
                     new GeoPoint(location.getLatitude(), location.getLongitude()));
         }
     }
@@ -871,7 +915,7 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         fragment.createRouteTo(getTestLocation(100.0, 200.0));
         fragment.createRouteTo(getTestLocation(200.0, 300.0));
-        Mockito.verify(router, atLeastOnce()).setCallback(callback.capture());
+        verify(router, atLeastOnce()).setCallback(callback.capture());
         callback.getValue().success(new Route(MOCK_NY_TO_VT));
         assertThat(router.getRouteUrl().toString()).contains("200.0,300.0");
         assertThat(router.getRouteUrl().toString()).doesNotContain("100.0,200.0");
@@ -882,54 +926,54 @@ public class RouteFragmentTest {
         Location testLocation = getTestLocation(100.0, 100.0);
         FragmentTestUtil.startFragment(fragment);
         fragment.createRouteTo(testLocation);
-        Mockito.verify(router).fetch();
+        verify(router).fetch();
     }
 
     @Test
     public void onLocationChange_shouldBeLostWhenSnapToIsNull() throws Exception {
         Location testLocation = getTestLocation(40.662046, -73.987089);
-        RouteFragment spyFragment = Mockito.spy(fragment);
+        RouteFragment spyFragment = spy(fragment);
         spyFragment.setRoute(new Route(MOCK_AROUND_THE_BLOCK));
         FragmentTestUtil.startFragment(spyFragment);
         spyFragment.onLocationChanged(testLocation);
-        Mockito.verify(spyFragment).createRouteTo(testLocation);
+        verify(spyFragment).createRouteTo(testLocation);
     }
 
     @Test
     public void onLocationChange_shouldDoNothingWhileRerouting() throws Exception {
         Location testLocation = getTestLocation(40.662046, -73.987089);
-        RouteFragment spyFragment = Mockito.spy(fragment);
+        RouteFragment spyFragment = spy(fragment);
         spyFragment.setRoute(new Route(MOCK_AROUND_THE_BLOCK));
         FragmentTestUtil.startFragment(spyFragment);
         spyFragment.onLocationChanged(testLocation);
         spyFragment.onLocationChanged(testLocation);
-        Mockito.verify(spyFragment, Mockito.times(1)).createRouteTo(testLocation);
+        verify(spyFragment, Mockito.times(1)).createRouteTo(testLocation);
     }
 
     @Test
     public void onLocationChange_shouldBeReEnabledOnceReRoutingIsCompleted() throws Exception {
         Location testLocation = getTestLocation(40.662046, -73.987089);
-        RouteFragment spyFragment = Mockito.spy(fragment);
+        RouteFragment spyFragment = spy(fragment);
         spyFragment.setRoute(new Route(MOCK_AROUND_THE_BLOCK));
         FragmentTestUtil.startFragment(spyFragment);
         spyFragment.onLocationChanged(testLocation);
-        Mockito.verify(router).setCallback(callback.capture());
+        verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(new JSONObject(MOCK_AROUND_THE_BLOCK)));
         spyFragment.onLocationChanged(testLocation);
-        Mockito.verify(spyFragment, Mockito.times(2)).createRouteTo(testLocation);
+        verify(spyFragment, Mockito.times(2)).createRouteTo(testLocation);
     }
 
     @Test
     public void onLocationChange_shouldBeReEnabledOnceReRoutingHasError() throws Exception {
         Location testLocation = getTestLocation(40.662046, -73.987089);
-        RouteFragment spyFragment = Mockito.spy(fragment);
+        RouteFragment spyFragment = spy(fragment);
         spyFragment.setRoute(new Route(MOCK_AROUND_THE_BLOCK));
         FragmentTestUtil.startFragment(spyFragment);
         spyFragment.onLocationChanged(testLocation);
-        Mockito.verify(router).setCallback(callback.capture());
+        verify(router).setCallback(callback.capture());
         callback.getValue().failure(500);
         spyFragment.onLocationChanged(testLocation);
-        Mockito.verify(spyFragment, Mockito.times(2)).createRouteTo(testLocation);
+        verify(spyFragment, Mockito.times(2)).createRouteTo(testLocation);
     }
 
     @Test
