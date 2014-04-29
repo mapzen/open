@@ -230,30 +230,6 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onRouteSuccess_shouldStoreRawJson() throws Exception {
-        enableDebugMode(act);
-        fragment.setRoute(new Route(MOCK_ROUTE_JSON));
-        FragmentTestUtil.startFragment(fragment);
-        fragment.onPause();
-        SQLiteDatabase db = act.getReadableDb();
-        Cursor cursor = db.query(TABLE_ROUTES,
-                new String[] { COLUMN_RAW },
-                null, null, null, null, null);
-        assertThat(cursor).hasCount(1);
-    }
-
-    @Test
-    public void onRouteSuccess_shouldNoteStoreRawJson() throws Exception {
-        FragmentTestUtil.startFragment(fragment);
-        fragment.onPause();
-        SQLiteDatabase db = act.getReadableDb();
-        Cursor cursor = db.query(TABLE_ROUTES,
-                new String[] { COLUMN_RAW },
-                null, null, null, null, null);
-        assertThat(cursor).hasCount(0);
-    }
-
-    @Test
     public void drawRoute_shouldStoreCoordinates() throws Exception {
         enableDebugMode(act);
         initTestFragment();
@@ -558,12 +534,6 @@ public class RouteFragmentTest {
         enableDebugMode(act);
         FragmentTestUtil.startFragment(fragment);
         fragment.onPause();
-        assertThat(act.getDb().inTransaction()).isFalse();
-    }
-
-    @Test
-    public void onResume_shouldNotStartDbTransaction() throws Exception {
-        FragmentTestUtil.startFragment(fragment);
         assertThat(act.getDb().inTransaction()).isFalse();
     }
 

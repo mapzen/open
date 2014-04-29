@@ -229,9 +229,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.disableActionbar();
         act.hideActionBar();
         act.deactivateMapLocationUpdates();
-        if (act.isInDebugMode()) {
-            act.getDb().beginTransaction();
-        }
+        act.getDb().beginTransaction();
     }
 
     @Override
@@ -239,11 +237,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         super.onPause();
         act.unregisterReceiver(locationReceiver);
         act.activateMapLocationUpdates();
-        if (act.isInDebugMode()) {
-            act.getDb().setTransactionSuccessful();
-            act.getDb().endTransaction();
-            generateGpxXml();
-        }
+        act.getDb().setTransactionSuccessful();
+        act.getDb().endTransaction();
+        generateGpxXml();
     }
 
     @Override
@@ -429,13 +425,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void storeRouteInDatabase(JSONObject rawRoute) {
-        if (act.isInDebugMode()) {
-            ContentValues insertValues = new ContentValues();
-            routeId = UUID.randomUUID().toString();
-            insertValues.put(COLUMN_TABLE_ID, routeId);
-            insertValues.put(COLUMN_RAW, rawRoute.toString());
-            act.getDb().insert(TABLE_ROUTES, null, insertValues);
-        }
+        ContentValues insertValues = new ContentValues();
+        routeId = UUID.randomUUID().toString();
+        insertValues.put(COLUMN_TABLE_ID, routeId);
+        insertValues.put(COLUMN_RAW, rawRoute.toString());
+        act.getDb().insert(TABLE_ROUTES, null, insertValues);
     }
 
     private void drawRoute() {
@@ -452,15 +446,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void addCoordinateToDatabase(Location location, int pos) {
-        if (act.isInDebugMode()) {
-            ContentValues values = new ContentValues();
-            values.put(COLUMN_TABLE_ID, UUID.randomUUID().toString());
-            values.put(COLUMN_ROUTE_ID, routeId);
-            values.put(COLUMN_POSITION, pos);
-            values.put(COLUMN_LAT, location.getLatitude());
-            values.put(COLUMN_LNG, location.getLongitude());
-            act.getDb().insert(TABLE_ROUTE_GEOMETRY, null, values);
-        }
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TABLE_ID, UUID.randomUUID().toString());
+        values.put(COLUMN_ROUTE_ID, routeId);
+        values.put(COLUMN_POSITION, pos);
+        values.put(COLUMN_LAT, location.getLatitude());
+        values.put(COLUMN_LNG, location.getLongitude());
+        act.getDb().insert(TABLE_ROUTE_GEOMETRY, null, values);
     }
 
     public Route getRoute() {
@@ -510,11 +502,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void storeLocationInfo(Location location, Location correctedLocation) {
-        if (act.isInDebugMode()) {
-            act.getDb().insert(TABLE_LOCATIONS, null,
-                    valuesForLocationCorrection(location,
-                            correctedLocation, instructions.get(pager.getCurrentItem()), routeId));
-        }
+        act.getDb().insert(TABLE_LOCATIONS, null,
+                valuesForLocationCorrection(location,
+                        correctedLocation, instructions.get(pager.getCurrentItem()), routeId));
     }
 
     private void turnAutoPageOff() {
