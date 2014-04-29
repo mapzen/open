@@ -14,6 +14,7 @@ import com.mapzen.widget.DistanceView;
 import com.google.api.client.util.Charsets;
 import com.google.common.io.Files;
 
+import org.apache.http.protocol.HTTP;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -57,6 +58,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -94,6 +96,12 @@ import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
 import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
+import static javax.xml.transform.OutputKeys.ENCODING;
+import static javax.xml.transform.OutputKeys.INDENT;
+import static javax.xml.transform.OutputKeys.METHOD;
+import static javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION;
+import static javax.xml.transform.OutputKeys.VERSION;
+import static org.apache.http.protocol.HTTP.UTF_8;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
         ViewPager.OnPageChangeListener, Router.Callback {
@@ -239,7 +247,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (act.isInDebugMode()) {
             act.getDb().setTransactionSuccessful();
             act.getDb().endTransaction();
-            generateXml();
+            generateGpxXml();
         }
     }
 
@@ -654,7 +662,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    public void generateXml() {
+    public void generateGpxXml() {
         if (routeId == null) {
             return;
         }
@@ -664,7 +672,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 COLUMN_ROUTE_ID + " = ?",
                 new String[] { routeId }, null, null, null);
 
-        String xmlString = null;
+        ByteArrayOutputStream output = null;
         try {
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
                     .newInstance();
@@ -709,25 +717,24 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer();
             Properties outFormat = new Properties();
-            outFormat.setProperty(OutputKeys.INDENT, "yes");
-            outFormat.setProperty(OutputKeys.METHOD, "xml");
-            outFormat.setProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-            outFormat.setProperty(OutputKeys.VERSION, "1.0");
+            outFormat.setProperty(INDENT, "yes");
+            outFormat.setProperty(METHOD, "xml");
+            outFormat.setProperty(OMIT_XML_DECLARATION, "no");
+            outFormat.setProperty(VERSION, "1.0");
+            outFormat.setProperty(ENCODING, UTF_8);
             transformer.setOutputProperties(outFormat);
             DOMSource domSource =
                     new DOMSource(document.getDocumentElement());
-            OutputStream output = new ByteArrayOutputStream();
+            output = new ByteArrayOutputStream();
             StreamResult result = new StreamResult(output);
             transformer.transform(domSource, result);
-            xmlString = output.toString();
         } catch (Exception e) {
             Logger.e("Parsing xml failed: " + e.getMessage());
         }
         // TODO optimize output stream to file without converting to a String
         try {
-            Files.write(xmlString, new File(
-                    act.getExternalFilesDir(null).getAbsolutePath() + "/" + routeId + ".gpx"),
-                    Charsets.UTF_8);
+            Files.write(output.toByteArray(), new File(
+                    act.getExternalFilesDir(null).getAbsolutePath() + "/" + routeId + ".gpx"));
             if (act.getAccessToken() != null) {
                 act.submitTrace(toString(), routeId + ".gpx");
             }

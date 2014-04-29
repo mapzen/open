@@ -42,9 +42,7 @@ public class OSMOauthFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         getDialog().setTitle(act.getString(R.string.osm_login_title));
-
         final View view = inflater.inflate(R.layout.fragment_osm_oauth_login, container, false);
-
         final WebView webview = (WebView) view.findViewById(R.id.oauth_login_screen);
         webview.setWebViewClient(new WebViewClient() {
             public void onPageStarted(WebView view, final String url, Bitmap favicon) {
