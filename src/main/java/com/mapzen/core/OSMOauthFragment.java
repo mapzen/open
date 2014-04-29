@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 
 public class OSMOauthFragment extends DialogFragment {
     public static final String TAG = OSMOauthFragment.class.getSimpleName();

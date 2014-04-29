@@ -11,10 +11,8 @@ import com.mapzen.util.DisplayHelper;
 import com.mapzen.util.Logger;
 import com.mapzen.widget.DistanceView;
 
-import com.google.api.client.util.Charsets;
 import com.google.common.io.Files;
 
-import org.apache.http.protocol.HTTP;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -57,8 +55,6 @@ import android.widget.Toast;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -69,7 +65,6 @@ import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
