@@ -65,7 +65,9 @@ import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -651,72 +653,22 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (routeId == null) {
             return;
         }
-        DateTimeFormatter isoDateParser = ISODateTimeFormat.dateTimeNoMillis();
-        Cursor cursor = act.getDb().query(TABLE_LOCATIONS,
-                new String[] { COLUMN_LAT, COLUMN_LNG, COLUMN_ALT, COLUMN_TIME },
-                COLUMN_ROUTE_ID + " = ?",
-                new String[] { routeId }, null, null, null);
-
         ByteArrayOutputStream output = null;
         try {
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
-                    .newInstance();
-            DocumentBuilder documentBuilder = documentBuilderFactory
-                    .newDocumentBuilder();
-            Document document = documentBuilder.newDocument();
-            Element rootElement = document.createElement("gpx");
-            rootElement.setAttribute("version", "1.0");
-            rootElement.setAttribute("creator", "mapzen - start where you are http://mazpen.com");
-            rootElement.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            rootElement.setAttribute("xmlns:schemaLocation",
-                    "http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd");
-            rootElement.setAttribute("xmlns", "http://www.topografix.com/GPX/1/0");
-            document.appendChild(rootElement);
-            Element trkElement = document.createElement("trk");
-            rootElement.appendChild(trkElement);
-            Element nameElement = document.createElement("name");
-            nameElement.setTextContent("Mapzen Route");
-            trkElement.appendChild(nameElement);
-            Element trksegElement = document.createElement("trkseg");
-
-            while (cursor.moveToNext()) {
-                int latIndex = cursor.getColumnIndex(COLUMN_LAT);
-                int lonIndex = cursor.getColumnIndex(COLUMN_LNG);
-                int altIndex = cursor.getColumnIndex(COLUMN_ALT);
-                int timeIndex = cursor.getColumnIndex(COLUMN_TIME);
-                Element trkptElement = document.createElement("trkpt");
-                Element elevationElement = document.createElement("ele");
-                Element timeElement = document.createElement("time");
-                trkptElement.setAttribute("lat", cursor.getString(latIndex));
-                trkptElement.setAttribute("lon", cursor.getString(lonIndex));
-                elevationElement.setTextContent(cursor.getString(altIndex));
-
-                DateTime date = new DateTime(cursor.getLong(timeIndex));
-                timeElement.setTextContent(date.toString(isoDateParser));
-
-                trkptElement.appendChild(elevationElement);
-                trkptElement.appendChild(timeElement);
-                trksegElement.appendChild(trkptElement);
-            }
-            trkElement.appendChild(trksegElement);
+            DOMSource domSource = getDocument();
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer();
-            Properties outFormat = new Properties();
-            outFormat.setProperty(INDENT, "yes");
-            outFormat.setProperty(METHOD, "xml");
-            outFormat.setProperty(OMIT_XML_DECLARATION, "no");
-            outFormat.setProperty(VERSION, "1.0");
-            outFormat.setProperty(ENCODING, UTF_8);
-            transformer.setOutputProperties(outFormat);
-            DOMSource domSource =
-                    new DOMSource(document.getDocumentElement());
+            setOutputFormat(transformer);
             output = new ByteArrayOutputStream();
             StreamResult result = new StreamResult(output);
             transformer.transform(domSource, result);
-        } catch (Exception e) {
-            Logger.e("Parsing xml failed: " + e.getMessage());
+        } catch (TransformerException e) {
+            Logger.e("Transforming failed: " + e.getMessage());
         }
-        // TODO optimize output stream to file without converting to a String
+        writeToFileAndSubmit(output);
+    }
+
+    private void writeToFileAndSubmit(ByteArrayOutputStream output) {
         try {
             Files.write(output.toByteArray(), new File(
                     act.getExternalFilesDir(null).getAbsolutePath() + "/" + routeId + ".gpx"));
@@ -724,7 +676,81 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 act.submitTrace(toString(), routeId + ".gpx");
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.e("IOException occurred " + e.getMessage());
         }
+    }
+
+    private DOMSource getDocument() {
+        DOMSource domSource = null;
+        try {
+            DateTimeFormatter isoDateParser = ISODateTimeFormat.dateTimeNoMillis();
+            Cursor cursor = act.getDb().query(TABLE_LOCATIONS,
+                    new String[] { COLUMN_LAT, COLUMN_LNG, COLUMN_ALT, COLUMN_TIME },
+                    COLUMN_ROUTE_ID + " = ?",
+                    new String[] { routeId }, null, null, null);
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
+                    .newInstance();
+            DocumentBuilder documentBuilder = documentBuilderFactory
+                    .newDocumentBuilder();
+            Document document = documentBuilder.newDocument();
+            Element rootElement = getRootElement(document);
+            document.appendChild(rootElement);
+            Element trkElement = document.createElement("trk");
+            rootElement.appendChild(trkElement);
+            Element nameElement = document.createElement("name");
+            nameElement.setTextContent("Mapzen Route");
+            trkElement.appendChild(nameElement);
+            Element trksegElement = document.createElement("trkseg");
+            while (cursor.moveToNext()) {
+                addTrackPoint(isoDateParser, cursor, document, trksegElement);
+            }
+            trkElement.appendChild(trksegElement);
+            domSource = new DOMSource(document.getDocumentElement());
+        } catch (ParserConfigurationException e) {
+            Logger.e("Building xml failed: " + e.getMessage());
+        }
+        return domSource;
+    }
+
+    private void setOutputFormat(Transformer transformer) {
+        Properties outFormat = new Properties();
+        outFormat.setProperty(INDENT, "yes");
+        outFormat.setProperty(METHOD, "xml");
+        outFormat.setProperty(OMIT_XML_DECLARATION, "no");
+        outFormat.setProperty(VERSION, "1.0");
+        outFormat.setProperty(ENCODING, UTF_8);
+        transformer.setOutputProperties(outFormat);
+    }
+
+    private void addTrackPoint(DateTimeFormatter isoDateParser, Cursor cursor, Document document,
+            Element trksegElement) {
+        int latIndex = cursor.getColumnIndex(COLUMN_LAT);
+        int lonIndex = cursor.getColumnIndex(COLUMN_LNG);
+        int altIndex = cursor.getColumnIndex(COLUMN_ALT);
+        int timeIndex = cursor.getColumnIndex(COLUMN_TIME);
+        Element trkptElement = document.createElement("trkpt");
+        Element elevationElement = document.createElement("ele");
+        Element timeElement = document.createElement("time");
+        trkptElement.setAttribute("lat", cursor.getString(latIndex));
+        trkptElement.setAttribute("lon", cursor.getString(lonIndex));
+        elevationElement.setTextContent(cursor.getString(altIndex));
+
+        DateTime date = new DateTime(cursor.getLong(timeIndex));
+        timeElement.setTextContent(date.toString(isoDateParser));
+
+        trkptElement.appendChild(elevationElement);
+        trkptElement.appendChild(timeElement);
+        trksegElement.appendChild(trkptElement);
+    }
+
+    private Element getRootElement(Document document) {
+        Element rootElement = document.createElement("gpx");
+        rootElement.setAttribute("version", "1.0");
+        rootElement.setAttribute("creator", "mapzen - start where you are http://mazpen.com");
+        rootElement.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        rootElement.setAttribute("xmlns:schemaLocation",
+                "http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd");
+        rootElement.setAttribute("xmlns", "http://www.topografix.com/GPX/1/0");
+        return rootElement;
     }
 }
