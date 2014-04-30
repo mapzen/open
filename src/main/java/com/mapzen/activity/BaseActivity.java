@@ -201,9 +201,11 @@ public class BaseActivity extends MapActivity {
                     .add(R.id.settings, fragment, SettingsFragment.TAG)
                     .addToBackStack(null)
                     .commit();
+            return true;
         } else if (item.getItemId() == R.id.phone_home) {
             initDebugDataSubmitter();
             debugDataSubmitter.run();
+            return true;
         } else if (item.getItemId() == R.id.login) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             Fragment prev = getSupportFragmentManager().findFragmentByTag(OSMOauthFragment.TAG);
@@ -213,12 +215,14 @@ public class BaseActivity extends MapActivity {
             ft.addToBackStack(null);
             DialogFragment newFragment = OSMOauthFragment.newInstance(this);
             newFragment.show(ft, OSMOauthFragment.TAG);
+            return true;
         } else if (item.getItemId() == R.id.logout) {
             SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             editor.remove("token");
             editor.commit();
             toggleOSMLogin();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
