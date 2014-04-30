@@ -12,6 +12,7 @@ import com.mapzen.util.DatabaseHelper;
 import com.mapzen.widget.DistanceView;
 
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -105,6 +106,11 @@ public class RouteFragmentTest {
         initTestFragment();
         app = Robolectric.getShadowApplication();
         setVoiceNavigationEnabled(true);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        act.onPause();
     }
 
     @Test

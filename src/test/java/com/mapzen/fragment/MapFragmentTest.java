@@ -20,7 +20,6 @@ import org.oscim.tiling.TileSource;
 import org.oscim.tiling.source.HttpEngine;
 import org.oscim.tiling.source.OkHttpEngine;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowLog;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -42,7 +41,6 @@ public class MapFragmentTest {
     @Before
     public void setUp() throws Exception {
         activity = initBaseActivity();
-        ShadowLog.stream = System.out;
         listener = new TestPoiClickListener();
         mapFragment = new MapFragment();
         mapFragment.setAct(activity);
