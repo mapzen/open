@@ -11,9 +11,16 @@ import com.mapzen.util.DisplayHelper;
 import com.mapzen.util.Logger;
 import com.mapzen.widget.DistanceView;
 
+import com.google.common.io.Files;
+
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.PathLayer;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
@@ -21,6 +28,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
@@ -44,12 +52,25 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -60,16 +81,24 @@ import static com.mapzen.MapController.getMapController;
 import static com.mapzen.MapController.locationToPair;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.SimpleFeature.NAME;
+import static com.mapzen.util.DatabaseHelper.COLUMN_ALT;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_POSITION;
 import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
 import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
 import static com.mapzen.util.DatabaseHelper.COLUMN_TABLE_ID;
+import static com.mapzen.util.DatabaseHelper.COLUMN_TIME;
 import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
 import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
+import static javax.xml.transform.OutputKeys.ENCODING;
+import static javax.xml.transform.OutputKeys.INDENT;
+import static javax.xml.transform.OutputKeys.METHOD;
+import static javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION;
+import static javax.xml.transform.OutputKeys.VERSION;
+import static org.apache.http.protocol.HTTP.UTF_8;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
         ViewPager.OnPageChangeListener, Router.Callback {
@@ -98,6 +127,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private boolean autoPaging = true;
 
     private static Router router = Router.getRouter();
+
     protected static void setRouter(Router router) {
         RouteFragment.router = router;
     }
@@ -201,9 +231,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.disableActionbar();
         act.hideActionBar();
         act.deactivateMapLocationUpdates();
-        if (act.isInDebugMode()) {
-            act.getDb().beginTransaction();
-        }
+        act.getDb().beginTransaction();
     }
 
     @Override
@@ -211,10 +239,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         super.onPause();
         act.unregisterReceiver(locationReceiver);
         act.activateMapLocationUpdates();
-        if (act.isInDebugMode()) {
-            act.getDb().setTransactionSuccessful();
-            act.getDb().endTransaction();
-        }
+        act.getDb().setTransactionSuccessful();
+        act.getDb().endTransaction();
     }
 
     @Override
@@ -222,6 +248,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         super.onDetach();
         act.enableActionbar();
         act.showActionBar();
+        generateGpxXml();
         clearRoute();
     }
 
@@ -398,14 +425,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
         return true;
     }
+
     private void storeRouteInDatabase(JSONObject rawRoute) {
-        if (act.isInDebugMode()) {
-            ContentValues insertValues = new ContentValues();
-            routeId = UUID.randomUUID().toString();
-            insertValues.put(COLUMN_TABLE_ID, routeId);
-            insertValues.put(COLUMN_RAW, rawRoute.toString());
-            act.getDb().insert(TABLE_ROUTES, null, insertValues);
-        }
+        ContentValues insertValues = new ContentValues();
+        routeId = UUID.randomUUID().toString();
+        insertValues.put(COLUMN_TABLE_ID, routeId);
+        insertValues.put(COLUMN_RAW, rawRoute.toString());
+        act.getDb().insert(TABLE_ROUTES, null, insertValues);
     }
 
     private void drawRoute() {
@@ -422,15 +448,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void addCoordinateToDatabase(Location location, int pos) {
-        if (act.isInDebugMode()) {
-            ContentValues values = new ContentValues();
-            values.put(COLUMN_TABLE_ID, UUID.randomUUID().toString());
-            values.put(COLUMN_ROUTE_ID, routeId);
-            values.put(COLUMN_POSITION, pos);
-            values.put(COLUMN_LAT, location.getLatitude());
-            values.put(COLUMN_LNG, location.getLongitude());
-            act.getDb().insert(TABLE_ROUTE_GEOMETRY, null, values);
-        }
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TABLE_ID, UUID.randomUUID().toString());
+        values.put(COLUMN_ROUTE_ID, routeId);
+        values.put(COLUMN_POSITION, pos);
+        values.put(COLUMN_LAT, location.getLatitude());
+        values.put(COLUMN_LNG, location.getLongitude());
+        act.getDb().insert(TABLE_ROUTE_GEOMETRY, null, values);
     }
 
     public Route getRoute() {
@@ -480,11 +504,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void storeLocationInfo(Location location, Location correctedLocation) {
-        if (act.isInDebugMode()) {
-            act.getDb().insert(TABLE_LOCATIONS, null,
-                    valuesForLocationCorrection(location,
-                            correctedLocation, instructions.get(pager.getCurrentItem()), routeId));
-        }
+        act.getDb().insert(TABLE_LOCATIONS, null,
+                valuesForLocationCorrection(location,
+                        correctedLocation, instructions.get(pager.getCurrentItem()), routeId));
     }
 
     private void turnAutoPageOff() {
@@ -613,4 +635,123 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         onServerError(statusCode);
     }
 
+    @Override
+    public String toString() {
+        if (instructions.size() >= 1) {
+            Instruction firstInstruction = instructions.get(0);
+            String destination = simpleFeature.toString();
+            return new StringBuilder().append("Route between: ")
+                    .append(firstInstruction.toString())
+                    .append(" -> ")
+                    .append(destination).toString();
+        } else {
+            return "Route without instructions";
+        }
+    }
+
+    public void generateGpxXml() {
+        if (routeId == null) {
+            return;
+        }
+        ByteArrayOutputStream output = null;
+        try {
+            DOMSource domSource = getDocument();
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Transformer transformer = factory.newTransformer();
+            setOutputFormat(transformer);
+            output = new ByteArrayOutputStream();
+            StreamResult result = new StreamResult(output);
+            transformer.transform(domSource, result);
+        } catch (TransformerException e) {
+            Logger.e("Transforming failed: " + e.getMessage());
+        }
+        writeToFileAndSubmit(output);
+    }
+
+    private void writeToFileAndSubmit(ByteArrayOutputStream output) {
+        try {
+            String fullPath = act.getExternalFilesDir(null).getAbsolutePath()
+                    + "/" + routeId + ".gpx";
+            Files.write(output.toByteArray(), new File(fullPath));
+            if (act.getAccessToken() != null) {
+                act.submitTrace(toString(), fullPath);
+            }
+        } catch (IOException e) {
+            Logger.e("IOException occurred " + e.getMessage());
+        }
+    }
+
+    private DOMSource getDocument() {
+        DOMSource domSource = null;
+        try {
+            DateTimeFormatter isoDateParser = ISODateTimeFormat.dateTimeNoMillis();
+            Cursor cursor = act.getDb().query(TABLE_LOCATIONS,
+                    new String[] { COLUMN_LAT, COLUMN_LNG, COLUMN_ALT, COLUMN_TIME },
+                    COLUMN_ROUTE_ID + " = ?",
+                    new String[] { routeId }, null, null, null);
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
+                    .newInstance();
+            DocumentBuilder documentBuilder = documentBuilderFactory
+                    .newDocumentBuilder();
+            Document document = documentBuilder.newDocument();
+            Element rootElement = getRootElement(document);
+            document.appendChild(rootElement);
+            Element trkElement = document.createElement("trk");
+            rootElement.appendChild(trkElement);
+            Element nameElement = document.createElement("name");
+            nameElement.setTextContent("Mapzen Route");
+            trkElement.appendChild(nameElement);
+            Element trksegElement = document.createElement("trkseg");
+            while (cursor.moveToNext()) {
+                addTrackPoint(isoDateParser, cursor, document, trksegElement);
+            }
+            trkElement.appendChild(trksegElement);
+            domSource = new DOMSource(document.getDocumentElement());
+        } catch (ParserConfigurationException e) {
+            Logger.e("Building xml failed: " + e.getMessage());
+        }
+        return domSource;
+    }
+
+    private void setOutputFormat(Transformer transformer) {
+        Properties outFormat = new Properties();
+        outFormat.setProperty(INDENT, "yes");
+        outFormat.setProperty(METHOD, "xml");
+        outFormat.setProperty(OMIT_XML_DECLARATION, "no");
+        outFormat.setProperty(VERSION, "1.0");
+        outFormat.setProperty(ENCODING, UTF_8);
+        transformer.setOutputProperties(outFormat);
+    }
+
+    private void addTrackPoint(DateTimeFormatter isoDateParser, Cursor cursor, Document document,
+            Element trksegElement) {
+        int latIndex = cursor.getColumnIndex(COLUMN_LAT);
+        int lonIndex = cursor.getColumnIndex(COLUMN_LNG);
+        int altIndex = cursor.getColumnIndex(COLUMN_ALT);
+        int timeIndex = cursor.getColumnIndex(COLUMN_TIME);
+        Element trkptElement = document.createElement("trkpt");
+        Element elevationElement = document.createElement("ele");
+        Element timeElement = document.createElement("time");
+        trkptElement.setAttribute("lat", cursor.getString(latIndex));
+        trkptElement.setAttribute("lon", cursor.getString(lonIndex));
+        elevationElement.setTextContent(cursor.getString(altIndex));
+
+        DateTime date = new DateTime(cursor.getLong(timeIndex));
+        timeElement.setTextContent(date.toString(isoDateParser));
+
+        trkptElement.appendChild(elevationElement);
+        trkptElement.appendChild(timeElement);
+        trksegElement.appendChild(trkptElement);
+    }
+
+    private Element getRootElement(Document document) {
+        Element rootElement = document.createElement("gpx");
+        rootElement.setAttribute("version", "1.0");
+        rootElement.setAttribute("creator", "mapzen - start where you are http://mazpen.com");
+        rootElement.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        rootElement.setAttribute("xmlns:schemaLocation",
+                "http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd");
+        rootElement.setAttribute("xmlns", "http://www.topografix.com/GPX/1/0");
+        return rootElement;
+    }
 }
