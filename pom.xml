@@ -20,10 +20,6 @@
         <repository>
             <id>scribe-java-mvn-repo</id>
             <url>https://raw.github.com/fernandezpablo85/scribe-java/mvn-repo/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
         </repository>
     </repositories>
 
