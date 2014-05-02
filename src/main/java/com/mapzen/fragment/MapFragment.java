@@ -4,6 +4,7 @@ import com.mapzen.R;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.util.MapzenTheme;
+import com.mapzen.util.PoiLayer;
 
 import org.oscim.android.canvas.AndroidGraphics;
 import org.oscim.backend.canvas.Color;
@@ -181,6 +182,7 @@ public class MapFragment extends BaseFragment {
 
         meMarkerLayer = buildMyPositionLayer();
         map.layers().add(meMarkerLayer);
+        map.layers().add(new PoiLayer(map, baseLayer, act));
 
         MapzenTheme theme = MapzenTheme.valueOf(getString(R.string.settings_default_mapstyle));
         theme.setContext(act);
