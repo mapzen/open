@@ -4,6 +4,7 @@ import com.mapzen.R;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.util.MapzenTheme;
+import com.mapzen.util.PoiLayer;
 
 import org.oscim.android.canvas.AndroidGraphics;
 import org.oscim.backend.canvas.Color;
@@ -170,6 +171,7 @@ public class MapFragment extends BaseFragment {
 
         map.layers().add(new BuildingLayer(map, baseLayer));
         map.layers().add(new LabelLayer(map, baseLayer));
+        map.layers().add(new PoiLayer(map, baseLayer, act));
 
         highlightMarker = getHighlightMarkerSymbol();
 
