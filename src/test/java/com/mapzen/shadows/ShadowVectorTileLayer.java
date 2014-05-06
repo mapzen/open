@@ -26,5 +26,7 @@ public class ShadowVectorTileLayer {
                 .set(new TileLoader[0]);
         field("mLoaderThemeHooks").ofType(VectorTileLayer.TileLoaderThemeHook[].class)
                 .in(realVectorTileLayer).set(new VectorTileLayer.TileLoaderThemeHook[0]);
+        field("mLoaderProcessHooks").ofType(VectorTileLayer.TileLoaderProcessHook[].class)
+                .in(realVectorTileLayer).set(new VectorTileLayer.TileLoaderProcessHook[0]);
     }
 }
