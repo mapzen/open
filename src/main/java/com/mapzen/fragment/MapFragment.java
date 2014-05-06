@@ -171,6 +171,7 @@ public class MapFragment extends BaseFragment {
 
         map.layers().add(new BuildingLayer(map, baseLayer));
         map.layers().add(new LabelLayer(map, baseLayer));
+        map.layers().add(new PoiLayer(map, baseLayer, act));
 
         highlightMarker = getHighlightMarkerSymbol();
 
@@ -182,7 +183,6 @@ public class MapFragment extends BaseFragment {
 
         meMarkerLayer = buildMyPositionLayer();
         map.layers().add(meMarkerLayer);
-        map.layers().add(new PoiLayer(map, baseLayer, act));
 
         MapzenTheme theme = MapzenTheme.valueOf(getString(R.string.settings_default_mapstyle));
         theme.setContext(act);
