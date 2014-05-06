@@ -8,4 +8,4 @@
 git clone https://github.com/mapzen/robolectric.git
 cd robolectric
 ./scripts/install-maps-jar.sh
-mvn clean install
+mvn clean install -Dmaven.test.skip=true
