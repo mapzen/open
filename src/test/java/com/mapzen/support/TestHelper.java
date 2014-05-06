@@ -29,6 +29,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Executor;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
@@ -63,6 +64,7 @@ public final class TestHelper {
                 .get();
         activity.onCreateOptionsMenu(menu);
         activity.registerMapView(new MapView(activity));
+        activity.setDebugDataExecutor(new ImmediateExecutor());
         return activity;
     }
 
@@ -265,6 +267,13 @@ public final class TestHelper {
             public TestLocation build() {
                 return new TestLocation(this);
             }
+        }
+    }
+
+    public static class ImmediateExecutor implements Executor {
+        @Override
+        public void execute(Runnable command) {
+            command.run();
         }
     }
 }

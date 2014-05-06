@@ -67,6 +67,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.android.lost.LocationClient.ConnectionCallbacks;
@@ -130,6 +132,8 @@ public class BaseActivity extends MapActivity {
     private SQLiteDatabase db;
     private TextView debugView;
     private boolean enableActionbar = true;
+
+    protected Executor debugDataExecutor = Executors.newSingleThreadExecutor();
 
     public void deactivateMapLocationUpdates() {
         updateMapLocation = false;
@@ -204,7 +208,7 @@ public class BaseActivity extends MapActivity {
             return true;
         } else if (item.getItemId() == R.id.phone_home) {
             initDebugDataSubmitter();
-            new Thread(debugDataSubmitter).start();
+            debugDataExecutor.execute(debugDataSubmitter);
             return true;
         } else if (item.getItemId() == R.id.login) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

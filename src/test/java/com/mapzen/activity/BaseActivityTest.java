@@ -44,8 +44,6 @@ import android.widget.SearchView;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
@@ -357,17 +355,11 @@ public class BaseActivityTest {
         server.enqueue(response);
         server.play();
 
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                testBaseActivity.setDebugDataEndpoint(server.getUrl("/upload.php").toString());
-                MenuItem menuItem = menu.findItem(R.id.phone_home);
-                testBaseActivity.onOptionsItemSelected(menuItem);
+        testBaseActivity.setDebugDataEndpoint(server.getUrl("/upload.php").toString());
+        MenuItem menuItem = menu.findItem(R.id.phone_home);
+        testBaseActivity.onOptionsItemSelected(menuItem);
 
-                assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(expected);
-            }
-        });
+        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(expected);
         server.shutdown();
     }
 
@@ -380,17 +372,11 @@ public class BaseActivityTest {
         server.enqueue(response);
         server.play();
 
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                testBaseActivity.setDebugDataEndpoint(server.getUrl("/upload.php").toString());
-                MenuItem menuItem = menu.findItem(R.id.phone_home);
-                testBaseActivity.onOptionsItemSelected(menuItem);
+        testBaseActivity.setDebugDataEndpoint(server.getUrl("/upload.php").toString());
+        MenuItem menuItem = menu.findItem(R.id.phone_home);
+        testBaseActivity.onOptionsItemSelected(menuItem);
 
-                assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(expected);
-            }
-        });
+        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(expected);
         server.shutdown();
     }
 

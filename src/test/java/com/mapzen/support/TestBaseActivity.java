@@ -10,6 +10,8 @@ import org.scribe.oauth.OAuthService;
 import android.app.ActionBar;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.concurrent.Executor;
+
 public class TestBaseActivity extends BaseActivity {
     private ActionBar actionBar = new TestActionBar();
     private boolean backPressed = false;
@@ -68,5 +70,9 @@ public class TestBaseActivity extends BaseActivity {
 
     public void setOsmOauthService(OAuthService service) {
         this.osmOauthService = service;
+    }
+
+    public void setDebugDataExecutor(Executor executor) {
+        debugDataExecutor = executor;
     }
 }
