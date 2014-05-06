@@ -30,6 +30,12 @@ public final class Logger {
         }
     }
 
+    public static void e(String msg, Throwable throwable) {
+        if (enabled) {
+            Log.e(TAG, msg, throwable);
+        }
+    }
+
     public static void logToDatabase(BaseActivity activity, String tag, String msg) {
         Log.v(TAG, tag + ": " + msg);
         if (activity.isInDebugMode()) {

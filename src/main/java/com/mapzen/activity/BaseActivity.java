@@ -204,7 +204,7 @@ public class BaseActivity extends MapActivity {
             return true;
         } else if (item.getItemId() == R.id.phone_home) {
             initDebugDataSubmitter();
-            debugDataSubmitter.run();
+            new Thread(debugDataSubmitter).start();
             return true;
         } else if (item.getItemId() == R.id.login) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
