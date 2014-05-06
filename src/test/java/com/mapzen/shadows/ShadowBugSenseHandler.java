@@ -8,7 +8,7 @@ import org.robolectric.annotation.Implements;
 import android.content.Context;
 
 @Implements(BugSenseHandler.class)
-public class ShadowBugSenseHandler {
+public final class ShadowBugSenseHandler {
     private ShadowBugSenseHandler() {
         // Do nothing.
     }
