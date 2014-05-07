@@ -304,7 +304,7 @@
         </m>
       </m>
       <m k="name" zoom-min="17">
-        <text use="poi-label" />
+        <!--<text use="poi-label" />-->
       </m>
     </m>
 
@@ -1135,7 +1135,7 @@
         <m v="bank" zoom-min="16">
           <symbol src="9_bank" />
           <m zoom-min="17">
-            <text use="poi-label" />
+            <!--<text use="poi-label" />-->
           </m>
         </m>
 
@@ -1146,13 +1146,13 @@
         <m v="cafe" zoom-min="16">
           <symbol src="23_cafe" />
           <m zoom-min="17">
-            <text use="poi-label" />
+            <!--<text use="poi-label" />-->
           </m>
         </m>
      
         <m v="cinema" zoom-min="18">
           <symbol src="17_movie_theatre" />
-          <text use="poi-label" />
+          <!--<text use="poi-label" />-->
         </m>
         <!--
         <m v="drinking_water" zoom-min="17">
@@ -1162,7 +1162,7 @@
         <m v="fast_food" zoom-min="16">
           <symbol src="22_restaurant" />
           <m zoom-min="17">
-              <text use="poi-label" />
+              <!--<text use="poi-label" />-->
             </m>
         </m>
         <!--
@@ -1176,13 +1176,13 @@
         <m v="fuel" zoom-min="18">
           <symbol src="7_gas_station" />
           <m zoom-min="17">
-              <text use="poi-label" />
+              <!--<text use="poi-label" />-->
             </m>
         </m>
         <m v="hospital" zoom-min="16">
           <symbol src="13_hospital" />
           <m zoom-min="17">
-              <text use="poi-label" />
+              <!--<text use="poi-label" />-->
             </m> 
         </m>
         <!--
@@ -1192,32 +1192,32 @@
         -->
         <m v="library" zoom-min="18">
           <symbol src="10_library" />
-          <text use="poi-label" />
+          <!--<text use="poi-label" />-->
         </m>
         <m v="parking" zoom-min="17">
           <symbol src="30_parking" />
         </m>
         <m v="pharmacy" zoom-min="18">
           <symbol src="14_pharmacy" />
-          <text use="poi-label" />
+          <!--<text use="poi-label" />-->
         </m>
         <m v="place_of_worship" zoom-min="18">
           <m k="denomination|religion" v="jewish">
             <symbol src="18_spiritual_center" />
             <m zoom-min="17">
-              <text use="poi-label" />
+              <!--<text use="poi-label" />-->
             </m>
           </m>
           <m k="denomination|religion" v="muslim|moslem">
             <symbol src="18_spiritual_center" />
             <m zoom-min="17">
-              <text use="poi-label" />
+              <!--<text use="poi-label" />-->
             </m>
           </m>
           <m k="denomination|religion" v="christian">
             <symbol src="20_church" />
             <m zoom-min="17">
-              <text use="poi-label" />
+              <!--<text use="poi-label" />-->
             </m>
           </m>
         </m>
@@ -1227,13 +1227,13 @@
         <m v="post_office" zoom-min="16">
           <symbol src="12_post_office" />
           <m zoom-min="17">
-            <text use="poi-label" />
+            <!--<text use="poi-label" />-->
           </m>
         </m>
         <m v="pub|bar" zoom-min="16">
           <symbol src="23_bar" />
           <m zoom-min="17">
-            <text use="poi-label" />
+            <!--<text use="poi-label" />-->
           </m>
         </m>
         <!--
@@ -1244,12 +1244,12 @@
         <m v="restaurant" zoom-min="16">
           <symbol src="22_restaurant" />
           <m zoom-min="17">
-            <text use="poi-label" />
+            <!--<text use="poi-label" />-->
           </m>
         </m>
         <m v="school" zoom-min="18">
           <symbol src="11_school" />
-          <text use="poi-label" />
+          <!--<text use="poi-label" />-->
         </m>
         <!--
         <m v="shelter" zoom-min="17">
@@ -1261,29 +1261,29 @@
       -->
         <m v="theatre" zoom-min="18">
           <symbol src="17_movie_theatre" />
-          <text use="poi-label" />
+          <!--<text use="poi-label" />-->
         </m>
         <m v="toilets" zoom-min="18">
           <symbol src="21_toilet" />
         </m>
         <m v="university|college" zoom-min="18">
           <symbol src="11_school" />
-          <text use="poi-label" />
+          <!--<text use="poi-label" />-->
         </m>
       </m>
 
       <m k="indoor_level" v="first" zoom-min="16">
-        <text use="poi-label" />
+        <!--<text use="poi-label" />-->
       </m>
       <m k="indoor_level" v="second" zoom-min="16">
-        <text use="poi-label" />
+        <!--<text use="poi-label" />-->
       </m>
     </m>
 
     <m k="historic">
       <circle radius="3" fill="#4040ff" stroke="#606060" width="1.5" />
       <m zoom-min="17">
-        <text use="poi-label" />
+        <!--<text use="poi-label" />-->
       </m>
     </m>
     <m k="addr:housenumber" zoom-min="18">
@@ -1460,7 +1460,7 @@
       <m v="bakery" zoom-min="16">
         <symbol src="22_restaurant" />
         <m zoom-min="17">
-          <text use="poi-label" />
+          <!--<text use="poi-label" />-->
         </m>
       </m>
       <m v="florist" zoom-min="18">
@@ -1485,7 +1485,7 @@
       <m zoom-min="16" v="hotel">
         <symbol src="8_hotel" />
         <m zoom-min="17">
-          <text use="poi-label" />
+          <!--<text use="poi-label" />-->
         </m>
       </m>
       <m v="information">
