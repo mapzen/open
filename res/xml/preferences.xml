@@ -42,12 +42,6 @@
             android:summary="@string/settings_mapsource_summary"
             android:title="@string/settings_mapsource" />
 
-        <ListPreference
-            android:title="@string/settings_mapstyle"
-            android:key="@string/settings_key_mapstyle"
-            android:summary="@string/settings_mapstyle_summary"
-            android:defaultValue="@string/settings_default_mapstyle" />
-
     </PreferenceCategory>
 
 </PreferenceScreen>

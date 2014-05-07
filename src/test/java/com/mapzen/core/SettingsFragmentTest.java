@@ -51,12 +51,4 @@ public class SettingsFragmentTest {
         mockSettingsFragment.onStop();
         assertThat(activity.getActionBar()).isShowing();
     }
-
-    @Test public void onCreate_shouldPopulateMapStyles() throws Exception {
-        // TODO find a way to test this
-    }
-
-    @Test public void onSharedPreferenceChanged_shouldUpdateMapStyle() throws Exception {
-        // TODO find a way to test this
-    }
 }
