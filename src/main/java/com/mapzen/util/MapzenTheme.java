@@ -14,11 +14,7 @@ import java.io.InputStream;
 
 public enum MapzenTheme implements ThemeFile {
 
-    MAPZEN("styles/mapzen.xml"),
-    VTM("styles/vtm.xml"),
-    TRONRENDER("styles/tronrender.xml"),
-    MAPNIK("styles/carto.xml"),
-    OSMARENDER("styles/osmarender.xml");
+    MAPZEN("styles/mapzen.xml");
 
     private final String path;
     private Context context;
