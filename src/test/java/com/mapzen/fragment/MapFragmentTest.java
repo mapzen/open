@@ -13,7 +13,7 @@ import org.oscim.core.GeoPoint;
 import org.oscim.event.Gesture;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
-import org.oscim.layers.tile.vector.VectorTileLayer;
+import org.oscim.layers.tile.TileLayer;
 import org.oscim.map.Map;
 import org.oscim.map.TestMap;
 import org.oscim.tiling.TileSource;
@@ -161,7 +161,7 @@ public class MapFragmentTest {
     @Test
     public void shouldUseOkHttp() throws Exception {
         Map map = mapFragment.getMap();
-        VectorTileLayer baseLayer = field("mBaseLayer").ofType(VectorTileLayer.class).in(map).get();
+        TileLayer baseLayer = field("mBaseLayer").ofType(TileLayer.class).in(map).get();
         TileSource tileSource = field("mTileSource").ofType(TileSource.class).in(baseLayer).get();
         HttpEngine.Factory factory = field("mHttpFactory").ofType(HttpEngine.Factory.class)
                 .in(tileSource).get();
