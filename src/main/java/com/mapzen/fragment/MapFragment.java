@@ -145,10 +145,6 @@ public class MapFragment extends BaseFragment {
         });
     }
 
-    private PathLayer buildPathLayer() {
-        return new PathLayer(map, Color.MAGENTA, ROUTE_LINE_WIDTH);
-    }
-
     private ItemizedLayer<MarkerItem> buildMyPositionLayer() {
         return new ItemizedLayer<MarkerItem>(map, meMarkers, getDefaultMarkerSymbol(), null);
     }
@@ -178,7 +174,7 @@ public class MapFragment extends BaseFragment {
         poiMarkersLayer = buildPoiMarkersLayer();
         map.layers().add(poiMarkersLayer);
 
-        pathLayer = buildPathLayer();
+        pathLayer = new PathLayer(map, Color.MAGENTA, ROUTE_LINE_WIDTH);
         map.layers().add(pathLayer);
 
         meMarkerLayer = buildMyPositionLayer();
