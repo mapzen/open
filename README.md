@@ -1,6 +1,5 @@
 # Mapzen
-
-![Circle CI Build Status](https://circleci.com/gh/mapzen/mapzen-android-demo.png?circle-token=cfd8a71bc5d58302f87abaec91a89a0ffd871d1e)
+[![Circle CI Build Status](https://circleci.com/gh/mapzen/mapzen-android-demo.png?circle-token=cfd8a71bc5d58302f87abaec91a89a0ffd871d1e)][1]
 
 This project is a simple mobile mapping application built using the Mapzen SDKs and other open source projects. 
 
@@ -51,3 +50,5 @@ We appreciate pull requests. Please run <code>$ mvn clean verify</code>
 and make sure it runs cleanly as it runs all of our tests and code quality tools 
 we have configured. If you cannot make it run cleanly please let us know in the
 comments of your pull requests and we will help. Thanks!
+
+[1]: https://circleci.com/gh/mapzen/mapzen-android-demo
