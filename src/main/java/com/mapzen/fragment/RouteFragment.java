@@ -427,6 +427,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void storeRouteInDatabase(JSONObject rawRoute) {
+        if (!act.getDb().isOpen()) {
+            return;
+        }
+
         ContentValues insertValues = new ContentValues();
         routeId = UUID.randomUUID().toString();
         insertValues.put(COLUMN_TABLE_ID, routeId);
@@ -448,6 +452,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void addCoordinateToDatabase(Location location, int pos) {
+        if (!act.getDb().isOpen()) {
+            return;
+        }
+
         ContentValues values = new ContentValues();
         values.put(COLUMN_TABLE_ID, UUID.randomUUID().toString());
         values.put(COLUMN_ROUTE_ID, routeId);

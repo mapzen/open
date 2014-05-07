@@ -19,7 +19,7 @@ import java.net.URL;
 
 import static com.mapzen.util.DatabaseHelper.truncateDatabase;
 
-public class DebugDataSubmitter {
+public class DebugDataSubmitter implements Runnable {
     OkHttpClient client = new OkHttpClient();
     BaseActivity activity;
     String endpoint;
@@ -44,15 +44,11 @@ public class DebugDataSubmitter {
     }
 
     public void run() {
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    submit();
-                } catch (IOException e) {
-                    Logger.e("Error: " + e.toString());
-                }
-            }
-        }).start();
+        try {
+            submit();
+        } catch (IOException e) {
+            Logger.e("Unable to submit GPS data.", e);
+        }
     }
 
     public String readInputStream(InputStream in) throws IOException {
