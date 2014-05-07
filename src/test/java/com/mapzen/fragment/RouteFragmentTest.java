@@ -7,6 +7,7 @@ import com.mapzen.helpers.DistanceFormatter;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
+import com.mapzen.shadows.ShadowBugSenseHandler;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.util.DatabaseHelper;
@@ -992,6 +993,22 @@ public class RouteFragmentTest {
         fragment.setInstructions(new ArrayList<Instruction>());
         String actual = fragment.toString();
         assertThat(actual).contains(expected);
+    }
+
+    @Test
+    public void storeRouteInDatabase_shouldSendExceptionToBugSense() throws Exception {
+        act.getDb().close();
+        fragment.storeRouteInDatabase(new JSONObject());
+        assertThat(ShadowBugSenseHandler.getLastHandledException())
+                .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    public void addCoordinatesToDatabase_shouldSendExceptionToBugSense() throws Exception {
+        act.getDb().close();
+        fragment.addCoordinatesToDatabase(new Location("test"), 0);
+        assertThat(ShadowBugSenseHandler.getLastHandledException())
+                .isInstanceOf(IllegalStateException.class);
     }
 
     private void setVoiceNavigationEnabled(boolean enabled) {
