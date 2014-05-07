@@ -186,6 +186,7 @@ public class BaseActivityTest {
 
     @Test
     public void onOptionsItemSelected_shouldHideActionBar() throws Exception {
+        activity.showActionBar();
         MenuItem menuItem = menu.findItem(R.id.settings);
         activity.onOptionsItemSelected(menuItem);
         assertThat(activity.getActionBar()).isNotShowing();
