@@ -42,7 +42,7 @@ import static com.mapzen.MapController.getMapController;
 import static org.oscim.layers.marker.ItemizedLayer.OnItemGestureListener;
 
 public class MapFragment extends BaseFragment {
-    public static final int ROUTE_LINE_WIDTH = 15;
+    public static final int ROUTE_LINE_WIDTH = 10;
     public static final int DURATION = 800;
     private VectorTileLayer baseLayer;
     private Button myPosition;
@@ -241,7 +241,7 @@ public class MapFragment extends BaseFragment {
         MarkerItem markerItem = new MarkerItem("ME", "Current Location", getUserLocationPoint());
         MarkerSymbol symbol = AndroidGraphics.makeMarker(
                 getResources().getDrawable(R.drawable.ic_locate_me),
-                MarkerItem.HotspotPlace.BOTTOM_CENTER);
+                MarkerItem.HotspotPlace.CENTER);
         markerItem.setMarker(symbol);
         return markerItem;
     }
