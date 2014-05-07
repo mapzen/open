@@ -11,6 +11,7 @@ import com.mapzen.util.DisplayHelper;
 import com.mapzen.util.Logger;
 import com.mapzen.widget.DistanceView;
 
+import com.bugsense.trace.BugSenseHandler;
 import com.google.common.io.Files;
 
 import org.joda.time.DateTime;
@@ -426,16 +427,17 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return true;
     }
 
-    private void storeRouteInDatabase(JSONObject rawRoute) {
-        if (!act.getDb().isOpen()) {
-            return;
-        }
-
+    public void storeRouteInDatabase(JSONObject rawRoute) {
         ContentValues insertValues = new ContentValues();
         routeId = UUID.randomUUID().toString();
         insertValues.put(COLUMN_TABLE_ID, routeId);
         insertValues.put(COLUMN_RAW, rawRoute.toString());
-        act.getDb().insert(TABLE_ROUTES, null, insertValues);
+
+        try {
+            act.getDb().insert(TABLE_ROUTES, null, insertValues);
+        } catch (IllegalStateException e) {
+            BugSenseHandler.sendException(e);
+        }
     }
 
     private void drawRoute() {
@@ -445,24 +447,25 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             ArrayList<Location> geometry = route.getGeometry();
             for (int index = 0; index < geometry.size(); index++) {
                 Location location = geometry.get(index);
-                addCoordinateToDatabase(location, index);
+                addCoordinatesToDatabase(location, index);
                 layer.addPoint(new GeoPoint(location.getLatitude(), location.getLongitude()));
             }
         }
     }
 
-    private void addCoordinateToDatabase(Location location, int pos) {
-        if (!act.getDb().isOpen()) {
-            return;
-        }
-
+    public void addCoordinatesToDatabase(Location location, int pos) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_TABLE_ID, UUID.randomUUID().toString());
         values.put(COLUMN_ROUTE_ID, routeId);
         values.put(COLUMN_POSITION, pos);
         values.put(COLUMN_LAT, location.getLatitude());
         values.put(COLUMN_LNG, location.getLongitude());
-        act.getDb().insert(TABLE_ROUTE_GEOMETRY, null, values);
+
+        try {
+            act.getDb().insert(TABLE_ROUTE_GEOMETRY, null, values);
+        } catch (IllegalStateException e) {
+            BugSenseHandler.sendException(e);
+        }
     }
 
     public Route getRoute() {

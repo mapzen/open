@@ -9,6 +9,8 @@ import android.content.Context;
 
 @Implements(BugSenseHandler.class)
 public final class ShadowBugSenseHandler {
+    private static Exception lastHandledException;
+
     private ShadowBugSenseHandler() {
         // Do nothing.
     }
@@ -21,5 +23,14 @@ public final class ShadowBugSenseHandler {
     @Implementation
     public static void addCrashExtraData(String s, String s1) {
         // Do nothing.
+    }
+
+    @Implementation
+    public static void sendException(Exception e) {
+        lastHandledException = e;
+    }
+
+    public static Exception getLastHandledException() {
+        return lastHandledException;
     }
 }
