@@ -1005,8 +1005,12 @@ public class RouteFragmentTest {
 
     @Test
     public void addCoordinatesToDatabase_shouldSendExceptionToBugSense() throws Exception {
+        initTestFragment();
+        FragmentTestUtil.startFragment(fragment);
+        fragment.createRouteTo(getTestLocation(100.0, 100.0));
+        verify(router).setCallback(callback.capture());
         act.getDb().close();
-        fragment.addCoordinatesToDatabase(new Location("test"), 0);
+        callback.getValue().success(new Route(MOCK_ROUTE_JSON));
         assertThat(ShadowBugSenseHandler.getLastHandledException())
                 .isInstanceOf(IllegalStateException.class);
     }

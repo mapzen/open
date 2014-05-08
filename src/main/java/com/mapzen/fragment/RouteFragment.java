@@ -434,11 +434,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         insertValues.put(COLUMN_TABLE_ID, routeId);
         insertValues.put(COLUMN_RAW, rawRoute.toString());
 
-        try {
-            act.getDb().insert(TABLE_ROUTES, null, insertValues);
-        } catch (IllegalStateException e) {
-            BugSenseHandler.sendException(e);
-        }
+        insertIntoDb(TABLE_ROUTES, null, insertValues);
     }
 
     private void drawRoute() {
@@ -446,27 +442,24 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         layer.clearPath();
         if (route != null) {
             ArrayList<Location> geometry = route.getGeometry();
+            ArrayList<ContentValues> databaseValues = new ArrayList<ContentValues>();
             for (int index = 0; index < geometry.size(); index++) {
                 Location location = geometry.get(index);
-                addCoordinatesToDatabase(location, index);
+                databaseValues.add(buildContentValues(location, index));
                 layer.addPoint(locationToGeoPoint(location));
             }
+            insertIntoDb(TABLE_ROUTE_GEOMETRY, null, databaseValues);
         }
     }
 
-    public void addCoordinatesToDatabase(Location location, int pos) {
+    private ContentValues buildContentValues(Location location, int pos) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_TABLE_ID, UUID.randomUUID().toString());
         values.put(COLUMN_ROUTE_ID, routeId);
         values.put(COLUMN_POSITION, pos);
         values.put(COLUMN_LAT, location.getLatitude());
         values.put(COLUMN_LNG, location.getLongitude());
-
-        try {
-            act.getDb().insert(TABLE_ROUTE_GEOMETRY, null, values);
-        } catch (IllegalStateException e) {
-            BugSenseHandler.sendException(e);
-        }
+        return values;
     }
 
     public Route getRoute() {
@@ -516,9 +509,24 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void storeLocationInfo(Location location, Location correctedLocation) {
-        act.getDb().insert(TABLE_LOCATIONS, null,
+        insertIntoDb(TABLE_LOCATIONS, null,
                 valuesForLocationCorrection(location,
                         correctedLocation, instructions.get(pager.getCurrentItem()), routeId));
+    }
+
+    private void insertIntoDb(String table, String nullHack,
+            ArrayList<ContentValues> contentValueCollection) {
+        for (ContentValues values : contentValueCollection) {
+            insertIntoDb(table, nullHack, values);
+        }
+    }
+
+    private void insertIntoDb(String table, String nullHack, ContentValues contentValues) {
+        try {
+            act.getDb().insert(table, nullHack, contentValues);
+        } catch (IllegalStateException e) {
+            BugSenseHandler.sendException(e);
+        }
     }
 
     private void turnAutoPageOff() {
