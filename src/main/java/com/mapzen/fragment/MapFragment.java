@@ -166,7 +166,6 @@ public class MapFragment extends BaseFragment {
         baseLayer = map.setBaseMap(tileSource);
 
         map.layers().add(new BuildingLayer(map, baseLayer));
-        map.layers().add(new LabelLayer(map, baseLayer));
         map.layers().add(new PoiLayer(map, baseLayer, act));
 
         highlightMarker = getHighlightMarkerSymbol();
@@ -176,6 +175,7 @@ public class MapFragment extends BaseFragment {
 
         pathLayer = new PathLayer(map, Color.MAGENTA, ROUTE_LINE_WIDTH);
         map.layers().add(pathLayer);
+        map.layers().add(new LabelLayer(map, baseLayer));
 
         meMarkerLayer = buildMyPositionLayer();
         map.layers().add(meMarkerLayer);
