@@ -313,9 +313,13 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldReRouteWhenLost() throws Exception {
-        FragmentTestUtil.startFragment(fragment);
+        initTestFragment();
+        Route oldRoute = fragment.getRoute();
         Location testLocation = getTestLocation(111.0, 111.0);
         fragment.onLocationChanged(testLocation);
+        verify(router).setCallback(callback.capture());
+        callback.getValue().success(new Route(MOCK_NY_TO_VT));
+        assertThat(fragment.getRoute()).isNotSameAs(oldRoute);
     }
 
     @Test
