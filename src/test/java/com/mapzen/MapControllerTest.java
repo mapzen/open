@@ -24,8 +24,12 @@ import android.preference.PreferenceManager;
 import java.util.ArrayList;
 
 import static com.mapzen.MapController.DEBUG_LOCATION;
+import static com.mapzen.MapController.geoPointToPair;
 import static com.mapzen.MapController.getMapController;
+import static com.mapzen.MapController.locationToGeoPoint;
+import static com.mapzen.MapController.locationToPair;
 import static com.mapzen.support.TestHelper.getTestInstruction;
+import static com.mapzen.support.TestHelper.getTestLocation;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -209,6 +213,33 @@ public class MapControllerTest {
         Map map = getMapController().getMap();
         assertThat(Math.round(map.getMapPosition().getLatitude())).isEqualTo(40);
         assertThat(Math.round(map.getMapPosition().getLongitude())).isEqualTo(100);
+    }
+
+    @Test
+    public void locationToPair_shouldReturnDoublePair() throws Exception {
+        double expectedLat = 20.0;
+        double expectedLon = 40.0;
+        Location testLoc = getTestLocation(expectedLat, expectedLon);
+        assertThat(locationToPair(testLoc)[0]).isEqualTo(expectedLat);
+        assertThat(locationToPair(testLoc)[1]).isEqualTo(expectedLon);
+    }
+
+    @Test
+    public void geoPointToPair_shouldReturnDoublePair() throws Exception {
+        double expectedLat = 20.0;
+        double expectedLon = 40.0;
+        GeoPoint testGeoPoint = new GeoPoint(expectedLat, expectedLon);
+        assertThat(geoPointToPair(testGeoPoint)[0]).isEqualTo(expectedLat);
+        assertThat(geoPointToPair(testGeoPoint)[1]).isEqualTo(expectedLon);
+    }
+
+    @Test
+    public void locationToGeoPoint_shouldReturnGeoPoint() throws Exception {
+        double expectedLat = 20.0;
+        double expectedLon = 40.0;
+        Location testLoc = getTestLocation(expectedLat, expectedLon);
+        assertThat(locationToGeoPoint(testLoc).getLatitude()).isEqualTo(expectedLat);
+        assertThat(locationToGeoPoint(testLoc).getLongitude()).isEqualTo(expectedLon);
     }
 
     private void enableFixedLocation() {

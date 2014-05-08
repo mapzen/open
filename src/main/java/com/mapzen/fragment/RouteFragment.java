@@ -79,6 +79,7 @@ import butterknife.OnClick;
 
 import static com.mapzen.MapController.geoPointToPair;
 import static com.mapzen.MapController.getMapController;
+import static com.mapzen.MapController.locationToGeoPoint;
 import static com.mapzen.MapController.locationToPair;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.SimpleFeature.NAME;
@@ -448,7 +449,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             for (int index = 0; index < geometry.size(); index++) {
                 Location location = geometry.get(index);
                 addCoordinatesToDatabase(location, index);
-                layer.addPoint(new GeoPoint(location.getLatitude(), location.getLongitude()));
+                layer.addPoint(locationToGeoPoint(location));
             }
         }
     }

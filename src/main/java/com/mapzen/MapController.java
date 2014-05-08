@@ -31,6 +31,10 @@ public final class MapController {
         return new double[] { loc.getLatitude(), loc.getLongitude() };
     }
 
+    public static GeoPoint locationToGeoPoint(Location loc) {
+        return new GeoPoint(loc.getLatitude(), loc.getLongitude());
+    }
+
     public static double[] geoPointToPair(GeoPoint point) {
         return new double[] { point.getLatitude(), point.getLongitude() };
     }
