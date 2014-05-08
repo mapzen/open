@@ -70,7 +70,6 @@ import static com.mapzen.helpers.DistanceFormatter.METERS_IN_ONE_MILE;
 import static com.mapzen.support.TestHelper.MOCK_AROUND_THE_BLOCK;
 import static com.mapzen.support.TestHelper.MOCK_NY_TO_VT;
 import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
-import static com.mapzen.support.TestHelper.enableDebugMode;
 import static com.mapzen.support.TestHelper.getTestInstruction;
 import static com.mapzen.support.TestHelper.getTestLocation;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
@@ -169,7 +168,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreOriginalLocationRecordInDatabase() throws Exception {
-        initFragmentInDebugMode();
+        initTestFragment();
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Location sample1 = fragment.getRoute().getGeometry().get(0);
         Location sample2 = fragment.getRoute().getGeometry().get(1);
@@ -191,7 +190,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreCorrectedLocationRecordInDatabase() throws Exception {
-        initFragmentInDebugMode();
+        initTestFragment();
         FragmentTestUtil.startFragment(fragment);
         Location testLocation = fragment.getRoute().getGeometry().get(2);
         fragment.onLocationChanged(testLocation);
@@ -210,7 +209,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreInstructionPointsRecordInDatabase() throws Exception {
-        initFragmentInDebugMode();
+        initTestFragment();
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Location expected = fragment.getRoute().getGeometry().get(0);
         Location sample1 = fragment.getRoute().getGeometry().get(1);
@@ -238,7 +237,6 @@ public class RouteFragmentTest {
 
     @Test
     public void drawRoute_shouldStoreCoordinates() throws Exception {
-        enableDebugMode(act);
         initTestFragment();
         FragmentTestUtil.startFragment(fragment);
         fragment.createRouteTo(getTestLocation(100.0, 100.0));
@@ -267,7 +265,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreInstructionBearingRecordInDatabase() throws Exception {
-        initFragmentInDebugMode();
+        initTestFragment();
         FragmentTestUtil.startFragment(fragment);
         Location testLocation = fragment.getRoute().getGeometry().get(2);
         fragment.onLocationChanged(testLocation);
@@ -301,7 +299,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldStoreAssociatedRoute() throws Exception {
-        initFragmentInDebugMode();
+        initTestFragment();
         FragmentTestUtil.startFragment(fragment);
         Location testLocation = fragment.getRoute().getGeometry().get(2);
         fragment.onLocationChanged(testLocation);
@@ -567,14 +565,12 @@ public class RouteFragmentTest {
 
     @Test
     public void onResume_shouldStartDbTransaction() throws Exception {
-        enableDebugMode(act);
         FragmentTestUtil.startFragment(fragment);
         assertThat(act.getDb().inTransaction()).isTrue();
     }
 
     @Test
     public void onPause_shouldEndDbTransaction() throws Exception {
-        enableDebugMode(act);
         FragmentTestUtil.startFragment(fragment);
         fragment.onPause();
         assertThat(act.getDb().inTransaction()).isFalse();
@@ -1005,8 +1001,12 @@ public class RouteFragmentTest {
 
     @Test
     public void addCoordinatesToDatabase_shouldSendExceptionToBugSense() throws Exception {
+        initTestFragment();
+        FragmentTestUtil.startFragment(fragment);
+        fragment.createRouteTo(getTestLocation(100.0, 100.0));
+        verify(router).setCallback(callback.capture());
         act.getDb().close();
-        fragment.addCoordinatesToDatabase(new Location("test"), 0);
+        callback.getValue().success(new Route(MOCK_ROUTE_JSON));
         assertThat(ShadowBugSenseHandler.getLastHandledException())
                 .isInstanceOf(IllegalStateException.class);
     }
@@ -1053,10 +1053,4 @@ public class RouteFragmentTest {
         View.OnTouchListener listener = shadowOf(fragment.pager).getOnTouchListener();
         listener.onTouch(null, motionEvent);
     }
-
-    private void initFragmentInDebugMode() throws Exception {
-        enableDebugMode(act);
-        initTestFragment();
-    }
-
 }
