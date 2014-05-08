@@ -116,6 +116,62 @@ public class SettingsFragmentTest {
                 .isEqualTo("http://vector.test.mapzen.com/vector/lite");
     }
 
+    @Test
+    public void shouldHaveZoomCategory() throws Exception {
+        PreferenceCategory category = findCategoryByIndex(1);
+        assertThat(category).hasTitle(R.string.settings_zoom_title);
+        assertThat(category).hasPreferenceCount(7);
+    }
+
+    @Test
+    public void shouldHaveWalkingZoom() throws Exception {
+        Preference preference = findPreferenceById(R.string.settings_zoom_walking_key);
+        assertThat(preference).hasTitle(R.string.settings_zoom_walking_title);
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("21");
+    }
+
+    @Test
+    public void shouldHaveBikingZoom() throws Exception {
+        Preference preference = findPreferenceById(R.string.settings_zoom_biking_key);
+        assertThat(preference).hasTitle(R.string.settings_zoom_biking_title);
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("20");
+    }
+
+    @Test
+    public void shouldHaveDrivingZoom0to15Mph() throws Exception {
+        Preference preference = findPreferenceById(R.string.settings_zoom_driving_0_to_15_key);
+        assertThat(preference).hasTitle(R.string.settings_zoom_driving_0_to_15_title);
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("19");
+    }
+
+    @Test
+    public void shouldHaveDrivingZoom15to25Mph() throws Exception {
+        Preference preference = findPreferenceById(R.string.settings_zoom_driving_15_to_25_key);
+        assertThat(preference).hasTitle(R.string.settings_zoom_driving_15_to_25_title);
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("18");
+    }
+
+    @Test
+    public void shouldHaveDrivingZoom25to35Mph() throws Exception {
+        Preference preference = findPreferenceById(R.string.settings_zoom_driving_25_to_35_key);
+        assertThat(preference).hasTitle(R.string.settings_zoom_driving_25_to_35_title);
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("17");
+    }
+
+    @Test
+    public void shouldHaveDrivingZoom35to50Mph() throws Exception {
+        Preference preference = findPreferenceById(R.string.settings_zoom_driving_35_to_50_key);
+        assertThat(preference).hasTitle(R.string.settings_zoom_driving_35_to_50_title);
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("16");
+    }
+
+    @Test
+    public void shouldHaveDrivingZoomOver50Mph() throws Exception {
+        Preference preference = findPreferenceById(R.string.settings_zoom_driving_over_50_key);
+        assertThat(preference).hasTitle(R.string.settings_zoom_driving_over_50_title);
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("15");
+    }
+
     private PreferenceCategory findCategoryByIndex(int index) {
         return (PreferenceCategory) fragment.getPreferenceScreen().getPreference(index);
     }

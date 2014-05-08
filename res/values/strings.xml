@@ -45,6 +45,21 @@
     <string name="settings_fixed_location_key">edittext_fixed_location</string>
     <string name="settings_fixed_location_summary">Set fixed debug location</string>
     <string name="settings_fixed_location_title">Debug location</string>
+    <string name="settings_zoom_title">Default Zoom Level</string>
+    <string name="settings_zoom_walking_key">zoom_walking</string>
+    <string name="settings_zoom_walking_title">Walking</string>
+    <string name="settings_zoom_biking_key">zoom_biking</string>
+    <string name="settings_zoom_biking_title">Biking</string>
+    <string name="settings_zoom_driving_0_to_15_key">zoom_driving_0_to_15</string>
+    <string name="settings_zoom_driving_0_to_15_title">Driving 0-15 Mph</string>
+    <string name="settings_zoom_driving_15_to_25_key">zoom_driving_15_to_25</string>
+    <string name="settings_zoom_driving_15_to_25_title">Driving 15-25 Mph</string>
+    <string name="settings_zoom_driving_25_to_35_key">zoom_driving_25_to_35</string>
+    <string name="settings_zoom_driving_25_to_35_title">Driving 25-35 Mph</string>
+    <string name="settings_zoom_driving_35_to_50_key">zoom_driving_35_to_50</string>
+    <string name="settings_zoom_driving_35_to_50_title">Driving 35-50 Mph</string>
+    <string name="settings_zoom_driving_over_50_key">zoom_driving_over_50</string>
+    <string name="settings_zoom_driving_over_50_title">Driving 50+ Mph</string>
 
     <string name="toast_fixed_location_is_malformed">Your fixed location is malformed</string>
     <string name="osm_login">OpenStreetMap Login</string>
