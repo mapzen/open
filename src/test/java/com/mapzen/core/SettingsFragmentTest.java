@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.FragmentTestUtil;
 
+import android.content.SharedPreferences;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
@@ -139,37 +140,73 @@ public class SettingsFragmentTest {
 
     @Test
     public void shouldHaveDrivingZoom0to15Mph() throws Exception {
-        Preference preference = findPreferenceById(R.string.settings_zoom_driving_0_to_15_key);
+        Preference preference = findPreferenceById(R.string.settings_zoom_driving_0to15_key);
         assertThat(preference).hasTitle(R.string.settings_zoom_driving_0_to_15_title);
         assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("19");
     }
 
     @Test
     public void shouldHaveDrivingZoom15to25Mph() throws Exception {
-        Preference preference = findPreferenceById(R.string.settings_zoom_driving_15_to_25_key);
+        Preference preference = findPreferenceById(R.string.settings_zoom_driving_15to25_key);
         assertThat(preference).hasTitle(R.string.settings_zoom_driving_15_to_25_title);
         assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("18");
     }
 
     @Test
     public void shouldHaveDrivingZoom25to35Mph() throws Exception {
-        Preference preference = findPreferenceById(R.string.settings_zoom_driving_25_to_35_key);
+        Preference preference = findPreferenceById(R.string.settings_zoom_driving_25to35_key);
         assertThat(preference).hasTitle(R.string.settings_zoom_driving_25_to_35_title);
         assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("17");
     }
 
     @Test
     public void shouldHaveDrivingZoom35to50Mph() throws Exception {
-        Preference preference = findPreferenceById(R.string.settings_zoom_driving_35_to_50_key);
+        Preference preference = findPreferenceById(R.string.settings_zoom_driving_35to50_key);
         assertThat(preference).hasTitle(R.string.settings_zoom_driving_35_to_50_title);
         assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("16");
     }
 
     @Test
     public void shouldHaveDrivingZoomOver50Mph() throws Exception {
-        Preference preference = findPreferenceById(R.string.settings_zoom_driving_over_50_key);
+        Preference preference = findPreferenceById(R.string.settings_zoom_driving_over50_key);
         assertThat(preference).hasTitle(R.string.settings_zoom_driving_over_50_title);
         assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("15");
+    }
+
+    @Test
+    public void shouldDisplayDefaultValueAsSummary() throws Exception {
+        assertThat(findPreferenceById(R.string.settings_zoom_walking_key)).hasSummary("21");
+        assertThat(findPreferenceById(R.string.settings_zoom_biking_key)).hasSummary("20");
+        assertThat(findPreferenceById(R.string.settings_zoom_driving_0to15_key)).hasSummary("19");
+        assertThat(findPreferenceById(R.string.settings_zoom_driving_15to25_key)).hasSummary("18");
+        assertThat(findPreferenceById(R.string.settings_zoom_driving_25to35_key)).hasSummary("17");
+        assertThat(findPreferenceById(R.string.settings_zoom_driving_35to50_key)).hasSummary("16");
+        assertThat(findPreferenceById(R.string.settings_zoom_driving_over50_key)).hasSummary("15");
+    }
+
+    @Test
+    public void shouldDisplayUpdatedValueAsSummary() throws Exception {
+        SharedPreferences prefs = fragment.getPreferenceManager().getSharedPreferences();
+        SharedPreferences.Editor editPrefs = prefs.edit();
+
+        editPrefs.putInt(fragment.getString(R.string.settings_zoom_walking_key), 1);
+        editPrefs.putInt(fragment.getString(R.string.settings_zoom_biking_key), 2);
+        editPrefs.putInt(fragment.getString(R.string.settings_zoom_driving_0to15_key), 3);
+        editPrefs.putInt(fragment.getString(R.string.settings_zoom_driving_15to25_key), 4);
+        editPrefs.putInt(fragment.getString(R.string.settings_zoom_driving_25to35_key), 5);
+        editPrefs.putInt(fragment.getString(R.string.settings_zoom_driving_35to50_key), 6);
+        editPrefs.putInt(fragment.getString(R.string.settings_zoom_driving_over50_key), 7);
+
+        editPrefs.commit();
+        fragment.onStart();
+
+        assertThat(findPreferenceById(R.string.settings_zoom_walking_key)).hasSummary("1");
+        assertThat(findPreferenceById(R.string.settings_zoom_biking_key)).hasSummary("2");
+        assertThat(findPreferenceById(R.string.settings_zoom_driving_0to15_key)).hasSummary("3");
+        assertThat(findPreferenceById(R.string.settings_zoom_driving_15to25_key)).hasSummary("4");
+        assertThat(findPreferenceById(R.string.settings_zoom_driving_25to35_key)).hasSummary("5");
+        assertThat(findPreferenceById(R.string.settings_zoom_driving_35to50_key)).hasSummary("6");
+        assertThat(findPreferenceById(R.string.settings_zoom_driving_over50_key)).hasSummary("7");
     }
 
     private PreferenceCategory findCategoryByIndex(int index) {

@@ -3,10 +3,10 @@
     <integer name="route_advance_radius">30</integer>
     <integer name="zoom_walking">21</integer>
     <integer name="zoom_biking">20</integer>
-    <integer name="zoom_driving_0_to_15">19</integer>
-    <integer name="zoom_driving_15_to_25">18</integer>
-    <integer name="zoom_driving_25_to_35">17</integer>
-    <integer name="zoom_driving_35_to_50">16</integer>
-    <integer name="zoom_driving_over_50">15</integer>
+    <integer name="zoom_driving_0to15">19</integer>
+    <integer name="zoom_driving_15to25">18</integer>
+    <integer name="zoom_driving_25to35">17</integer>
+    <integer name="zoom_driving_35to50">16</integer>
+    <integer name="zoom_driving_over50">15</integer>
 </resources>
 
