@@ -21,6 +21,18 @@
             <id>scribe-java-mvn-repo</id>
             <url>https://raw.github.com/fernandezpablo85/scribe-java/mvn-repo/</url>
         </repository>
+
+        <repository>
+            <id>snapshots-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+
     </repositories>
 
     <properties>
