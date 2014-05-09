@@ -83,6 +83,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -540,7 +541,7 @@ public class RouteFragmentTest {
         fragment.setAct(spy);
         FragmentTestUtil.startFragment(fragment);
         fragment.onDetach();
-        verify(spy, Mockito.never()).submitTrace(anyString(), anyString());
+        verify(spy, never()).submitTrace(anyString(), anyString());
     }
 
     @Test
@@ -931,18 +932,18 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onLocationChange_shouldBeLostWhenSnapToIsNull() throws Exception {
+    public void onLocationChange_shouldNotReRouteWhenSnapToIsNull() throws Exception {
         Location testLocation = getTestLocation(40.662046, -73.987089);
         RouteFragment spyFragment = spy(fragment);
         spyFragment.setRoute(new Route(MOCK_AROUND_THE_BLOCK));
         FragmentTestUtil.startFragment(spyFragment);
         spyFragment.onLocationChanged(testLocation);
-        verify(spyFragment).createRouteTo(testLocation);
+        verify(spyFragment, never()).createRouteTo(testLocation);
     }
 
     @Test
     public void onLocationChange_shouldDoNothingWhileRerouting() throws Exception {
-        Location testLocation = getTestLocation(40.662046, -73.987089);
+        Location testLocation = getTestLocation(40.658563, -73.986853);
         RouteFragment spyFragment = spy(fragment);
         spyFragment.setRoute(new Route(MOCK_AROUND_THE_BLOCK));
         FragmentTestUtil.startFragment(spyFragment);
@@ -953,7 +954,7 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldBeReEnabledOnceReRoutingIsCompleted() throws Exception {
-        Location testLocation = getTestLocation(40.662046, -73.987089);
+        Location testLocation = getTestLocation(40.658563, -73.986853);
         RouteFragment spyFragment = spy(fragment);
         spyFragment.setRoute(new Route(MOCK_AROUND_THE_BLOCK));
         FragmentTestUtil.startFragment(spyFragment);
@@ -964,9 +965,10 @@ public class RouteFragmentTest {
         verify(spyFragment, Mockito.times(2)).createRouteTo(testLocation);
     }
 
+
     @Test
     public void onLocationChange_shouldBeReEnabledOnceReRoutingHasError() throws Exception {
-        Location testLocation = getTestLocation(40.662046, -73.987089);
+        Location testLocation = getTestLocation(40.658563, -73.986853);
         RouteFragment spyFragment = spy(fragment);
         spyFragment.setRoute(new Route(MOCK_AROUND_THE_BLOCK));
         FragmentTestUtil.startFragment(spyFragment);

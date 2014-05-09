@@ -29,6 +29,7 @@
                 <enabled>false</enabled>
             </releases>
             <snapshots>
+                <updatePolicy>always</updatePolicy>
                 <enabled>true</enabled>
             </snapshots>
         </repository>
