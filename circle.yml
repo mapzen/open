@@ -24,4 +24,5 @@ test:
 deployment:
   s3:
     branch: master
-    commands: mvn s3-upload:s3-upload -P jenkins
+    commands:
+      - mvn s3-upload:s3-upload -P jenkins
