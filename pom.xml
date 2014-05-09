@@ -378,8 +378,8 @@
                             <bucketName>android.mapzen.com</bucketName>
                             <source>target/${project.build.finalName}.apk</source>
                             <destination>latest.apk</destination>
-                            <accessKey>${s3.accessKey}</accessKey>
-                            <secretKey>${s3.secretKey}</secretKey>
+                            <accessKey>${accessKey}</accessKey>
+                            <secretKey>${secretKey}</secretKey>
                         </configuration>
                         <executions>
                             <execution>
@@ -422,8 +422,8 @@
                             <bucketName>android.mapzen.com</bucketName>
                             <source>target/${project.build.finalName}.apk</source>
                             <destination>${project.build.finalName}.apk</destination>
-                            <accessKey>${s3.accessKey}</accessKey>
-                            <secretKey>${s3.secretKey}</secretKey>
+                            <accessKey>${accessKey}</accessKey>
+                            <secretKey>${secretKey}</secretKey>
                         </configuration>
                         <executions>
                             <execution>
