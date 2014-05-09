@@ -315,8 +315,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             return;
         }
         Location correctedLocation = route.snapToRoute(location);
-        if (correctedLocation == null && route.isLost()) {
-            createRouteTo(location);
+        if (correctedLocation == null) {
+            if (route.isLost()) {
+                createRouteTo(location);
+            }
             return;
         }
         storeLocationInfo(location, correctedLocation);
