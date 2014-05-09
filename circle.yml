@@ -19,7 +19,7 @@ dependencies:
 
 test:
   override:
-    - mvn install -Dosm_oauth.key=$OSM_AUTH_KEY -Dosm_oauth.secret=$OSM_AUTH_SECRET
+    - mvn install -Dosm_oauth.key=$OSM_AUTH_KEY -Dosm_oauth.secret=$OSM_AUTH_SECRET -P jenkins
 
 deployment:
   s3:
