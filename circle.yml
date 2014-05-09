@@ -20,3 +20,8 @@ dependencies:
 test:
   override:
     - mvn install
+
+deployment:
+  s3:
+    branch: master
+    commands: mvn s3-upload:s3-upload -P jenkins
