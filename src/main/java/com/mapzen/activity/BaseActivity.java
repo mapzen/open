@@ -6,8 +6,8 @@ import com.mapzen.R;
 import com.mapzen.android.lost.LocationClient;
 import com.mapzen.android.lost.LocationListener;
 import com.mapzen.android.lost.LocationRequest;
+import com.mapzen.core.DataUploadService;
 import com.mapzen.core.OSMOauthFragment;
-import com.mapzen.core.OSMApi;
 import com.mapzen.core.SettingsFragment;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.fragment.MapFragment;
@@ -20,24 +20,16 @@ import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
 import com.bugsense.trace.BugSenseHandler;
-import com.google.common.io.CharStreams;
 import com.squareup.okhttp.OkHttpClient;
 
-import org.apache.http.Header;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.protocol.HTTP;
 import org.oscim.android.MapActivity;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.Map;
-import org.scribe.builder.ServiceBuilder;
-import org.scribe.model.OAuthRequest;
-import org.scribe.model.Response;
 import org.scribe.model.Token;
 import org.scribe.model.Verifier;
-import org.scribe.oauth.OAuthService;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
@@ -45,7 +37,6 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
@@ -62,17 +53,13 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.util.Calendar;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.android.lost.LocationClient.ConnectionCallbacks;
-import static org.scribe.model.Verb.POST;
 
 public class BaseActivity extends MapActivity {
     public static final int LOCATION_INTERVAL = 1000;
@@ -89,7 +76,6 @@ public class BaseActivity extends MapActivity {
     private MapFragment mapFragment;
     private MapzenProgressDialogFragment progressDialogFragment;
     private boolean updateMapLocation = true;
-    protected OAuthService osmOauthService = null;
     private Token requestToken = null;
     private Verifier verifier = null;
     private LocationListener locationListener = new LocationListener() {
@@ -129,7 +115,6 @@ public class BaseActivity extends MapActivity {
             Logger.d("LocationHelper disconnected.");
         }
     };
-    private SQLiteDatabase db;
     private TextView debugView;
     private boolean enableActionbar = true;
 
@@ -156,34 +141,39 @@ public class BaseActivity extends MapActivity {
         setContentView(R.layout.base);
         initMapFragment();
         progressDialogFragment = new MapzenProgressDialogFragment();
-        dbHelper = new DatabaseHelper(this);
         initMapController();
         initLocationClient();
         initDebugView();
-        osmOauthService = new ServiceBuilder()
-                        .provider(OSMApi.class)
-                        .apiKey(getString(R.string.osm_key))
-                        .debug()
-                        .callback("http://mapzen.com")
-                        .apiSecret(getString(R.string.osm_secret)).build();
+
+        // use this to start and trigger a service
+        //Intent dataUplaodServiceIntent= new Intent(this, DataUploadService.class);
+        //startService(dataUplaodServiceIntent);
+
+        Calendar cal = Calendar.getInstance();
+
+        Intent intent = new Intent(this, DataUploadService.class);
+        PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
+
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        // Start every 30 seconds
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 30 * 1000, pintent);
+
     }
 
     @Override
     public void onPause() {
         super.onPause();
         locationHelper.disconnect();
-        db.close();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         locationHelper.connect();
-        db = dbHelper.getWritableDatabase();
     }
 
     public SQLiteDatabase getDb() {
-        return db;
+        return app.getDb();
     }
 
     public boolean isInDebugMode() {
@@ -229,50 +219,6 @@ public class BaseActivity extends MapActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void submitTrace(final String description, final String path) {
-        (new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                OAuthRequest request =
-                        new OAuthRequest(POST, OSMApi.BASE_URL + OSMApi.CREATE_GPX);
-
-                MultipartEntity reqEntity = new MultipartEntity();
-                try {
-                    reqEntity.addPart("description", new StringBody(description));
-                    reqEntity.addPart("visibility", new StringBody("private"));
-                    reqEntity.addPart("public", new StringBody("0"));
-                } catch (UnsupportedEncodingException e) {
-                    Logger.e(e.getMessage());
-                }
-
-                reqEntity.addPart("file", new FileBody(new File(path)));
-
-                ByteArrayOutputStream bos =
-                        new ByteArrayOutputStream((int) reqEntity.getContentLength());
-                try {
-                    reqEntity.writeTo(bos);
-                } catch (IOException e) {
-                    Logger.e("IOException: " + e.getMessage());
-                }
-                request.addPayload(bos.toByteArray());
-
-                Header contentType = reqEntity.getContentType();
-                request.addHeader(contentType.getName(), contentType.getValue());
-                osmOauthService.signRequest(getAccessToken(), request);
-                Response response = request.send();
-                String payload = "";
-                try {
-                    payload = CharStreams.toString(
-                            new InputStreamReader(response.getStream(), HTTP.UTF_8));
-                } catch (IOException e) {
-                    Logger.e("IOException: " + e.getMessage());
-                }
-                Logger.d("OAUTH response: " + payload);
-                return null;
-            }
-        }).execute();
     }
 
     public void showProgressDialog() {
@@ -377,7 +323,7 @@ public class BaseActivity extends MapActivity {
                 MenuItem loginMenu = activityMenu.findItem(R.id.login);
                 MenuItem logoutMenu = activityMenu.findItem(R.id.logout);
 
-                if (getAccessToken() != null) {
+                if (app.getAccessToken() != null) {
                     loginMenu.setVisible(false);
                     logoutMenu.setVisible(true);
                 } else {
@@ -520,27 +466,11 @@ public class BaseActivity extends MapActivity {
         debugDataSubmitter.setFile(new File(getDb().getPath()));
     }
 
-    public Token getAccessToken() {
-        Token accessToken = null;
-        SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
-        if (!prefs.getString("token", "").isEmpty()) {
-            accessToken = new Token(prefs.getString("token", ""), prefs.getString("secret", ""));
-        }
-        return accessToken;
-    }
-
     public void setAccessToken(Token accessToken) {
-        SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("token", accessToken.getToken());
-        editor.putString("secret", accessToken.getSecret());
-        editor.commit();
+        app.setAccessToken(accessToken);
         toggleOSMLogin();
     }
 
-    public OAuthService getOsmOauthService() {
-        return osmOauthService;
-    }
     public Verifier getVerifier() {
         return verifier;
     }

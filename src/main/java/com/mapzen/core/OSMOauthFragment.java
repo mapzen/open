@@ -1,5 +1,6 @@
 package com.mapzen.core;
 
+import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 
@@ -22,6 +23,7 @@ public class OSMOauthFragment extends DialogFragment {
     public static final String OSM_MAPZEN_URL_MATCH = "mapzen.com";
 
     private BaseActivity act;
+    private MapzenApplication app;
 
     public void setActivity(BaseActivity act) {
         this.act = act;
@@ -30,7 +32,12 @@ public class OSMOauthFragment extends DialogFragment {
     public static OSMOauthFragment newInstance(BaseActivity act) {
         final OSMOauthFragment fragment = new OSMOauthFragment();
         fragment.setActivity(act);
+        fragment.setApp((MapzenApplication) act.getApplication());
         return fragment;
+    }
+
+    public void setApp(MapzenApplication app) {
+        this.app = app;
     }
 
     public void setVerifier(Uri uri) {
@@ -62,9 +69,9 @@ public class OSMOauthFragment extends DialogFragment {
             @Override
             protected String doInBackground(Void... params) {
                 String url = "";
-                if (act.getAccessToken() == null) {
-                    act.setRequestToken(act.getOsmOauthService().getRequestToken());
-                    url = act.getOsmOauthService().getAuthorizationUrl(act.getRequestToken());
+                if (app.getAccessToken() == null) {
+                    act.setRequestToken(app.getOsmOauthService().getRequestToken());
+                    url = app.getOsmOauthService().getAuthorizationUrl(act.getRequestToken());
                 } else {
                     act.runOnUiThread(new Runnable() {
                         @Override
@@ -87,8 +94,8 @@ public class OSMOauthFragment extends DialogFragment {
         (new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                if (act.getAccessToken() == null) {
-                    act.setAccessToken(act.getOsmOauthService().getAccessToken(
+                if (app.getAccessToken() == null) {
+                    act.setAccessToken(app.getOsmOauthService().getAccessToken(
                             act.getRequestToken(), act.getVerifier()));
                 }
                 act.runOnUiThread(new Runnable() {

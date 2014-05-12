@@ -1,7 +1,7 @@
 package com.mapzen.fragment;
 
+import com.mapzen.MapzenApplication;
 import com.mapzen.R;
-import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.helpers.DistanceFormatter;
 import com.mapzen.osrm.Instruction;
@@ -36,8 +36,6 @@ import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.tester.android.view.TestMenuItem;
 import org.robolectric.util.FragmentTestUtil;
-import org.scribe.model.Token;
-import org.scribe.oauth.OAuthService;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -59,7 +57,6 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import static com.mapzen.MapController.getMapController;
@@ -79,8 +76,6 @@ import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.contains;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -99,6 +94,7 @@ public class RouteFragmentTest {
     TestMenu menu;
     ArrayList<Instruction> testInstructions;
     Router router = spy(Router.getRouter());
+    SQLiteDatabase db;
 
     @Captor
     @SuppressWarnings("unused")
@@ -112,6 +108,7 @@ public class RouteFragmentTest {
         act = initBaseActivityWithMenu(menu);
         initTestFragment();
         app = Robolectric.getShadowApplication();
+        db = ((MapzenApplication) Robolectric.application).getDb();
         setVoiceNavigationEnabled(true);
     }
 
@@ -179,7 +176,6 @@ public class RouteFragmentTest {
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
         fragment.onLocationChanged(expected);
-        SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
                 new String[] { DatabaseHelper.COLUMN_LAT, DatabaseHelper.COLUMN_LNG },
                 null, null, null, null, null);
@@ -195,7 +191,6 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         Location testLocation = fragment.getRoute().getGeometry().get(2);
         fragment.onLocationChanged(testLocation);
-        SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
                 new String[] {
                         DatabaseHelper.COLUMN_CORRECTED_LAT,
@@ -223,7 +218,6 @@ public class RouteFragmentTest {
 
         Location testLocation = getTestLocation(sample2.getLatitude(), sample2.getLongitude());
         fragment.onLocationChanged(testLocation);
-        SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
                 new String[] {
                         DatabaseHelper.COLUMN_INSTRUCTION_LAT,
@@ -244,7 +238,6 @@ public class RouteFragmentTest {
         verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(MOCK_ROUTE_JSON));
         fragment.onPause();
-        SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(TABLE_ROUTE_GEOMETRY,
                 new String[] { COLUMN_ROUTE_ID },
                 COLUMN_ROUTE_ID + " = ?",
@@ -256,7 +249,6 @@ public class RouteFragmentTest {
     public void drawRoute_shouldNotStoreCoordinates() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         fragment.onPause();
-        SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(TABLE_ROUTE_GEOMETRY,
                 new String[] { COLUMN_ROUTE_ID },
                 COLUMN_ROUTE_ID + " = ?",
@@ -270,7 +262,6 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         Location testLocation = fragment.getRoute().getGeometry().get(2);
         fragment.onLocationChanged(testLocation);
-        SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
                 new String[] { DatabaseHelper.COLUMN_INSTRUCTION_BEARING },
                 null, null, null, null, null);
@@ -291,7 +282,6 @@ public class RouteFragmentTest {
 
         Location testLocation = getTestLocation(20.0, 30.0);
         fragment.onLocationChanged(testLocation);
-        SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
                 new String[] { DatabaseHelper.COLUMN_INSTRUCTION_BEARING },
                 null, null, null, null, null);
@@ -304,7 +294,6 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         Location testLocation = fragment.getRoute().getGeometry().get(2);
         fragment.onLocationChanged(testLocation);
-        SQLiteDatabase db = act.getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
                 new String[] { COLUMN_ROUTE_ID },
                 COLUMN_ROUTE_ID + " = ?",
@@ -522,42 +511,6 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onDetach_shouldSubmitTrace() throws Exception {
-        act.setAccessToken(new Token("fake", "stuff"));
-        OAuthService mockService = mock(OAuthService.class);
-        act.setOsmOauthService(mockService);
-        BaseActivity spy = spy(act);
-        fragment.setAct(spy);
-        FragmentTestUtil.startFragment(fragment);
-        fragment.onDetach();
-        verify(spy).submitTrace(anyString(), contains(fragment.getRouteId() + ".gpx"));
-    }
-
-    @Test
-    public void onDetach_shouldNotSubmitTrace() throws Exception {
-        OAuthService mockService = Mockito.mock(OAuthService.class);
-        act.setOsmOauthService(mockService);
-        BaseActivity spy = spy(act);
-        fragment.setAct(spy);
-        FragmentTestUtil.startFragment(fragment);
-        fragment.onDetach();
-        verify(spy, never()).submitTrace(anyString(), anyString());
-    }
-
-    @Test
-    public void onDetach_shouldStoreGPXtrace() throws Exception {
-        OAuthService mockService = Mockito.mock(OAuthService.class);
-        act.setOsmOauthService(mockService);
-        BaseActivity spy = spy(act);
-        fragment.setAct(spy);
-        FragmentTestUtil.startFragment(fragment);
-        fragment.onDetach();
-        File expectedFile = new File(act.getExternalFilesDir(null).getAbsolutePath()
-                + "/" + fragment.getRouteId() + ".gpx");
-        assertThat(expectedFile.exists()).isTrue();
-    }
-
-    @Test
     public void onPause_shouldActivateActivitiesMapUpdates() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         fragment.onPause();
@@ -566,12 +519,6 @@ public class RouteFragmentTest {
         GeoPoint point = act.getMapFragment().getMeMarker().geoPoint;
         assertThat(Math.round(point.getLatitude())).isEqualTo(Math.round(23.0));
         assertThat(Math.round(point.getLongitude())).isEqualTo(Math.round(63.0));
-    }
-
-    @Test
-    public void onResume_shouldStartDbTransaction() throws Exception {
-        FragmentTestUtil.startFragment(fragment);
-        assertThat(act.getDb().inTransaction()).isTrue();
     }
 
     @Test
