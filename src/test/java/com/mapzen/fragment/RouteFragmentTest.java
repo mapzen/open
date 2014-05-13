@@ -1,9 +1,11 @@
 package com.mapzen.fragment;
 
+import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.helpers.DistanceFormatter;
+import com.mapzen.helpers.ZoomController;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
@@ -39,6 +41,7 @@ import org.robolectric.util.FragmentTestUtil;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.ColorDrawable;
@@ -962,6 +965,47 @@ public class RouteFragmentTest {
         callback.getValue().success(new Route(MOCK_ROUTE_JSON));
         assertThat(ShadowBugSenseHandler.getLastHandledException())
                 .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    public void shouldInitDynamicZoomUsingDefaultValues() throws Exception {
+        Resources res = act.getResources();
+        FragmentTestUtil.startFragment(fragment);
+        Location location = fragment.getRoute().getRouteInstructions().get(0).getLocation();
+
+        assertZoomLevel(res.getInteger(R.integer.zoom_driving_0to15), 10, location);
+        assertZoomLevel(res.getInteger(R.integer.zoom_driving_15to25), 20, location);
+        assertZoomLevel(res.getInteger(R.integer.zoom_driving_25to35), 30, location);
+        assertZoomLevel(res.getInteger(R.integer.zoom_driving_35to50), 40, location);
+        assertZoomLevel(res.getInteger(R.integer.zoom_driving_over50), 50, location);
+    }
+
+    @Test
+    public void shouldUpdateDynamicZoomWithNewValues() throws Exception {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
+        SharedPreferences.Editor editPrefs = prefs.edit();
+
+        editPrefs.putInt(act.getString(R.string.settings_zoom_driving_0to15_key), 14);
+        editPrefs.putInt(act.getString(R.string.settings_zoom_driving_15to25_key), 13);
+        editPrefs.putInt(act.getString(R.string.settings_zoom_driving_25to35_key), 12);
+        editPrefs.putInt(act.getString(R.string.settings_zoom_driving_35to50_key), 11);
+        editPrefs.putInt(act.getString(R.string.settings_zoom_driving_over50_key), 10);
+
+        editPrefs.commit();
+        FragmentTestUtil.startFragment(fragment);
+        Location location = fragment.getRoute().getRouteInstructions().get(0).getLocation();
+
+        assertZoomLevel(14, 10, location);
+        assertZoomLevel(13, 20, location);
+        assertZoomLevel(12, 30, location);
+        assertZoomLevel(11, 40, location);
+        assertZoomLevel(10, 50, location);
+    }
+
+    private void assertZoomLevel(int expectedZoom, float milesPerHour, Location location) {
+        location.setSpeed(ZoomController.milesPerHourToMetersPerSecond(milesPerHour));
+        fragment.onLocationChanged(location);
+        assertThat(MapController.getMapController().getZoomLevel()).isEqualTo(expectedZoom);
     }
 
     private void setVoiceNavigationEnabled(boolean enabled) {

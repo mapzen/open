@@ -3,6 +3,7 @@ package com.mapzen.fragment;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
+import com.mapzen.helpers.ZoomController;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
@@ -24,10 +25,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -58,12 +59,15 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.mapzen.MapController.geoPointToPair;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.MapController.locationToGeoPoint;
 import static com.mapzen.MapController.locationToPair;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.SimpleFeature.NAME;
+import static com.mapzen.helpers.ZoomController.DrivingSpeed;
+import static com.mapzen.util.DatabaseHelper.COLUMN_ALT;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_POSITION;
@@ -102,6 +106,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private boolean autoPaging = true;
 
     private static Router router = Router.getRouter();
+    private ZoomController zoomController;
+    private SharedPreferences prefs;
+    private Resources res;
 
     protected static void setRouter(Router router) {
         RouteFragment.router = router;
@@ -158,7 +165,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void checkIfVoiceNavigationIsEnabled() {
         final boolean voiceNavigationEnabled =
-                PreferenceManager.getDefaultSharedPreferences(act)
+                getDefaultSharedPreferences(act)
                         .getBoolean(getString(R.string.settings_voice_navigation_key), true);
 
         if (voiceNavigationEnabled) {
@@ -203,6 +210,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void onResume() {
         super.onResume();
         initLocationReceiver();
+        initZoomController();
         act.disableActionbar();
         act.hideActionBar();
         act.deactivateMapLocationUpdates();
@@ -244,7 +252,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public int getWalkingAdvanceRadius() {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
+        final SharedPreferences prefs = getDefaultSharedPreferences(act);
         return prefs.getInt(
                 act.getString(R.string.settings_key_walking_advance_radius),
                 act.getResources().getInteger(R.integer.route_advance_radius));
@@ -269,6 +277,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void manageMap(Location location, Location originalLocation) {
         if (location != null) {
+            zoomController.setCurrentSpeed(originalLocation.getSpeed());
+            getMapController().setZoomLevel(zoomController.getZoom());
             getMapController().setLocation(location).centerOn(location);
             mapFragment.findMe();
             Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChange: Corrected: "
@@ -278,6 +288,29 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     "RouteFragment::onLocationChange: Unable to Correct: location: "
                             + originalLocation.toString());
         }
+    }
+
+    private ZoomController initZoomController() {
+        res = act.getResources();
+        prefs = getDefaultSharedPreferences(act);
+        zoomController = new ZoomController();
+
+        initZoomLevel(DrivingSpeed.MPH_0_TO_15, R.string.settings_zoom_driving_0to15_key,
+                R.integer.zoom_driving_0to15);
+        initZoomLevel(DrivingSpeed.MPH_15_TO_25, R.string.settings_zoom_driving_15to25_key,
+                R.integer.zoom_driving_15to25);
+        initZoomLevel(DrivingSpeed.MPH_25_TO_35, R.string.settings_zoom_driving_25to35_key,
+                R.integer.zoom_driving_25to35);
+        initZoomLevel(DrivingSpeed.MPH_35_TO_50, R.string.settings_zoom_driving_35to50_key,
+                R.integer.zoom_driving_35to50);
+        initZoomLevel(DrivingSpeed.MPH_OVER_50, R.string.settings_zoom_driving_over50_key,
+                R.integer.zoom_driving_over50);
+
+        return zoomController;
+    }
+
+    private void initZoomLevel(DrivingSpeed speed, int key, int defKey) {
+        zoomController.setDrivingZoom(prefs.getInt(getString(key), res.getInteger(defKey)), speed);
     }
 
     public void onLocationChanged(Location location) {
