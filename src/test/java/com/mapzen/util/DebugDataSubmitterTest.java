@@ -1,8 +1,8 @@
 package com.mapzen.util;
 
+import com.mapzen.MapzenApplication;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.support.MapzenTestRunner;
-import com.mapzen.support.TestBaseActivity;
 
 import com.google.common.io.Files;
 import com.squareup.okhttp.mockwebserver.MockResponse;
@@ -13,6 +13,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 
 import android.database.Cursor;
@@ -32,6 +33,7 @@ public class DebugDataSubmitterTest {
     DebugDataSubmitter submitter;
     MockWebServer server;
     BaseActivity activity;
+    SQLiteDatabase db;
 
     @Before
     public void setUp() throws Exception {
@@ -42,6 +44,7 @@ public class DebugDataSubmitterTest {
         submitter = new DebugDataSubmitter(activity);
         submitter.setFile(new File(activity.getDb().getPath()));
         submitter.setEndpoint(server.getUrl("/fake").toString());
+        db = ((MapzenApplication) Robolectric.application).getDb();
     }
 
     @After
@@ -82,7 +85,6 @@ public class DebugDataSubmitterTest {
     public void run_shouldTruncateRoutesTable() throws Exception {
         server.enqueue(new MockResponse());
         submitter.run();
-        SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_ROUTES,
                 new String[] { DatabaseHelper.COLUMN_TABLE_ID },
                 null, null, null, null, null);
@@ -93,7 +95,6 @@ public class DebugDataSubmitterTest {
     public void run_shouldTruncateRouteGeometryTable() throws Exception {
         server.enqueue(new MockResponse());
         submitter.run();
-        SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_ROUTE_GEOMETRY,
                 new String[] { DatabaseHelper.COLUMN_TABLE_ID },
                 null, null, null, null, null);
@@ -104,7 +105,6 @@ public class DebugDataSubmitterTest {
     public void run_shouldTruncateLocations() throws Exception {
         server.enqueue(new MockResponse());
         submitter.run();
-        SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
                 new String[] { DatabaseHelper.COLUMN_TABLE_ID },
                 null, null, null, null, null);
@@ -115,7 +115,6 @@ public class DebugDataSubmitterTest {
     public void run_shouldTruncateLogEntries() throws Exception {
         server.enqueue(new MockResponse());
         submitter.run();
-        SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOG_ENTRIES,
                 new String[] { DatabaseHelper.COLUMN_TABLE_ID },
                 null, null, null, null, null);
@@ -126,7 +125,6 @@ public class DebugDataSubmitterTest {
     public void run_shouldNotTruncateRoutesTable() throws Exception {
         server.enqueue(new MockResponse().setResponseCode(500));
         submitter.run();
-        SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_ROUTES,
                 new String[] { DatabaseHelper.COLUMN_TABLE_ID },
                 null, null, null, null, null);
@@ -137,7 +135,6 @@ public class DebugDataSubmitterTest {
     public void run_shouldNotTruncateRouteGeometryTable() throws Exception {
         server.enqueue(new MockResponse().setResponseCode(500));
         submitter.run();
-        SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_ROUTE_GEOMETRY,
                 new String[] { DatabaseHelper.COLUMN_TABLE_ID },
                 null, null, null, null, null);
@@ -148,7 +145,6 @@ public class DebugDataSubmitterTest {
     public void run_shouldNotTruncateLocations() throws Exception {
         server.enqueue(new MockResponse().setResponseCode(500));
         submitter.run();
-        SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
                 new String[] { DatabaseHelper.COLUMN_TABLE_ID },
                 null, null, null, null, null);
@@ -159,7 +155,6 @@ public class DebugDataSubmitterTest {
     public void run_shouldNotTruncateLogEntries() throws Exception {
         server.enqueue(new MockResponse().setResponseCode(500));
         submitter.run();
-        SQLiteDatabase db = ((TestBaseActivity) activity).getReadableDb();
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOG_ENTRIES,
                 new String[] { DatabaseHelper.COLUMN_TABLE_ID },
                 null, null, null, null, null);

@@ -137,12 +137,6 @@ public class BaseActivityTest {
     }
 
     @Test
-    public void onPause_shouldCloseDB() throws Exception {
-        activity.onPause();
-        assertThat(activity.getDb()).isNotOpen();
-    }
-
-    @Test
     public void onResume_shouldReConnectLocationClient() throws Exception {
         activity.locationHelper.disconnect();
         activity.onResume();
@@ -327,6 +321,7 @@ public class BaseActivityTest {
 
     @Test
     public void onCreate_debugViewShouldBeVisible() throws Exception {
+        activity.getDb().close();
         enableDebugMode(Robolectric.application);
         BaseActivity act = TestHelper.initBaseActivity();
         assertThat(act.findViewById(R.id.debugging)).isVisible();
@@ -452,9 +447,9 @@ public class BaseActivityTest {
         activity.onCreateOptionsMenu(menu);
         activity.setAccessToken(token);
         MenuItem menuItem = menu.findItem(R.id.logout);
-        assertThat(activity.getAccessToken()).isNotNull();
+        assertThat(((MapzenApplication) application).getAccessToken()).isNotNull();
         activity.onOptionsItemSelected(menuItem);
-        assertThat(activity.getAccessToken()).isNull();
+        assertThat(((MapzenApplication) application).getAccessToken()).isNull();
     }
 
     @Test
@@ -476,7 +471,7 @@ public class BaseActivityTest {
         final TestBaseActivity testBaseActivity = (TestBaseActivity) activity;
         testBaseActivity.onCreateOptionsMenu(menu);
         OAuthService serviceMock = Mockito.mock(OAuthService.class);
-        testBaseActivity.setOsmOauthService(serviceMock);
+        ((MapzenApplication) application).setOsmOauthService(serviceMock);
         MenuItem loginItem = menu.findItem(R.id.login);
         testBaseActivity.onOptionsItemSelected(loginItem);
 
