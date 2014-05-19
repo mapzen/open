@@ -242,6 +242,12 @@ public class MapControllerTest {
         assertThat(locationToGeoPoint(testLoc).getLongitude()).isEqualTo(expectedLon);
     }
 
+    @Test
+    public void setZoomLevel_shouldUpdateMap() throws Exception {
+        getMapController().setZoomLevel(10);
+        assertThat(getMapController().getMap().getMapPosition().getZoomLevel()).isEqualTo(10);
+    }
+
     private void enableFixedLocation() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         SharedPreferences.Editor prefEditor = prefs.edit();
