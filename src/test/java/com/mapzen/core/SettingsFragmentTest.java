@@ -128,60 +128,60 @@ public class SettingsFragmentTest {
     public void shouldHaveWalkingZoom() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_zoom_walking_key);
         assertThat(preference).hasTitle(R.string.settings_zoom_walking_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("21");
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("19");
     }
 
     @Test
     public void shouldHaveBikingZoom() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_zoom_biking_key);
         assertThat(preference).hasTitle(R.string.settings_zoom_biking_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("20");
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("18");
     }
 
     @Test
     public void shouldHaveDrivingZoom0to15Mph() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_zoom_driving_0to15_key);
         assertThat(preference).hasTitle(R.string.settings_zoom_driving_0_to_15_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("19");
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("17");
     }
 
     @Test
     public void shouldHaveDrivingZoom15to25Mph() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_zoom_driving_15to25_key);
         assertThat(preference).hasTitle(R.string.settings_zoom_driving_15_to_25_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("18");
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("16");
     }
 
     @Test
     public void shouldHaveDrivingZoom25to35Mph() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_zoom_driving_25to35_key);
         assertThat(preference).hasTitle(R.string.settings_zoom_driving_25_to_35_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("17");
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("15");
     }
 
     @Test
     public void shouldHaveDrivingZoom35to50Mph() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_zoom_driving_35to50_key);
         assertThat(preference).hasTitle(R.string.settings_zoom_driving_35_to_50_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("16");
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("14");
     }
 
     @Test
     public void shouldHaveDrivingZoomOver50Mph() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_zoom_driving_over50_key);
         assertThat(preference).hasTitle(R.string.settings_zoom_driving_over_50_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("15");
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("13");
     }
 
     @Test
     public void shouldDisplayDefaultValueAsSummary() throws Exception {
-        assertThat(findPreferenceById(R.string.settings_zoom_walking_key)).hasSummary("21");
-        assertThat(findPreferenceById(R.string.settings_zoom_biking_key)).hasSummary("20");
-        assertThat(findPreferenceById(R.string.settings_zoom_driving_0to15_key)).hasSummary("19");
-        assertThat(findPreferenceById(R.string.settings_zoom_driving_15to25_key)).hasSummary("18");
-        assertThat(findPreferenceById(R.string.settings_zoom_driving_25to35_key)).hasSummary("17");
-        assertThat(findPreferenceById(R.string.settings_zoom_driving_35to50_key)).hasSummary("16");
-        assertThat(findPreferenceById(R.string.settings_zoom_driving_over50_key)).hasSummary("15");
+        assertThat(findPreferenceById(R.string.settings_zoom_walking_key)).hasSummary("19");
+        assertThat(findPreferenceById(R.string.settings_zoom_biking_key)).hasSummary("18");
+        assertThat(findPreferenceById(R.string.settings_zoom_driving_0to15_key)).hasSummary("17");
+        assertThat(findPreferenceById(R.string.settings_zoom_driving_15to25_key)).hasSummary("16");
+        assertThat(findPreferenceById(R.string.settings_zoom_driving_25to35_key)).hasSummary("15");
+        assertThat(findPreferenceById(R.string.settings_zoom_driving_35to50_key)).hasSummary("14");
+        assertThat(findPreferenceById(R.string.settings_zoom_driving_over50_key)).hasSummary("13");
     }
 
     @Test
