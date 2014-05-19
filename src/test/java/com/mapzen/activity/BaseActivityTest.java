@@ -4,7 +4,6 @@ import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.android.gson.Feature;
-import com.mapzen.core.DataUploadService;
 import com.mapzen.core.OSMOauthFragment;
 import com.mapzen.core.SettingsFragment;
 import com.mapzen.entity.SimpleFeature;
@@ -27,14 +26,12 @@ import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAlarmManager;
-import org.robolectric.shadows.ShadowPendingIntent;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
 import org.scribe.model.Token;
 import org.scribe.oauth.OAuthService;
 
 import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -88,7 +85,8 @@ public class BaseActivityTest {
 
     @Test
     public void onCreate_shouldSetDataUploadServiceAlarm() throws Exception {
-        AlarmManager alarmManager = (AlarmManager) Robolectric.application.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager =
+                (AlarmManager) Robolectric.application.getSystemService(Context.ALARM_SERVICE);
         ShadowAlarmManager shadowAlarmManager = Robolectric.shadowOf(alarmManager);
         assertThat(shadowAlarmManager.getNextScheduledAlarm()).isNotNull();
     }
