@@ -4,35 +4,12 @@
 This project is a simple mobile mapping application built using the Mapzen SDKs and other open source projects. 
 
 
-## Setup notes
+## Prerequisites
 
-The following dependencies must be installed locally prior to building the project. [Maven 3.1+](http://maven.apache.org/download.cgi) is required.
-
-### Install Android SDK and Support Library
-
-```bash
-$ git clone https://github.com/mapzen/maven-android-sdk-deployer.git
-$ cd maven-android-sdk-deployer
-$ mvn install -P 4.4
-$ mvn install -P 4.3
-$ mvn install -fextras/compatibility-v4/pom.xml
-```
-
-See [Maven Android SDK Deployer](https://github.com/mosabua/maven-android-sdk-deployer) project for more information.
-
-### Install VectorTileMap Library
-
-```bash
-$ git clone --recursive https://github.com/mapzen/vtm.git
-$ cd vtm && ./gradlew clean install
-```
-
-### Install VectorTileMap Native Libs
-
-```bash
-$ git clone https://github.com/mapzen/vtm-native-libs.git
-$ cd vtm-native-libs && ./install-dependencies.sh
-```
+* [Java 7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)
+* [Maven 3.1+](http://maven.apache.org/download.cgi)
+* [Android SDK](http://developer.android.com/sdk/index.html) (Platform-tools, Build-tools 19.0.3, API 19)
+* `JAVA_HOME`, `M2_HOME`, `ANDROID_HOME`, and `ANDROID_NDK_HOME` environment variables
 
 ## Mapzen Android Demo
 
@@ -41,6 +18,7 @@ Install and run Mapzen demo application.
 ```bash
 $ git clone https://github.com/mapzen/mapzen-android-demo.git
 $ cd mapzen-android-demo
+$ ./install-dependencies.sh
 $ mvn clean install
 $ mvn android:deploy android:run
 ```
