@@ -170,12 +170,12 @@ public class MapFragment extends BaseFragment {
 
         highlightMarker = getHighlightMarkerSymbol();
 
-        poiMarkersLayer = buildPoiMarkersLayer();
-        map.layers().add(poiMarkersLayer);
-
         pathLayer = new PathLayer(map, Color.MAGENTA, ROUTE_LINE_WIDTH);
         map.layers().add(pathLayer);
         map.layers().add(new LabelLayer(map, baseLayer));
+
+        poiMarkersLayer = buildPoiMarkersLayer();
+        map.layers().add(poiMarkersLayer);
 
         meMarkerLayer = buildMyPositionLayer();
         map.layers().add(meMarkerLayer);
