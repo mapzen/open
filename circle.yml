@@ -13,7 +13,6 @@ dependencies:
     - ./scripts/install-android-jar.sh
     - ./scripts/install-support-jar.sh
     - ./scripts/install-vtm.sh
-    - ./scripts/install-vtm-android.sh
     - ./scripts/install-vtm-native-libs.sh
 
 test:
