@@ -144,20 +144,7 @@ public class BaseActivity extends MapActivity {
         initMapController();
         initLocationClient();
         initDebugView();
-
-        // use this to start and trigger a service
-        //Intent dataUplaodServiceIntent= new Intent(this, DataUploadService.class);
-        //startService(dataUplaodServiceIntent);
-
-        Calendar cal = Calendar.getInstance();
-
-        Intent intent = new Intent(this, DataUploadService.class);
-        PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
-
-        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        // Start every 30 seconds
-        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 30 * 1000, pintent);
-
+        initAlarm();
     }
 
     @Override
@@ -487,4 +474,13 @@ public class BaseActivity extends MapActivity {
         this.requestToken = requestToken;
     }
 
+    private void initAlarm() {
+        Calendar cal = Calendar.getInstance();
+        Intent intent = new Intent(this, DataUploadService.class);
+        PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
+
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        // Start every hour
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 60 * 60 * 1000, pintent);
+    }
 }
