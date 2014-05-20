@@ -4,25 +4,41 @@
 #
 # Usage:
 #   install-support-jar.sh
-#
-# Assumptions:
-#  1. You've got one or more Android SDKs installed locally.
-#  2. Your ANDROID_HOME environment variable points to the Android SDK install dir.
-#  3. You have installed the Android Support (compatibility) libraries from the SDK installer.
-#
-# Copied from https://github.com/robolectric/robolectric/blob/master/scripts/install-support-jar.sh
 
-jarLocation="$ANDROID_HOME/extras/android/m2repository/com/android/support/support-v4/19.1.0/support-v4-19.1.0.jar"
-if [ ! -f "$jarLocation" ]; then
-  jarLocation="$ANDROID_HOME/extras/android/support/v4/android-support-v4.jar"
-  if [ ! -f "$jarLocation" ]; then
-    echo "support-v4 artifact not found!";
-    exit 1;
-  fi
-fi
+# Version 19.1.0 used by mapzen-android-demo
 
-echo "Installing com.android.support:support-v4 from $jarLocation"
+echo "Downloading support_r19.1.zip"
+wget https://dl-ssl.google.com/android/repository/support_r19.1.zip
+unzip support_r19.1.zip
+mv support support_r19.1
+
+echo "Installing com.android.support:support-v4:19.1.0"
 mvn -q install:install-file -DgroupId=com.android.support -DartifactId=support-v4 \
-  -Dversion=19.1.0 -Dpackaging=jar -Dfile="$jarLocation"
+  -Dversion=19.1.0 -Dpackaging=jar -Dfile=support_r19.1/v4/android-support-v4.jar
+
+# Version 19.0.1 used by Robolectric
+
+echo "Downloading support_r19.0.1.zip"
+wget https://dl-ssl.google.com/android/repository/support_r19.0.1.zip
+unzip support_r19.0.1.zip
+mv support support_r19.0.1
+
+echo "Installing com.android.support:support-v4:19.0.1"
+mvn -q install:install-file -DgroupId=com.android.support -DartifactId=support-v4 \
+  -Dversion=19.0.1 -Dpackaging=jar -Dfile=support_r19.0.1/v4/android-support-v4.jar
+
+# Cleanup
+
+echo "Deleting file support_r19.1.zip"
+rm support_r19.1.zip
+
+echo "Deleting folder support_r19.1"
+rm -rf support_r19.1
+
+echo "Deleting file support_r19.0.1.zip"
+rm support_r19.0.1.zip
+
+echo "Deleting folder support_r19.0.1"
+rm -rf support_r19.0.1
 
 echo "Done!"
