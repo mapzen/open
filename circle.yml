@@ -15,7 +15,6 @@ dependencies:
     - ./scripts/install-vtm.sh
     - ./scripts/install-vtm-android.sh
     - ./scripts/install-vtm-native-libs.sh
-    - ./scripts/install-robolectric.sh
 
 test:
   override:
