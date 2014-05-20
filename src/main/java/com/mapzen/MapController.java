@@ -89,6 +89,7 @@ public final class MapController {
 
     public void setZoomLevel(int zoomLevel) {
         mapPosition.setZoomLevel(zoomLevel);
+        map.setMapPosition(mapPosition);
     }
 
     public void setMapPerspectiveForInstruction(Instruction instruction) {
