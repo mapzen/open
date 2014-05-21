@@ -174,7 +174,7 @@ public class SettingsFragmentTest {
     }
 
     @Test
-    public void shouldDisplayDefaultValueAsSummary() throws Exception {
+    public void shouldDisplayDefaultZoomValueAsSummary() throws Exception {
         assertThat(findPreferenceById(R.string.settings_zoom_walking_key)).hasSummary("19");
         assertThat(findPreferenceById(R.string.settings_zoom_biking_key)).hasSummary("18");
         assertThat(findPreferenceById(R.string.settings_zoom_driving_0to15_key)).hasSummary("17");
@@ -185,7 +185,7 @@ public class SettingsFragmentTest {
     }
 
     @Test
-    public void shouldDisplayUpdatedValueAsSummary() throws Exception {
+    public void shouldDisplayUpdatedZoomValueAsSummary() throws Exception {
         SharedPreferences prefs = fragment.getPreferenceManager().getSharedPreferences();
         SharedPreferences.Editor editPrefs = prefs.edit();
 
@@ -207,6 +207,98 @@ public class SettingsFragmentTest {
         assertThat(findPreferenceById(R.string.settings_zoom_driving_25to35_key)).hasSummary("5");
         assertThat(findPreferenceById(R.string.settings_zoom_driving_35to50_key)).hasSummary("6");
         assertThat(findPreferenceById(R.string.settings_zoom_driving_over50_key)).hasSummary("7");
+    }
+
+    @Test
+    public void shouldHaveTurnRadiusCategory() throws Exception {
+        PreferenceCategory category = findCategoryByIndex(2);
+        assertThat(category).hasTitle(R.string.settings_turn_title);
+        assertThat(category).hasPreferenceCount(7);
+    }
+
+    @Test
+    public void shouldHaveWalkingTurnRadius() throws Exception {
+        Preference preference = findPreferenceById(R.string.settings_turn_walking_key);
+        assertThat(preference).hasTitle(R.string.settings_turn_walking_title);
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("10");
+    }
+
+    @Test
+    public void shouldHaveBikingTurnRadius() throws Exception {
+        Preference preference = findPreferenceById(R.string.settings_turn_biking_key);
+        assertThat(preference).hasTitle(R.string.settings_turn_biking_title);
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("20");
+    }
+
+    @Test
+    public void shouldHaveDrivingTurnRadius0to15Mph() throws Exception {
+        Preference preference = findPreferenceById(R.string.settings_turn_driving_0to15_key);
+        assertThat(preference).hasTitle(R.string.settings_turn_driving_0_to_15_title);
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("50");
+    }
+
+    @Test
+    public void shouldHaveDrivingTurnRadius15to25Mph() throws Exception {
+        Preference preference = findPreferenceById(R.string.settings_turn_driving_15to25_key);
+        assertThat(preference).hasTitle(R.string.settings_turn_driving_15_to_25_title);
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("100");
+    }
+
+    @Test
+    public void shouldHaveDrivingTurnRadius25to35Mph() throws Exception {
+        Preference preference = findPreferenceById(R.string.settings_turn_driving_25to35_key);
+        assertThat(preference).hasTitle(R.string.settings_turn_driving_25_to_35_title);
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("150");
+    }
+
+    @Test
+    public void shouldHaveDrivingTurnRadius35to50Mph() throws Exception {
+        Preference preference = findPreferenceById(R.string.settings_turn_driving_35to50_key);
+        assertThat(preference).hasTitle(R.string.settings_turn_driving_35_to_50_title);
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("200");
+    }
+
+    @Test
+    public void shouldHaveDrivingTurnRadiusOver50Mph() throws Exception {
+        Preference preference = findPreferenceById(R.string.settings_turn_driving_over50_key);
+        assertThat(preference).hasTitle(R.string.settings_turn_driving_over_50_title);
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("300");
+    }
+
+    @Test
+    public void shouldDisplayDefaultTurnRadiusValueAsSummary() throws Exception {
+        assertThat(findPreferenceById(R.string.settings_turn_walking_key)).hasSummary("10");
+        assertThat(findPreferenceById(R.string.settings_turn_biking_key)).hasSummary("20");
+        assertThat(findPreferenceById(R.string.settings_turn_driving_0to15_key)).hasSummary("50");
+        assertThat(findPreferenceById(R.string.settings_turn_driving_15to25_key)).hasSummary("100");
+        assertThat(findPreferenceById(R.string.settings_turn_driving_25to35_key)).hasSummary("150");
+        assertThat(findPreferenceById(R.string.settings_turn_driving_35to50_key)).hasSummary("200");
+        assertThat(findPreferenceById(R.string.settings_turn_driving_over50_key)).hasSummary("300");
+    }
+
+    @Test
+    public void shouldDisplayUpdatedTurnRadiusValueAsSummary() throws Exception {
+        SharedPreferences prefs = fragment.getPreferenceManager().getSharedPreferences();
+        SharedPreferences.Editor editPrefs = prefs.edit();
+
+        editPrefs.putInt(fragment.getString(R.string.settings_turn_walking_key), 1);
+        editPrefs.putInt(fragment.getString(R.string.settings_turn_biking_key), 2);
+        editPrefs.putInt(fragment.getString(R.string.settings_turn_driving_0to15_key), 3);
+        editPrefs.putInt(fragment.getString(R.string.settings_turn_driving_15to25_key), 4);
+        editPrefs.putInt(fragment.getString(R.string.settings_turn_driving_25to35_key), 5);
+        editPrefs.putInt(fragment.getString(R.string.settings_turn_driving_35to50_key), 6);
+        editPrefs.putInt(fragment.getString(R.string.settings_turn_driving_over50_key), 7);
+
+        editPrefs.commit();
+        fragment.onStart();
+
+        assertThat(findPreferenceById(R.string.settings_turn_walking_key)).hasSummary("1");
+        assertThat(findPreferenceById(R.string.settings_turn_biking_key)).hasSummary("2");
+        assertThat(findPreferenceById(R.string.settings_turn_driving_0to15_key)).hasSummary("3");
+        assertThat(findPreferenceById(R.string.settings_turn_driving_15to25_key)).hasSummary("4");
+        assertThat(findPreferenceById(R.string.settings_turn_driving_25to35_key)).hasSummary("5");
+        assertThat(findPreferenceById(R.string.settings_turn_driving_35to50_key)).hasSummary("6");
+        assertThat(findPreferenceById(R.string.settings_turn_driving_over50_key)).hasSummary("7");
     }
 
     private PreferenceCategory findCategoryByIndex(int index) {
