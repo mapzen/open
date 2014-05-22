@@ -58,6 +58,15 @@ public class SettingsFragment extends PreferenceFragment {
         displayValue(R.string.settings_zoom_driving_25to35_key, R.integer.zoom_driving_25to35);
         displayValue(R.string.settings_zoom_driving_35to50_key, R.integer.zoom_driving_35to50);
         displayValue(R.string.settings_zoom_driving_over50_key, R.integer.zoom_driving_over50);
+
+        displayValue(R.string.settings_turn_walking_key, R.integer.turn_walking);
+        displayValue(R.string.settings_turn_biking_key, R.integer.turn_biking);
+        displayValue(R.string.settings_turn_driving_0to15_key, R.integer.turn_driving_0to15);
+        displayValue(R.string.settings_turn_driving_0to15_key, R.integer.turn_driving_0to15);
+        displayValue(R.string.settings_turn_driving_15to25_key, R.integer.turn_driving_15to25);
+        displayValue(R.string.settings_turn_driving_25to35_key, R.integer.turn_driving_25to35);
+        displayValue(R.string.settings_turn_driving_35to50_key, R.integer.turn_driving_35to50);
+        displayValue(R.string.settings_turn_driving_over50_key, R.integer.turn_driving_over50);
     }
 
     private void initSharedPrefsListener() {
