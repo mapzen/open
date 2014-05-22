@@ -57,7 +57,7 @@ public class SettingsFragmentTest {
     public void shouldHaveDebugCategory() throws Exception {
         PreferenceCategory category = findCategoryByIndex(0);
         assertThat(category).hasTitle(R.string.settings_debug_title);
-        assertThat(category).hasPreferenceCount(6);
+        assertThat(category).hasPreferenceCount(5);
     }
 
     @Test
@@ -92,17 +92,6 @@ public class SettingsFragmentTest {
         assertThat(preference).hasTitle(R.string.settings_voice_navigation_title);
 
         assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("true");
-    }
-
-    @Test
-    public void shouldHaveAdvanceRadiusPreference() throws Exception {
-        Preference preference = findPreferenceById(R.string.settings_key_walking_advance_radius);
-        assertThat(preference).hasSummary(R.string.settings_advance_radius_summary);
-        assertThat(preference).hasTitle(R.string.settings_advance_radius);
-        assertThat((EditTextPreference) preference)
-                .hasDialogTitle(R.string.settings_advance_radius_dialog_title);
-
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("30");
     }
 
     @Test

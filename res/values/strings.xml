@@ -24,9 +24,6 @@
     <string name="settings_debug_mode">Debug Mode</string>
     <string name="settings_debug_mode_summary">This will keep application in debug mode and location will be stored</string>
     <string name="settings_debug_title">Debugging</string>
-    <string name="settings_advance_radius">Walking advance radius</string>
-    <string name="settings_advance_radius_summary">This will define the radius for when instruction will advance</string>
-    <string name="settings_advance_radius_dialog_title">In Meters</string>
     <string name="settings_key_debug">checkbox_debug</string>
     <string name="settings_key_walking_advance_radius">edittext_walking_advance_radius</string>
     <string name="settings_key_mapsource">edittext_mapsource</string>
@@ -66,7 +63,7 @@
 
     <!--Turn Radius Settings-->
 
-    <string name="settings_turn_title">Turn Radius</string>
+    <string name="settings_turn_title">Advance Radius</string>
     <string name="settings_turn_walking_key">turn_walking</string>
     <string name="settings_turn_walking_title">Walking</string>
     <string name="settings_turn_biking_key">turn_biking</string>
