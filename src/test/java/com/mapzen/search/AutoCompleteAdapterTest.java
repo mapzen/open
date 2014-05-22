@@ -1,8 +1,9 @@
 package com.mapzen.search;
 
 import android.support.v4.app.FragmentManager;
-import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
+
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
@@ -31,7 +32,7 @@ import static org.robolectric.Robolectric.buildActivity;
 public class AutoCompleteAdapterTest {
     private AutoCompleteAdapter adapter;
     private BaseActivity baseActivity;
-    private View view;
+    private TextView view;
     private FragmentManager fragmentManager;
     private SimpleFeature simpleFeature;
 
@@ -45,7 +46,8 @@ public class AutoCompleteAdapterTest {
                 baseActivity, ((MapzenApplication) application).getColumns(), fragmentManager);
         adapter.setSearchView(baseActivity.getSearchView());
         adapter.setMapFragment(initMapFragment(baseActivity));
-        view = adapter.newView(baseActivity, new TestCursor(), new FrameLayout(baseActivity));
+        view = (TextView) adapter.newView(baseActivity,
+                new TestCursor(), new FrameLayout(baseActivity));
         simpleFeature = getTestSimpleFeature();
         view.setTag(simpleFeature);
     }
@@ -59,6 +61,13 @@ public class AutoCompleteAdapterTest {
     public void onClick_shouldCreatePagerResultsFragment() throws Exception {
         view.performClick();
         assertThat(fragmentManager).hasFragmentWithTag(PagerResultsFragment.TAG);
+    }
+
+    @Test
+    public void onClick_shouldSaveTerm() throws Exception {
+        view.setText("saved term");
+        view.performClick();
+        assertThat(SavedSearch.get().next()).isEqualTo("saved term");
     }
 
     @Test

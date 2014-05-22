@@ -63,6 +63,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
             public void onClick(View view) {
                 TextView tv = (TextView) view;
                 SimpleFeature simpleFeature = (SimpleFeature) tv.getTag();
+                SavedSearch.store(tv.getText().toString());
                 app.setCurrentSearchTerm("");
                 searchView.setQuery("", false);
                 searchView.clearFocus();
