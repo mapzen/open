@@ -22,6 +22,7 @@ public abstract class SavedSearch {
         if (store.size() >= MAX_ENTRIES) {
             store.removeLast();
         }
+        store.remove(term);
         store.addFirst(term);
         return 0;
     }

@@ -49,6 +49,24 @@ public class SavedSearchTest {
     }
 
     @Test
+    public void store_shouldNotStoreExsistingTerms() throws Exception {
+        SavedSearch.store("expected");
+        SavedSearch.store("search1");
+        SavedSearch.store("search2");
+        SavedSearch.store("expected");
+        assertThat(countTerms(SavedSearch.get(MAX_ENTRIES))).isEqualTo(3);
+    }
+
+    @Test
+    public void store_shouldPutExsistingTermsAtTheTop() throws Exception {
+        SavedSearch.store("expected");
+        SavedSearch.store("search1");
+        SavedSearch.store("search2");
+        SavedSearch.store("expected");
+        assertThat(SavedSearch.get(1).next()).isEqualTo("expected");
+    }
+
+    @Test
     public void get_shouldReturnDefaultNumberOfTerms() throws Exception {
         SavedSearch.store("search1");
         SavedSearch.store("search2");
