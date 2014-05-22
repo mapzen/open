@@ -9,8 +9,6 @@ import org.robolectric.annotation.Config;
 
 import java.util.Iterator;
 
-import javax.print.DocFlavor;
-
 import static com.mapzen.search.SavedSearch.MAX_ENTRIES;
 import static org.fest.assertions.api.Assertions.assertThat;
 

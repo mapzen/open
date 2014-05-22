@@ -1,21 +1,18 @@
 package com.mapzen.search;
 
-import com.google.common.collect.Lists;
-
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedList;
 
 public abstract class SavedSearch {
-    private static List<String> store = new ArrayList<String>();
+    private static LinkedList<String> store = new LinkedList<String>();
     public static final int DEFAULT_SIZE = 3;
     public static final int MAX_ENTRIES = 10;
 
     public static int store(String term) {
         if (store.size() >= MAX_ENTRIES) {
-            store.remove(0);
+            store.removeLast();
         }
-        store.add(term);
+        store.addFirst(term);
         return 0;
     }
 
@@ -24,13 +21,10 @@ public abstract class SavedSearch {
     }
 
     public static Iterator<String> get(int size) {
-        if (store.size() == 0) {
+        if (store.size() == 0 || store.size() < size) {
             return store.iterator();
         }
-        if (store.size() < size) {
-            size = store.size();
-        }
-        return Lists.reverse(store.subList(store.size() - size, store.size())).iterator();
+        return store.subList(0, size).iterator();
     }
 
     public static void clear() {
