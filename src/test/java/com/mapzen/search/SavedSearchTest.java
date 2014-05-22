@@ -7,7 +7,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
 
-import java.util.List;
+import java.util.Iterator;
+
+import javax.print.DocFlavor;
 
 import static com.mapzen.search.SavedSearch.MAX_ENTRIES;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -25,8 +27,7 @@ public class SavedSearchTest {
         SavedSearch.store("search1");
         SavedSearch.store("search2");
         SavedSearch.store("expected");
-        List<String> terms = SavedSearch.get(2);
-        assertThat(terms.get(0)).isEqualTo("expected");
+        assertThat(SavedSearch.get(2).next()).isEqualTo("expected");
     }
 
     @Test
@@ -34,7 +35,7 @@ public class SavedSearchTest {
         for (int i = 0; i < MAX_ENTRIES + 3; i++) {
             SavedSearch.store(String.valueOf(i));
         }
-        assertThat(SavedSearch.get(MAX_ENTRIES + 10)).hasSize(MAX_ENTRIES);
+        assertThat(countTerms(SavedSearch.get(MAX_ENTRIES + 10))).isEqualTo(MAX_ENTRIES);
     }
 
     @Test
@@ -43,7 +44,10 @@ public class SavedSearchTest {
         for (int i = 0; i < MAX_ENTRIES; i++) {
             SavedSearch.store(String.valueOf(i));
         }
-        assertThat(SavedSearch.get(MAX_ENTRIES)).doesNotContain("search1");
+        Iterator<String> it = SavedSearch.get(MAX_ENTRIES);
+        while (it.hasNext()) {
+            assertThat(it.next()).isNotEqualTo("search1");
+        }
     }
 
     @Test
@@ -51,8 +55,8 @@ public class SavedSearchTest {
         SavedSearch.store("search1");
         SavedSearch.store("search2");
         SavedSearch.store("search3");
-        List<String> terms = SavedSearch.get();
-        assertThat(terms).hasSize(SavedSearch.DEFAULT_SIZE);
+        SavedSearch.store("search4");
+        assertThat(countTerms(SavedSearch.get())).isEqualTo(SavedSearch.DEFAULT_SIZE);
     }
 
     @Test
@@ -60,13 +64,12 @@ public class SavedSearchTest {
         SavedSearch.store("search1");
         SavedSearch.store("search2");
         SavedSearch.store("search3");
-        List<String> terms = SavedSearch.get(1);
-        assertThat(terms).hasSize(1);
+        assertThat(countTerms(SavedSearch.get(1))).isEqualTo(1);
     }
 
     @Test
     public void get_shouldReturnEmptyList() throws Exception {
-        assertThat(SavedSearch.get()).hasSize(0);
+        assertThat(SavedSearch.get().hasNext()).isFalse();
     }
 
     @Test
@@ -88,6 +91,16 @@ public class SavedSearchTest {
         SavedSearch.store("search2");
         SavedSearch.store("search3");
         SavedSearch.clear();
-        assertThat(SavedSearch.get()).hasSize(0);
+        assertThat(SavedSearch.get().hasNext()).isFalse();
     }
+
+    private int countTerms(Iterator<String> results) {
+        int count = 0;
+        while (results.hasNext()) {
+            results.next();
+            count++;
+        }
+        return count;
+    }
+
 }

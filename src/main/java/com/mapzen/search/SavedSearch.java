@@ -3,6 +3,7 @@ package com.mapzen.search;
 import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public abstract class SavedSearch {
@@ -18,18 +19,18 @@ public abstract class SavedSearch {
         return 0;
     }
 
-    public static List<String> get() {
+    public static Iterator<String> get() {
         return SavedSearch.get(DEFAULT_SIZE);
     }
 
-    public static List<String> get(int size) {
+    public static Iterator<String> get(int size) {
         if (store.size() == 0) {
-            return store;
+            return store.iterator();
         }
         if (store.size() < size) {
             size = store.size();
         }
-        return Lists.reverse(store.subList(store.size() - size, store.size()));
+        return Lists.reverse(store.subList(store.size() - size, store.size())).iterator();
     }
 
     public static void clear() {
