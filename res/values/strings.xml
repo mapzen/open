@@ -25,7 +25,6 @@
     <string name="settings_debug_mode_summary">This will keep application in debug mode and location will be stored</string>
     <string name="settings_debug_title">Debugging</string>
     <string name="settings_key_debug">checkbox_debug</string>
-    <string name="settings_key_walking_advance_radius">edittext_walking_advance_radius</string>
     <string name="settings_key_mapsource">edittext_mapsource</string>
     <string name="settings_default_mapsource">http://vector.test.mapzen.com/vector/lite</string>
     <string name="settings_mapsource_dialog_title">Configure Map Tile source</string>
@@ -61,7 +60,7 @@
     <string name="settings_zoom_driving_over50_key">zoom_driving_over_50</string>
     <string name="settings_zoom_driving_over_50_title">Driving 50+ Mph</string>
 
-    <!--Turn Radius Settings-->
+    <!--Advance Radius Settings-->
 
     <string name="settings_turn_title">Advance Radius</string>
     <string name="settings_turn_walking_key">turn_walking</string>

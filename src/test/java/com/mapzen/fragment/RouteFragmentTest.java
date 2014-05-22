@@ -616,16 +616,27 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void getWalkingAdvanceRadius_shouldHaveDefaultValue() {
-        assertThat(fragment.getWalkingAdvanceRadius())
-                .isEqualTo(act.getResources().getInteger(R.integer.route_advance_radius));
+    public void getAdvanceRadius_shouldHaveDefaultValue() {
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(fragment.getAdvanceRadius()).isEqualTo(ZoomController.DEFAULT_TURN_RADIUS);
     }
 
     @Test
-    public void getWalkingAdvanceRadius_shouldBeConfigurable() {
-        int expected = 102;
-        setWalkingRadius(expected);
-        assertThat(fragment.getWalkingAdvanceRadius()).isEqualTo(expected);
+    public void getAdvanceRadius_shouldBeConfigurable() {
+        setAdvanceRadiusPreference(R.string.settings_turn_driving_0to15_key, 100);
+        setAdvanceRadiusPreference(R.string.settings_turn_driving_15to25_key, 200);
+        setAdvanceRadiusPreference(R.string.settings_turn_driving_25to35_key, 300);
+        setAdvanceRadiusPreference(R.string.settings_turn_driving_35to50_key, 400);
+        setAdvanceRadiusPreference(R.string.settings_turn_driving_over50_key, 500);
+
+        FragmentTestUtil.startFragment(fragment);
+        Location location = fragment.getRoute().getRouteInstructions().get(0).getLocation();
+
+        assertAdvanceRadius(100, 10, location);
+        assertAdvanceRadius(200, 20, location);
+        assertAdvanceRadius(300, 30, location);
+        assertAdvanceRadius(400, 40, location);
+        assertAdvanceRadius(500, 50, location);
     }
 
     @Test
@@ -1002,10 +1013,16 @@ public class RouteFragmentTest {
         assertZoomLevel(10, 50, location);
     }
 
-    private void assertZoomLevel(int expectedZoom, float milesPerHour, Location location) {
+    private void assertZoomLevel(int expected, float milesPerHour, Location location) {
         location.setSpeed(ZoomController.milesPerHourToMetersPerSecond(milesPerHour));
         fragment.onLocationChanged(location);
-        assertThat(MapController.getMapController().getZoomLevel()).isEqualTo(expectedZoom);
+        assertThat(MapController.getMapController().getZoomLevel()).isEqualTo(expected);
+    }
+
+    private void assertAdvanceRadius(int expected, float milesPerHour, Location location) {
+        location.setSpeed(ZoomController.milesPerHourToMetersPerSecond(milesPerHour));
+        fragment.onLocationChanged(location);
+        assertThat(fragment.getAdvanceRadius()).isEqualTo(expected);
     }
 
     private void setVoiceNavigationEnabled(boolean enabled) {
@@ -1037,10 +1054,10 @@ public class RouteFragmentTest {
         fragment.setInstructions(testInstructions);
     }
 
-    private void setWalkingRadius(int expected) {
+    private void setAdvanceRadiusPreference(int key, int value) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
         SharedPreferences.Editor prefEditor = prefs.edit();
-        prefEditor.putInt(act.getString(R.string.settings_key_walking_advance_radius), expected);
+        prefEditor.putInt(act.getString(key), value);
         prefEditor.commit();
     }
 

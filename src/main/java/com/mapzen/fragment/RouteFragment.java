@@ -250,11 +250,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return routeId;
     }
 
-    public int getWalkingAdvanceRadius() {
-        final SharedPreferences prefs = getDefaultSharedPreferences(act);
-        return prefs.getInt(
-                act.getString(R.string.settings_key_walking_advance_radius),
-                act.getResources().getInteger(R.integer.route_advance_radius));
+    public int getAdvanceRadius() {
+        return zoomController.getTurnRadius();
     }
 
     public void setInstructions(ArrayList<Instruction> instructions) {
@@ -305,11 +302,27 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         initZoomLevel(DrivingSpeed.MPH_OVER_50, R.string.settings_zoom_driving_over50_key,
                 R.integer.zoom_driving_over50);
 
+        initTurnRadius(DrivingSpeed.MPH_0_TO_15, R.string.settings_turn_driving_0to15_key,
+                R.integer.turn_driving_0to15);
+        initTurnRadius(DrivingSpeed.MPH_15_TO_25, R.string.settings_turn_driving_15to25_key,
+                R.integer.turn_driving_15to25);
+        initTurnRadius(DrivingSpeed.MPH_25_TO_35, R.string.settings_turn_driving_25to35_key,
+                R.integer.turn_driving_25to35);
+        initTurnRadius(DrivingSpeed.MPH_35_TO_50, R.string.settings_turn_driving_35to50_key,
+                R.integer.turn_driving_35to50);
+        initTurnRadius(DrivingSpeed.MPH_OVER_50, R.string.settings_turn_driving_over50_key,
+                R.integer.turn_driving_over50);
+
         return zoomController;
     }
 
     private void initZoomLevel(DrivingSpeed speed, int key, int defKey) {
         zoomController.setDrivingZoom(prefs.getInt(getString(key), res.getInteger(defKey)), speed);
+    }
+
+    private void initTurnRadius(DrivingSpeed speed, int key, int defKey) {
+        zoomController.setDrivingTurnRadius(prefs.getInt(getString(key),
+                res.getInteger(defKey)), speed);
     }
 
     public void onLocationChanged(Location location) {
@@ -336,7 +349,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             debugStringBuilder.append(", distance: " + String.valueOf(closestDistance));
         }
 
-        if (closestDistance < getWalkingAdvanceRadius()) {
+        if (closestDistance < getAdvanceRadius()) {
             Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: "
                     + closestInstruction.toString());
             final int instructionIndex = instructions.indexOf(closestInstruction);
@@ -356,7 +369,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             debugStringBuilder.append("\n");
             debugStringBuilder.append("seen instruction: " + instruction.getName());
             debugStringBuilder.append(" distance: " + String.valueOf(distance));
-            if (distance > getWalkingAdvanceRadius()) {
+            if (distance > getAdvanceRadius()) {
                 Logger.logToDatabase(act, ROUTE_TAG, "post language: " +
                         instruction.toString());
                 act.appendToDebugView("post language for: " + instruction.toString());
@@ -398,7 +411,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 + "new corrected location: " + correctedLocation.toString()
                 + " from original: " + location.toString());
         Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
-                "threshold: " + String.valueOf(getWalkingAdvanceRadius()));
+                "threshold: " + String.valueOf(getAdvanceRadius()));
         for (Instruction instruction : instructions) {
             Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
                     "turnPoint: " + instruction.toString());
