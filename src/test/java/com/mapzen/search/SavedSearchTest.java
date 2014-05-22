@@ -92,6 +92,31 @@ public class SavedSearchTest {
         assertThat(SavedSearch.get().hasNext()).isFalse();
     }
 
+    @Test
+    public void shouldBeSerializable() throws Exception {
+        SavedSearch.store("search1");
+        SavedSearch.store("search2");
+        SavedSearch.store("expected");
+        String serialized = SavedSearch.serialize();
+        SavedSearch.clear();
+        assertThat(SavedSearch.get().hasNext()).isFalse();
+        SavedSearch.deserialize(serialized);
+        Iterator<String> it = SavedSearch.get();
+        assertThat(it.next()).isEqualTo("expected");
+        assertThat(it.next()).isEqualTo("search2");
+        assertThat(it.next()).isEqualTo("search1");
+    }
+
+    @Test
+    public void deserialize_shouldHandleEmptyString() throws Exception {
+        String serialized = SavedSearch.serialize();
+        SavedSearch.clear();
+        assertThat(SavedSearch.get().hasNext()).isFalse();
+        SavedSearch.deserialize(serialized);
+        Iterator<String> it = SavedSearch.get();
+        assertThat(it.hasNext()).isFalse();
+    }
+
     private int countTerms(Iterator<String> results) {
         int count = 0;
         while (results.hasNext()) {
