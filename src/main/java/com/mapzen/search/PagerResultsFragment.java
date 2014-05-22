@@ -186,6 +186,7 @@ public class PagerResultsFragment extends BaseFragment {
     public boolean executeSearchOnMap(final SearchView view, String query) {
         act.showProgressDialog();
         app.setCurrentSearchTerm(query);
+        SavedSearch.store(query);
         getPelias().search(query, ApiHelper.getViewBox(mapFragment.getMap()),
                 getSearchCallback(view));
         return true;

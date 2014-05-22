@@ -105,6 +105,12 @@ public class PagerResultsFragmentTest {
     }
 
     @Test
+    public void executeSearchOnMap_shouldSaveSearchTerm() {
+        fragment.executeSearchOnMap(new SearchView(app), "Some fantastic term");
+        assertThat(SavedSearch.get().next()).isEqualTo("Some fantastic term");
+    }
+
+    @Test
     public void viewAll_shouldAddListResultsFragment() throws Exception {
         fragment.viewAll.performClick();
         assertThat(act.getSupportFragmentManager()).hasFragmentWithTag(ListResultsFragment.TAG);
