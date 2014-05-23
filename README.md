@@ -23,6 +23,8 @@ $ mvn clean install
 $ mvn android:deploy android:run
 ```
 
+**Note:** Additional packages must be installed to run `aapt` on Ubuntu 64-bit installations. Please see http://stackoverflow.com/questions/19523502/androids-aapt-not-running-on-64-bit-ubuntu-13-10-no-ia32-libs-how-can-i-fix for more information.
+
 ## Contributions
 We appreciate pull requests. Please run <code>$ mvn clean verify</code>
 and make sure it runs cleanly as it runs all of our tests and code quality tools 
