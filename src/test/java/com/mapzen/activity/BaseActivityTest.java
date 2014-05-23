@@ -55,6 +55,7 @@ import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.android.lost.LocationClient.ConnectionCallbacks;
+import static com.mapzen.search.SavedSearch.getSavedSearch;
 import static com.mapzen.support.TestHelper.enableDebugMode;
 import static com.mapzen.support.TestHelper.getTestFeature;
 import static com.mapzen.support.TestHelper.initBaseActivity;
@@ -75,7 +76,7 @@ public class BaseActivityTest {
     public void setUp() throws Exception {
         menu = new TestMenu();
         activity = initBaseActivityWithMenu(menu);
-        SavedSearch.clear();
+        getSavedSearch().clear();
     }
 
     @Test
@@ -98,24 +99,24 @@ public class BaseActivityTest {
 
     @Test
     public void onCreate_shouldInitializeSavedSearches() throws Exception {
-        SavedSearch.store("expected");
+        getSavedSearch().store("expected");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(SavedSearch.TAG, SavedSearch.serialize());
+        editor.putString(SavedSearch.TAG, getSavedSearch().serialize());
         editor.commit();
-        SavedSearch.clear();
+        getSavedSearch().clear();
         initBaseActivity();
-        assertThat(SavedSearch.get().next()).isEqualTo("expected");
+        assertThat(getSavedSearch().get().next()).isEqualTo("expected");
     }
 
     @Test
     public void onPause_shouldPersistSavedSearches() throws Exception {
-        SavedSearch.store("expected");
+        getSavedSearch().store("expected");
         activity.onPause();
-        SavedSearch.clear();
+        getSavedSearch().clear();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        SavedSearch.deserialize(prefs.getString(SavedSearch.TAG, ""));
-        assertThat(SavedSearch.get().next()).isEqualTo("expected");
+        getSavedSearch().deserialize(prefs.getString(SavedSearch.TAG, ""));
+        assertThat(getSavedSearch().get().next()).isEqualTo("expected");
     }
 
     @Test

@@ -61,6 +61,7 @@ import java.util.concurrent.Executors;
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.android.lost.LocationClient.ConnectionCallbacks;
+import static com.mapzen.search.SavedSearch.getSavedSearch;
 
 public class BaseActivity extends MapActivity {
     public static final int LOCATION_INTERVAL = 1000;
@@ -489,13 +490,13 @@ public class BaseActivity extends MapActivity {
 
     private void initSavedSearches() {
         SharedPreferences prefs = getDefaultSharedPreferences(this);
-        SavedSearch.deserialize(prefs.getString(SavedSearch.TAG, ""));
+        getSavedSearch().deserialize(prefs.getString(SavedSearch.TAG, ""));
     }
 
     private void persistSavedSearches() {
         SharedPreferences prefs = getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(SavedSearch.TAG, SavedSearch.serialize());
+        editor.putString(SavedSearch.TAG, getSavedSearch().serialize());
         editor.commit();
     }
 }

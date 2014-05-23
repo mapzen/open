@@ -20,6 +20,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.tester.android.database.TestCursor;
 import org.robolectric.util.ActivityController;
 
+import static com.mapzen.search.SavedSearch.getSavedSearch;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
@@ -67,7 +68,7 @@ public class AutoCompleteAdapterTest {
     public void onClick_shouldSaveTerm() throws Exception {
         view.setText("saved term");
         view.performClick();
-        assertThat(SavedSearch.get().next()).isEqualTo("saved term");
+        assertThat(getSavedSearch().get().next()).isEqualTo("saved term");
     }
 
     @Test
