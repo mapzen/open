@@ -14,6 +14,7 @@ import com.mapzen.fragment.MapFragment;
 import com.mapzen.search.AutoCompleteAdapter;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.search.PagerResultsFragment;
+import com.mapzen.search.SavedSearch;
 import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.DebugDataSubmitter;
 import com.mapzen.util.Logger;
@@ -40,7 +41,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -58,8 +58,10 @@ import java.util.Calendar;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.android.lost.LocationClient.ConnectionCallbacks;
+import static com.mapzen.search.SavedSearch.getSavedSearch;
 
 public class BaseActivity extends MapActivity {
     public static final int LOCATION_INTERVAL = 1000;
@@ -145,12 +147,14 @@ public class BaseActivity extends MapActivity {
         initLocationClient();
         initDebugView();
         initAlarm();
+        initSavedSearches();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         locationHelper.disconnect();
+        persistSavedSearches();
     }
 
     @Override
@@ -164,7 +168,7 @@ public class BaseActivity extends MapActivity {
     }
 
     public boolean isInDebugMode() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences prefs = getDefaultSharedPreferences(this);
         return prefs.getBoolean(getString(R.string.settings_key_debug), false);
     }
 
@@ -482,5 +486,17 @@ public class BaseActivity extends MapActivity {
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         // Start every hour
         alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 60 * 60 * 1000, pintent);
+    }
+
+    private void initSavedSearches() {
+        SharedPreferences prefs = getDefaultSharedPreferences(this);
+        getSavedSearch().deserialize(prefs.getString(SavedSearch.TAG, ""));
+    }
+
+    private void persistSavedSearches() {
+        SharedPreferences prefs = getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(SavedSearch.TAG, getSavedSearch().serialize());
+        editor.commit();
     }
 }

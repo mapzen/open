@@ -9,6 +9,7 @@ import com.mapzen.core.SettingsFragment;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.search.PagerResultsFragment;
+import com.mapzen.search.SavedSearch;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.support.TestHelper;
@@ -34,10 +35,12 @@ import org.scribe.oauth.OAuthService;
 import android.app.AlarmManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,8 +55,10 @@ import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.android.lost.LocationClient.ConnectionCallbacks;
+import static com.mapzen.search.SavedSearch.getSavedSearch;
 import static com.mapzen.support.TestHelper.enableDebugMode;
 import static com.mapzen.support.TestHelper.getTestFeature;
+import static com.mapzen.support.TestHelper.initBaseActivity;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -71,6 +76,7 @@ public class BaseActivityTest {
     public void setUp() throws Exception {
         menu = new TestMenu();
         activity = initBaseActivityWithMenu(menu);
+        getSavedSearch().clear();
     }
 
     @Test
@@ -89,6 +95,28 @@ public class BaseActivityTest {
                 (AlarmManager) Robolectric.application.getSystemService(Context.ALARM_SERVICE);
         ShadowAlarmManager shadowAlarmManager = Robolectric.shadowOf(alarmManager);
         assertThat(shadowAlarmManager.getNextScheduledAlarm()).isNotNull();
+    }
+
+    @Test
+    public void onCreate_shouldInitializeSavedSearches() throws Exception {
+        getSavedSearch().store("expected");
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(SavedSearch.TAG, getSavedSearch().serialize());
+        editor.commit();
+        getSavedSearch().clear();
+        initBaseActivity();
+        assertThat(getSavedSearch().get().next()).isEqualTo("expected");
+    }
+
+    @Test
+    public void onPause_shouldPersistSavedSearches() throws Exception {
+        getSavedSearch().store("expected");
+        activity.onPause();
+        getSavedSearch().clear();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        getSavedSearch().deserialize(prefs.getString(SavedSearch.TAG, ""));
+        assertThat(getSavedSearch().get().next()).isEqualTo("expected");
     }
 
     @Test

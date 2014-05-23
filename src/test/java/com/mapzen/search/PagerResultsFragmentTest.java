@@ -28,6 +28,7 @@ import android.widget.Toast;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 
+import static com.mapzen.search.SavedSearch.getSavedSearch;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
@@ -102,6 +103,12 @@ public class PagerResultsFragmentTest {
         assertThat(ShadowToast.getTextOfLatestToast())
                 .isEqualTo(app.getString(R.string.generic_server_error));
         assertThat(ShadowToast.getLatestToast()).hasDuration(Toast.LENGTH_LONG);
+    }
+
+    @Test
+    public void executeSearchOnMap_shouldSaveSearchTerm() {
+        fragment.executeSearchOnMap(new SearchView(app), "Some fantastic term");
+        assertThat(getSavedSearch().get().next()).isEqualTo("Some fantastic term");
     }
 
     @Test

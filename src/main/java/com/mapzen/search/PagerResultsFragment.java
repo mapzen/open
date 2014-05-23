@@ -38,6 +38,7 @@ import java.util.Locale;
 import static com.mapzen.MapController.DEFAULT_ZOOMLEVEL;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.android.Pelias.getPelias;
+import static com.mapzen.search.SavedSearch.getSavedSearch;
 
 public class PagerResultsFragment extends BaseFragment {
     public static final String TAG = PagerResultsFragment.class.getSimpleName();
@@ -186,6 +187,7 @@ public class PagerResultsFragment extends BaseFragment {
     public boolean executeSearchOnMap(final SearchView view, String query) {
         act.showProgressDialog();
         app.setCurrentSearchTerm(query);
+        getSavedSearch().store(query);
         getPelias().search(query, ApiHelper.getViewBox(mapFragment.getMap()),
                 getSearchCallback(view));
         return true;
