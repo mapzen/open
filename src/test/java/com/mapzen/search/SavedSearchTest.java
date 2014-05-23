@@ -29,7 +29,7 @@ public class SavedSearchTest {
     }
 
     @Test
-    public void store_shouldStoreMaxiumNumberOfElements() throws Exception {
+    public void store_shouldStoreMaximumNumberOfElements() throws Exception {
         for (int i = 0; i < MAX_ENTRIES + 3; i++) {
             SavedSearch.store(String.valueOf(i));
         }
@@ -49,7 +49,7 @@ public class SavedSearchTest {
     }
 
     @Test
-    public void store_shouldNotStoreExsistingTerms() throws Exception {
+    public void store_shouldNotStoreExistingTerms() throws Exception {
         SavedSearch.store("expected");
         SavedSearch.store("search1");
         SavedSearch.store("search2");
@@ -58,7 +58,7 @@ public class SavedSearchTest {
     }
 
     @Test
-    public void store_shouldPutExsistingTermsAtTheTop() throws Exception {
+    public void store_shouldPutExistingTermsAtTheTop() throws Exception {
         SavedSearch.store("expected");
         SavedSearch.store("search1");
         SavedSearch.store("search2");
@@ -89,12 +89,12 @@ public class SavedSearchTest {
     }
 
     @Test
-    public void isEmtpy_shouldBeTrue() {
+    public void isEmpty_shouldBeTrue() {
         assertThat(SavedSearch.isEmpty()).isTrue();
     }
 
     @Test
-    public void isEmtpy_shouldBeFalse() {
+    public void isEmpty_shouldBeFalse() {
         SavedSearch.store("search1");
         SavedSearch.store("search2");
         SavedSearch.store("search3");
