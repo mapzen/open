@@ -9,7 +9,7 @@ This project is a simple mobile mapping application built using the Mapzen SDKs 
 * [Java 7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)
 * [Maven 3.1+](http://maven.apache.org/download.cgi)
 * [Android SDK](http://developer.android.com/sdk/index.html) (Platform-tools, Build-tools 19.0.3, API 19)
-* `JAVA_HOME`, `M2_HOME`, `ANDROID_HOME`, and `ANDROID_NDK_HOME` environment variables
+* `JAVA_HOME`, `M2_HOME`, and `ANDROID_HOME` environment variables
 
 ## Mapzen Android Demo
 
