@@ -723,6 +723,16 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onPageScrolled_shouldNotSpeakInstruction() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onPageScrolled(1, (float) 0.1, 1);
+        ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
+        shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
+        assertThat(shadowTextToSpeech.getLastSpokenText())
+                .isEqualTo("Head on 19th Street for 520 feet");
+    }
+
+    @Test
     public void textToSpeechRules_shouldReplaceMiWithMiles() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction instruction = getTestInstruction(0, 0);
