@@ -496,6 +496,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @Override
     public void onPageScrolled(int i, float v, int i2) {
+        speakerbox.stop();
     }
 
     @Override
