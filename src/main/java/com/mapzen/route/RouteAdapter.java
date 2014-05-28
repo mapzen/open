@@ -36,36 +36,54 @@ public class RouteAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         currentInstruction = instructions.get(position);
-        View view = View.inflate(context, R.layout.instruction, null);
+        final View view = View.inflate(context, R.layout.instruction, null);
+        setBackgroundColor(position, view);
+        setFullInstruction(view);
+        setFullInstructionAfterAction(view);
+        setTurnIcon(view);
+        setTurnIconAfterAction(view);
+        setTag(position, view);
+        container.addView(view);
+        return view;
+    }
 
+    private void setBackgroundColor(int position, View view) {
         if (position == instructions.size() - 1) {
             view.setBackgroundColor(context.getResources().getColor(R.color.destination_green));
         } else {
             view.setBackgroundColor(context.getResources().getColor(R.color.dark_gray));
         }
+    }
 
-        TextView fullInstruction = (TextView) view.findViewById(R.id.full_instruction);
-        fullInstruction.setText(
-                getFullInstructionWithBoldName(currentInstruction.getFullInstruction()));
+    private void setFullInstruction(View view) {
+        final TextView fullInstruction = (TextView) view.findViewById(R.id.full_instruction);
+        fullInstruction.setText(getFullInstructionWithBoldName(currentInstruction
+                .getFullInstruction()));
+    }
 
-        TextView fullInstructionAfterAction =
+    private void setFullInstructionAfterAction(View view) {
+        final TextView fullInstructionAfterAction =
                 (TextView) view.findViewById(R.id.full_instruction_after_action);
         fullInstructionAfterAction.setText(
                 getFullInstructionWithBoldName(
                         currentInstruction.getFullInstructionAfterAction()));
+    }
 
-        ImageView turnIcon = (ImageView) view.findViewById(R.id.turn_icon);
+    private void setTurnIcon(View view) {
+        final ImageView turnIcon = (ImageView) view.findViewById(R.id.turn_icon);
         turnIcon.setImageResource(DisplayHelper.getRouteDrawable(context,
                 currentInstruction.getTurnInstruction(), DisplayHelper.IconStyle.WHITE));
+    }
 
-        ImageView turnIconAfterAction =
+    private void setTurnIconAfterAction(View view) {
+        final ImageView turnIconAfterAction =
                 (ImageView) view.findViewById(R.id.turn_icon_after_action);
         turnIconAfterAction.setImageResource(DisplayHelper.getRouteDrawable(context,
                 10, DisplayHelper.IconStyle.WHITE));
+    }
 
+    private void setTag(int position, View view) {
         view.setTag("Instruction_" + String.valueOf(position));
-        container.addView(view);
-        return view;
     }
 
     private SpannableStringBuilder getFullInstructionWithBoldName(String fullInstruction) {
