@@ -103,7 +103,7 @@ public class SettingsFragmentTest {
                 .hasDialogTitle(R.string.settings_mapsource_dialog_title);
 
         assertThat(shadowOf(preference).getDefaultValue())
-                .isEqualTo("http://vector.test.mapzen.com/vector/lite");
+                .isEqualTo(activity.getString(R.string.settings_default_mapsource));
     }
 
     @Test
