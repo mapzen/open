@@ -1,13 +1,14 @@
-package com.mapzen.fragment;
+package com.mapzen.route;
 
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
+import com.mapzen.fragment.BaseFragment;
+import com.mapzen.fragment.DirectionListFragment;
 import com.mapzen.helpers.ZoomController;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
-import com.mapzen.route.RouteAdapter;
 import com.mapzen.speakerbox.Speakerbox;
 import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.Logger;
@@ -103,7 +104,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private SharedPreferences prefs;
     private Resources res;
 
-    protected static void setRouter(Router router) {
+    public static void setRouter(Router router) {
         RouteFragment.router = router;
     }
 

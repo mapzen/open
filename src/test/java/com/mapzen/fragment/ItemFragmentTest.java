@@ -5,6 +5,7 @@ import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.osrm.Router;
 import com.mapzen.osrm.Route;
+import com.mapzen.route.RouteFragment;
 import com.mapzen.support.MapzenTestRunner;
 
 import org.junit.Before;

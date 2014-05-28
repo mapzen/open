@@ -1,9 +1,11 @@
-package com.mapzen.fragment;
+package com.mapzen.route;
 
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.entity.SimpleFeature;
+import com.mapzen.fragment.DirectionListFragment;
+import com.mapzen.fragment.MapFragment;
 import com.mapzen.helpers.DistanceFormatter;
 import com.mapzen.helpers.ZoomController;
 import com.mapzen.osrm.Instruction;
@@ -158,7 +160,7 @@ public class RouteFragmentTest {
     @Test
     public void onLocationChange_shouldCenterMapOnLocation() throws Exception {
         Animator animator = mock(Animator.class);
-        ((TestMap) fragment.mapFragment.getMap()).setAnimator(animator);
+        ((TestMap) fragment.getMapFragment().getMap()).setAnimator(animator);
         FragmentTestUtil.startFragment(fragment);
         ArrayList<Location> geometry = fragment.getRoute().getGeometry();
         Location testLocation = fragment.getRoute().snapToRoute(geometry.get(2));
