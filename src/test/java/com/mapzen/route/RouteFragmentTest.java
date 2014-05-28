@@ -46,17 +46,13 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
-import android.text.SpannedString;
 import android.text.TextUtils;
-import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
@@ -644,42 +640,6 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void firstInstruction_shouldHaveDarkGrayBackground() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-        View view = getInstructionView(0);
-        ColorDrawable background = (ColorDrawable) view.getBackground();
-        assertThat(background.getColor()).isEqualTo(0xff333333);
-    }
-
-    @Test
-    public void lastInstruction_shouldHaveGreenBackground() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-        View view = getInstructionView(1);
-        ColorDrawable background = (ColorDrawable) view.getBackground();
-        assertThat(background.getColor()).isEqualTo(0xff68a547);
-    }
-
-    @Test
-    public void shouldBoldName() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-        TextView textView = (TextView) getInstructionView(0).findViewById(R.id.full_instruction);
-        SpannedString spannedString = (SpannedString) textView.getText();
-        assertThat(spannedString.getSpans(0, spannedString.length(), StyleSpan.class)).isNotNull();
-    }
-
-    @Test
     public void onLocationChanged_finalInstructionShouldNotAdvance() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
@@ -1057,15 +1017,6 @@ public class RouteFragmentTest {
         SharedPreferences.Editor prefEditor = prefs.edit();
         prefEditor.putBoolean(act.getString(R.string.settings_voice_navigation_key), enabled);
         prefEditor.commit();
-    }
-
-    private View getInstructionView(int position) {
-        ViewGroup group = new ViewGroup(act) {
-            @Override
-            protected void onLayout(boolean changed, int l, int t, int r, int b) {
-            }
-        };
-        return (View) fragment.pager.getAdapter().instantiateItem(group, position);
     }
 
     private void initTestFragment() throws Exception {
