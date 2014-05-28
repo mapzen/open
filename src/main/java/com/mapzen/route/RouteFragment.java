@@ -203,6 +203,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onResume() {
         super.onResume();
+        mapFragment.hideLocationMarker();
         initLocationReceiver();
         initZoomController();
         act.disableActionbar();
@@ -224,6 +225,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.showActionBar();
         markReadyForUpload(routeId);
         clearRoute();
+        mapFragment.showLocationMarker();
     }
 
     public void createRouteTo(Location location) {

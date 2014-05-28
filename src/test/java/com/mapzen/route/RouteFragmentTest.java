@@ -316,6 +316,21 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onStart_shouldHideLocationMarker() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(fragment.mapFragment.getMap().layers().
+                contains(fragment.mapFragment.getLocationMarkerLayer())).isFalse();
+    }
+
+    @Test
+    public void onDetach_shouldShowLocationMarker() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onDetach();
+        assertThat(fragment.mapFragment.getMap().layers().
+                contains(fragment.mapFragment.getLocationMarkerLayer())).isTrue();
+    }
+
+    @Test
     public void shouldRegisterReceiver() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         assertThat(app.hasReceiverForIntent(new Intent(COM_MAPZEN_UPDATES_LOCATION))).isTrue();
@@ -865,6 +880,7 @@ public class RouteFragmentTest {
     @Test
     public void createRouteTo_shouldRedrawPath() throws Exception {
         MapFragment mapFragmentMock = mock(MapFragment.class, Mockito.CALLS_REAL_METHODS);
+        mapFragmentMock.setAct(fragment.act);
         PathLayer pathLayerMock = mock(PathLayer.class);
         when(mapFragmentMock.getPathLayer()).thenReturn(pathLayerMock);
         fragment.setMapFragment(mapFragmentMock);
@@ -883,6 +899,7 @@ public class RouteFragmentTest {
     @Test
     public void createRouteTo_shouldRedoUrl() throws Exception {
         MapFragment mapFragmentMock = mock(MapFragment.class, Mockito.CALLS_REAL_METHODS);
+        mapFragmentMock.setAct(fragment.act);
         PathLayer pathLayerMock = mock(PathLayer.class);
         when(mapFragmentMock.getPathLayer()).thenReturn(pathLayerMock);
         fragment.setMapFragment(mapFragmentMock);

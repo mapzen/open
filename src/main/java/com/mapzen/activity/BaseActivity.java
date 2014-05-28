@@ -234,7 +234,6 @@ public class BaseActivity extends MapActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
         mapFragment.setAct(this);
-        mapFragment.setMap(getMap());
         mapFragment.setOnPoiClickListener(new OnPoiClickListener() {
             @Override
             public void onPoiClick(int index, MarkerItem item) {
