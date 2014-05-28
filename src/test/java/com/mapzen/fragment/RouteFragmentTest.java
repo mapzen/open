@@ -307,6 +307,8 @@ public class RouteFragmentTest {
     @Test
     public void onLocationChange_shouldReRouteWhenLost() throws Exception {
         initTestFragment();
+        FragmentTestUtil.startFragment(fragment);
+
         Route oldRoute = fragment.getRoute();
         Location testLocation = getTestLocation(111.0, 111.0);
         fragment.onLocationChanged(testLocation);
@@ -730,6 +732,19 @@ public class RouteFragmentTest {
         shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
         assertThat(shadowTextToSpeech.getLastSpokenText())
                 .isEqualTo("Head on 19th Street for 520 feet");
+    }
+
+    @Test
+    public void shouldAnnounceRecalculationOnLost() throws Exception {
+        initTestFragment();
+        FragmentTestUtil.startFragment(fragment);
+
+        Location testLocation = getTestLocation(111.0, 111.0);
+        fragment.onLocationChanged(testLocation);
+        ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
+        shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
+        assertThat(shadowTextToSpeech.getLastSpokenText())
+                .isEqualTo("Recalculating");
     }
 
     @Test

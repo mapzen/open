@@ -333,6 +333,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (correctedLocation == null) {
             if (route.isLost()) {
                 createRouteTo(location);
+                speakerbox.play(act.getString(R.string.recalculating));
             }
             return;
         }
@@ -496,7 +497,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @Override
     public void onPageScrolled(int i, float v, int i2) {
-        speakerbox.stop();
+        if (pager.getCurrentItem() != 0) {
+            speakerbox.stop();
+        }
     }
 
     @Override
@@ -668,6 +671,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     @Override
                     public void run() {
                         pager.setAdapter(new RoutesAdapter(act, instructions));
+                        playFirstInstruction();
                     }
                 });
             }
