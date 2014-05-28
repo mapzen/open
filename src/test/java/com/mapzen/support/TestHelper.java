@@ -13,8 +13,6 @@ import com.mapzen.util.DatabaseHelper;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.oscim.android.MapView;
-import org.oscim.map.Map;
-import org.oscim.map.TestMap;
 import org.robolectric.shadows.ShadowLocationManager;
 import org.robolectric.tester.android.view.TestMenu;
 

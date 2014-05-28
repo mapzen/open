@@ -15,7 +15,6 @@ import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.tile.TileLayer;
 import org.oscim.map.Map;
-import org.oscim.map.TestMap;
 import org.oscim.tiling.TileSource;
 import org.oscim.tiling.source.HttpEngine;
 import org.oscim.tiling.source.OkHttpEngine;
@@ -170,20 +169,23 @@ public class MapFragmentTest {
 
     @Test
     public void shouldSetupLocationMarker() throws Exception {
-        assertThat(mapFragment.getMap().layers().contains(mapFragment.getLocationMarkerLayer())).isTrue();
+        assertThat(mapFragment.getMap().layers().
+                contains(mapFragment.getLocationMarkerLayer())).isTrue();
     }
 
     @Test
     public void shouldHideLocationMarker() throws Exception {
         mapFragment.hideLocationMarker();
-        assertThat(mapFragment.getMap().layers().contains(mapFragment.getLocationMarkerLayer())).isFalse();
+        assertThat(mapFragment.getMap().layers().
+                contains(mapFragment.getLocationMarkerLayer())).isFalse();
     }
 
     @Test
     public void shouldShowLocationMarker() throws Exception {
         mapFragment.getMap().layers().remove(mapFragment.getLocationMarkerLayer());
         mapFragment.showLocationMarker();
-        assertThat(mapFragment.getMap().layers().contains(mapFragment.getLocationMarkerLayer())).isTrue();
+        assertThat(mapFragment.getMap().layers().
+                contains(mapFragment.getLocationMarkerLayer())).isTrue();
     }
 
     private void setTileSourceConfiguration(String source) {
