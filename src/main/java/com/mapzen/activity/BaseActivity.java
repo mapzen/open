@@ -19,6 +19,7 @@ import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.DebugDataSubmitter;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialogFragment;
+import com.mapzen.util.MapzenGPSPromptDialogFragment;
 
 import com.bugsense.trace.BugSenseHandler;
 import com.squareup.okhttp.OkHttpClient;
@@ -77,6 +78,7 @@ public class BaseActivity extends MapActivity {
     private MapzenApplication app;
     private MapFragment mapFragment;
     private MapzenProgressDialogFragment progressDialogFragment;
+    private MapzenGPSPromptDialogFragment gpsPromptDialogFragment;
     private boolean updateMapLocation = true;
     private Token requestToken = null;
     private Verifier verifier = null;
@@ -134,6 +136,10 @@ public class BaseActivity extends MapActivity {
         return locationListener;
     }
 
+    public LocationClient getLocationClient() {
+        return locationHelper;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -143,6 +149,7 @@ public class BaseActivity extends MapActivity {
         setContentView(R.layout.base);
         initMapFragment();
         progressDialogFragment = new MapzenProgressDialogFragment();
+        gpsPromptDialogFragment = new MapzenGPSPromptDialogFragment();
         initMapController();
         initLocationClient();
         initDebugView();
@@ -218,8 +225,24 @@ public class BaseActivity extends MapActivity {
         }
     }
 
+    public void showGPSPromptDialog() {
+        if (!gpsPromptDialogFragment.isAdded()) {
+            gpsPromptDialogFragment.show(getSupportFragmentManager(), "gps_dialog");
+        }
+    }
+
+    public void promptForGPSIfNotEnabled() {
+        if (!locationHelper.isGPSEnabled()) {
+            showGPSPromptDialog();
+        }
+    }
+
     public void dismissProgressDialog() {
         progressDialogFragment.dismiss();
+    }
+
+    public void dismissGPSPromptDialog() {
+        gpsPromptDialogFragment.dismiss();
     }
 
     public MapzenProgressDialogFragment getProgressDialogFragment() {

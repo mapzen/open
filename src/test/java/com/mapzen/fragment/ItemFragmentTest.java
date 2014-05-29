@@ -1,5 +1,6 @@
 package com.mapzen.fragment;
 
+import android.location.LocationManager;
 import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
@@ -15,6 +16,7 @@ import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowLocationManager;
 
 import android.location.Location;
 import android.text.TextUtils;
@@ -98,5 +100,25 @@ public class ItemFragmentTest {
         Mockito.verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(getFixture("around_the_block")));
         assertThat(act.getSupportFragmentManager()).hasFragmentWithTag(RouteFragment.TAG);
+    }
+
+    @Test
+    public void shouldDisplayGPSPromptOnRoute() throws Exception {
+        Router router = Mockito.spy(getRouter());
+        RouteFragment.setRouter(router);
+        ShadowLocationManager manager = shadowOf(act.getLocationClient().getLocationManager());
+        manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
+        itemFragment.startButton.performClick();
+        assertThat(act.getSupportFragmentManager()).hasFragmentWithTag("gps_dialog");
+    }
+
+    @Test
+    public void shouldNotDisplayGPSPromptOnRoute() throws Exception {
+        Router router = Mockito.spy(getRouter());
+        RouteFragment.setRouter(router);
+        ShadowLocationManager manager = shadowOf(act.getLocationClient().getLocationManager());
+        manager.setProviderEnabled(LocationManager.GPS_PROVIDER, true);
+        itemFragment.startButton.performClick();
+        assertThat(act.getSupportFragmentManager()).doesNotHaveFragmentWithTag("gps_dialog");
     }
 }
