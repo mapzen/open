@@ -1,9 +1,11 @@
-package com.mapzen.fragment;
+package com.mapzen.route;
 
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.entity.SimpleFeature;
+import com.mapzen.fragment.DirectionListFragment;
+import com.mapzen.fragment.MapFragment;
 import com.mapzen.helpers.DistanceFormatter;
 import com.mapzen.helpers.ZoomController;
 import com.mapzen.osrm.Instruction;
@@ -44,17 +46,13 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
-import android.text.SpannedString;
 import android.text.TextUtils;
-import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
@@ -158,7 +156,7 @@ public class RouteFragmentTest {
     @Test
     public void onLocationChange_shouldCenterMapOnLocation() throws Exception {
         Animator animator = mock(Animator.class);
-        ((TestMap) fragment.mapFragment.getMap()).setAnimator(animator);
+        ((TestMap) fragment.getMapFragment().getMap()).setAnimator(animator);
         FragmentTestUtil.startFragment(fragment);
         ArrayList<Location> geometry = fragment.getRoute().getGeometry();
         Location testLocation = fragment.getRoute().snapToRoute(geometry.get(2));
@@ -594,6 +592,30 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onLocationChange_shouldUpdateDistanceIfAlreadyFlipped() throws Exception {
+        setAdvanceRadiusPreference(R.string.settings_turn_driving_0to15_key, 0);
+        fragment.createRouteTo(getTestLocation(100.0, 100.0));
+        verify(router).setCallback(callback.capture());
+        callback.getValue().success(new Route(MOCK_AROUND_THE_BLOCK));
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onResume();
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+
+        // Flip first instruction
+        fragment.onLocationChanged(instructions.get(0).getLocation());
+
+        // Midpoint between first and second instruction (pre-calculated)
+        Location midPoint = getTestLocation(40.660278, -73.988611);
+        fragment.onLocationChanged(midPoint);
+
+        View view = fragment.pager.findViewWithTag("Instruction_0");
+        TextView textView = (TextView) view.findViewById(R.id.full_instruction_after_action);
+        assertThat(textView).containsText(DistanceFormatter.format(instructions.get(0)
+                .getRemainingDistance(midPoint)));
+    }
+
+    @Test
     public void onLocationChange_shouldNotFlipToPostInstructionLanguage() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         fragment.onResume();
@@ -639,42 +661,6 @@ public class RouteFragmentTest {
         assertAdvanceRadius(300, 30, location);
         assertAdvanceRadius(400, 40, location);
         assertAdvanceRadius(500, 50, location);
-    }
-
-    @Test
-    public void firstInstruction_shouldHaveDarkGrayBackground() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-        View view = getInstructionView(0);
-        ColorDrawable background = (ColorDrawable) view.getBackground();
-        assertThat(background.getColor()).isEqualTo(0xff333333);
-    }
-
-    @Test
-    public void lastInstruction_shouldHaveGreenBackground() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-        View view = getInstructionView(1);
-        ColorDrawable background = (ColorDrawable) view.getBackground();
-        assertThat(background.getColor()).isEqualTo(0xff68a547);
-    }
-
-    @Test
-    public void shouldBoldName() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        instructions.add(getTestInstruction(0, 0));
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-        TextView textView = (TextView) getInstructionView(0).findViewById(R.id.full_instruction);
-        SpannedString spannedString = (SpannedString) textView.getText();
-        assertThat(spannedString.getSpans(0, spannedString.length(), StyleSpan.class)).isNotNull();
     }
 
     @Test
@@ -1055,15 +1041,6 @@ public class RouteFragmentTest {
         SharedPreferences.Editor prefEditor = prefs.edit();
         prefEditor.putBoolean(act.getString(R.string.settings_voice_navigation_key), enabled);
         prefEditor.commit();
-    }
-
-    private View getInstructionView(int position) {
-        ViewGroup group = new ViewGroup(act) {
-            @Override
-            protected void onLayout(boolean changed, int l, int t, int r, int b) {
-            }
-        };
-        return (View) fragment.pager.getAdapter().instantiateItem(group, position);
     }
 
     private void initTestFragment() throws Exception {

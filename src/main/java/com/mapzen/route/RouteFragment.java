@@ -1,15 +1,16 @@
-package com.mapzen.fragment;
+package com.mapzen.route;
 
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
+import com.mapzen.fragment.BaseFragment;
+import com.mapzen.fragment.DirectionListFragment;
 import com.mapzen.helpers.ZoomController;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
 import com.mapzen.speakerbox.Speakerbox;
 import com.mapzen.util.DatabaseHelper;
-import com.mapzen.util.DisplayHelper;
 import com.mapzen.util.Logger;
 import com.mapzen.widget.DistanceView;
 
@@ -26,15 +27,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Typeface;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -51,7 +47,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -89,7 +84,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @InjectView(R.id.resume_button) Button resume;
 
     private ArrayList<Instruction> instructions;
-    private RoutesAdapter adapter;
+    private RouteAdapter adapter;
     private Route route;
     private LocationReceiver locationReceiver;
     private SimpleFeature simpleFeature;
@@ -109,7 +104,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private SharedPreferences prefs;
     private Resources res;
 
-    protected static void setRouter(Router router) {
+    public static void setRouter(Router router) {
         RouteFragment.router = router;
     }
 
@@ -126,7 +121,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.route_widget, container, false);
         ButterKnife.inject(this, rootView);
-        adapter = new RoutesAdapter(act, instructions);
+        adapter = new RouteAdapter(act, instructions);
         TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
         destinationName.setText(simpleFeature.getProperty(NAME));
         distanceLeftView = (DistanceView) rootView.findViewById(R.id.destination_distance);
@@ -350,7 +345,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             debugStringBuilder.append(", distance: " + String.valueOf(closestDistance));
         }
 
-        if (closestDistance < getAdvanceRadius()) {
+        if (closestDistance <= getAdvanceRadius()) {
             Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: "
                     + closestInstruction.toString());
             final int instructionIndex = instructions.indexOf(closestInstruction);
@@ -370,11 +365,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             debugStringBuilder.append("\n");
             debugStringBuilder.append("seen instruction: " + instruction.getName());
             debugStringBuilder.append(" distance: " + String.valueOf(distance));
-            if (distance > getAdvanceRadius()) {
+            if (distance >= getAdvanceRadius()) {
                 Logger.logToDatabase(act, ROUTE_TAG, "post language: " +
                         instruction.toString());
                 act.appendToDebugView("post language for: " + instruction.toString());
-                flipInstructionToAfter(instruction);
+                flipInstructionToAfter(instruction, correctedLocation);
             }
         }
 
@@ -382,18 +377,22 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         logForDebugging(location, correctedLocation);
     }
 
-    private void flipInstructionToAfter(Instruction instruction) {
-        final int index = instructions.indexOf(instruction);
+    private void flipInstructionToAfter(Instruction instruction, Location location) {
         if (flippedInstructions.contains(instruction)) {
-            return;
+            updateRemainingDistance(instruction, location);
+        } else {
+            flipInstruction(instruction);
         }
+    }
+
+    private void flipInstruction(Instruction instruction) {
+        final int index = instructions.indexOf(instruction);
         flippedInstructions.add(instruction);
         if (pager.getCurrentItem() == index) {
             speakerbox.play(instruction.getFullInstructionAfterAction());
         }
 
-        View view = pager.findViewWithTag(
-                "Instruction_" + String.valueOf(index));
+        View view = getViewForIndex(index);
 
         if (view != null) {
             TextView fullBefore = (TextView) view.findViewById(R.id.full_instruction);
@@ -405,6 +404,18 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             ImageView turnIconAfter = (ImageView) view.findViewById(R.id.turn_icon_after_action);
             turnIconAfter.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void updateRemainingDistance(Instruction instruction, Location location) {
+        final View view = getViewForIndex(instructions.indexOf(instruction));
+        if (view != null) {
+            TextView fullAfter = (TextView) view.findViewById(R.id.full_instruction_after_action);
+            fullAfter.setText(instruction.getFullInstructionAfterAction(location));
+        }
+    }
+
+    private View getViewForIndex(int index) {
+        return pager.findViewWithTag("Instruction_" + String.valueOf(index));
     }
 
     private void logForDebugging(Location location, Location correctedLocation) {
@@ -571,78 +582,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         autoPaging = true;
     }
 
-    private static class RoutesAdapter extends PagerAdapter {
-        private List<Instruction> instructions = new ArrayList<Instruction>();
-        private Context context;
-        private Instruction currentInstruction;
-
-        public RoutesAdapter(Context context, List<Instruction> instructions) {
-            this.context = context;
-            this.instructions = instructions;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((View) object);
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            currentInstruction = instructions.get(position);
-            View view = View.inflate(context, R.layout.instruction, null);
-
-            if (position == instructions.size() - 1) {
-                view.setBackgroundColor(context.getResources().getColor(R.color.destination_green));
-            } else {
-                view.setBackgroundColor(context.getResources().getColor(R.color.dark_gray));
-            }
-
-            TextView fullInstruction = (TextView) view.findViewById(R.id.full_instruction);
-            fullInstruction.setText(
-                    getFullInstructionWithBoldName(currentInstruction.getFullInstruction()));
-
-            TextView fullInstructionAfterAction =
-                    (TextView) view.findViewById(R.id.full_instruction_after_action);
-            fullInstructionAfterAction.setText(
-                    getFullInstructionWithBoldName(
-                            currentInstruction.getFullInstructionAfterAction()));
-
-            ImageView turnIcon = (ImageView) view.findViewById(R.id.turn_icon);
-            turnIcon.setImageResource(DisplayHelper.getRouteDrawable(context,
-                    currentInstruction.getTurnInstruction(), DisplayHelper.IconStyle.WHITE));
-
-            ImageView turnIconAfterAction =
-                    (ImageView) view.findViewById(R.id.turn_icon_after_action);
-            turnIconAfterAction.setImageResource(DisplayHelper.getRouteDrawable(context,
-                    10, DisplayHelper.IconStyle.WHITE));
-
-            view.setTag("Instruction_" + String.valueOf(position));
-            container.addView(view);
-            return view;
-        }
-
-        private SpannableStringBuilder getFullInstructionWithBoldName(String fullInstruction) {
-            final String name = currentInstruction.getName();
-            final int startOfName = fullInstruction.indexOf(name);
-            final int endOfName = startOfName + name.length();
-            final StyleSpan boldStyleSpan = new StyleSpan(Typeface.BOLD);
-
-            final SpannableStringBuilder ssb = new SpannableStringBuilder(fullInstruction);
-            ssb.setSpan(boldStyleSpan, startOfName, endOfName, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-            return ssb;
-        }
-
-        @Override
-        public int getCount() {
-            return instructions.size();
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view == object;
-        }
-    }
-
     private class LocationReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -670,7 +609,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        pager.setAdapter(new RoutesAdapter(act, instructions));
+                        pager.setAdapter(new RouteAdapter(act, instructions));
                         playFirstInstruction();
                     }
                 });

@@ -12,7 +12,7 @@ import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 import org.oscim.map.Map;
 
-import static com.mapzen.fragment.RouteFragment.ROUTE_ZOOM_LEVEL;
+import static com.mapzen.route.RouteFragment.ROUTE_ZOOM_LEVEL;
 
 public final class MapController {
     public static final int DEFAULT_ZOOMLEVEL = 15;

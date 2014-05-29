@@ -25,6 +25,10 @@ public abstract class BaseFragment extends Fragment {
         this.mapFragment = mapFragment;
     }
 
+    public MapFragment getMapFragment() {
+        return mapFragment;
+    }
+
     protected void onServerError(int status) {
         if (status == 207) {
             Toast.makeText(act, act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();

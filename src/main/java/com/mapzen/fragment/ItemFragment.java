@@ -2,6 +2,7 @@ package com.mapzen.fragment;
 
 import com.mapzen.R;
 import com.mapzen.entity.SimpleFeature;
+import com.mapzen.route.RouteFragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
