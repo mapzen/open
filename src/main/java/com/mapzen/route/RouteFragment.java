@@ -345,7 +345,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             debugStringBuilder.append(", distance: " + String.valueOf(closestDistance));
         }
 
-        if (closestDistance < getAdvanceRadius()) {
+        if (closestDistance <= getAdvanceRadius()) {
             Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: "
                     + closestInstruction.toString());
             final int instructionIndex = instructions.indexOf(closestInstruction);
@@ -365,11 +365,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             debugStringBuilder.append("\n");
             debugStringBuilder.append("seen instruction: " + instruction.getName());
             debugStringBuilder.append(" distance: " + String.valueOf(distance));
-            if (distance > getAdvanceRadius()) {
+            if (distance >= getAdvanceRadius()) {
                 Logger.logToDatabase(act, ROUTE_TAG, "post language: " +
                         instruction.toString());
                 act.appendToDebugView("post language for: " + instruction.toString());
-                flipInstructionToAfter(instruction);
+                flipInstructionToAfter(instruction, correctedLocation);
             }
         }
 
@@ -377,18 +377,22 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         logForDebugging(location, correctedLocation);
     }
 
-    private void flipInstructionToAfter(Instruction instruction) {
-        final int index = instructions.indexOf(instruction);
+    private void flipInstructionToAfter(Instruction instruction, Location location) {
         if (flippedInstructions.contains(instruction)) {
-            return;
+            updateRemainingDistance(instruction, location);
+        } else {
+            flipInstruction(instruction);
         }
+    }
+
+    private void flipInstruction(Instruction instruction) {
+        final int index = instructions.indexOf(instruction);
         flippedInstructions.add(instruction);
         if (pager.getCurrentItem() == index) {
             speakerbox.play(instruction.getFullInstructionAfterAction());
         }
 
-        View view = pager.findViewWithTag(
-                "Instruction_" + String.valueOf(index));
+        View view = getViewForIndex(index);
 
         if (view != null) {
             TextView fullBefore = (TextView) view.findViewById(R.id.full_instruction);
@@ -400,6 +404,18 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             ImageView turnIconAfter = (ImageView) view.findViewById(R.id.turn_icon_after_action);
             turnIconAfter.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void updateRemainingDistance(Instruction instruction, Location location) {
+        final View view = getViewForIndex(instructions.indexOf(instruction));
+        if (view != null) {
+            TextView fullAfter = (TextView) view.findViewById(R.id.full_instruction_after_action);
+            fullAfter.setText(instruction.getFullInstructionAfterAction(location));
+        }
+    }
+
+    private View getViewForIndex(int index) {
+        return pager.findViewWithTag("Instruction_" + String.valueOf(index));
     }
 
     private void logForDebugging(Location location, Location correctedLocation) {

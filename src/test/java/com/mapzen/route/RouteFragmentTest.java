@@ -592,6 +592,30 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onLocationChange_shouldUpdateDistanceIfAlreadyFlipped() throws Exception {
+        setAdvanceRadiusPreference(R.string.settings_turn_driving_0to15_key, 0);
+        fragment.createRouteTo(getTestLocation(100.0, 100.0));
+        verify(router).setCallback(callback.capture());
+        callback.getValue().success(new Route(MOCK_AROUND_THE_BLOCK));
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onResume();
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+
+        // Flip first instruction
+        fragment.onLocationChanged(instructions.get(0).getLocation());
+
+        // Midpoint between first and second instruction (pre-calculated)
+        Location midPoint = getTestLocation(40.660278, -73.988611);
+        fragment.onLocationChanged(midPoint);
+
+        View view = fragment.pager.findViewWithTag("Instruction_0");
+        TextView textView = (TextView) view.findViewById(R.id.full_instruction_after_action);
+        assertThat(textView).containsText(DistanceFormatter.format(instructions.get(0)
+                .getRemainingDistance(midPoint)));
+    }
+
+    @Test
     public void onLocationChange_shouldNotFlipToPostInstructionLanguage() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         fragment.onResume();
