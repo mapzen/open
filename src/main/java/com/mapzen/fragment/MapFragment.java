@@ -179,7 +179,8 @@ public class MapFragment extends BaseFragment {
         poiMarkersLayer = buildPoiMarkersLayer();
         getMap().layers().add(poiMarkersLayer);
 
-        locationMarkerLayer = new ItemizedLayer<MarkerItem>(getMap(), meMarkers, getDefaultMarkerSymbol(), null);
+        locationMarkerLayer = new ItemizedLayer<MarkerItem>(getMap(),
+                meMarkers, getDefaultMarkerSymbol(), null);
         getMap().layers().add(locationMarkerLayer);
 
         MapzenTheme theme = MapzenTheme.MAPZEN;
