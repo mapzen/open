@@ -159,7 +159,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void addIgnoredPhrases() {
-        speakerbox.disregardInputIfContains("Continue on  for");
+        speakerbox.dontPlayIfContains("Continue on  for");
     }
 
     private void checkIfVoiceNavigationIsEnabled() {
