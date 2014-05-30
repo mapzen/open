@@ -15,7 +15,6 @@ import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.tile.TileLayer;
 import org.oscim.map.Map;
-import org.oscim.map.TestMap;
 import org.oscim.tiling.TileSource;
 import org.oscim.tiling.source.HttpEngine;
 import org.oscim.tiling.source.OkHttpEngine;
@@ -44,7 +43,6 @@ public class MapFragmentTest {
         listener = new TestPoiClickListener();
         mapFragment = new MapFragment();
         mapFragment.setAct(activity);
-        mapFragment.setMap(new TestMap());
         mapFragment.setOnPoiClickListener(listener);
         startFragment(mapFragment);
     }
@@ -61,7 +59,7 @@ public class MapFragmentTest {
 
     @Test
     public void shouldHaveMeMarkerLayer() throws Exception {
-        assertThat(mapFragment.getMeMarkerLayer()).isNotNull();
+        assertThat(mapFragment.getLocationMarkerLayer()).isNotNull();
     }
 
     @Test
@@ -99,7 +97,7 @@ public class MapFragmentTest {
 
     @Test
     public void onPause_shouldEmptyMeMarkers() throws Exception {
-        ItemizedLayer<MarkerItem> meMarkerLayer = mapFragment.getMeMarkerLayer();
+        ItemizedLayer<MarkerItem> meMarkerLayer = mapFragment.getLocationMarkerLayer();
         meMarkerLayer.addItem(new MarkerItem("Title", "Description", new GeoPoint(0, 0)));
         mapFragment.onPause();
         assertThat(meMarkerLayer.size()).isEqualTo(0);
@@ -167,6 +165,27 @@ public class MapFragmentTest {
                 .in(tileSource).get();
 
         assertThat(factory).isInstanceOf(OkHttpEngine.OkHttpFactory.class);
+    }
+
+    @Test
+    public void shouldSetupLocationMarker() throws Exception {
+        assertThat(mapFragment.getMap().layers().
+                contains(mapFragment.getLocationMarkerLayer())).isTrue();
+    }
+
+    @Test
+    public void shouldHideLocationMarker() throws Exception {
+        mapFragment.hideLocationMarker();
+        assertThat(mapFragment.getMap().layers().
+                contains(mapFragment.getLocationMarkerLayer())).isFalse();
+    }
+
+    @Test
+    public void shouldShowLocationMarker() throws Exception {
+        mapFragment.getMap().layers().remove(mapFragment.getLocationMarkerLayer());
+        mapFragment.showLocationMarker();
+        assertThat(mapFragment.getMap().layers().
+                contains(mapFragment.getLocationMarkerLayer())).isTrue();
     }
 
     private void setTileSourceConfiguration(String source) {

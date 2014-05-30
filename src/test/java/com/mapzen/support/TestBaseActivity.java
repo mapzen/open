@@ -14,8 +14,8 @@ public class TestBaseActivity extends BaseActivity {
     private ActionBar actionBar = new TestActionBar();
     private boolean backPressed = false;
     private boolean optionsMenuInvalidated = false;
-    private Map map = new TestMap();
     private String debugDataEndpoint;
+    private Map map = new TestMap();
 
     @Override
     public ActionBar getActionBar() {
@@ -45,6 +45,10 @@ public class TestBaseActivity extends BaseActivity {
     @Override
     public Map getMap() {
         return map;
+    }
+
+    public void setMap(Map map) {
+        this.map = map;
     }
 
     public LocationClient.ConnectionCallbacks getConnectionCallback() {
