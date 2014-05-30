@@ -1,5 +1,12 @@
 package com.mapzen.activity;
 
+import android.app.*;
+import android.support.v4.app.*;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.TaskStackBuilder;
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
@@ -30,9 +37,6 @@ import org.oscim.map.Map;
 import org.scribe.model.Token;
 import org.scribe.model.Verifier;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,10 +46,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -494,4 +494,6 @@ public class BaseActivity extends MapActivity {
         editor.putString(SavedSearch.TAG, getSavedSearch().serialize());
         editor.commit();
     }
+
+
 }
