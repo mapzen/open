@@ -47,10 +47,6 @@ public class TestBaseActivity extends BaseActivity {
         return map;
     }
 
-    public void setMap(Map map) {
-        this.map = map;
-    }
-
     public LocationClient.ConnectionCallbacks getConnectionCallback() {
         return connectionCallback;
     }
