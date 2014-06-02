@@ -15,6 +15,7 @@ import com.mapzen.shadows.ShadowBugSenseHandler;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.util.DatabaseHelper;
+import com.mapzen.util.RouteLocationIndicator;
 import com.mapzen.widget.DistanceView;
 
 import org.json.JSONObject;
@@ -313,6 +314,61 @@ public class RouteFragmentTest {
         verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(MOCK_NY_TO_VT));
         assertThat(fragment.getRoute()).isNotSameAs(oldRoute);
+    }
+
+    @Test
+    public void onCreate_shouldHideLocationMarker() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(fragment.getMapFragment().getMap().layers().
+                contains(fragment.getMapFragment().getLocationMarkerLayer())).isFalse();
+    }
+
+    @Test
+    public void onDetach_shouldShowLocationMarker() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onDetach();
+        assertThat(fragment.getMapFragment().getMap().layers().
+                contains(fragment.getMapFragment().getLocationMarkerLayer())).isTrue();
+    }
+
+    @Test
+    public void onCreate_shouldShowRouteLocationIndicator() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(fragment.getMapFragment().getMap().layers().
+                contains(fragment.getRouteLocationIndicator())).isTrue();
+    }
+
+    @Test
+    public void onDetach_shouldHideRouteLocationIndicator() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onDetach();
+        assertThat(fragment.getMapFragment().getMap().layers().
+                contains(fragment.getRouteLocationIndicator())).isFalse();
+    }
+
+    @Test
+    public void shouldHaveRouteLocationIndicator() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(fragment.getRouteLocationIndicator()).isNotNull();
+    }
+
+    @Test
+    public void onCreate_shouldSetRouteLocationIndicatorToStartingCoordinates() throws Exception {
+        RouteLocationIndicator mockLocationIndicator = mock(RouteLocationIndicator.class);
+        fragment.setRouteLocationIndicator(mockLocationIndicator);
+        FragmentTestUtil.startFragment(fragment);
+        verify(mockLocationIndicator).setPosition(
+                fragment.getRoute().getStartCoordinates().getLatitude(),
+                fragment.getRoute().getStartCoordinates().getLongitude());
+    }
+
+    @Test
+    public void onCreate_shouldSetRouteLocationIndicatorToStartingBearing() throws Exception {
+        RouteLocationIndicator mockLocationIndicator = mock(RouteLocationIndicator.class);
+        fragment.setRouteLocationIndicator(mockLocationIndicator);
+        FragmentTestUtil.startFragment(fragment);
+        verify(mockLocationIndicator).setRotation(
+                (float) fragment.getRoute().getCurrentRotationBearing());
     }
 
     @Test
@@ -865,6 +921,7 @@ public class RouteFragmentTest {
     @Test
     public void createRouteTo_shouldRedrawPath() throws Exception {
         MapFragment mapFragmentMock = mock(MapFragment.class, Mockito.CALLS_REAL_METHODS);
+        mapFragmentMock.setAct(act);
         PathLayer pathLayerMock = mock(PathLayer.class);
         when(mapFragmentMock.getPathLayer()).thenReturn(pathLayerMock);
         fragment.setMapFragment(mapFragmentMock);
@@ -883,6 +940,7 @@ public class RouteFragmentTest {
     @Test
     public void createRouteTo_shouldRedoUrl() throws Exception {
         MapFragment mapFragmentMock = mock(MapFragment.class, Mockito.CALLS_REAL_METHODS);
+        mapFragmentMock.setAct(act);
         PathLayer pathLayerMock = mock(PathLayer.class);
         when(mapFragmentMock.getPathLayer()).thenReturn(pathLayerMock);
         fragment.setMapFragment(mapFragmentMock);
@@ -1049,6 +1107,7 @@ public class RouteFragmentTest {
         fragment.setAct(act);
         fragment.setMapFragment(initMapFragment(act));
         fragment.setRoute(new Route(MOCK_ROUTE_JSON));
+        fragment.setRouteLocationIndicator(new RouteLocationIndicator(act.getMap()));
         testInstructions = new ArrayList<Instruction>();
         testInstructions.add(getTestInstruction(0, 0));
         testInstructions.add(getTestInstruction(1, 1));

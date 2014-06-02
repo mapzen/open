@@ -13,7 +13,6 @@ import com.mapzen.util.DatabaseHelper;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.oscim.android.MapView;
-import org.oscim.map.TestMap;
 import org.robolectric.shadows.ShadowLocationManager;
 import org.robolectric.tester.android.view.TestMenu;
 
@@ -72,7 +71,6 @@ public final class TestHelper {
         FragmentManager manager = activity.getSupportFragmentManager();
         MapFragment mapFragment = (MapFragment) manager.findFragmentById(R.id.map_fragment);
         mapFragment.setAct(activity);
-        mapFragment.setMap(new TestMap());
         mapFragment.onStart();
         return mapFragment;
     }

@@ -6,12 +6,10 @@ import android.widget.Toast;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
-import org.oscim.map.Map;
 
 import retrofit.RetrofitError;
 
 public abstract class BaseFragment extends Fragment {
-    protected Map map;
     protected BaseActivity act;
     protected MapFragment mapFragment;
     protected MapzenApplication app;

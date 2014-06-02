@@ -46,7 +46,7 @@ public class MapFragment extends BaseFragment {
     public static final int DURATION = 800;
     private VectorTileLayer baseLayer;
     private Button myPosition;
-    private ItemizedLayer<MarkerItem> meMarkerLayer;
+    private ItemizedLayer<MarkerItem> locationMarkerLayer;
     private PoiItemizedLayer poiMarkersLayer;
     private MarkerSymbol highlightMarker;
     private PathLayer pathLayer;
@@ -71,7 +71,7 @@ public class MapFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-        meMarkerLayer.removeAllItems();
+        locationMarkerLayer.removeAllItems();
         poiMarkersLayer.removeAllItems();
     }
 
@@ -106,11 +106,11 @@ public class MapFragment extends BaseFragment {
             poiMarkersLayer.setFocus(focused);
         }
         GeoPoint geoPoint = simpleFeature.getGeoPoint();
-        map.animator().animateTo(DURATION, geoPoint, zoom, false);
+        getMap().animator().animateTo(DURATION, geoPoint, zoom, false);
     }
 
     public MarkerItem getMeMarker() {
-        if (meMarkerLayer.size() == 1) {
+        if (locationMarkerLayer.size() == 1) {
             return meMarkers.get(0);
         }
         return null;
@@ -128,7 +128,7 @@ public class MapFragment extends BaseFragment {
     }
 
     private PoiItemizedLayer buildPoiMarkersLayer() {
-        return new PoiItemizedLayer(map, new ArrayList<MarkerItem>(),
+        return new PoiItemizedLayer(getMap(), new ArrayList<MarkerItem>(),
                 getDefaultMarkerSymbol(), new OnItemGestureListener<MarkerItem>() {
             @Override
             public boolean onItemSingleTapUp(int index, MarkerItem item) {
@@ -145,45 +145,48 @@ public class MapFragment extends BaseFragment {
         });
     }
 
-    private ItemizedLayer<MarkerItem> buildMyPositionLayer() {
-        return new ItemizedLayer<MarkerItem>(map, meMarkers, getDefaultMarkerSymbol(), null);
-    }
-
-    public void setMap(Map map) {
-        this.map = map;
-    }
-
     public void setTheme(MapzenTheme theme) {
         IRenderTheme t = ThemeLoader.load(theme);
         baseLayer.setRenderTheme(t);
         MapRenderer.setBackgroundColor(t.getMapBackground());
-        map.clearMap();
+        getMap().clearMap();
+    }
+
+    public void showLocationMarker() {
+        if (!getMap().layers().contains(getLocationMarkerLayer())) {
+            getMap().layers().add(getLocationMarkerLayer());
+        }
+    }
+
+    public void hideLocationMarker() {
+        getMap().layers().remove(getLocationMarkerLayer());
     }
 
     private void setupMap() {
         final OSciMap4TileSource tileSource = new OSciMap4TileSource(getTileBaseSource());
         tileSource.setHttpEngine(new OkHttpEngine.OkHttpFactory());
-        baseLayer = map.setBaseMap(tileSource);
+        baseLayer = getMap().setBaseMap(tileSource);
 
-        map.layers().add(new BuildingLayer(map, baseLayer));
-        map.layers().add(new PoiLayer(map, baseLayer, act));
+        getMap().layers().add(new BuildingLayer(getMap(), baseLayer));
+        getMap().layers().add(new PoiLayer(getMap(), baseLayer, act));
 
         highlightMarker = getHighlightMarkerSymbol();
 
-        pathLayer = new PathLayer(map, Color.MAGENTA, ROUTE_LINE_WIDTH);
-        map.layers().add(pathLayer);
-        map.layers().add(new LabelLayer(map, baseLayer));
+        pathLayer = new PathLayer(getMap(), Color.MAGENTA, ROUTE_LINE_WIDTH);
+        getMap().layers().add(pathLayer);
+        getMap().layers().add(new LabelLayer(getMap(), baseLayer));
 
         poiMarkersLayer = buildPoiMarkersLayer();
-        map.layers().add(poiMarkersLayer);
+        getMap().layers().add(poiMarkersLayer);
 
-        meMarkerLayer = buildMyPositionLayer();
-        map.layers().add(meMarkerLayer);
+        locationMarkerLayer = new ItemizedLayer<MarkerItem>(getMap(),
+                meMarkers, getDefaultMarkerSymbol(), null);
+        getMap().layers().add(locationMarkerLayer);
 
         MapzenTheme theme = MapzenTheme.MAPZEN;
         theme.setContext(act);
         setTheme(theme);
-        map.events.bind(new Map.UpdateListener() {
+        getMap().events.bind(new Map.UpdateListener() {
             @Override
             public void onMapEvent(Event e, MapPosition mapPosition) {
                 if (e == Map.POSITION_EVENT) {
@@ -208,8 +211,8 @@ public class MapFragment extends BaseFragment {
         return poiMarkersLayer;
     }
 
-    public ItemizedLayer<MarkerItem> getMeMarkerLayer() {
-        return meMarkerLayer;
+    public ItemizedLayer<MarkerItem> getLocationMarkerLayer() {
+        return locationMarkerLayer;
     }
 
     public PathLayer getPathLayer() {
@@ -249,15 +252,15 @@ public class MapFragment extends BaseFragment {
     }
 
     public void findMe() {
-        if (meMarkerLayer != null) {
-            meMarkerLayer.removeAllItems();
-            meMarkerLayer.addItem(getUserLocationMarker());
+        if (locationMarkerLayer != null) {
+            locationMarkerLayer.removeAllItems();
+            locationMarkerLayer.addItem(getUserLocationMarker());
         }
 
         if (followMe || !initialRelocateHappened) {
             // TODO find ways to accomplish this without two flags ;(
             initialRelocateHappened = true;
-            map.setMapPosition(getUserLocationPosition());
+            getMap().setMapPosition(getUserLocationPosition());
         }
 
         updateMap();
@@ -274,8 +277,8 @@ public class MapFragment extends BaseFragment {
     }
 
     public void updateMap() {
-        if (map != null) {
-            map.updateMap(true);
+        if (getMap() != null) {
+            getMap().updateMap(true);
         }
     }
 

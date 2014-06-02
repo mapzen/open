@@ -11,6 +11,7 @@ import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
 import com.mapzen.speakerbox.Speakerbox;
 import com.mapzen.util.DatabaseHelper;
+import com.mapzen.util.RouteLocationIndicator;
 import com.mapzen.util.Logger;
 import com.mapzen.widget.DistanceView;
 
@@ -87,6 +88,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private RouteAdapter adapter;
     private Route route;
     private LocationReceiver locationReceiver;
+    private RouteLocationIndicator routeLocationIndicator;
     private SimpleFeature simpleFeature;
     private DistanceView distanceLeftView;
     private int previousPosition;
@@ -113,6 +115,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         fragment.setAct(act);
         fragment.setMapFragment(act.getMapFragment());
         fragment.setSimpleFeature(simpleFeature);
+        fragment.setRouteLocationIndicator(new RouteLocationIndicator(act.getMap()));
         return fragment;
     }
 
@@ -201,6 +204,16 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Location startPoint = route.getStartCoordinates();
+        routeLocationIndicator.setPosition(startPoint.getLatitude(), startPoint.getLongitude());
+        routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
+        mapFragment.getMap().layers().add(routeLocationIndicator);
+        mapFragment.hideLocationMarker();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         initLocationReceiver();
@@ -224,6 +237,16 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.showActionBar();
         markReadyForUpload(routeId);
         clearRoute();
+        mapFragment.showLocationMarker();
+        mapFragment.getMap().layers().remove(routeLocationIndicator);
+    }
+
+    public RouteLocationIndicator getRouteLocationIndicator() {
+        return routeLocationIndicator;
+    }
+
+    public void setRouteLocationIndicator(RouteLocationIndicator routeLocationIndicator) {
+        this.routeLocationIndicator = routeLocationIndicator;
     }
 
     public void createRouteTo(Location location) {
@@ -271,7 +294,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             zoomController.setCurrentSpeed(originalLocation.getSpeed());
             getMapController().setZoomLevel(zoomController.getZoom());
             getMapController().setLocation(location).centerOn(location);
-            mapFragment.findMe();
+            routeLocationIndicator.setPosition(location.getLatitude(), location.getLongitude());
+            routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
             Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChange: Corrected: "
                     + location.toString());
         } else {
