@@ -1,7 +1,7 @@
 package com.mapzen.fragment;
 
 import android.app.AlertDialog;
-import android.app.DialogFragment;
+import android.content.Intent;
 import android.location.LocationManager;
 import com.mapzen.MapController;
 import com.mapzen.R;
@@ -24,6 +24,7 @@ import org.robolectric.shadows.ShadowLocationManager;
 import android.location.Location;
 import android.text.TextUtils;
 
+import static android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS;
 import static com.mapzen.osrm.Router.getRouter;
 import static com.mapzen.support.TestHelper.getFixture;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
@@ -127,11 +128,27 @@ public class ItemFragmentTest {
 
     @Test
      public void shouldDismissGPSPromptOnNegativeButton() throws Exception {
+        Router router = Mockito.spy(getRouter());
+        RouteFragment.setRouter(router);
+        ShadowLocationManager manager = shadowOf(act.getLocationClient().getLocationManager());
+        manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
+        itemFragment.startButton.performClick();
+        AlertDialog gpsPrompt = ShadowAlertDialog.getLatestAlertDialog();
+        gpsPrompt.getButton(AlertDialog.BUTTON_NEGATIVE).performClick();
+        assertThat(act.getSupportFragmentManager()).doesNotHaveFragmentWithTag("gps_dialog");
     }
 
     @Test
     public void shouldOpenGPSSettingsOnPositiveButtonClick() throws Exception {
-
+        Router router = Mockito.spy(getRouter());
+        RouteFragment.setRouter(router);
+        ShadowLocationManager manager = shadowOf(act.getLocationClient().getLocationManager());
+        manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
+        itemFragment.startButton.performClick();
+        AlertDialog gpsPrompt = ShadowAlertDialog.getLatestAlertDialog();
+        gpsPrompt.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
+        Intent intent = shadowOf(act).peekNextStartedActivityForResult().intent;
+        assertThat(intent).isEqualTo(new Intent(ACTION_LOCATION_SOURCE_SETTINGS));
     }
 
     @Test
@@ -146,6 +163,4 @@ public class ItemFragmentTest {
         assertThat(shadowGPSPrompt.getTitle()).isEqualTo(act.getString(R.string.gps_dialog_title));
         assertThat(shadowGPSPrompt.getMessage()).isEqualTo(act.getString(R.string.gps_dialog_message));
     }
-
-
 }
