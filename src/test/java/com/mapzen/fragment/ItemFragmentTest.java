@@ -134,6 +134,7 @@ public class ItemFragmentTest {
         manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
         itemFragment.startButton.performClick();
         AlertDialog gpsPrompt = ShadowAlertDialog.getLatestAlertDialog();
+        assertThat(act.getSupportFragmentManager()).hasFragmentWithTag("gps_dialog");
         gpsPrompt.getButton(AlertDialog.BUTTON_NEGATIVE).performClick();
         assertThat(act.getSupportFragmentManager()).doesNotHaveFragmentWithTag("gps_dialog");
     }
@@ -161,6 +162,7 @@ public class ItemFragmentTest {
         AlertDialog gpsPrompt = ShadowAlertDialog.getLatestAlertDialog();
         ShadowAlertDialog shadowGPSPrompt = shadowOf(gpsPrompt);
         assertThat(shadowGPSPrompt.getTitle()).isEqualTo(act.getString(R.string.gps_dialog_title));
-        assertThat(shadowGPSPrompt.getMessage()).isEqualTo(act.getString(R.string.gps_dialog_message));
+        assertThat(shadowGPSPrompt.getMessage()).isEqualTo(
+                act.getString(R.string.gps_dialog_message));
     }
 }
