@@ -241,10 +241,6 @@ public class BaseActivity extends MapActivity {
         progressDialogFragment.dismiss();
     }
 
-    public void dismissGPSPromptDialog() {
-        gpsPromptDialogFragment.dismiss();
-    }
-
     public MapzenProgressDialogFragment getProgressDialogFragment() {
         return progressDialogFragment;
     }
