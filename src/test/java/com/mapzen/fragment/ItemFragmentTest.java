@@ -1,5 +1,7 @@
 package com.mapzen.fragment;
 
+import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.location.LocationManager;
 import com.mapzen.MapController;
 import com.mapzen.R;
@@ -16,6 +18,7 @@ import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowLocationManager;
 
 import android.location.Location;
@@ -121,4 +124,28 @@ public class ItemFragmentTest {
         itemFragment.startButton.performClick();
         assertThat(act.getSupportFragmentManager()).doesNotHaveFragmentWithTag("gps_dialog");
     }
+
+    @Test
+     public void shouldDismissGPSPromptOnNegativeButton() throws Exception {
+    }
+
+    @Test
+    public void shouldOpenGPSSettingsOnPositiveButtonClick() throws Exception {
+
+    }
+
+    @Test
+    public void shouldDisplayGPSPromptTextCorrectly() throws Exception {
+        Router router = Mockito.spy(getRouter());
+        RouteFragment.setRouter(router);
+        ShadowLocationManager manager = shadowOf(act.getLocationClient().getLocationManager());
+        manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
+        itemFragment.startButton.performClick();
+        AlertDialog gpsPrompt = ShadowAlertDialog.getLatestAlertDialog();
+        ShadowAlertDialog shadowGPSPrompt = shadowOf(gpsPrompt);
+        assertThat(shadowGPSPrompt.getTitle()).isEqualTo(act.getString(R.string.gps_dialog_title));
+        assertThat(shadowGPSPrompt.getMessage()).isEqualTo(act.getString(R.string.gps_dialog_message));
+    }
+
+
 }
