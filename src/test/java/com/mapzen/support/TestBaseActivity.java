@@ -58,6 +58,10 @@ public class TestBaseActivity extends BaseActivity {
         debugDataSubmitter.setEndpoint(debugDataEndpoint);
     }
 
+    public LocationClient getLocationClient() {
+        return locationClient;
+    }
+
     public void setDebugDataEndpoint(String debugDataEndpoint) {
         this.debugDataEndpoint = debugDataEndpoint;
     }

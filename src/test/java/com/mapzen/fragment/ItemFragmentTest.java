@@ -3,7 +3,7 @@ package com.mapzen.fragment;
 import android.location.LocationManager;
 import com.mapzen.MapController;
 import com.mapzen.R;
-import com.mapzen.activity.BaseActivity;
+import com.mapzen.support.TestBaseActivity;
 import com.mapzen.osrm.Router;
 import com.mapzen.osrm.Route;
 import com.mapzen.support.MapzenTestRunner;
@@ -38,7 +38,7 @@ public class ItemFragmentTest {
     @SuppressWarnings("unused")
     ArgumentCaptor<Router.Callback> callback;
     private ItemFragment itemFragment;
-    private BaseActivity act;
+    private TestBaseActivity act;
 
     @Before
     public void setUp() throws Exception {

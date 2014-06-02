@@ -71,7 +71,7 @@ public class BaseActivity extends MapActivity {
             DEBUG_DATA_ENDPOINT = "http://on-the-road.dev.mapzen.com/upload";
     protected DatabaseHelper dbHelper;
     protected DebugDataSubmitter debugDataSubmitter;
-    LocationClient locationHelper;
+    protected LocationClient locationClient;
     private Menu activityMenu;
     private AutoCompleteAdapter autoCompleteAdapter;
     private MenuItem menuItem;
@@ -98,7 +98,7 @@ public class BaseActivity extends MapActivity {
         @Override
         public void onConnected(Bundle bundle) {
             getMapController().setZoomLevel(MapController.DEFAULT_ZOOMLEVEL);
-            final Location location = locationHelper.getLastLocation();
+            final Location location = locationClient.getLastLocation();
             Logger.d("Last known location: " + location);
 
             if (location != null) {
@@ -111,7 +111,7 @@ public class BaseActivity extends MapActivity {
 
             LocationRequest locationRequest = LocationRequest.create();
             locationRequest.setInterval(LOCATION_INTERVAL);
-            locationHelper.requestLocationUpdates(locationRequest, locationListener);
+            locationClient.requestLocationUpdates(locationRequest, locationListener);
         }
 
         @Override
@@ -136,10 +136,6 @@ public class BaseActivity extends MapActivity {
         return locationListener;
     }
 
-    public LocationClient getLocationClient() {
-        return locationHelper;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,14 +156,14 @@ public class BaseActivity extends MapActivity {
     @Override
     public void onPause() {
         super.onPause();
-        locationHelper.disconnect();
+        locationClient.disconnect();
         persistSavedSearches();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        locationHelper.connect();
+        locationClient.connect();
     }
 
     public SQLiteDatabase getDb() {
@@ -232,7 +228,7 @@ public class BaseActivity extends MapActivity {
     }
 
     public void promptForGPSIfNotEnabled() {
-        if (!locationHelper.isGPSEnabled()) {
+        if (!locationClient.isGPSEnabled()) {
             showGPSPromptDialog();
         }
     }
@@ -246,7 +242,7 @@ public class BaseActivity extends MapActivity {
     }
 
     private void initLocationClient() {
-        locationHelper = new LocationClient(this, connectionCallback);
+        locationClient = new LocationClient(this, connectionCallback);
     }
 
     private void initMapFragment() {
