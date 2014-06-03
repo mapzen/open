@@ -148,9 +148,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 return false;
             }
         });
-
         initDebugView(rootView);
-        notificationCreator = new MapzenNotificationCreator();
+        notificationCreator = new MapzenNotificationCreator(act);
         return rootView;
     }
 
@@ -552,7 +551,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         getMapController().setMapPerspectiveForInstruction(instructions.get(i));
         speakerbox.stop();
         speakerbox.play(instructions.get(i).getFullInstruction());
-        notificationCreator.createNewNotifiction(simpleFeature.getMarker().title, instructions.get(i).getFullInstruction(), act);
+        notificationCreator.createNewNotification(simpleFeature.getMarker().title, instructions.get(i).getFullInstruction());
     }
 
     @Override
@@ -641,7 +640,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     public void run() {
                         pager.setAdapter(new RouteAdapter(act, instructions));
                         playFirstInstruction();
-                        notificationCreator.createNewNotifiction(simpleFeature.getMarker().title, instructions.get(0).getFullInstruction(), act);
+                        notificationCreator.createNewNotification(simpleFeature.getMarker().title, instructions.get(0).getFullInstruction());
                     }
                 });
             }

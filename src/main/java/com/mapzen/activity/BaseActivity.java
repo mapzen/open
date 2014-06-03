@@ -163,6 +163,13 @@ public class BaseActivity extends MapActivity {
         locationClient.connect();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancel(0);
+    }
+
     public SQLiteDatabase getDb() {
         return app.getDb();
     }
