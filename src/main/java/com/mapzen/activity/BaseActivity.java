@@ -166,6 +166,10 @@ public class BaseActivity extends MapActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        clearNotifications();
+    }
+
+    private void clearNotifications() {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.cancel(0);
     }
@@ -354,6 +358,7 @@ public class BaseActivity extends MapActivity {
         } else {
             super.onBackPressed();
         }
+        clearNotifications();
     }
 
     @Override

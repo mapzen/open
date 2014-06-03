@@ -41,7 +41,7 @@ public class MapzenNotificationCreator {
     private void initExitNavigationIntent() {
         exitNavigationIntent = new Intent(baseActivity, NotificationBroadcastReciever.class);
         exitNavigationIntent.putExtra(exitNavigation, true);
-        pendingExitNavigationIntent = PendingIntent.getBroadcast(baseActivity, 1, exitNavigationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        pendingExitNavigationIntent = PendingIntent.getBroadcast(baseActivity, 0, exitNavigationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private void initNotificationIntent() {

@@ -140,6 +140,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager.setOnPageChangeListener(this);
         adapter.notifyDataSetChanged();
         previousPosition = pager.getCurrentItem();
+        notificationCreator = new MapzenNotificationCreator(act);
         initSpeakerbox();
         pager.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -149,7 +150,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             }
         });
         initDebugView(rootView);
-        notificationCreator = new MapzenNotificationCreator(act);
         return rootView;
     }
 
@@ -159,6 +159,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         addIgnoredPhrases();
         checkIfVoiceNavigationIsEnabled();
         playFirstInstruction();
+        notificationCreator.createNewNotification(simpleFeature.getMarker().title, instructions.get(0).getFullInstruction());
     }
 
     private void addRemixPatterns() {
