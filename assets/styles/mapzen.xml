@@ -37,7 +37,7 @@
     <rect id="31_information" pos="0 1110 32 32" />
   </atlas>  
 
-<!-- icons 24 
+  <!-- icons 24 
   <atlas img="styles/poi_icons_24.png">
     <rect id="1_airport" pos="0 0 24 24" />
     <rect id="2_taxi " pos="0 29 24 24" />
@@ -191,10 +191,10 @@
   <style-text id="park-label" k="name" size="18" fill="#38678f" stroke="#e8ecd3" stroke-width="1.0" priority="4" />
 
   <style-text id="street-label-sm" k="name" size="16" fill="#294d6b" stroke="#e4e9cc" stroke-width="2.0" priority="3" />
-  <style-text id="street-label" k="name" size="20" character-spacing="0.3" fill="#294d6b" stroke="#e4e9cc" stroke-width="2.0" priority="2" />
+  <style-text id="street-label" k="name" size="20" style="bold"  character-spacing="0.3" fill="#294d6b" stroke="#e4e9cc" stroke-width="2.0" priority="2" />
   <style-text id="street-label-lg" k="name" size="28" fill="#294d6b" stroke="#e4e9cc" stroke-width="2.0" priority="1" />
 
-  <style-text id="poi-label" k="name" size="16" fill="#ffffff" stroke="#e8ecd3" stroke-width="0.5" dy="2" />
+  <style-text id="poi-label" k="name" size="16" fill="#000000" stroke="#e8ecd3" stroke-width="0.5" dy="2" dx="2" text-align="center" />
   
 
   <!-- ways -->
@@ -521,25 +521,28 @@
       <m k="highway">
         <!-- highway tunnel casings -->
         <m v="steps|footway|path">
-          <line stroke="#ebf0d8" width="0.6" dasharray="5,5" cap="round" />
+          <line stroke="#d6dac2" dasharray="5,5" width="0.45" cap="round" />
         </m>
         <m v="track|cycleway|bridleway|service">
-          <line stroke="#56452e" dasharray="5,5" cap="round" />
+          <line stipple-stroke="#A7A89B" width="2.6" stroke="#00A7A89B" stipple="2" stipple-width="1.5" cap="round" fix="true" />
         </m>
         <m v="construction">
-          <line stroke="#ebf0d8" width="1.1" dasharray="5,5" cap="round" />
+          <line stroke="#d6dac2" width="1.1" dasharray="5,5" cap="round" />
         </m>
         <m v="road">
           <line stroke="#d6dac2" width="1.3" dasharray="5,5" cap="round" />
         </m>
         <m v="pedestrian|unclassified|residential|living_street|byway">
-          <line stroke="#ebf0d8" width="1.5" dasharray="5,5" cap="round" />
+          <line stroke="#d6dac2" width="1.5" dasharray="5,5" cap="round" />
         </m>
         <m v="tertiary|secondary_link|primary_link|trunk_link|motorway_link|secondary|primary|trunk">
           <line stipple-stroke="#A7A89B" width="2.6" stroke="#00A7A89B" stipple="2" stipple-width="1.5" cap="round" fix="true" />
+          <m zoom-min="11">
+            <text use="street-label-sm" />
+          </m> 
         </m>
 
-        <!-- highway tunnel cores -->
+        <!-- highway tunnel cores 
         <m v="steps|footway|path">
           <line stroke="#d6dac2" width="0.45" cap="round" />
         </m>
@@ -547,7 +550,7 @@
           <line stroke="#d6dac2" width="0.7" cap="round" />
         </m>
         <m v="cycleway|bridleway|service">
-          <line stroke="#56452e" dasharray="5,5" cap="round" />
+          <line stroke="#d6dac2" dasharray="5,5" cap="round" />
         </m>
         <m v="construction">
           <line stroke="#d6dac2" width="1.0" cap="round" />
@@ -561,9 +564,9 @@
         <m v="tertiary|secondary_link|primary_link|trunk_link|motorway_link|secondary|primary|trunk">
           <line stroke="#d6dac2" width="1.5" cap="round" />
           <m zoom-min="11">
-            <text use="street-label" />
-          </m>
-        </m>
+            <text use="street-label-sm" />
+          </m> 
+        </m> -->
       </m>
 
       <!-- railway tunnel -->
@@ -685,7 +688,6 @@
     <m k="highway">
       <m k="tunnel" v="~|no|false">
         <m k="area" v="~|no|false" select="first">
-
           <m v="steps">
             <line stroke="#ebf0d8" width="0.45" dasharray="3,1" cap="round" />
           </m>
@@ -693,11 +695,10 @@
             <line stroke="#ebf0d8" width="1.4" fix="true" cap="round" />
           </m>
           <m v="cycleway">
-            <line stroke="#d3cb98" width="1.0" dasharray="4,4" cap="round" />
+            <line stroke="#ebf0d8" width="1.0" dasharray="4,4" cap="round" />
           </m>
           <m v="bridleway">
-            <line stroke="#d3cb98" width="0.85" />
-            <text use="street-label-sm" />
+            <line stroke="#ebf0d8" width="0.85" />
           </m>
           <m v="path">
             <line stroke="#f3f7e6" width="1.45" fix="true" />
@@ -705,27 +706,21 @@
           <m v="track" select="first">
             <m k="tracktype" v="grade1">
               <line stroke="#f3f7e6" width="0.75" />
-              <text use="street-label-sm" />
             </m>
             <m k="tracktype" v="grade2">
               <line stroke="#f3f7e6" width="0.75" />
-              <text use="street-label-sm" />
             </m>
             <m k="tracktype" v="grade3">
               <line stroke="#f3f7e6" width="0.7" />
-              <text use="street-label-sm" />
             </m>
             <m k="tracktype" v="grade4">
               <line stroke="#f3f7e6" width="0.7" />
-              <text use="street-label-sm" />
             </m>
             <m k="tracktype" v="grade5">
               <line stroke="#f3f7e6" width="0.7" />
-              <text use="street-label-sm" />
             </m>
             <m k="tracktype" v="~|no|false">
               <line stroke="#f3f7e6" width="0.75" />
-              <text use="street-label-sm" />
             </m>
           </m>
 
@@ -745,7 +740,6 @@
               </m>
               <m v="pedestrian">
                 <line stroke="#f3f7e6" width="0.85" />
-                <text use="street-label-sm" />
               </m>
               <m v="unclassified|residential|living_street">
                 <line stroke="#f3f7e6" width="1.25" />
@@ -826,19 +820,6 @@
                   <text use="street-label" />                
                 </m>
               </m>
-              <!-- <m zoom-min="16">
-
-                <line width="1.0" stroke="#ff0000" />
-
-                <m k="access" v="destination">
-                <line src="patterns/access-destination.png" width="1.5" />
-                </m>
-                <m k="access" v="private">
-                <line src="patterns/access-private.png" width="1.5" />
-                </m>
-                </m> -->
-
-              <!-- add outline for all matches -->
               <outline use="casing" />
             </m>
           </m>
@@ -865,9 +846,9 @@
               </m>
               <m v="pedestrian">
                 <line stroke="#ebf0d8" width="0.85" />
-                <m zoom-min="15">
+                <!-- <m zoom-min="15">
                   <text k="name" style="bold" size="10" stroke="#ebf0d8" stroke-width="2.0" />
-                </m>
+                </m> -->
               </m>
               <m v="unclassified|residential|living_street">
                 <line stroke="#d6dac2" width="1.25" />
@@ -1006,7 +987,7 @@
 
     <!-- non-physical routes -->
     <m k="route" v="ferry">
-      <line stroke="#5e9fa3" width="0.3" dasharray="15,10" cap="round" />
+      <line stroke="#316669" width="0.3" dasharray="15,10" cap="round" />
     </m>
 
 
@@ -1129,10 +1110,10 @@
 
     <m k="amenity">
       <m select="first">
-        <m v="atm" zoom-min="16">
+        <m v="atm" k="name" zoom-min="16">
           <symbol src="9_bank" />
         </m>
-        <m v="bank" zoom-min="16">
+        <m v="bank" k="name" zoom-min="16">
           <symbol src="9_bank" />
           <m zoom-min="17">
             <!--<text use="poi-label" />-->
@@ -1143,14 +1124,14 @@
           <symbol src="5_bus" />
         </m>
 
-        <m v="cafe" zoom-min="16">
+        <m v="cafe" k="name" zoom-min="16">
           <symbol src="23_cafe" />
           <m zoom-min="17">
             <!--<text use="poi-label" />-->
           </m>
         </m>
      
-        <m v="cinema" zoom-min="18">
+        <m v="cinema" k="name" zoom-min="18">
           <symbol src="17_movie_theatre" />
           <!--<text use="poi-label" />-->
         </m>
@@ -1159,7 +1140,7 @@
           <symbol src="drinking_water" />
         </m>
         -->
-        <m v="fast_food" zoom-min="16">
+        <m v="fast_food" k="name" zoom-min="16">
           <symbol src="22_restaurant" />
           <m zoom-min="17">
               <!--<text use="poi-label" />-->
@@ -1173,13 +1154,13 @@
           <symbol src="fountain" />
         </m>
         -->
-        <m v="fuel" zoom-min="18">
+        <m v="fuel" k="name" zoom-min="18">
           <symbol src="7_gas_station" />
           <m zoom-min="17">
               <!--<text use="poi-label" />-->
             </m>
         </m>
-        <m v="hospital" zoom-min="16">
+        <m v="hospital" k="name" zoom-min="16">
           <symbol src="13_hospital" />
           <m zoom-min="17">
               <!--<text use="poi-label" />-->
@@ -1190,14 +1171,14 @@
           <symbol src="kindergarten" />
         </m>
         -->
-        <m v="library" zoom-min="18">
+        <m v="library" k="name" zoom-min="18">
           <symbol src="10_library" />
           <!--<text use="poi-label" />-->
         </m>
         <m v="parking" zoom-min="17">
           <symbol src="30_parking" />
         </m>
-        <m v="pharmacy" zoom-min="18">
+        <m v="pharmacy" k="name" zoom-min="18">
           <symbol src="14_pharmacy" />
           <!--<text use="poi-label" />-->
         </m>
@@ -1411,10 +1392,10 @@
       </m>
       <m v="suburb|neighbourhood|quarter|borough" zoom-max="16">
         <m zoom-min="12">
-          <caption k="name" size="16" fill="#427aa9" stroke="#e4e9cc" stroke-width="1" priority="5" />
+          <caption k="name" size="18" fill="#427aa9" stroke="#e4e9cc" stroke-width="1" priority="5" />
         </m>
         <m zoom-min="14">
-          <caption k="name" size="22" fill="#427aa9" stroke="#e4e9cc" stroke-width="1.5" priority="5" />
+          <caption k="name" size="24" fill="#427aa9" stroke="#e4e9cc" stroke-width="1.5" priority="5" />
         </m>
       </m>
 
