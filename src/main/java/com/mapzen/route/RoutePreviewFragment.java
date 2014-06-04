@@ -11,12 +11,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 
 import static com.mapzen.MapController.geoPointToPair;
 import static com.mapzen.MapController.getMapController;
@@ -26,10 +28,12 @@ import static com.mapzen.entity.SimpleFeature.NAME;
 public class RoutePreviewFragment extends BaseFragment implements Router.Callback {
     public static final String TAG = RoutePreviewFragment.class.getSimpleName();
     private SimpleFeature destination;
+    private boolean reverse = false;
 
     @Inject Router router;
     @InjectView(R.id.starting_point) TextView startingPointTextView;
     @InjectView(R.id.destination) TextView destinationTextView;
+    @InjectView(R.id.route_reverse) Button routeReverse;
 
     public static RoutePreviewFragment newInstance(BaseActivity act,
             SimpleFeature destination) {
@@ -58,9 +62,25 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.route_preview, container, false);
         ButterKnife.inject(this, view);
-        startingPointTextView.setText("Current Location");
-        destinationTextView.setText(destination.getProperty(NAME));
+        setOriginAndDestination();
         return view;
+    }
+
+    private void setOriginAndDestination() {
+        if (!reverse) {
+            startingPointTextView.setText("Current Location");
+            destinationTextView.setText(destination.getProperty(NAME));
+        } else {
+            startingPointTextView.setText(destination.getProperty(NAME));
+            destinationTextView.setText("Current Location");
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @OnClick(R.id.route_reverse) public void reverse() {
+        reverse = !reverse;
+        setOriginAndDestination();
+        createRouteToDestination();
     }
 
     public void createRouteToDestination() {
@@ -68,18 +88,31 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
         mapFragment.updateMap();
         act.showProgressDialog();
         router.clearLocations()
-                .setLocation(locationToPair(getMapController().getLocation()))
-                .setLocation(geoPointToPair(destination.getGeoPoint()))
-                .setZoomLevel(getMapController().getZoomLevel())
+                .setLocation(getOriginPoint())
+                .setLocation(getDestinationPoint())
+                .setZoomLevel(getRouteZoomLevel())
                 .setDriving()
                 .setCallback(this)
                 .fetch();
     }
 
+    private double getRouteZoomLevel() {
+        return getMapController().getZoomLevel();
+    }
+
+    private double[] getDestinationPoint() {
+        return reverse ? locationToPair(getMapController().getLocation()) :
+            geoPointToPair(destination.getGeoPoint());
+    }
+
+    private double[] getOriginPoint() {
+        return !reverse ? locationToPair(getMapController().getLocation()) :
+            geoPointToPair(destination.getGeoPoint());
+    }
+
     public void setDestination(SimpleFeature destination) {
         this.destination = destination;
     }
-
 
     @Override
     public void success(Route route) {

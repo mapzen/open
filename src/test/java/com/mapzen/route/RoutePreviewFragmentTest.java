@@ -1,5 +1,6 @@
 package com.mapzen.route;
 
+import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
 import com.mapzen.entity.SimpleFeature;
@@ -21,10 +22,13 @@ import org.robolectric.util.FragmentTestUtil;
 
 import android.widget.TextView;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import static com.mapzen.entity.SimpleFeature.NAME;
 import static com.mapzen.support.TestHelper.getFixture;
+import static com.mapzen.support.TestHelper.getTestLocation;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initBaseActivity;
 import static org.fest.assertions.api.ANDROID.assertThat;
@@ -39,7 +43,7 @@ public class RoutePreviewFragmentTest {
     @Inject Router router;
     @Captor
     @SuppressWarnings("unused")
-    ArgumentCaptor<Router.Callback> callback;
+    ArgumentCaptor<double[]> location;
 
     @Before
     public void setup() throws Exception {
@@ -78,16 +82,14 @@ public class RoutePreviewFragmentTest {
     @Test
     public void setRouteTo_successShouldDismissLoadingDialogUpon() throws Exception {
         fragment.createRouteToDestination();
-        Mockito.verify(router).setCallback(callback.capture());
-        callback.getValue().success(new Route(getFixture("around_the_block")));
+        fragment.success(new Route(getFixture("around_the_block")));
         assertThat(activity.getProgressDialogFragment()).isNotAdded();
     }
 
     @Test
     public void setRouteTo_failureShouldDismissLoadingDialogUpon() throws Exception {
         fragment.createRouteToDestination();
-        Mockito.verify(router).setCallback(callback.capture());
-        callback.getValue().failure(500);
+        fragment.failure(500);
         assertThat(activity.getProgressDialogFragment()).isNotAdded();
     }
 
@@ -106,8 +108,7 @@ public class RoutePreviewFragmentTest {
     public void onStart_shouldHaveCurrentLocation() throws Exception {
         TextView textView = (TextView) fragment.getView().findViewById(R.id.starting_point);
         fragment.createRouteToDestination();
-        Mockito.verify(router).setCallback(callback.capture());
-        callback.getValue().success(new Route(getFixture("around_the_block")));
+        fragment.success(new Route(getFixture("around_the_block")));
         assertThat(textView).isNotNull();
         assertThat(textView).hasText("Current Location");
     }
@@ -117,9 +118,41 @@ public class RoutePreviewFragmentTest {
         SimpleFeature feature = getTestSimpleFeature();
         TextView textView = (TextView) fragment.getView().findViewById(R.id.destination);
         fragment.createRouteToDestination();
-        Mockito.verify(router).setCallback(callback.capture());
-        callback.getValue().success(new Route(getFixture("around_the_block")));
+        fragment.success(new Route(getFixture("around_the_block")));
         assertThat(textView).isNotNull();
         assertThat(textView).hasText(feature.getProperty(NAME));
+    }
+
+    @Test
+    public void reverse_shouldSwapOriginalLocationAndDestination() throws Exception {
+        TextView startingPoint = (TextView) fragment.getView().findViewById(R.id.starting_point);
+        TextView destination = (TextView) fragment.getView().findViewById(R.id.destination);
+        SimpleFeature feature = getTestSimpleFeature();
+        fragment.createRouteToDestination();
+        fragment.success(new Route(getFixture("around_the_block")));
+        fragment.reverse();
+        fragment.success(new Route(getFixture("around_the_block")));
+        assertThat(destination).hasText("Current Location");
+        assertThat(startingPoint).hasText(feature.getProperty(NAME));
+    }
+
+    @Test
+    public void createRouteToDestination_shouldGetCurrentLocationFirst() throws Exception {
+        MapController.getMapController().setLocation(getTestLocation(22.22, 44.44));
+        fragment.createRouteToDestination();
+        Mockito.verify(router, Mockito.times(2)).setLocation(location.capture());
+        List<double[]> values = location.getAllValues();
+        assertThat(values.get(0)).isEqualTo(new double[] {22.22, 44.44});
+        assertThat(values.get(1)).isEqualTo(new double[] {1.0, 1.0});
+    }
+
+    @Test
+    public void createRouteToDestination_shouldGetFeatureDestinationFirst() throws Exception {
+        MapController.getMapController().setLocation(getTestLocation(22.22, 44.44));
+        fragment.reverse();
+        Mockito.verify(router, Mockito.times(2)).setLocation(location.capture());
+        List<double[]> values = location.getAllValues();
+        assertThat(values.get(0)).isEqualTo(new double[] {1.0, 1.0});
+        assertThat(values.get(1)).isEqualTo(new double[] {22.22, 44.44});
     }
 }
