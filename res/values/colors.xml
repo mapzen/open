@@ -5,4 +5,9 @@
     <color name="light_gray">#ddd</color>
     <color name="dark_gray">#333</color>
     <color name="destination_green">#68a547</color>
+    <color name="teal_background">#6da1a5</color>
+    <color name="white">#fff</color>
+    <color name="button_red">#d46a5f</color>
+    <color name="button_dark_blue">#345557</color>
+
 </resources>

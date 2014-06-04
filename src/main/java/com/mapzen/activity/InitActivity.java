@@ -46,7 +46,8 @@ public class InitActivity extends Activity {
         if(app.isLoggedIn()) {
             Intent baseActivity = new Intent(this, BaseActivity.class);
             startActivity(baseActivity);
-            finish();
+            this.finish();
+
         }
         else {
             Token userAuthenticationToken;
@@ -55,6 +56,9 @@ public class InitActivity extends Activity {
                 if (token[0] != null) {
                     userAuthenticationToken = new Token(token[0], token[1]);
                     app.setAccessToken(userAuthenticationToken);
+                    Intent baseActivity = new Intent(this, BaseActivity.class);
+                    startActivity(baseActivity);
+                    this.finish();
                 }
             } catch (Exception e) {
 

@@ -4,7 +4,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+              android:layout_height="wrap_content"
+              android:background="@color/teal_background">
 <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,17 +17,17 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="60dp"
             android:layout_gravity="center"
-            android:src="@drawable/mapzen_logo"
+            android:src="@drawable/ic_mapzen_logo_white"
             android:layout_alignParentTop="true" />
     <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Mapzen"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:fontFamily="sans-serif-thin"
+            android:textSize="16pt"
             android:text="The best open maps and services for everyone to use."/>
 
 </LinearLayout>
@@ -44,6 +45,8 @@
             android:layout_gravity="center"
             android:layout_marginBottom="10dp"
             android:text="@string/osm_init_sign_up"
+            android:fontFamily="sans-serif"
+            android:background="@color/button_red"
             android:layout_alignParentBottom="true"/>
     <Button
             android:id="@+id/log_in_button"
@@ -52,6 +55,8 @@
             android:layout_gravity="center"
             android:layout_marginBottom="80dp"
             android:text="@string/osm_init_login"
+            android:fontFamily="sans-serif"
+            android:background="@color/button_dark_blue"
             android:layout_alignParentBottom="true"/>
     </LinearLayout>
 
