@@ -27,10 +27,6 @@
             android:label="@string/application_name"
             android:screenOrientation="portrait">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <data android:scheme="geo" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -44,6 +40,12 @@
                 <action android:name="android.intent.action.VIEW" />
                 <data android:scheme="https" android:host="maps.google.com" />
                 <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activity.InitActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <service android:name="com.mapzen.core.DataUploadService"
