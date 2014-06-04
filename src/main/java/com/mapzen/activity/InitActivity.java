@@ -21,16 +21,47 @@ public class InitActivity extends Activity {
     @InjectView(R.id.log_in_button) Button logIn;
 
     MapzenApplication app;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.init);
+
         View rootView = getWindow().getDecorView().getRootView();
         ButterKnife.inject(this, rootView);
         app = (MapzenApplication) getApplication();
         app.onCreate();
         getActionBar().hide();
+
+        if(app.isLoggedIn()) {
+            Intent baseActivity = new Intent(this, BaseActivity.class);
+            startActivity(baseActivity);
+            finish();
+        }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(app.isLoggedIn()) {
+            Intent baseActivity = new Intent(this, BaseActivity.class);
+            startActivity(baseActivity);
+            finish();
+        }
+        else {
+            Token userAuthenticationToken;
+            try {
+                String[] token = getVerifier();
+                if (token[0] != null) {
+                    userAuthenticationToken = new Token(token[0], token[1]);
+                    app.setAccessToken(userAuthenticationToken);
+                }
+            } catch (Exception e) {
+
+            }
+        }
+    }
+
 
     @OnClick(R.id.sign_up_button)
     @SuppressWarnings("unused")
@@ -64,8 +95,16 @@ public class InitActivity extends Activity {
                                Uri.parse(authenticationUrl)));
             }
         }).execute();
-//        Toast.makeText(getApplicationContext(), rx, Toast.LENGTH_LONG);
-        //startActivity(new Intent("android.intent.action.VIEW",
-         //       Uri.parse(requestToken.toString())));
+    }
+
+    private String[] getVerifier() {
+        // extract the token if it exists
+        Uri uri = this.getIntent().getData();
+        if (uri == null) {
+            return null;
+        }
+        String token = uri.getQueryParameter("oauth_token");
+        String verifier = uri.getQueryParameter("oauth_verifier");
+        return new String[] { token, verifier };
     }
 }

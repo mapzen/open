@@ -63,6 +63,11 @@ public class MapzenApplication extends Application {
         return accessToken;
     }
 
+    public boolean isLoggedIn() {
+        Token accessToken = getAccessToken();
+        return (accessToken != null) ? true : false;
+    }
+
     public OAuthService getOsmOauthService() {
         return osmOauthService;
     }

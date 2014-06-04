@@ -207,6 +207,8 @@ public class BaseActivity extends MapActivity {
             editor.remove("token");
             editor.commit();
             toggleOSMLogin();
+            startActivity(new Intent(this, InitActivity.class));
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
