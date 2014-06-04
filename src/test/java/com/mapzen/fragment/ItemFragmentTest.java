@@ -6,11 +6,11 @@ import android.location.LocationManager;
 import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
-import com.mapzen.activity.BaseActivity;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
 import com.mapzen.route.RoutePreviewFragment;
 import com.mapzen.support.MapzenTestRunner;
+import com.mapzen.support.TestBaseActivity;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +29,6 @@ import android.location.Location;
 import android.text.TextUtils;
 
 import static android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS;
-import static com.mapzen.osrm.Router.getRouter;
 import javax.inject.Inject;
 
 import static com.mapzen.support.TestHelper.getFixture;
@@ -122,8 +121,6 @@ public class ItemFragmentTest {
 
     @Test
     public void shouldDisplayGPSPromptOnRoute() throws Exception {
-        Router router = Mockito.spy(getRouter());
-        RouteFragment.setRouter(router);
         ShadowLocationManager manager = shadowOf(act.getLocationClient().getLocationManager());
         manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
         itemFragment.startButton.performClick();
@@ -132,8 +129,6 @@ public class ItemFragmentTest {
 
     @Test
     public void shouldNotDisplayGPSPromptOnRoute() throws Exception {
-        Router router = Mockito.spy(getRouter());
-        RouteFragment.setRouter(router);
         ShadowLocationManager manager = shadowOf(act.getLocationClient().getLocationManager());
         manager.setProviderEnabled(LocationManager.GPS_PROVIDER, true);
         itemFragment.startButton.performClick();
@@ -142,8 +137,6 @@ public class ItemFragmentTest {
 
     @Test
      public void shouldDismissGPSPromptOnNegativeButton() throws Exception {
-        Router router = Mockito.spy(getRouter());
-        RouteFragment.setRouter(router);
         ShadowLocationManager manager = shadowOf(act.getLocationClient().getLocationManager());
         manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
         itemFragment.startButton.performClick();
@@ -155,8 +148,6 @@ public class ItemFragmentTest {
 
     @Test
     public void shouldOpenGPSSettingsOnPositiveButtonClick() throws Exception {
-        Router router = Mockito.spy(getRouter());
-        RouteFragment.setRouter(router);
         ShadowLocationManager manager = shadowOf(act.getLocationClient().getLocationManager());
         manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
         itemFragment.startButton.performClick();
@@ -168,8 +159,6 @@ public class ItemFragmentTest {
 
     @Test
     public void shouldDisplayGPSPromptTextCorrectly() throws Exception {
-        Router router = Mockito.spy(getRouter());
-        RouteFragment.setRouter(router);
         ShadowLocationManager manager = shadowOf(act.getLocationClient().getLocationManager());
         manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
         itemFragment.startButton.performClick();
