@@ -742,7 +742,8 @@ public class RouteFragmentTest {
         ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
         shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
         fragment.onPageSelected(13);
-        assertThat(route.getRouteInstructions().get(13).getFullInstruction()).contains("Continue on  for");
+        assertThat(route.getRouteInstructions().get(13).getFullInstruction())
+                .contains("Continue on  for");
         assertThat(shadowTextToSpeech.getLastSpokenText()).doesNotContain("Continue on  for");
     }
 
