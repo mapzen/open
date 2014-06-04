@@ -1,7 +1,7 @@
 package com.mapzen.route;
 
+import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
-import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
@@ -19,8 +19,11 @@ import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.FragmentTestUtil;
 
+import android.widget.TextView;
+
 import javax.inject.Inject;
 
+import static com.mapzen.entity.SimpleFeature.NAME;
 import static com.mapzen.support.TestHelper.getFixture;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initBaseActivity;
@@ -43,8 +46,9 @@ public class RoutePreviewFragmentTest {
         ((TestMapzenApplication) Robolectric.application).inject(this);
         MockitoAnnotations.initMocks(this);
         activity = initBaseActivity();
-        fragment = RoutePreviewFragment.newInstance(activity);
         destination = getTestSimpleFeature();
+        fragment = RoutePreviewFragment.newInstance(activity, destination);
+        FragmentTestUtil.startFragment(fragment);
     }
 
     @Test
@@ -54,26 +58,26 @@ public class RoutePreviewFragmentTest {
 
     @Test
     public void newInstance_shouldReturnInstanceOfRoutePreviewFragment() throws Exception {
-        assertThat(RoutePreviewFragment.newInstance(activity)).
+        assertThat(RoutePreviewFragment.newInstance(activity, destination)).
                 isInstanceOf(RoutePreviewFragment.class);
     }
 
     @Test
     public void setRouteTo_shouldClearMap() throws Exception {
         fragment.getMapFragment().addPoi(getTestSimpleFeature());
-        fragment.createRouteTo(getTestSimpleFeature());
+        fragment.createRouteToDestination();
         assertThat(fragment.getMapFragment().getPoiLayer().size()).isEqualTo(0);
     }
 
     @Test
     public void setRouteTo_shouldShowLoadingDialog() throws Exception {
-        fragment.createRouteTo(getTestSimpleFeature());
+        fragment.createRouteToDestination();
         assertThat(activity.getProgressDialogFragment()).isAdded();
     }
 
     @Test
     public void setRouteTo_successShouldDismissLoadingDialogUpon() throws Exception {
-        fragment.createRouteTo(getTestSimpleFeature());
+        fragment.createRouteToDestination();
         Mockito.verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(getFixture("around_the_block")));
         assertThat(activity.getProgressDialogFragment()).isNotAdded();
@@ -81,7 +85,7 @@ public class RoutePreviewFragmentTest {
 
     @Test
     public void setRouteTo_failureShouldDismissLoadingDialogUpon() throws Exception {
-        fragment.createRouteTo(getTestSimpleFeature());
+        fragment.createRouteToDestination();
         Mockito.verify(router).setCallback(callback.capture());
         callback.getValue().failure(500);
         assertThat(activity.getProgressDialogFragment()).isNotAdded();
@@ -89,14 +93,33 @@ public class RoutePreviewFragmentTest {
 
     @Test
     public void onStart_shouldHideActionbar() throws Exception {
-        FragmentTestUtil.startFragment(fragment);
         assertThat(activity.getActionBar()).isNotShowing();
     }
 
     @Test
     public void onDetach_shouldShowActionbar() throws Exception {
-        FragmentTestUtil.startFragment(fragment);
         fragment.onDetach();
         assertThat(activity.getActionBar()).isShowing();
+    }
+
+    @Test
+    public void onStart_shouldHaveCurrentLocation() throws Exception {
+        TextView textView = (TextView) fragment.getView().findViewById(R.id.starting_point);
+        fragment.createRouteToDestination();
+        Mockito.verify(router).setCallback(callback.capture());
+        callback.getValue().success(new Route(getFixture("around_the_block")));
+        assertThat(textView).isNotNull();
+        assertThat(textView).hasText("Current Location");
+    }
+
+    @Test
+    public void onStart_shouldHaveDestinationLocation() throws Exception {
+        SimpleFeature feature = getTestSimpleFeature();
+        TextView textView = (TextView) fragment.getView().findViewById(R.id.destination);
+        fragment.createRouteToDestination();
+        Mockito.verify(router).setCallback(callback.capture());
+        callback.getValue().success(new Route(getFixture("around_the_block")));
+        assertThat(textView).isNotNull();
+        assertThat(textView).hasText(feature.getProperty(NAME));
     }
 }

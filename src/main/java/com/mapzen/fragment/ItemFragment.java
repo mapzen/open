@@ -41,8 +41,8 @@ public class ItemFragment extends BaseFragment {
     @OnClick(R.id.start)
     public void start() {
         final RoutePreviewFragment routePreviewFragment =
-                RoutePreviewFragment.newInstance(act);
-        routePreviewFragment.createRouteTo(simpleFeature);
+                RoutePreviewFragment.newInstance(act, simpleFeature);
+        routePreviewFragment.createRouteToDestination();
         act.promptForGPSIfNotEnabled();
     }
 
