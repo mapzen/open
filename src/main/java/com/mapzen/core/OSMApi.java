@@ -3,6 +3,7 @@ package com.mapzen.core;
 import org.scribe.builder.api.DefaultApi10a;
 import org.scribe.model.Token;
 
+
 public class OSMApi extends DefaultApi10a {
 
     public static final String BASE_URL = "http://www.openstreetmap.org";
