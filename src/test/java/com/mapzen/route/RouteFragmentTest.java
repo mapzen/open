@@ -790,6 +790,20 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void textToSpeechRules_shouldIgnoreContinueOn() throws Exception {
+        fragment.setRoute(new Route(MOCK_NY_TO_VT));
+        FragmentTestUtil.startFragment(fragment);
+        Route route = fragment.getRoute();
+
+        ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
+        shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
+        fragment.onPageSelected(13);
+        assertThat(route.getRouteInstructions().get(13).getFullInstruction())
+                .contains("Continue on  for");
+        assertThat(shadowTextToSpeech.getLastSpokenText()).doesNotContain("Continue on  for");
+    }
+
+    @Test
     public void textToSpeechRules_shouldReplaceMiWithMiles() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction instruction = getTestInstruction(0, 0);

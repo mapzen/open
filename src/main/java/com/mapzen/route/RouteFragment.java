@@ -150,6 +150,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private void initSpeakerbox() {
         speakerbox = new Speakerbox(getActivity());
         addRemixPatterns();
+        addIgnoredPhrases();
         checkIfVoiceNavigationIsEnabled();
         playFirstInstruction();
     }
@@ -158,6 +159,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         speakerbox.remix(" mi", " miles");
         speakerbox.remix(" 1 miles", " 1 mile");
         speakerbox.remix(" ft", " feet");
+    }
+
+    private void addIgnoredPhrases() {
+        speakerbox.dontPlayIfContains("Continue on  for");
     }
 
     private void checkIfVoiceNavigationIsEnabled() {
@@ -546,6 +551,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
         previousPosition = i;
         getMapController().setMapPerspectiveForInstruction(instructions.get(i));
+        speakerbox.stop();
         speakerbox.play(instructions.get(i).getFullInstruction());
     }
 
