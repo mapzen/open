@@ -1,8 +1,11 @@
 package com.mapzen.fragment;
 
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.location.LocationManager;
 import com.mapzen.MapController;
 import com.mapzen.R;
-import com.mapzen.activity.BaseActivity;
+import com.mapzen.support.TestBaseActivity;
 import com.mapzen.osrm.Router;
 import com.mapzen.osrm.Route;
 import com.mapzen.route.RouteFragment;
@@ -16,10 +19,13 @@ import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowAlertDialog;
+import org.robolectric.shadows.ShadowLocationManager;
 
 import android.location.Location;
 import android.text.TextUtils;
 
+import static android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS;
 import static com.mapzen.osrm.Router.getRouter;
 import static com.mapzen.support.TestHelper.getFixture;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
@@ -37,7 +43,7 @@ public class ItemFragmentTest {
     @SuppressWarnings("unused")
     ArgumentCaptor<Router.Callback> callback;
     private ItemFragment itemFragment;
-    private BaseActivity act;
+    private TestBaseActivity act;
 
     @Before
     public void setUp() throws Exception {
@@ -99,5 +105,65 @@ public class ItemFragmentTest {
         Mockito.verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(getFixture("around_the_block")));
         assertThat(act.getSupportFragmentManager()).hasFragmentWithTag(RouteFragment.TAG);
+    }
+
+    @Test
+    public void shouldDisplayGPSPromptOnRoute() throws Exception {
+        Router router = Mockito.spy(getRouter());
+        RouteFragment.setRouter(router);
+        ShadowLocationManager manager = shadowOf(act.getLocationClient().getLocationManager());
+        manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
+        itemFragment.startButton.performClick();
+        assertThat(act.getSupportFragmentManager()).hasFragmentWithTag("gps_dialog");
+    }
+
+    @Test
+    public void shouldNotDisplayGPSPromptOnRoute() throws Exception {
+        Router router = Mockito.spy(getRouter());
+        RouteFragment.setRouter(router);
+        ShadowLocationManager manager = shadowOf(act.getLocationClient().getLocationManager());
+        manager.setProviderEnabled(LocationManager.GPS_PROVIDER, true);
+        itemFragment.startButton.performClick();
+        assertThat(act.getSupportFragmentManager()).doesNotHaveFragmentWithTag("gps_dialog");
+    }
+
+    @Test
+     public void shouldDismissGPSPromptOnNegativeButton() throws Exception {
+        Router router = Mockito.spy(getRouter());
+        RouteFragment.setRouter(router);
+        ShadowLocationManager manager = shadowOf(act.getLocationClient().getLocationManager());
+        manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
+        itemFragment.startButton.performClick();
+        AlertDialog gpsPrompt = ShadowAlertDialog.getLatestAlertDialog();
+        assertThat(act.getSupportFragmentManager()).hasFragmentWithTag("gps_dialog");
+        gpsPrompt.getButton(AlertDialog.BUTTON_NEGATIVE).performClick();
+        assertThat(act.getSupportFragmentManager()).doesNotHaveFragmentWithTag("gps_dialog");
+    }
+
+    @Test
+    public void shouldOpenGPSSettingsOnPositiveButtonClick() throws Exception {
+        Router router = Mockito.spy(getRouter());
+        RouteFragment.setRouter(router);
+        ShadowLocationManager manager = shadowOf(act.getLocationClient().getLocationManager());
+        manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
+        itemFragment.startButton.performClick();
+        AlertDialog gpsPrompt = ShadowAlertDialog.getLatestAlertDialog();
+        gpsPrompt.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
+        Intent intent = shadowOf(act).peekNextStartedActivityForResult().intent;
+        assertThat(intent).isEqualTo(new Intent(ACTION_LOCATION_SOURCE_SETTINGS));
+    }
+
+    @Test
+    public void shouldDisplayGPSPromptTextCorrectly() throws Exception {
+        Router router = Mockito.spy(getRouter());
+        RouteFragment.setRouter(router);
+        ShadowLocationManager manager = shadowOf(act.getLocationClient().getLocationManager());
+        manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
+        itemFragment.startButton.performClick();
+        AlertDialog gpsPrompt = ShadowAlertDialog.getLatestAlertDialog();
+        ShadowAlertDialog shadowGPSPrompt = shadowOf(gpsPrompt);
+        assertThat(shadowGPSPrompt.getTitle()).isEqualTo(act.getString(R.string.gps_dialog_title));
+        assertThat(shadowGPSPrompt.getMessage()).isEqualTo(
+                act.getString(R.string.gps_dialog_message));
     }
 }

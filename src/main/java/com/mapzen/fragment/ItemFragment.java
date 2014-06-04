@@ -44,6 +44,7 @@ public class ItemFragment extends BaseFragment {
     public void start() {
         final RouteFragment routeFragment = RouteFragment.newInstance(act, simpleFeature);
         routeFragment.createRouteTo(getMapController().getLocation());
+        act.promptForGPSIfNotEnabled();
     }
 
     public SimpleFeature getSimpleFeature() {

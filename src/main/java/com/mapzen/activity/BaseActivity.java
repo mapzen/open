@@ -19,6 +19,7 @@ import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.DebugDataSubmitter;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenProgressDialogFragment;
+import com.mapzen.util.MapzenGPSPromptDialogFragment;
 
 import com.bugsense.trace.BugSenseHandler;
 import com.squareup.okhttp.OkHttpClient;
@@ -70,13 +71,14 @@ public class BaseActivity extends MapActivity {
             DEBUG_DATA_ENDPOINT = "http://on-the-road.dev.mapzen.com/upload";
     protected DatabaseHelper dbHelper;
     protected DebugDataSubmitter debugDataSubmitter;
-    LocationClient locationHelper;
+    protected LocationClient locationClient;
     private Menu activityMenu;
     private AutoCompleteAdapter autoCompleteAdapter;
     private MenuItem menuItem;
     private MapzenApplication app;
     private MapFragment mapFragment;
     private MapzenProgressDialogFragment progressDialogFragment;
+    private MapzenGPSPromptDialogFragment gpsPromptDialogFragment;
     private boolean updateMapLocation = true;
     private Token requestToken = null;
     private Verifier verifier = null;
@@ -96,7 +98,7 @@ public class BaseActivity extends MapActivity {
         @Override
         public void onConnected(Bundle bundle) {
             getMapController().setZoomLevel(MapController.DEFAULT_ZOOMLEVEL);
-            final Location location = locationHelper.getLastLocation();
+            final Location location = locationClient.getLastLocation();
             Logger.d("Last known location: " + location);
 
             if (location != null) {
@@ -109,7 +111,7 @@ public class BaseActivity extends MapActivity {
 
             LocationRequest locationRequest = LocationRequest.create();
             locationRequest.setInterval(LOCATION_INTERVAL);
-            locationHelper.requestLocationUpdates(locationRequest, locationListener);
+            locationClient.requestLocationUpdates(locationRequest, locationListener);
         }
 
         @Override
@@ -143,6 +145,7 @@ public class BaseActivity extends MapActivity {
         setContentView(R.layout.base);
         initMapFragment();
         progressDialogFragment = new MapzenProgressDialogFragment();
+        gpsPromptDialogFragment = new MapzenGPSPromptDialogFragment();
         initMapController();
         initLocationClient();
         initDebugView();
@@ -153,14 +156,14 @@ public class BaseActivity extends MapActivity {
     @Override
     public void onPause() {
         super.onPause();
-        locationHelper.disconnect();
+        locationClient.disconnect();
         persistSavedSearches();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        locationHelper.connect();
+        locationClient.connect();
     }
 
     public SQLiteDatabase getDb() {
@@ -218,6 +221,18 @@ public class BaseActivity extends MapActivity {
         }
     }
 
+    public void showGPSPromptDialog() {
+        if (!gpsPromptDialogFragment.isAdded()) {
+            gpsPromptDialogFragment.show(getSupportFragmentManager(), "gps_dialog");
+        }
+    }
+
+    public void promptForGPSIfNotEnabled() {
+        if (!locationClient.isGPSEnabled()) {
+            showGPSPromptDialog();
+        }
+    }
+
     public void dismissProgressDialog() {
         progressDialogFragment.dismiss();
     }
@@ -227,7 +242,7 @@ public class BaseActivity extends MapActivity {
     }
 
     private void initLocationClient() {
-        locationHelper = new LocationClient(this, connectionCallback);
+        locationClient = new LocationClient(this, connectionCallback);
     }
 
     private void initMapFragment() {
