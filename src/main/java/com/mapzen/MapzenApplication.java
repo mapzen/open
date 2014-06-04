@@ -1,5 +1,7 @@
 package com.mapzen;
 
+import com.mapzen.core.AndroidModule;
+import com.mapzen.core.AppModule;
 import com.mapzen.core.OSMApi;
 import com.mapzen.util.DatabaseHelper;
 
@@ -12,9 +14,27 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.Arrays;
+import java.util.List;
+
+import dagger.ObjectGraph;
+
 import static android.provider.BaseColumns._ID;
 
 public class MapzenApplication extends Application {
+    private ObjectGraph graph;
+
+    protected List<Object> getModules() {
+        return Arrays.asList(
+                new AndroidModule(this),
+                new AppModule()
+        );
+    }
+
+    public void inject(Object object) {
+        graph.inject(object);
+    }
+
     public static final String PELIAS_BLOB = "text";
     private final String[] columns = {
             _ID, PELIAS_BLOB
@@ -27,6 +47,7 @@ public class MapzenApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        graph = ObjectGraph.create(getModules().toArray());
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
         db = databaseHelper.getWritableDatabase();
         db.enableWriteAheadLogging();

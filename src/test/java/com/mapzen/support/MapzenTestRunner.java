@@ -33,7 +33,6 @@ import java.util.List;
  * </ol>
  */
 public class MapzenTestRunner extends RobolectricTestRunner {
-
     /**
      * List of fully qualified class names backed by custom shadows in the test harness.
      */

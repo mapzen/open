@@ -60,12 +60,15 @@ import java.util.Calendar;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import javax.inject.Inject;
+
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.android.lost.LocationClient.ConnectionCallbacks;
 import static com.mapzen.search.SavedSearch.getSavedSearch;
 
 public class BaseActivity extends MapActivity {
+    @Inject MapzenProgressDialogFragment progressDialogFragment;
     public static final int LOCATION_INTERVAL = 1000;
     public static final String COM_MAPZEN_UPDATES_LOCATION = "com.mapzen.updates.location";
     public static final String
@@ -78,7 +81,6 @@ public class BaseActivity extends MapActivity {
     private MenuItem menuItem;
     private MapzenApplication app;
     private MapFragment mapFragment;
-    private MapzenProgressDialogFragment progressDialogFragment;
     private MapzenGPSPromptDialogFragment gpsPromptDialogFragment;
     private boolean updateMapLocation = true;
     private Token requestToken = null;
@@ -140,12 +142,12 @@ public class BaseActivity extends MapActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        app = (MapzenApplication) getApplication();
+        app.inject(this);
         BugSenseHandler.initAndStartSession(this, "ebfa8fd7");
         BugSenseHandler.addCrashExtraData("OEM", Build.MANUFACTURER);
-        app = (MapzenApplication) getApplication();
         setContentView(R.layout.base);
         initMapFragment();
-        progressDialogFragment = new MapzenProgressDialogFragment();
         gpsPromptDialogFragment = new MapzenGPSPromptDialogFragment();
         initMapController();
         initLocationClient();

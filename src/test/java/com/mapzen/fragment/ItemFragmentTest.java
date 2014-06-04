@@ -5,10 +5,11 @@ import android.content.Intent;
 import android.location.LocationManager;
 import com.mapzen.MapController;
 import com.mapzen.R;
-import com.mapzen.support.TestBaseActivity;
-import com.mapzen.osrm.Router;
+import com.mapzen.TestMapzenApplication;
+import com.mapzen.activity.BaseActivity;
 import com.mapzen.osrm.Route;
-import com.mapzen.route.RouteFragment;
+import com.mapzen.osrm.Router;
+import com.mapzen.route.RoutePreviewFragment;
 import com.mapzen.support.MapzenTestRunner;
 
 import org.junit.Before;
@@ -18,15 +19,19 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowLocationManager;
+import org.robolectric.shadows.ShadowToast;
 
 import android.location.Location;
 import android.text.TextUtils;
 
 import static android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS;
 import static com.mapzen.osrm.Router.getRouter;
+import javax.inject.Inject;
+
 import static com.mapzen.support.TestHelper.getFixture;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initBaseActivity;
@@ -44,9 +49,11 @@ public class ItemFragmentTest {
     ArgumentCaptor<Router.Callback> callback;
     private ItemFragment itemFragment;
     private TestBaseActivity act;
+    @Inject Router router;
 
     @Before
     public void setUp() throws Exception {
+        ((TestMapzenApplication) Robolectric.application).inject(this);
         MockitoAnnotations.initMocks(this);
         act = initBaseActivity();
         initItemFragment();
@@ -88,23 +95,29 @@ public class ItemFragmentTest {
     }
 
     @Test
-    public void shouldNotStartRouteFragment() throws Exception {
-        Router router = Mockito.spy(getRouter());
-        RouteFragment.setRouter(router);
+    public void start_shouldNotStartRoutePreviewFragment() throws Exception {
         itemFragment.startButton.performClick();
         Mockito.verify(router).setCallback(callback.capture());
         callback.getValue().failure(500);
-        assertThat(act.getSupportFragmentManager()).doesNotHaveFragmentWithTag(RouteFragment.TAG);
+        assertThat(act.getSupportFragmentManager()).
+                doesNotHaveFragmentWithTag(RoutePreviewFragment.TAG);
     }
 
     @Test
-    public void shouldStartRouteFragment() throws Exception {
-        Router router = Mockito.spy(getRouter());
-        RouteFragment.setRouter(router);
+    public void start_shouldToastFailure() throws Exception {
+        itemFragment.startButton.performClick();
+        Mockito.verify(router).setCallback(callback.capture());
+        callback.getValue().failure(500);
+        assertThat(ShadowToast.getTextOfLatestToast()).
+                isEqualTo(act.getString(R.string.generic_server_error));
+    }
+
+    @Test
+    public void start_shouldStartRoutePreviewFragment() throws Exception {
         itemFragment.startButton.performClick();
         Mockito.verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(getFixture("around_the_block")));
-        assertThat(act.getSupportFragmentManager()).hasFragmentWithTag(RouteFragment.TAG);
+        assertThat(act.getSupportFragmentManager()).hasFragmentWithTag(RoutePreviewFragment.TAG);
     }
 
     @Test

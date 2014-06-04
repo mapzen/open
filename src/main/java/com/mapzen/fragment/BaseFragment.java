@@ -19,6 +19,10 @@ public abstract class BaseFragment extends Fragment {
         this.app = (MapzenApplication) act.getApplication();
     }
 
+    public void inject() {
+        app.inject(this);
+    }
+
     public void setMapFragment(MapFragment mapFragment) {
         this.mapFragment = mapFragment;
     }

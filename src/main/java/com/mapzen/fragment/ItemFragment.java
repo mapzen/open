@@ -2,7 +2,7 @@ package com.mapzen.fragment;
 
 import com.mapzen.R;
 import com.mapzen.entity.SimpleFeature;
-import com.mapzen.route.RouteFragment;
+import com.mapzen.route.RoutePreviewFragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,8 +13,6 @@ import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-
-import static com.mapzen.MapController.getMapController;
 
 public class ItemFragment extends BaseFragment {
     @InjectView(R.id.title)
@@ -42,8 +40,9 @@ public class ItemFragment extends BaseFragment {
 
     @OnClick(R.id.start)
     public void start() {
-        final RouteFragment routeFragment = RouteFragment.newInstance(act, simpleFeature);
-        routeFragment.createRouteTo(getMapController().getLocation());
+        final RoutePreviewFragment routePreviewFragment =
+                RoutePreviewFragment.newInstance(act);
+        routePreviewFragment.createRouteTo(simpleFeature);
         act.promptForGPSIfNotEnabled();
     }
 
@@ -55,3 +54,4 @@ public class ItemFragment extends BaseFragment {
         this.simpleFeature = simpleFeature;
     }
 }
+
