@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import javax.inject.Inject;
@@ -33,7 +34,7 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
     @Inject Router router;
     @InjectView(R.id.starting_point) TextView startingPointTextView;
     @InjectView(R.id.destination) TextView destinationTextView;
-    @InjectView(R.id.route_reverse) Button routeReverse;
+    @InjectView(R.id.route_reverse) ImageButton routeReverse;
 
     public static RoutePreviewFragment newInstance(BaseActivity act,
             SimpleFeature destination) {
