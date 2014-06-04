@@ -7,6 +7,7 @@ import org.oscim.map.Map;
 import org.oscim.map.TestMap;
 
 import android.app.ActionBar;
+import android.os.Bundle;
 
 import java.util.concurrent.Executor;
 
@@ -20,6 +21,12 @@ public class TestBaseActivity extends BaseActivity {
     @Override
     public ActionBar getActionBar() {
         return actionBar;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        actionBar.show();
     }
 
     @Override

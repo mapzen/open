@@ -7,6 +7,11 @@ import com.mapzen.fragment.BaseFragment;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
 
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import javax.inject.Inject;
 
 import static com.mapzen.MapController.geoPointToPair;
@@ -23,6 +28,25 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
         fragment.setMapFragment(act.getMapFragment());
         fragment.inject();
         return fragment;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        act.hideActionBar();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        act.showActionBar();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.route_preview, container, false);
+        return view;
     }
 
     public void createRouteTo(SimpleFeature destination) {
@@ -43,7 +67,7 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
         if (!isAdded()) {
             act.getSupportFragmentManager().beginTransaction()
                     .addToBackStack(null)
-                    .add(R.id.routes_container, this, TAG)
+                    .add(R.id.routes_preview_container, this, TAG)
                     .commit();
         }
         act.dismissProgressDialog();

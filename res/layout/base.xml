@@ -18,6 +18,11 @@
         android:layout_above="@id/pager_results_container" />
 
     <FrameLayout
+        android:id="@+id/routes_preview_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <FrameLayout
         android:id="@+id/routes_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

@@ -6,6 +6,7 @@ import com.mapzen.entity.SimpleFeature;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
 import com.mapzen.support.MapzenTestRunner;
+import com.mapzen.support.TestBaseActivity;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
+import org.robolectric.util.FragmentTestUtil;
 
 import javax.inject.Inject;
 
@@ -28,7 +30,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class RoutePreviewFragmentTest {
-    BaseActivity activity;
+    TestBaseActivity activity;
     RoutePreviewFragment fragment;
     SimpleFeature destination;
     @Inject Router router;
@@ -85,4 +87,16 @@ public class RoutePreviewFragmentTest {
         assertThat(activity.getProgressDialogFragment()).isNotAdded();
     }
 
+    @Test
+    public void onStart_shouldHideActionbar() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(activity.getActionBar()).isNotShowing();
+    }
+
+    @Test
+    public void onDetach_shouldShowActionbar() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onDetach();
+        assertThat(activity.getActionBar()).isShowing();
+    }
 }

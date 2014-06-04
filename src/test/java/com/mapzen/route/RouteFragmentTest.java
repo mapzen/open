@@ -136,6 +136,7 @@ public class RouteFragmentTest {
 
     @Test
     public void shouldHideActionBar() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
         assertThat(act.getActionBar()).isNotShowing();
     }
 
@@ -563,7 +564,6 @@ public class RouteFragmentTest {
     @Test
     public void onResume_shouldDisableActionbar() throws Exception {
         FragmentTestUtil.startFragment(fragment);
-        act.showActionBar();
         assertThat(act.getActionBar()).isNotShowing();
     }
 
