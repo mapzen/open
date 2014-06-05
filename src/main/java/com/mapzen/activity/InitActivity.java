@@ -23,7 +23,7 @@ public class InitActivity extends Activity {
     @InjectView(R.id.log_in_button) Button logIn;
     MapzenApplication app;
     Handler delayButtonHandler;
-    Animation fadeIn, fadeInSlow;
+    Animation fadeIn, fadeInSlow, fadeOut;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,19 +35,8 @@ public class InitActivity extends Activity {
         if (app.isLoggedIn()) {
             startBaseActivity();
         }
-        fadeIn = AnimationUtils.loadAnimation(this, R.anim.fadein);
-        fadeInSlow = AnimationUtils.loadAnimation(this, R.anim.fadeinslow);
-        delayButtonHandler = new Handler();
-        delayButtonHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                findViewById(R.id.motto).setVisibility(LinearLayout.INVISIBLE);
-                findViewById(R.id.login_explanation).startAnimation(fadeIn);
-                findViewById(R.id.log_in_button).startAnimation(fadeInSlow);
-                findViewById(R.id.sign_up_button).startAnimation(fadeInSlow);
-                findViewById(R.id.login_layout).setVisibility(LinearLayout.VISIBLE);
-            } }
-                , 2000);
+        loadAnimations();
+        animateViewTransitions();
     }
 
     @Override
@@ -109,5 +98,39 @@ public class InitActivity extends Activity {
         String token = uri.getQueryParameter("oauth_token");
         String verifier = uri.getQueryParameter("oauth_verifier");
         return new Token(token, verifier);
+    }
+
+    private void animateViewTransitions() {
+        fadeOutMotto();
+        delayButtonHandler = new Handler();
+        delayButtonHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setMottoInvisible();
+                fadeInLoginView();
+            }
+        }
+                , 2000);
+    }
+
+    private void setMottoInvisible() {
+        findViewById(R.id.motto).setVisibility(LinearLayout.INVISIBLE);
+    }
+
+    private void fadeOutMotto() {
+        findViewById(R.id.motto).startAnimation(fadeOut);
+    }
+
+    private void fadeInLoginView() {
+        findViewById(R.id.login_explanation).startAnimation(fadeIn);
+        findViewById(R.id.log_in_button).startAnimation(fadeInSlow);
+        findViewById(R.id.sign_up_button).startAnimation(fadeInSlow);
+        findViewById(R.id.login_layout).setVisibility(LinearLayout.VISIBLE);
+    }
+
+    private void loadAnimations() {
+        fadeIn = AnimationUtils.loadAnimation(this, R.anim.fadein);
+        fadeInSlow = AnimationUtils.loadAnimation(this, R.anim.fadeinslow);
+        fadeOut = AnimationUtils.loadAnimation(this, R.anim.fadeout);
     }
 }
