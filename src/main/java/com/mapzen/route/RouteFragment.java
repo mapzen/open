@@ -367,21 +367,15 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
         storeLocationInfo(location, correctedLocation);
         manageMap(correctedLocation, location);
-        StringBuilder debugStringBuilder = new StringBuilder();
 
         Instruction closestInstruction = route.getClosestInstruction(correctedLocation);
         int closestDistance =
                 (int) Math.floor(correctedLocation.distanceTo(closestInstruction.getLocation()));
 
-        if (closestInstruction != null) {
-            debugStringBuilder.append("Closest instruction is: " + closestInstruction.getName());
-            debugStringBuilder.append(", distance: " + String.valueOf(closestDistance));
-        }
-
+        final int instructionIndex = instructions.indexOf(closestInstruction);
         if (closestDistance <= getAdvanceRadius()) {
             Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: "
                     + closestInstruction.toString());
-            final int instructionIndex = instructions.indexOf(closestInstruction);
             pager.setCurrentItem(instructionIndex);
             if (!route.getSeenInstructions().contains(closestInstruction)) {
                 route.addSeenInstruction(closestInstruction);
@@ -395,18 +389,14 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             l.setLatitude(instruction.getLocation().getLatitude());
             l.setLongitude(instruction.getLocation().getLongitude());
             final int distance = (int) Math.floor(l.distanceTo(correctedLocation));
-            debugStringBuilder.append("\n");
-            debugStringBuilder.append("seen instruction: " + instruction.getName());
-            debugStringBuilder.append(" distance: " + String.valueOf(distance));
             if (distance >= getAdvanceRadius()) {
                 Logger.logToDatabase(act, ROUTE_TAG, "post language: " +
                         instruction.toString());
-                appendToDebugView("post language for: " + instruction.toString());
                 flipInstructionToAfter(instruction, correctedLocation);
             }
         }
 
-        writeToDebugView(debugStringBuilder.toString());
+        debugView.setClosestInstruction(closestInstruction, closestDistance, instructionIndex);
         logForDebugging(location, correctedLocation);
     }
 
@@ -691,14 +681,5 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (act.isInDebugMode()) {
             debugView.setVisibility(View.VISIBLE);
         }
-    }
-
-    public void writeToDebugView(String msg) {
-        debugView.setText(msg);
-    }
-
-    public void appendToDebugView(String msg) {
-        String fullText = debugView.getText().toString() + "," + msg;
-        debugView.setText(fullText);
     }
 }
