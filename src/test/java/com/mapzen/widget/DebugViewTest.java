@@ -11,24 +11,56 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
 
+import android.location.Location;
 import android.widget.TextView;
 
+import static com.mapzen.helpers.ZoomController.milesPerHourToMetersPerSecond;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.robolectric.Robolectric.application;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class DebugViewTest {
-    DebugView debugView;
+    private DebugView debugView;
 
     @Before
     public void setUp() throws Exception {
         debugView = new DebugView(application);
+
+        Location location = TestHelper.getTestLocation(40.660713, -73.989341);
+        location.setBearing(128);
+        location.setSpeed(milesPerHourToMetersPerSecond(30));
+        debugView.setCurrentLocation(location);
+
+        Route route = new Route(TestHelper.MOCK_AROUND_THE_BLOCK);
+        Instruction instruction = route.getRouteInstructions().get(0);
+        debugView.setClosestInstruction(instruction, 30, 0);
     }
 
     @Test
     public void shouldNotBeNull() throws Exception {
         assertThat(debugView).isNotNull();
+    }
+
+    @Test
+    public void currentLocation_shouldHaveTitle() throws Exception {
+        assertThat((TextView) debugView.findViewById(R.id.current_location))
+                .hasText("Current Location");
+    }
+
+    @Test
+    public void currentLocation_shouldHaveCoordinates() throws Exception {
+        assertThat(debugView.currentCoordinates).hasText("40.660713, -73.989341");
+    }
+
+    @Test
+    public void currentLocation_shouldHaveBearing() throws Exception {
+        assertThat(debugView.currentBearing).hasText("128°");
+    }
+
+    @Test
+    public void currentLocation_shouldHaveSpeed() throws Exception {
+        assertThat(debugView.currentSpeed).hasText("30 mph");
     }
 
     @Test
@@ -39,57 +71,36 @@ public class DebugViewTest {
 
     @Test
     public void closestInstruction_shouldHaveIndex() throws Exception {
-        Route route = new Route(TestHelper.MOCK_AROUND_THE_BLOCK);
-        Instruction instruction = route.getRouteInstructions().get(0);
-        debugView.setClosestInstruction(instruction, 30, 0);
-        assertThat(debugView.position).hasText("position 0");
+        assertThat(debugView.instructionIndex).hasText("index 0");
     }
 
     @Test
     public void closestInstruction_shouldHaveTurn() throws Exception {
-        Route route = new Route(TestHelper.MOCK_AROUND_THE_BLOCK);
-        Instruction instruction = route.getRouteInstructions().get(0);
-        debugView.setClosestInstruction(instruction, 30, 0);
-        assertThat(debugView.turn).hasText("Head on");
+        assertThat(debugView.instructionTurn).hasText("Head on");
     }
 
     @Test
     public void closestInstruction_shouldHaveName() throws Exception {
-        Route route = new Route(TestHelper.MOCK_AROUND_THE_BLOCK);
-        Instruction instruction = route.getRouteInstructions().get(0);
-        debugView.setClosestInstruction(instruction, 30, 0);
-        assertThat(debugView.name).hasText("19th Street");
+        assertThat(debugView.instructionName).hasText("19th Street");
     }
 
     @Test
     public void closestInstruction_shouldHaveTotalDistance() throws Exception {
-        Route route = new Route(TestHelper.MOCK_AROUND_THE_BLOCK);
-        Instruction instruction = route.getRouteInstructions().get(0);
-        debugView.setClosestInstruction(instruction, 30, 0);
-        assertThat(debugView.distance).hasText("0.1 mi");
+        assertThat(debugView.instructionDistance).hasText("0.1 mi");
     }
 
     @Test
     public void closestInstruction_shouldHaveBearing() throws Exception {
-        Route route = new Route(TestHelper.MOCK_AROUND_THE_BLOCK);
-        Instruction instruction = route.getRouteInstructions().get(0);
-        debugView.setClosestInstruction(instruction, 30, 0);
-        assertThat(debugView.bearing).hasText("SE 128°");
+        assertThat(debugView.instructionBearing).hasText("SE 128°");
     }
 
     @Test
     public void closestInstruction_shouldHaveCoordinates() throws Exception {
-        Route route = new Route(TestHelper.MOCK_AROUND_THE_BLOCK);
-        Instruction instruction = route.getRouteInstructions().get(0);
-        debugView.setClosestInstruction(instruction, 30, 0);
-        assertThat(debugView.coordinates).hasText("40.660713, -73.989341");
+        assertThat(debugView.instructionCoordinates).hasText("40.660713, -73.989341");
     }
 
     @Test
     public void closestInstruction_shouldHaveDistanceFromHere() throws Exception {
-        Route route = new Route(TestHelper.MOCK_AROUND_THE_BLOCK);
-        Instruction instruction = route.getRouteInstructions().get(0);
-        debugView.setClosestInstruction(instruction, 30, 0);
-        assertThat(debugView.displacement).hasText("30 meters away");
+        assertThat(debugView.instructionDisplacement).hasText("30 meters away");
     }
 }
