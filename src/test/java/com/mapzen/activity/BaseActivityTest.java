@@ -12,7 +12,6 @@ import com.mapzen.search.PagerResultsFragment;
 import com.mapzen.search.SavedSearch;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
-import com.mapzen.support.TestHelper;
 
 import com.google.common.io.Files;
 import com.squareup.okhttp.mockwebserver.MockResponse;
@@ -56,7 +55,6 @@ import static android.location.LocationManager.NETWORK_PROVIDER;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.android.lost.LocationClient.ConnectionCallbacks;
 import static com.mapzen.search.SavedSearch.getSavedSearch;
-import static com.mapzen.support.TestHelper.enableDebugMode;
 import static com.mapzen.support.TestHelper.getTestFeature;
 import static com.mapzen.support.TestHelper.initBaseActivity;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
@@ -350,19 +348,6 @@ public class BaseActivityTest {
         activity.executeSearchOnMap("query");
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         assertThat(searchView.getSuggestionsAdapter()).isNull();
-    }
-
-    @Test
-    public void onCreate_debugViewShouldBeHidden() throws Exception {
-        assertThat(activity.findViewById(R.id.debugging)).isNotVisible();
-    }
-
-    @Test
-    public void onCreate_debugViewShouldBeVisible() throws Exception {
-        activity.getDb().close();
-        enableDebugMode(Robolectric.application);
-        BaseActivity act = TestHelper.initBaseActivity();
-        assertThat(act.findViewById(R.id.debugging)).isVisible();
     }
 
     @Test

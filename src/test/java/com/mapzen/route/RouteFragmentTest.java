@@ -69,6 +69,7 @@ import static com.mapzen.helpers.DistanceFormatter.METERS_IN_ONE_MILE;
 import static com.mapzen.support.TestHelper.MOCK_AROUND_THE_BLOCK;
 import static com.mapzen.support.TestHelper.MOCK_NY_TO_VT;
 import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
+import static com.mapzen.support.TestHelper.enableDebugMode;
 import static com.mapzen.support.TestHelper.getTestInstruction;
 import static com.mapzen.support.TestHelper.getTestLocation;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
@@ -1094,6 +1095,19 @@ public class RouteFragmentTest {
         assertZoomLevel(12, 30, location);
         assertZoomLevel(11, 40, location);
         assertZoomLevel(10, 50, location);
+    }
+
+    @Test
+    public void debugViewShouldBeHidden() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(fragment.getView().findViewById(R.id.debugging)).isNotVisible();
+    }
+
+    @Test
+    public void debugViewShouldBeVisible() throws Exception {
+        enableDebugMode(Robolectric.application);
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(fragment.getView().findViewById(R.id.debugging)).isVisible();
     }
 
     private void assertZoomLevel(int expected, float milesPerHour, Location location) {
