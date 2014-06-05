@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Browser;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -41,29 +42,28 @@ public class InitActivity extends Activity {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
         if(app.isLoggedIn()) {
             Intent baseActivity = new Intent(this, BaseActivity.class);
             startActivity(baseActivity);
             this.finish();
-
         }
         else {
             Token userAuthenticationToken;
             try {
-                String[] token = getVerifier();
+                String[] token = getVerifier(intent);
                 if (token[0] != null) {
                     userAuthenticationToken = new Token(token[0], token[1]);
                     app.setAccessToken(userAuthenticationToken);
                     Intent baseActivity = new Intent(this, BaseActivity.class);
                     startActivity(baseActivity);
-                    this.finish();
+                    finish();
                 }
             } catch (Exception e) {
-
             }
         }
+
     }
 
 
@@ -95,15 +95,16 @@ public class InitActivity extends Activity {
             @Override
             protected void onPostExecute(Token url) {
                 String authenticationUrl = app.getOsmOauthService().getAuthorizationUrl(url);
-                startActivity(new Intent("android.intent.action.VIEW",
-                               Uri.parse(authenticationUrl)));
+                Intent oauthIntent = new Intent(Intent.ACTION_VIEW);
+                oauthIntent.setData(Uri.parse(authenticationUrl));
+                startActivity(oauthIntent);
             }
         }).execute();
     }
 
-    private String[] getVerifier() {
+    private String[] getVerifier(Intent intent) {
         // extract the token if it exists
-        Uri uri = this.getIntent().getData();
+        Uri uri = intent.getData();
         if (uri == null) {
             return null;
         }
