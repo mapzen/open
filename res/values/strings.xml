@@ -90,6 +90,8 @@
     <string name="osm_init_login">Log in with Open Street Map</string>
     <string name="osm_init_sign_up">Sign up with Open Street Map</string>
     <string name="osm_sign_up_url">https://www.openstreetmap.org/user/new</string>
+    <string name="login_explanation">Sign up or log in with Open Street Map to get started.</string>
+    <string name="motto">Start where you are.</string>
 
     <!--Debug Strings-->
 

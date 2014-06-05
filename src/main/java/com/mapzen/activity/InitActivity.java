@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import butterknife.ButterKnife;
@@ -21,6 +23,7 @@ public class InitActivity extends Activity {
     @InjectView(R.id.log_in_button) Button logIn;
     MapzenApplication app;
     Handler delayButtonHandler;
+    Animation fadeIn, fadeInSlow;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,11 +35,16 @@ public class InitActivity extends Activity {
         if (app.isLoggedIn()) {
             startBaseActivity();
         }
+        fadeIn = AnimationUtils.loadAnimation(this, R.anim.fadein);
+        fadeInSlow = AnimationUtils.loadAnimation(this, R.anim.fadeinslow);
         delayButtonHandler = new Handler();
         delayButtonHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 findViewById(R.id.motto).setVisibility(LinearLayout.INVISIBLE);
+                findViewById(R.id.login_explanation).startAnimation(fadeIn);
+                findViewById(R.id.log_in_button).startAnimation(fadeInSlow);
+                findViewById(R.id.sign_up_button).startAnimation(fadeInSlow);
                 findViewById(R.id.login_layout).setVisibility(LinearLayout.VISIBLE);
             } }
                 , 2000);
