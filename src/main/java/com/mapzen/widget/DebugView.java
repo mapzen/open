@@ -4,6 +4,7 @@ import com.mapzen.R;
 import com.mapzen.osrm.Instruction;
 
 import android.content.Context;
+import android.location.Location;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ public class DebugView extends RelativeLayout {
     @InjectView(R.id.name) TextView name;
     @InjectView(R.id.distance) TextView distance;
     @InjectView(R.id.bearing) TextView bearing;
+    @InjectView(R.id.coordinates) TextView coordinates;
     @InjectView(R.id.displacement) TextView displacement;
 
     public DebugView(Context context) {
@@ -30,11 +32,13 @@ public class DebugView extends RelativeLayout {
     }
 
     public void setClosestInstruction(Instruction instruction, int meters, int index) {
+        final Location location = instruction.getLocation();
         position.setText("position " + index);
         turn.setText(instruction.getHumanTurnInstruction());
         name.setText(instruction.getName());
         distance.setText(instruction.getFormattedDistance());
         bearing.setText(instruction.getDirection() + " " + instruction.getBearing() + "°");
+        coordinates.setText(location.getLatitude() + ", " + location.getLongitude());
         displacement.setText(meters + " meters away");
     }
 }

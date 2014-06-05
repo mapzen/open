@@ -46,8 +46,15 @@
         android:textColor="@android:color/white" />
 
     <TextView
-        android:id="@+id/displacement"
+        android:id="@+id/coordinates"
         android:layout_below="@id/bearing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white" />
+
+    <TextView
+        android:id="@+id/displacement"
+        android:layout_below="@id/coordinates"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@android:color/white" />

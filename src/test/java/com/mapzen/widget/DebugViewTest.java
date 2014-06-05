@@ -78,6 +78,14 @@ public class DebugViewTest {
     }
 
     @Test
+    public void closestInstruction_shouldHaveCoordinates() throws Exception {
+        Route route = new Route(TestHelper.MOCK_AROUND_THE_BLOCK);
+        Instruction instruction = route.getRouteInstructions().get(0);
+        debugView.setClosestInstruction(instruction, 30, 0);
+        assertThat(debugView.coordinates).hasText("40.660713, -73.989341");
+    }
+
+    @Test
     public void closestInstruction_shouldHaveDistanceFromHere() throws Exception {
         Route route = new Route(TestHelper.MOCK_AROUND_THE_BLOCK);
         Instruction instruction = route.getRouteInstructions().get(0);
