@@ -49,9 +49,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.SearchView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -119,7 +117,7 @@ public class BaseActivity extends MapActivity {
             Logger.d("LocationHelper disconnected.");
         }
     };
-    private TextView debugView;
+
     private boolean enableActionbar = true;
 
     protected Executor debugDataExecutor = Executors.newSingleThreadExecutor();
@@ -148,7 +146,6 @@ public class BaseActivity extends MapActivity {
         gpsPromptDialogFragment = new MapzenGPSPromptDialogFragment();
         initMapController();
         initLocationClient();
-        initDebugView();
         initAlarm();
         initSavedSearches();
     }
@@ -446,22 +443,6 @@ public class BaseActivity extends MapActivity {
                 .commit();
 
         return pagerResultsFragment.executeSearchOnMap(getSearchView(), query);
-    }
-
-    private void initDebugView() {
-        debugView = (TextView) findViewById(R.id.debugging);
-        if (isInDebugMode()) {
-            debugView.setVisibility(View.VISIBLE);
-        }
-    }
-
-    public void writeToDebugView(String msg) {
-        debugView.setText(msg);
-    }
-
-    public void appendToDebugView(String msg) {
-        String fullText = debugView.getText().toString() + "," + msg;
-        debugView.setText(fullText);
     }
 
     public void initDebugDataSubmitter() {

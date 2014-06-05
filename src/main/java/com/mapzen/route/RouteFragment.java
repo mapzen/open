@@ -13,6 +13,7 @@ import com.mapzen.speakerbox.Speakerbox;
 import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.RouteLocationIndicator;
 import com.mapzen.util.Logger;
+import com.mapzen.widget.DebugView;
 import com.mapzen.widget.DistanceView;
 
 import com.bugsense.trace.BugSenseHandler;
@@ -105,6 +106,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private ZoomController zoomController;
     private SharedPreferences prefs;
     private Resources res;
+    private DebugView debugView;
 
     public static void setRouter(Router router) {
         RouteFragment.router = router;
@@ -144,6 +146,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 return false;
             }
         });
+
+        initDebugView(rootView);
         return rootView;
     }
 
@@ -397,12 +401,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             if (distance >= getAdvanceRadius()) {
                 Logger.logToDatabase(act, ROUTE_TAG, "post language: " +
                         instruction.toString());
-                act.appendToDebugView("post language for: " + instruction.toString());
+                appendToDebugView("post language for: " + instruction.toString());
                 flipInstructionToAfter(instruction, correctedLocation);
             }
         }
 
-        act.writeToDebugView(debugStringBuilder.toString());
+        writeToDebugView(debugStringBuilder.toString());
         logForDebugging(location, correctedLocation);
     }
 
@@ -680,5 +684,21 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         } else {
             return "Route without instructions";
         }
+    }
+
+    private void initDebugView(View view) {
+        debugView = (DebugView) view.findViewById(R.id.debugging);
+        if (act.isInDebugMode()) {
+            debugView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void writeToDebugView(String msg) {
+        debugView.setText(msg);
+    }
+
+    public void appendToDebugView(String msg) {
+        String fullText = debugView.getText().toString() + "," + msg;
+        debugView.setText(fullText);
     }
 }

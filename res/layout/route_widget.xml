@@ -66,12 +66,19 @@
         android:text="@string/route_resume_button"
         android:visibility="gone" />
 
-
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="@dimen/divider_height"
         android:layout_above="@id/footer"
         android:background="@color/dark_gray" />
+
+    <com.mapzen.widget.DebugView
+        android:id="@+id/debugging"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_above="@id/divider"
+        android:background="#66000000"
+        android:visibility="gone" />
 
 </RelativeLayout>
