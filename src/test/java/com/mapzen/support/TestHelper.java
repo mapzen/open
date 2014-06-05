@@ -2,6 +2,7 @@ package com.mapzen.support;
 
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
+import com.mapzen.activity.InitActivity;
 import com.mapzen.android.gson.Feature;
 import com.mapzen.android.gson.Geometry;
 import com.mapzen.android.gson.Properties;
@@ -64,6 +65,16 @@ public final class TestHelper {
         activity.onCreateOptionsMenu(menu);
         activity.registerMapView(new MapView(activity));
         activity.setDebugDataExecutor(new ImmediateExecutor());
+        return activity;
+    }
+
+    public static InitActivity initInitActivity() {
+        InitActivity activity = buildActivity(InitActivity.class)
+                .create()
+                .start()
+                .resume()
+                .visible()
+                .get();
         return activity;
     }
 

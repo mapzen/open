@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Browser;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.LinearLayout;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -16,80 +16,65 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import org.scribe.model.Token;
 
-
 public class InitActivity extends Activity {
     @InjectView(R.id.sign_up_button) Button signUp;
     @InjectView(R.id.log_in_button) Button logIn;
-
     MapzenApplication app;
-
+    Handler delayButtonHandler;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.init);
-
         View rootView = getWindow().getDecorView().getRootView();
-        ButterKnife.inject(this, rootView);
         app = (MapzenApplication) getApplication();
-        app.onCreate();
+        ButterKnife.inject(this, rootView);
         getActionBar().hide();
-
-        if(app.isLoggedIn()) {
-            Intent baseActivity = new Intent(this, BaseActivity.class);
-            startActivity(baseActivity);
-            finish();
+        if (app.isLoggedIn()) {
+            startBaseActivity();
         }
+        delayButtonHandler = new Handler();
+        delayButtonHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                findViewById(R.id.motto).setVisibility(LinearLayout.INVISIBLE);
+                findViewById(R.id.login_layout).setVisibility(LinearLayout.VISIBLE);
+            } }
+                , 2000);
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if(app.isLoggedIn()) {
-            Intent baseActivity = new Intent(this, BaseActivity.class);
-            startActivity(baseActivity);
-            this.finish();
+        Token userAuthenticationToken = getTokenFromCallback(intent);
+        if (userAuthenticationToken != null) {
+            app.setAccessToken(userAuthenticationToken);
+            startBaseActivity();
         }
-        else {
-            Token userAuthenticationToken;
-            try {
-                String[] token = getVerifier(intent);
-                if (token[0] != null) {
-                    userAuthenticationToken = new Token(token[0], token[1]);
-                    app.setAccessToken(userAuthenticationToken);
-                    Intent baseActivity = new Intent(this, BaseActivity.class);
-                    startActivity(baseActivity);
-                    finish();
-                }
-            } catch (Exception e) {
-            }
-        }
-
     }
-
 
     @OnClick(R.id.sign_up_button)
     @SuppressWarnings("unused")
-    public void onClickSignUp() {
+    protected void onClickSignUp() {
         openSignUpPage();
     }
 
     @OnClick(R.id.log_in_button)
     @SuppressWarnings("unused")
-    public void onClickLogIn() {
+    protected void onClickLogIn() {
         loginRoutine();
     }
 
-    public void openSignUpPage() {
+    private void openSignUpPage() {
         String signUpURL = getString(R.string.osm_sign_up_url);
         Intent signUpIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(signUpURL));
         startActivity(signUpIntent);
     }
 
-    public void loginRoutine() {
+    private void loginRoutine() {
         (new AsyncTask<Void, Void, Token>() {
             @Override
             protected Token doInBackground(Void... params) {
-                    return app.getOsmOauthService().getRequestToken();
+                return app.getOsmOauthService().getRequestToken();
             }
 
             @Override
@@ -102,14 +87,19 @@ public class InitActivity extends Activity {
         }).execute();
     }
 
-    private String[] getVerifier(Intent intent) {
-        // extract the token if it exists
+    private void startBaseActivity() {
+        Intent baseActivity = new Intent(this, BaseActivity.class);
+        startActivity(baseActivity);
+        finish();
+    }
+
+    private Token getTokenFromCallback(Intent intent) {
         Uri uri = intent.getData();
         if (uri == null) {
             return null;
         }
         String token = uri.getQueryParameter("oauth_token");
         String verifier = uri.getQueryParameter("oauth_verifier");
-        return new String[] { token, verifier };
+        return new Token(token, verifier);
     }
 }
