@@ -8,13 +8,16 @@ import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 public class DebugView extends RelativeLayout {
-    private TextView position;
-    private TextView turn;
-    private TextView name;
-    private TextView distance;
-    private TextView bearing;
-    private TextView howFarAway;
+    @InjectView(R.id.position) TextView position;
+    @InjectView(R.id.turn) TextView turn;
+    @InjectView(R.id.name) TextView name;
+    @InjectView(R.id.distance) TextView distance;
+    @InjectView(R.id.bearing) TextView bearing;
+    @InjectView(R.id.displacement) TextView displacement;
 
     public DebugView(Context context) {
         this(context, null);
@@ -23,12 +26,7 @@ public class DebugView extends RelativeLayout {
     public DebugView(Context context, AttributeSet attrs) {
         super(context, attrs);
         inflate(getContext(), R.layout.debug, this);
-        position = (TextView) findViewById(R.id.position);
-        turn = (TextView) findViewById(R.id.turn);
-        name = (TextView) findViewById(R.id.name);
-        distance = (TextView) findViewById(R.id.distance);
-        bearing = (TextView) findViewById(R.id.bearing);
-        howFarAway = (TextView) findViewById(R.id.how_far_away);
+        ButterKnife.inject(this);
     }
 
     public void setClosestInstruction(Instruction instruction, int meters, int index) {
@@ -37,6 +35,6 @@ public class DebugView extends RelativeLayout {
         name.setText(instruction.getName());
         distance.setText(instruction.getFormattedDistance());
         bearing.setText(instruction.getDirection() + " " + instruction.getBearing() + "°");
-        howFarAway.setText(meters + " meter(s) away");
+        displacement.setText(meters + " meters away");
     }
 }

@@ -42,8 +42,7 @@ public class DebugViewTest {
         Route route = new Route(TestHelper.MOCK_AROUND_THE_BLOCK);
         Instruction instruction = route.getRouteInstructions().get(0);
         debugView.setClosestInstruction(instruction, 30, 0);
-        assertThat((TextView) debugView.findViewById(R.id.position))
-                .hasText("position 0");
+        assertThat(debugView.position).hasText("position 0");
     }
 
     @Test
@@ -51,8 +50,7 @@ public class DebugViewTest {
         Route route = new Route(TestHelper.MOCK_AROUND_THE_BLOCK);
         Instruction instruction = route.getRouteInstructions().get(0);
         debugView.setClosestInstruction(instruction, 30, 0);
-        assertThat((TextView) debugView.findViewById(R.id.turn))
-                .hasText(instruction.getHumanTurnInstruction());
+        assertThat(debugView.turn).hasText("Head on");
     }
 
     @Test
@@ -60,8 +58,7 @@ public class DebugViewTest {
         Route route = new Route(TestHelper.MOCK_AROUND_THE_BLOCK);
         Instruction instruction = route.getRouteInstructions().get(0);
         debugView.setClosestInstruction(instruction, 30, 0);
-        assertThat((TextView) debugView.findViewById(R.id.name))
-                .hasText(instruction.getName());
+        assertThat(debugView.name).hasText("19th Street");
     }
 
     @Test
@@ -69,8 +66,7 @@ public class DebugViewTest {
         Route route = new Route(TestHelper.MOCK_AROUND_THE_BLOCK);
         Instruction instruction = route.getRouteInstructions().get(0);
         debugView.setClosestInstruction(instruction, 30, 0);
-        assertThat((TextView) debugView.findViewById(R.id.distance))
-                .hasText(instruction.getFormattedDistance());
+        assertThat(debugView.distance).hasText("0.1 mi");
     }
 
     @Test
@@ -78,8 +74,7 @@ public class DebugViewTest {
         Route route = new Route(TestHelper.MOCK_AROUND_THE_BLOCK);
         Instruction instruction = route.getRouteInstructions().get(0);
         debugView.setClosestInstruction(instruction, 30, 0);
-        assertThat((TextView) debugView.findViewById(R.id.bearing))
-                .hasText(instruction.getDirection() + " " + instruction.getBearing() + "°");
+        assertThat(debugView.bearing).hasText("SE 128°");
     }
 
     @Test
@@ -87,7 +82,6 @@ public class DebugViewTest {
         Route route = new Route(TestHelper.MOCK_AROUND_THE_BLOCK);
         Instruction instruction = route.getRouteInstructions().get(0);
         debugView.setClosestInstruction(instruction, 30, 0);
-        assertThat((TextView) debugView.findViewById(R.id.how_far_away))
-                .hasText("30 meter(s) away");
+        assertThat(debugView.displacement).hasText("30 meters away");
     }
 }
