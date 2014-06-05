@@ -7,12 +7,18 @@ import com.mapzen.fragment.BaseFragment;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
 
+import org.oscim.backend.canvas.Color;
+import org.oscim.layers.PathLayer;
+
+import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -22,6 +28,7 @@ import butterknife.OnClick;
 
 import static com.mapzen.MapController.geoPointToPair;
 import static com.mapzen.MapController.getMapController;
+import static com.mapzen.MapController.locationToGeoPoint;
 import static com.mapzen.MapController.locationToPair;
 import static com.mapzen.entity.SimpleFeature.NAME;
 
@@ -29,6 +36,7 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
     public static final String TAG = RoutePreviewFragment.class.getSimpleName();
     private SimpleFeature destination;
     private boolean reverse = false;
+    @Inject PathLayer path;
 
     @Inject Router router;
     @InjectView(R.id.starting_point) TextView startingPointTextView;
@@ -123,10 +131,19 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
                     .commit();
         }
         act.dismissProgressDialog();
+        ArrayList<Location> points = route.getGeometry();
+        path.clearPath();
+        for (Location loc : points) {
+            path.addPoint(locationToGeoPoint(loc));
+        }
+        if (!getMapController().getMap().layers().contains(path)) {
+            getMapController().getMap().layers().add(path);
+        }
     }
 
     @Override
     public void failure(int statusCode) {
+        path.clearPath();
         onServerError(statusCode);
     }
 }

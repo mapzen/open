@@ -16,16 +16,20 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.oscim.layers.PathLayer;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.FragmentTestUtil;
 
+import android.location.Location;
 import android.widget.TextView;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import static com.mapzen.MapController.getMapController;
+import static com.mapzen.MapController.locationToGeoPoint;
 import static com.mapzen.entity.SimpleFeature.NAME;
 import static com.mapzen.support.TestHelper.getFixture;
 import static com.mapzen.support.TestHelper.getTestLocation;
@@ -41,6 +45,7 @@ public class RoutePreviewFragmentTest {
     RoutePreviewFragment fragment;
     SimpleFeature destination;
     @Inject Router router;
+    @Inject PathLayer path;
     @Captor
     @SuppressWarnings("unused")
     ArgumentCaptor<double[]> location;
@@ -138,7 +143,7 @@ public class RoutePreviewFragmentTest {
 
     @Test
     public void createRouteToDestination_shouldGetCurrentLocationFirst() throws Exception {
-        MapController.getMapController().setLocation(getTestLocation(22.22, 44.44));
+        getMapController().setLocation(getTestLocation(22.22, 44.44));
         fragment.createRouteToDestination();
         Mockito.verify(router, Mockito.times(2)).setLocation(location.capture());
         List<double[]> values = location.getAllValues();
@@ -148,11 +153,52 @@ public class RoutePreviewFragmentTest {
 
     @Test
     public void createRouteToDestination_shouldGetFeatureDestinationFirst() throws Exception {
-        MapController.getMapController().setLocation(getTestLocation(22.22, 44.44));
+        getMapController().setLocation(getTestLocation(22.22, 44.44));
         fragment.reverse();
         Mockito.verify(router, Mockito.times(2)).setLocation(location.capture());
         List<double[]> values = location.getAllValues();
         assertThat(values.get(0)).isEqualTo(new double[] {1.0, 1.0});
         assertThat(values.get(1)).isEqualTo(new double[] {22.22, 44.44});
+    }
+
+    @Test
+    public void success_shouldAddPathToMap() throws Exception {
+        int layersSize = getMapController().getMap().layers().size();
+        fragment.createRouteToDestination();
+        fragment.success(new Route(getFixture("around_the_block")));
+        assertThat(getMapController().getMap().layers().size()).isEqualTo(layersSize + 1);
+    }
+
+    @Test
+    public void success_shouldNotAddPathToMapMoreThanOnce() throws Exception {
+        int layersSize = getMapController().getMap().layers().size();
+        fragment.createRouteToDestination();
+        fragment.success(new Route(getFixture("around_the_block")));
+        fragment.success(new Route(getFixture("around_the_block")));
+        assertThat(getMapController().getMap().layers().size()).isEqualTo(layersSize + 1);
+    }
+
+    @Test
+    public void success_shouldClearPreviousRoutes() throws Exception {
+        fragment.createRouteToDestination();
+        fragment.success(new Route(getFixture("around_the_block")));
+        Mockito.verify(path).clearPath();
+    }
+
+    @Test
+    public void failure_shouldClearPreviousRoutes() throws Exception {
+        fragment.createRouteToDestination();
+        fragment.failure(500);
+        Mockito.verify(path).clearPath();
+    }
+
+    @Test
+    public void success_shouldDrawRoute() throws Exception {
+        Route route = new Route(getFixture("around_the_block"));
+        fragment.createRouteToDestination();
+        fragment.success(route);
+        for (Location loc : route.getGeometry()) {
+            Mockito.verify(path).addPoint(locationToGeoPoint(loc));
+        }
     }
 }

@@ -11,6 +11,7 @@ import com.mapzen.support.TestBaseActivity;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
 import org.mockito.Mockito;
+import org.oscim.layers.PathLayer;
 
 import javax.inject.Singleton;
 
@@ -38,5 +39,9 @@ public class TestAppModule {
 
     @Provides @Singleton Router provideRouter() {
         return Mockito.spy(getRouter());
+    }
+
+    @Provides @Singleton PathLayer providePathLayer() {
+        return Mockito.mock(PathLayer.class);
     }
 }
