@@ -38,12 +38,17 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
     public static final String TAG = RoutePreviewFragment.class.getSimpleName();
     private SimpleFeature destination;
     private boolean reverse = false;
+    private String transportationMode = "c";
+
     @Inject PathLayer path;
 
     @Inject Router router;
     @InjectView(R.id.starting_point) TextView startingPointTextView;
     @InjectView(R.id.destination) TextView destinationTextView;
     @InjectView(R.id.route_reverse) ImageButton routeReverse;
+    @InjectView(R.id.by_car) ImageButton byCar;
+    @InjectView(R.id.by_foot) ImageButton byFoot;
+    @InjectView(R.id.by_bike) ImageButton byBike;
 
     public static RoutePreviewFragment newInstance(BaseActivity act,
             SimpleFeature destination) {
@@ -93,6 +98,22 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
         createRouteToDestination();
     }
 
+    @SuppressWarnings("unused")
+    @OnClick(R.id.by_car) public void byCar() {
+        transportationMode = "c";
+        createRouteToDestination();
+    }
+    @SuppressWarnings("unused")
+    @OnClick(R.id.by_bike) public void byBike() {
+        transportationMode = "b";
+        createRouteToDestination();
+    }
+    @SuppressWarnings("unused")
+    @OnClick(R.id.by_foot) public void byFoot() {
+        transportationMode = "w";
+        createRouteToDestination();
+    }
+
     public void createRouteToDestination() {
         mapFragment.clearMarkers();
         mapFragment.updateMap();
@@ -101,9 +122,15 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
                 .setLocation(getOriginPoint())
                 .setLocation(getDestinationPoint())
                 .setZoomLevel(getRouteZoomLevel())
-                .setDriving()
-                .setCallback(this)
-                .fetch();
+                .setCallback(this);
+        if (transportationMode.equals("c")) {
+            router.setDriving();
+        } else if (transportationMode.equals("w")) {
+            router.setWalking();
+        } else if (transportationMode.equals("b")) {
+            router.setBiking();
+        }
+        router.fetch();
     }
 
     private double getRouteZoomLevel() {

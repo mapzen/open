@@ -135,7 +135,7 @@ public class RoutePreviewFragmentTest {
         SimpleFeature feature = getTestSimpleFeature();
         fragment.createRouteToDestination();
         fragment.success(new Route(getFixture("around_the_block")));
-        fragment.reverse();
+        fragment.getView().findViewById(R.id.route_reverse).performClick();
         fragment.success(new Route(getFixture("around_the_block")));
         assertThat(destination).hasText("Current Location");
         assertThat(startingPoint).hasText(feature.getProperty(NAME));
@@ -200,5 +200,23 @@ public class RoutePreviewFragmentTest {
         for (Location loc : route.getGeometry()) {
             Mockito.verify(path).addPoint(locationToGeoPoint(loc));
         }
+    }
+
+    @Test
+    public void routeForCar_shouldRouteByCar() throws Exception {
+        fragment.getView().findViewById(R.id.by_car).performClick();
+        Mockito.verify(router).setDriving();
+    }
+
+    @Test
+    public void routeForFoot_shouldRouteByFoot() throws Exception {
+        fragment.getView().findViewById(R.id.by_foot).performClick();
+        Mockito.verify(router).setWalking();
+    }
+
+    @Test
+    public void routeForBike_shouldRouteByBike() throws Exception {
+        fragment.getView().findViewById(R.id.by_bike).performClick();
+        Mockito.verify(router).setBiking();
     }
 }
