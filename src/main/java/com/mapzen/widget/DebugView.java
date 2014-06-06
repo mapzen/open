@@ -80,7 +80,7 @@ public class DebugView extends RelativeLayout {
     }
 
     public static String getDirectionForBearing(float degrees) {
-        final int direction = 45 * Math.round(degrees/45);
+        final int direction = 45 * Math.round(degrees / 45);
         switch (direction) {
             case 0:
             case 360:
