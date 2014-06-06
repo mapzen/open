@@ -27,14 +27,19 @@ public class DebugViewTest {
     public void setUp() throws Exception {
         debugView = new DebugView(application);
 
-        Location location = TestHelper.getTestLocation(40.660713, -73.989341);
-        location.setBearing(128);
-        location.setSpeed(milesPerHourToMetersPerSecond(30));
-        debugView.setCurrentLocation(location);
+        Location currentLocation = TestHelper.getTestLocation(40.660713, -73.989341);
+        currentLocation.setBearing(130);
+        currentLocation.setSpeed(milesPerHourToMetersPerSecond(30));
+        debugView.setCurrentLocation(currentLocation);
+
+        Location snapLocation = TestHelper.getTestLocation(41.660713, -74.989341);
+        snapLocation.setBearing(140);
+        snapLocation.setSpeed(milesPerHourToMetersPerSecond(40));
+        debugView.setSnapLocation(snapLocation);
 
         Route route = new Route(TestHelper.MOCK_AROUND_THE_BLOCK);
         Instruction instruction = route.getRouteInstructions().get(0);
-        debugView.setClosestInstruction(instruction, 30, 0);
+        debugView.setClosestInstruction(instruction, 30);
     }
 
     @Test
@@ -55,12 +60,23 @@ public class DebugViewTest {
 
     @Test
     public void currentLocation_shouldHaveBearing() throws Exception {
-        assertThat(debugView.currentBearing).hasText("128°");
+        assertThat(debugView.currentBearing).hasText("130°");
     }
 
     @Test
     public void currentLocation_shouldHaveSpeed() throws Exception {
         assertThat(debugView.currentSpeed).hasText("30 mph");
+    }
+
+    @Test
+    public void snapLocation_shouldHaveTitle() throws Exception {
+        assertThat((TextView) debugView.findViewById(R.id.snap_location))
+                .hasText("Snap Location");
+    }
+
+    @Test
+    public void snapLocation_shouldHaveCoordinates() throws Exception {
+        assertThat(debugView.snapCoordinates).hasText("41.660713, -74.989341");
     }
 
     @Test
@@ -70,8 +86,13 @@ public class DebugViewTest {
     }
 
     @Test
-    public void closestInstruction_shouldHaveIndex() throws Exception {
-        assertThat(debugView.instructionIndex).hasText("index 0");
+    public void closestInstruction_shouldHaveCoordinates() throws Exception {
+        assertThat(debugView.instructionCoordinates).hasText("40.660713, -73.989341");
+    }
+
+    @Test
+    public void closestInstruction_shouldHaveBearing() throws Exception {
+        assertThat(debugView.instructionBearing).hasText("SE 128°");
     }
 
     @Test
@@ -85,18 +106,8 @@ public class DebugViewTest {
     }
 
     @Test
-    public void closestInstruction_shouldHaveTotalDistance() throws Exception {
+    public void closestInstruction_shouldHaveDistance() throws Exception {
         assertThat(debugView.instructionDistance).hasText("0.1 mi");
-    }
-
-    @Test
-    public void closestInstruction_shouldHaveBearing() throws Exception {
-        assertThat(debugView.instructionBearing).hasText("SE 128°");
-    }
-
-    @Test
-    public void closestInstruction_shouldHaveCoordinates() throws Exception {
-        assertThat(debugView.instructionCoordinates).hasText("40.660713, -73.989341");
     }
 
     @Test

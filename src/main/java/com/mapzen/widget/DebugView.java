@@ -9,24 +9,23 @@ import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 import static com.mapzen.helpers.ZoomController.metersPerSecondToMilesPerHour;
-import static java.lang.Math.round;
 
 public class DebugView extends RelativeLayout {
-
     @InjectView(R.id.current_coordinates) TextView currentCoordinates;
     @InjectView(R.id.current_bearing) TextView currentBearing;
     @InjectView(R.id.current_speed) TextView currentSpeed;
-
-    @InjectView(R.id.instruction_index) TextView instructionIndex;
+    @InjectView(R.id.snap_coordinates) TextView snapCoordinates;
+    @InjectView(R.id.instruction_coordinates) TextView instructionCoordinates;
+    @InjectView(R.id.instruction_bearing) TextView instructionBearing;
     @InjectView(R.id.instruction_turn) TextView instructionTurn;
     @InjectView(R.id.instruction_name) TextView instructionName;
     @InjectView(R.id.instruction_distance) TextView instructionDistance;
-    @InjectView(R.id.instruction_bearing) TextView instructionBearing;
-    @InjectView(R.id.instruction_coordinates) TextView instructionCoordinates;
     @InjectView(R.id.instruction_displacement) TextView instructionDisplacement;
 
     public DebugView(Context context) {
@@ -39,21 +38,39 @@ public class DebugView extends RelativeLayout {
         ButterKnife.inject(this);
     }
 
-    public void setClosestInstruction(Instruction instruction, int meters, int index) {
-        final Location location = instruction.getLocation();
-        instructionIndex.setText("index " + index);
+    public void setClosestInstruction(Instruction instruction, int meters) {
+        instructionCoordinates.setText(formatCoordinates(instruction.getLocation()));
+        instructionBearing.setText(formatBearing(instruction));
         instructionTurn.setText(instruction.getHumanTurnInstruction());
         instructionName.setText(instruction.getName());
         instructionDistance.setText(instruction.getFormattedDistance());
-        instructionBearing.setText(instruction.getDirection() + " "
-                + instruction.getBearing() + "°");
-        instructionCoordinates.setText(location.getLatitude() + ", " + location.getLongitude());
         instructionDisplacement.setText(meters + " meters away");
     }
 
     public void setCurrentLocation(Location location) {
-        currentCoordinates.setText(location.getLatitude() + ", " + location.getLongitude());
-        currentBearing.setText(round(location.getBearing()) + "°");
-        currentSpeed.setText(round(metersPerSecondToMilesPerHour(location.getSpeed())) + " mph");
+        currentCoordinates.setText(formatCoordinates(location));
+        currentBearing.setText(formatBearing(location));
+        currentSpeed.setText(formatSpeed(location));
+    }
+
+    public void setSnapLocation(Location location) {
+        snapCoordinates.setText(formatCoordinates(location));
+    }
+
+    private String formatCoordinates(Location location) {
+        final DecimalFormat df = new DecimalFormat("#.######");
+        return df.format(location.getLatitude()) + ", " + df.format(location.getLongitude());
+    }
+
+    private String formatBearing(Location location) {
+        return Math.round(location.getBearing()) + "°";
+    }
+
+    private String formatBearing(Instruction instruction) {
+        return instruction.getDirection() + " " + instruction.getBearing() + "°";
+    }
+
+    private String formatSpeed(Location location) {
+        return Math.round(metersPerSecondToMilesPerHour(location.getSpeed())) + " mph";
     }
 }

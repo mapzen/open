@@ -76,7 +76,7 @@
     <com.mapzen.widget.DebugView
         android:id="@+id/debugging"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="148dp"
         android:layout_above="@id/divider"
         android:background="#66000000"
         android:visibility="gone" />

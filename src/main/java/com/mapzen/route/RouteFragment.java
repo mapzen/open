@@ -397,7 +397,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
 
         debugView.setCurrentLocation(location);
-        debugView.setClosestInstruction(closestInstruction, closestDistance, instructionIndex);
+        debugView.setSnapLocation(correctedLocation);
+        debugView.setClosestInstruction(closestInstruction, closestDistance);
         logForDebugging(location, correctedLocation);
     }
 

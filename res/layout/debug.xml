@@ -37,6 +37,32 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/snap_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Snap Location"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/snap_coordinates"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/snap_bearing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/snap_speed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white" />
     </LinearLayout>
 
     <LinearLayout
@@ -54,7 +80,13 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/instruction_index"
+            android:id="@+id/instruction_coordinates"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/instruction_bearing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@android:color/white" />
@@ -78,21 +110,10 @@
             android:textColor="@android:color/white" />
 
         <TextView
-            android:id="@+id/instruction_bearing"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/white" />
-
-        <TextView
-            android:id="@+id/instruction_coordinates"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/white" />
-
-        <TextView
             android:id="@+id/instruction_displacement"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@android:color/white" />
+
     </LinearLayout>
 </LinearLayout>
