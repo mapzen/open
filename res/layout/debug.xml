@@ -3,6 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:baselineAligned="false"
     android:orientation="horizontal"
     android:padding="4dp">
 
@@ -16,7 +17,7 @@
             android:id="@+id/current_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Current Location"
+            android:text="@string/debug_current_location"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
 
@@ -42,7 +43,7 @@
             android:id="@+id/snap_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Snap Location"
+            android:text="@string/debug_snap_location"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
 
@@ -75,7 +76,7 @@
             android:id="@+id/closest_instruction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Closest Instruction"
+            android:text="@string/debug_closest_instruction"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
 

@@ -88,4 +88,10 @@
     <string name="osm_logout">OpenStreetMap Logout</string>
     <string name="osm_login_title">Please Authorize</string>
 
+    <!--Debug Strings-->
+
+    <string name="debug_current_location">Current Location</string>
+    <string name="debug_snap_location">Snap Location</string>
+    <string name="debug_closest_instruction">Closest Instruction</string>
+
 </resources>
