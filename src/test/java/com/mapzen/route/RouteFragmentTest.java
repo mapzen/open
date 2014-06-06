@@ -1,5 +1,6 @@
 package com.mapzen.route;
 
+import android.app.NotificationManager;
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
@@ -1108,6 +1109,41 @@ public class RouteFragmentTest {
         enableDebugMode(Robolectric.application);
         FragmentTestUtil.startFragment(fragment);
         assertThat(fragment.getView().findViewById(R.id.debugging)).isVisible();
+    }
+
+    @Test
+    public void shouldGenerateNotificationOnFirstInstruction() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction instruction = getTestInstruction(3, 3);
+        instructions.add(instruction);
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+
+        NotificationManager manager = (NotificationManager) act.getSystemService(
+                act.getApplicationContext().NOTIFICATION_SERVICE);
+        ShadowNotificationManager sManager = shadowOf(manager);
+        ShadowNotification sNotification = shadowOf(sManager.getAllNotifications().get(0));
+        assertThat(sNotification.getContentTitle()).isEqualTo("Test SimpleFeature");
+        assertThat(sNotification.getContentText()).isEqualTo("Head on 19th Street for 520 ft");
+        assertThat(sNotification.getActions().get(0).title).isEqualTo("Exit Navigation");
+    }
+
+    @Test
+    public void shouldGenerateNotificationOnPageSelected() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction instruction = getTestInstruction(3, 3);
+        instructions.add(instruction);
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onPageSelected(0);
+
+        NotificationManager manager = (NotificationManager) act.getSystemService(
+                act.getApplicationContext().NOTIFICATION_SERVICE);
+        ShadowNotificationManager sManager = shadowOf(manager);
+        ShadowNotification sNotification = shadowOf(sManager.getAllNotifications().get(0));
+        assertThat(sNotification.getContentTitle()).isEqualTo("Test SimpleFeature");
+        assertThat(sNotification.getContentText()).isEqualTo("Head on 19th Street for 520 ft");
+        assertThat(sNotification.getActions().get(0).title).isEqualTo("Exit Navigation");
     }
 
     private void assertZoomLevel(int expected, float milesPerHour, Location location) {

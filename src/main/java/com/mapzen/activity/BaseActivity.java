@@ -1,12 +1,5 @@
 package com.mapzen.activity;
 
-import android.app.*;
-import android.support.v4.app.*;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.TaskStackBuilder;
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
@@ -37,6 +30,14 @@ import org.oscim.map.Map;
 import org.scribe.model.Token;
 import org.scribe.model.Verifier;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.app.SearchManager;
+import android.app.NotificationManager;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -170,7 +171,8 @@ public class BaseActivity extends MapActivity {
     }
 
     private void clearNotifications() {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(
+                NOTIFICATION_SERVICE);
         notificationManager.cancel(0);
     }
 

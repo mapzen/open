@@ -10,8 +10,9 @@ import com.mapzen.activity.BaseActivity;
 
 public class NotificationBroadcastReciever extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
-        if (intent.getBooleanExtra(MapzenNotificationCreator.exitNavigation, false)) {
-            NotificationManager nm = (NotificationManager) context.getSystemService(Activity.NOTIFICATION_SERVICE);
+        if (intent.getBooleanExtra(MapzenNotificationCreator.EXIT_NAVIGATION, false)) {
+            NotificationManager nm = (NotificationManager) context
+                    .getSystemService(Activity.NOTIFICATION_SERVICE);
             nm.cancel(0);
             Intent exitRouting = new Intent();
             exitRouting.setClass(context, BaseActivity.class);
@@ -20,4 +21,3 @@ public class NotificationBroadcastReciever extends BroadcastReceiver {
         }
     }
 }
-
