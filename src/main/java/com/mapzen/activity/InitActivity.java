@@ -109,8 +109,7 @@ public class InitActivity extends Activity {
                 setMottoInvisible();
                 fadeInLoginView();
             }
-        }
-                , 2000);
+        }, 2000);
     }
 
     private void setMottoInvisible() {
