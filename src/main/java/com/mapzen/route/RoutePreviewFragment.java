@@ -8,6 +8,8 @@ import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
 
 import org.oscim.backend.canvas.Color;
+import org.oscim.core.BoundingBox;
+import org.oscim.core.MapPosition;
 import org.oscim.layers.PathLayer;
 
 import android.location.Location;
@@ -133,9 +135,33 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
         act.dismissProgressDialog();
         ArrayList<Location> points = route.getGeometry();
         path.clearPath();
+        double minlat = points.get(0).getLatitude();
+        double minlon = points.get(0).getLongitude();
+        double maxlat = points.get(0).getLatitude();
+        double maxlon = points.get(0).getLongitude();
         for (Location loc : points) {
+            if (maxlat < loc.getLatitude()) {
+                maxlat = loc.getLatitude();
+            }
+            if (maxlon < loc.getLongitude()) {
+                maxlon = loc.getLongitude();
+            }
+            if (minlat > loc.getLatitude()) {
+                minlat = loc.getLatitude();
+            }
+            if (minlon > loc.getLongitude()) {
+                minlon = loc.getLongitude();
+            }
             path.addPoint(locationToGeoPoint(loc));
         }
+
+        BoundingBox bbox = new BoundingBox(minlat, minlon, maxlat, maxlon);
+        int w = getMapController().getMap().getWidth();
+        int h = getMapController().getMap().getHeight();
+        MapPosition position = new MapPosition();
+        position.setByBoundingBox(bbox, w, h);
+
+        getMapController().getMap().setMapPosition(position);
         if (!getMapController().getMap().layers().contains(path)) {
             getMapController().getMap().layers().add(path);
         }
