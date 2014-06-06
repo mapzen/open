@@ -33,12 +33,16 @@ import static com.mapzen.MapController.getMapController;
 import static com.mapzen.MapController.locationToGeoPoint;
 import static com.mapzen.MapController.locationToPair;
 import static com.mapzen.entity.SimpleFeature.NAME;
+import static com.mapzen.osrm.Router.Type;
+import static com.mapzen.osrm.Router.Type.BIKING;
+import static com.mapzen.osrm.Router.Type.DRIVING;
+import static com.mapzen.osrm.Router.Type.WALKING;
 
 public class RoutePreviewFragment extends BaseFragment implements Router.Callback {
     public static final String TAG = RoutePreviewFragment.class.getSimpleName();
     private SimpleFeature destination;
     private boolean reverse = false;
-    private String transportationMode = "c";
+    private Type transportationMode = DRIVING;
 
     @Inject PathLayer path;
 
@@ -100,17 +104,17 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
 
     @SuppressWarnings("unused")
     @OnClick(R.id.by_car) public void byCar() {
-        transportationMode = "c";
+        transportationMode = DRIVING;
         createRouteToDestination();
     }
     @SuppressWarnings("unused")
     @OnClick(R.id.by_bike) public void byBike() {
-        transportationMode = "b";
+        transportationMode = BIKING;
         createRouteToDestination();
     }
     @SuppressWarnings("unused")
     @OnClick(R.id.by_foot) public void byFoot() {
-        transportationMode = "w";
+        transportationMode = WALKING;
         createRouteToDestination();
     }
 
@@ -123,11 +127,11 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
                 .setLocation(getDestinationPoint())
                 .setZoomLevel(getRouteZoomLevel())
                 .setCallback(this);
-        if (transportationMode.equals("c")) {
+        if (transportationMode.equals(DRIVING)) {
             router.setDriving();
-        } else if (transportationMode.equals("w")) {
+        } else if (transportationMode.equals(WALKING)) {
             router.setWalking();
-        } else if (transportationMode.equals("b")) {
+        } else if (transportationMode.equals(BIKING)) {
             router.setBiking();
         }
         router.fetch();
