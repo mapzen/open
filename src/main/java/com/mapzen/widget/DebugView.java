@@ -63,14 +63,44 @@ public class DebugView extends RelativeLayout {
     }
 
     private String formatBearing(Location location) {
-        return Math.round(location.getBearing()) + "°";
+        final float bearing = location.getBearing();
+        return formatBearing(getDirectionForBearing(bearing), bearing);
     }
 
     private String formatBearing(Instruction instruction) {
-        return instruction.getDirection() + " " + instruction.getBearing() + "°";
+        return formatBearing(instruction.getDirection(), instruction.getBearing());
+    }
+
+    private String formatBearing(String direction, float bearing) {
+        return direction + " " + Math.round(bearing) + "°";
     }
 
     private String formatSpeed(Location location) {
         return Math.round(metersPerSecondToMilesPerHour(location.getSpeed())) + " mph";
+    }
+
+    public static String getDirectionForBearing(float degrees) {
+        final int direction = 45 * Math.round(degrees/45);
+        switch (direction) {
+            case 0:
+            case 360:
+                return "N";
+            case 45:
+                return "NE";
+            case 90:
+                return "E";
+            case 135:
+                return "SE";
+            case 180:
+                return "S";
+            case 225:
+                return "SW";
+            case 270:
+                return "W";
+            case 315:
+                return "NW";
+            default:
+                return null;
+        }
     }
 }

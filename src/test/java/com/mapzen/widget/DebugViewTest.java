@@ -15,7 +15,9 @@ import android.location.Location;
 import android.widget.TextView;
 
 import static com.mapzen.helpers.ZoomController.milesPerHourToMetersPerSecond;
+import static com.mapzen.widget.DebugView.getDirectionForBearing;
 import static org.fest.assertions.api.ANDROID.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
 
 @Config(emulateSdk = 18)
@@ -60,7 +62,7 @@ public class DebugViewTest {
 
     @Test
     public void currentLocation_shouldHaveBearing() throws Exception {
-        assertThat(debugView.currentBearing).hasText("130°");
+        assertThat(debugView.currentBearing).hasText("SE 130°");
     }
 
     @Test
@@ -113,5 +115,52 @@ public class DebugViewTest {
     @Test
     public void closestInstruction_shouldHaveDistanceFromHere() throws Exception {
         assertThat(debugView.instructionDisplacement).hasText("30 meters away");
+    }
+
+    @Test
+    public void getDirectionForBearing_0degreesShouldReturnNorth() throws Exception {
+        assertThat(getDirectionForBearing(0)).isEqualTo("N");
+    }
+
+    @Test
+    public void getDirectionForBearing_45degreesShouldReturnNorthEast() throws Exception {
+        assertThat(getDirectionForBearing(45)).isEqualTo("NE");
+    }
+
+    @Test
+    public void getDirectionForBearing_90degreesShouldReturnEast() throws Exception {
+        assertThat(getDirectionForBearing(90)).isEqualTo("E");
+    }
+
+    @Test
+    public void getDirectionForBearing_135degreesShouldReturnSouthEast() throws Exception {
+        assertThat(getDirectionForBearing(135)).isEqualTo("SE");
+    }
+
+    @Test
+    public void getDirectionForBearing_180degreesShouldReturnSouth() throws Exception {
+        assertThat(getDirectionForBearing(180)).isEqualTo("S");
+    }
+
+    @Test
+    public void getDirectionForBearing_180degreesShouldReturnSouthWest() throws Exception {
+        assertThat(getDirectionForBearing(225)).isEqualTo("SW");
+    }
+
+    @Test
+    public void getDirectionForBearing_270degreesShouldReturnWest() throws Exception {
+        assertThat(getDirectionForBearing(270)).isEqualTo("W");
+    }
+
+    @Test
+    public void getDirectionForBearing_315degreesShouldReturnNorthWest() throws Exception {
+        assertThat(getDirectionForBearing(315)).isEqualTo("NW");
+    }
+
+    @Test
+    public void getDirectionForBearing_shouldRoundFloatToNearest45Degrees() throws Exception {
+        assertThat(getDirectionForBearing(7.9f)).isEqualTo("N");
+        assertThat(getDirectionForBearing(202.6f)).isEqualTo("SW");
+        assertThat(getDirectionForBearing(350.0f)).isEqualTo("N");
     }
 }
