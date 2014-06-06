@@ -13,6 +13,7 @@ import com.mapzen.speakerbox.Speakerbox;
 import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.RouteLocationIndicator;
 import com.mapzen.util.Logger;
+import com.mapzen.widget.DebugView;
 import com.mapzen.widget.DistanceView;
 
 import com.bugsense.trace.BugSenseHandler;
@@ -105,6 +106,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private ZoomController zoomController;
     private SharedPreferences prefs;
     private Resources res;
+    private DebugView debugView;
 
     public static void setRouter(Router router) {
         RouteFragment.router = router;
@@ -144,6 +146,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 return false;
             }
         });
+
+        initDebugView(rootView);
         return rootView;
     }
 
@@ -363,21 +367,15 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
         storeLocationInfo(location, correctedLocation);
         manageMap(correctedLocation, location);
-        StringBuilder debugStringBuilder = new StringBuilder();
 
         Instruction closestInstruction = route.getClosestInstruction(correctedLocation);
         int closestDistance =
                 (int) Math.floor(correctedLocation.distanceTo(closestInstruction.getLocation()));
 
-        if (closestInstruction != null) {
-            debugStringBuilder.append("Closest instruction is: " + closestInstruction.getName());
-            debugStringBuilder.append(", distance: " + String.valueOf(closestDistance));
-        }
-
+        final int instructionIndex = instructions.indexOf(closestInstruction);
         if (closestDistance <= getAdvanceRadius()) {
             Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: "
                     + closestInstruction.toString());
-            final int instructionIndex = instructions.indexOf(closestInstruction);
             pager.setCurrentItem(instructionIndex);
             if (!route.getSeenInstructions().contains(closestInstruction)) {
                 route.addSeenInstruction(closestInstruction);
@@ -391,18 +389,16 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             l.setLatitude(instruction.getLocation().getLatitude());
             l.setLongitude(instruction.getLocation().getLongitude());
             final int distance = (int) Math.floor(l.distanceTo(correctedLocation));
-            debugStringBuilder.append("\n");
-            debugStringBuilder.append("seen instruction: " + instruction.getName());
-            debugStringBuilder.append(" distance: " + String.valueOf(distance));
             if (distance >= getAdvanceRadius()) {
                 Logger.logToDatabase(act, ROUTE_TAG, "post language: " +
                         instruction.toString());
-                act.appendToDebugView("post language for: " + instruction.toString());
                 flipInstructionToAfter(instruction, correctedLocation);
             }
         }
 
-        act.writeToDebugView(debugStringBuilder.toString());
+        debugView.setCurrentLocation(location);
+        debugView.setSnapLocation(correctedLocation);
+        debugView.setClosestInstruction(closestInstruction, closestDistance);
         logForDebugging(location, correctedLocation);
     }
 
@@ -679,6 +675,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     .append(destination).toString();
         } else {
             return "Route without instructions";
+        }
+    }
+
+    private void initDebugView(View view) {
+        debugView = (DebugView) view.findViewById(R.id.debugging);
+        if (act.isInDebugMode()) {
+            debugView.setVisibility(View.VISIBLE);
         }
     }
 }
