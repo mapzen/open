@@ -6,6 +6,7 @@ import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
+import com.mapzen.widget.DistanceView;
 
 import org.oscim.android.canvas.AndroidGraphics;
 import org.oscim.core.BoundingBox;
@@ -53,6 +54,8 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
     @Inject Router router;
     @InjectView(R.id.starting_point) TextView startingPointTextView;
     @InjectView(R.id.destination) TextView destinationTextView;
+    @InjectView(R.id.destination_preview) TextView destinationPreview;
+    @InjectView(R.id.destination_preview_distance) DistanceView destinationPreviewDistance;
     @InjectView(R.id.route_reverse) ImageButton routeReverse;
     @InjectView(R.id.by_car) ImageButton byCar;
     @InjectView(R.id.by_foot) ImageButton byFoot;
@@ -93,9 +96,11 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
         if (!reverse) {
             startingPointTextView.setText("Current Location");
             destinationTextView.setText(destination.getProperty(NAME));
+            destinationPreview.setText(destination.getProperty(NAME));
         } else {
             startingPointTextView.setText(destination.getProperty(NAME));
             destinationTextView.setText("Current Location");
+            destinationPreview.setText("Current Location");
         }
     }
 
@@ -207,6 +212,7 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
         markers.removeAllItems();
         markers.addItem(getMarkerItem(points.get(0)));
         markers.addItem(getMarkerItem(points.get(points.size() - 1)));
+        destinationPreviewDistance.setDistance(route.getTotalDistance());
     }
 
     @Override

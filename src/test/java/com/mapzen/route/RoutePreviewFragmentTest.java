@@ -3,10 +3,12 @@ package com.mapzen.route;
 import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
 import com.mapzen.entity.SimpleFeature;
+import com.mapzen.helpers.DistanceFormatter;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
+import com.mapzen.widget.DistanceView;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -264,5 +266,39 @@ public class RoutePreviewFragmentTest {
                 isEqualTo(geometry.get(geometry.size() - 1).getLatitude());
         assertThat(values.get(1).getPoint().getLongitude()).
                 isEqualTo(geometry.get(geometry.size() - 1).getLongitude());
+    }
+
+    @Test
+    public void success_shouldPopulateDestinationPreview() throws Exception {
+        fragment.createRouteToDestination();
+        Route testRoute = new Route(getFixture("around_the_block"));
+        fragment.success(testRoute);
+        TextView distanceToDestination =
+                (TextView) fragment.getView().findViewById(R.id.destination_preview);
+        assertThat(distanceToDestination).
+                containsText(destination.getProperty(NAME));
+    }
+
+    @Test
+    public void success_shouldPopulateDestinationPreviewDistance() throws Exception {
+        fragment.createRouteToDestination();
+        Route testRoute = new Route(getFixture("around_the_block"));
+        fragment.success(testRoute);
+        TextView distanceToDestination =
+                (DistanceView) fragment.getView().findViewById(R.id.destination_preview_distance);
+        assertThat(distanceToDestination).
+                containsText(DistanceFormatter.format(testRoute.getTotalDistance()));
+    }
+
+    @Test
+    public void reverse_shouldPopulateDestinationPreviewWithCurrentLocation() throws Exception {
+        fragment.createRouteToDestination();
+        Route testRoute = new Route(getFixture("around_the_block"));
+        fragment.success(testRoute);
+        fragment.reverse();
+        TextView distanceToDestination =
+                (TextView) fragment.getView().findViewById(R.id.destination_preview);
+        assertThat(distanceToDestination).
+                containsText("Current Location");
     }
 }

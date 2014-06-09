@@ -85,6 +85,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="destination" />
+        <com.mapzen.widget.DistanceView
+            android:id="@+id/destination_preview_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="destination" />
     </LinearLayout>
 
 </RelativeLayout>
