@@ -1,6 +1,5 @@
 package com.mapzen.route;
 
-import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
 import com.mapzen.entity.SimpleFeature;
@@ -17,6 +16,8 @@ import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.oscim.layers.PathLayer;
+import org.oscim.layers.marker.ItemizedLayer;
+import org.oscim.layers.marker.MarkerItem;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.FragmentTestUtil;
@@ -24,6 +25,7 @@ import org.robolectric.util.FragmentTestUtil;
 import android.location.Location;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -46,9 +48,14 @@ public class RoutePreviewFragmentTest {
     SimpleFeature destination;
     @Inject Router router;
     @Inject PathLayer path;
+    @Inject ItemizedLayer<MarkerItem> markers;
     @Captor
     @SuppressWarnings("unused")
     ArgumentCaptor<double[]> location;
+
+    @Captor
+    @SuppressWarnings("unused")
+    ArgumentCaptor<MarkerItem> marker;
 
     @Before
     public void setup() throws Exception {
@@ -163,10 +170,9 @@ public class RoutePreviewFragmentTest {
 
     @Test
     public void success_shouldAddPathToMap() throws Exception {
-        int layersSize = getMapController().getMap().layers().size();
         fragment.createRouteToDestination();
         fragment.success(new Route(getFixture("around_the_block")));
-        assertThat(getMapController().getMap().layers().size()).isEqualTo(layersSize + 1);
+        assertThat(getMapController().getMap().layers().contains(path)).isTrue();
     }
 
     @Test
@@ -175,7 +181,7 @@ public class RoutePreviewFragmentTest {
         fragment.createRouteToDestination();
         fragment.success(new Route(getFixture("around_the_block")));
         fragment.success(new Route(getFixture("around_the_block")));
-        assertThat(getMapController().getMap().layers().size()).isEqualTo(layersSize + 1);
+        assertThat(getMapController().getMap().layers().contains(path)).isTrue();
     }
 
     @Test
@@ -194,8 +200,8 @@ public class RoutePreviewFragmentTest {
 
     @Test
     public void success_shouldDrawRoute() throws Exception {
-        Route route = new Route(getFixture("around_the_block"));
         fragment.createRouteToDestination();
+        Route route = new Route(getFixture("around_the_block"));
         fragment.success(route);
         for (Location loc : route.getGeometry()) {
             Mockito.verify(path).addPoint(locationToGeoPoint(loc));
@@ -218,5 +224,45 @@ public class RoutePreviewFragmentTest {
     public void routeForBike_shouldRouteByBike() throws Exception {
         fragment.getView().findViewById(R.id.by_bike).performClick();
         Mockito.verify(router).setBiking();
+    }
+
+    @Test
+    public void success_shouldAddMarkerLayer() throws Exception {
+        fragment.createRouteToDestination();
+        fragment.success(new Route(getFixture("around_the_block")));
+        assertThat(getMapController().getMap().layers().contains(markers)).isTrue();
+    }
+
+    @Test
+    public void success_shouldAddMarkerLayerOnce() throws Exception {
+        fragment.createRouteToDestination();
+        fragment.success(new Route(getFixture("around_the_block")));
+        fragment.success(new Route(getFixture("around_the_block")));
+        assertThat(getMapController().getMap().layers().contains(markers)).isTrue();
+    }
+
+    @Test
+    public void success_shouldClearMarkerLayer() throws Exception {
+        fragment.createRouteToDestination();
+        fragment.success(new Route(getFixture("around_the_block")));
+        Mockito.verify(markers).removeAllItems();
+    }
+
+    @Test
+    public void success_shouldAddBubblesAandB() throws Exception {
+        Route testRoute = new Route(getFixture("around_the_block"));
+        ArrayList<Location> geometry = testRoute.getGeometry();
+        fragment.createRouteToDestination();
+        fragment.success(testRoute);
+        Mockito.verify(markers, Mockito.times(2)).addItem(marker.capture());
+        List<MarkerItem> values = marker.getAllValues();
+        assertThat(values.get(0).getPoint().getLatitude()).
+                isEqualTo(geometry.get(0).getLatitude());
+        assertThat(values.get(0).getPoint().getLongitude()).
+                isEqualTo(geometry.get(0).getLongitude());
+        assertThat(values.get(1).getPoint().getLatitude()).
+                isEqualTo(geometry.get(geometry.size() - 1).getLatitude());
+        assertThat(values.get(1).getPoint().getLongitude()).
+                isEqualTo(geometry.get(geometry.size() - 1).getLongitude());
     }
 }

@@ -27,7 +27,7 @@ public class MapzenApplication extends Application {
     protected List<Object> getModules() {
         return Arrays.asList(
                 new AndroidModule(this),
-                new AppModule()
+                new AppModule(this)
         );
     }
 

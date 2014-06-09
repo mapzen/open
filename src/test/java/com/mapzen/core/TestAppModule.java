@@ -12,6 +12,11 @@ import com.mapzen.util.MapzenProgressDialogFragment;
 
 import org.mockito.Mockito;
 import org.oscim.layers.PathLayer;
+import org.oscim.layers.marker.ItemizedLayer;
+import org.oscim.layers.marker.MarkerItem;
+
+import android.content.Context;
+
 
 import javax.inject.Singleton;
 
@@ -33,6 +38,12 @@ import static com.mapzen.osrm.Router.getRouter;
         complete = false
 )
 public class TestAppModule {
+    Context context;
+
+    public TestAppModule(Context context) {
+        this.context = context;
+    }
+
     @Provides @Singleton MapzenProgressDialogFragment provideMapzenProgressDialogFragment() {
         return new MapzenProgressDialogFragment();
     }
@@ -44,4 +55,10 @@ public class TestAppModule {
     @Provides @Singleton PathLayer providePathLayer() {
         return Mockito.mock(PathLayer.class);
     }
+
+    @Provides @Singleton
+    ItemizedLayer<MarkerItem> provideItemizedLayer() {
+        return Mockito.mock(ItemizedLayer.class);
+    }
+
 }

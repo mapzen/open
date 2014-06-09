@@ -7,10 +7,13 @@ import com.mapzen.fragment.BaseFragment;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
 
-import org.oscim.backend.canvas.Color;
+import org.oscim.android.canvas.AndroidGraphics;
 import org.oscim.core.BoundingBox;
 import org.oscim.core.MapPosition;
 import org.oscim.layers.PathLayer;
+import org.oscim.layers.marker.ItemizedLayer;
+import org.oscim.layers.marker.MarkerItem;
+import org.oscim.layers.marker.MarkerSymbol;
 
 import android.location.Location;
 import android.os.Bundle;
@@ -45,6 +48,7 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
     private Type transportationMode = DRIVING;
 
     @Inject PathLayer path;
+    @Inject ItemizedLayer<MarkerItem> markers;
 
     @Inject Router router;
     @InjectView(R.id.starting_point) TextView startingPointTextView;
@@ -196,11 +200,27 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
         if (!getMapController().getMap().layers().contains(path)) {
             getMapController().getMap().layers().add(path);
         }
+
+        if (!getMapController().getMap().layers().contains(markers)) {
+            getMapController().getMap().layers().add(markers);
+        }
+        markers.removeAllItems();
+        markers.addItem(getMarkerItem(points.get(0)));
+        markers.addItem(getMarkerItem(points.get(points.size() - 1)));
     }
 
     @Override
     public void failure(int statusCode) {
         path.clearPath();
         onServerError(statusCode);
+    }
+
+    private MarkerItem getMarkerItem(Location loc) {
+        MarkerItem markerItem = new MarkerItem("Generic Marker",
+                "Generic Description", locationToGeoPoint(loc));
+        markerItem.setMarker(new MarkerSymbol(
+                AndroidGraphics.drawableToBitmap(app.getResources().getDrawable(R.drawable.ic_a)),
+                MarkerItem.HotspotPlace.BOTTOM_CENTER));
+        return markerItem;
     }
 }

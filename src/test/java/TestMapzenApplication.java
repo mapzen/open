@@ -11,7 +11,7 @@ public class TestMapzenApplication extends MapzenApplication {
     protected List<Object> getModules() {
         return Arrays.asList(
                 new AndroidModule(this),
-                new TestAppModule()
+                new TestAppModule(this)
         );
     }
 }

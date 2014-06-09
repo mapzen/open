@@ -162,6 +162,9 @@ public class MapFragment extends BaseFragment {
         getMap().layers().remove(getLocationMarkerLayer());
     }
 
+    public VectorTileLayer getBaseLayer() {
+        return baseLayer;
+    }
     private void setupMap() {
         final OSciMap4TileSource tileSource = new OSciMap4TileSource(getTileBaseSource());
         tileSource.setHttpEngine(new OkHttpEngine.OkHttpFactory());
