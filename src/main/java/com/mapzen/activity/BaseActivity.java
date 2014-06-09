@@ -205,6 +205,7 @@ public class BaseActivity extends MapActivity {
             SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             editor.remove("token");
+            editor.remove("forced_login");
             editor.commit();
             toggleOSMLogin();
             startActivity(new Intent(this, InitActivity.class));
@@ -327,7 +328,7 @@ public class BaseActivity extends MapActivity {
                 MenuItem loginMenu = activityMenu.findItem(R.id.login);
                 MenuItem logoutMenu = activityMenu.findItem(R.id.logout);
 
-                if (app.getAccessToken() != null) {
+                if ((app.getAccessToken() != null) || wasForceLoggedIn()) {
                     loginMenu.setVisible(false);
                     logoutMenu.setVisible(true);
                 } else {
@@ -495,5 +496,10 @@ public class BaseActivity extends MapActivity {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(SavedSearch.TAG, getSavedSearch().serialize());
         editor.commit();
+    }
+
+    private boolean wasForceLoggedIn() {
+        SharedPreferences pref = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
+        return pref.getBoolean("forced_login", false);
     }
 }

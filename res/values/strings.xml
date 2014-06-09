@@ -93,6 +93,7 @@
     <string name="osm_sign_up_url">https://www.openstreetmap.org/user/new</string>
     <string name="login_explanation">Sign up or log in with Open Street Map to get started.</string>
     <string name="motto">Start where you are.</string>
+    <string name="login_error">Unable to log in. You can try to log in again by restarting the application.</string>
 
     <!--Debug Strings-->
 

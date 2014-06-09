@@ -1,7 +1,9 @@
 package com.mapzen.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -34,7 +37,7 @@ public class InitActivity extends Activity {
         clickCount = 0;
         ButterKnife.inject(this, rootView);
         getActionBar().hide();
-        if (app.isLoggedIn()) {
+        if (app.isLoggedIn() || wasForceLoggedIn()) {
             startBaseActivity();
         }
         loadAnimations();
@@ -66,9 +69,22 @@ public class InitActivity extends Activity {
     @OnClick(R.id.logo)
     protected void onClickLogo() {
         clickCount++;
-        if (clickCount > 2) {
-            startBaseActivity();
+        if (clickCount == 3) {
+            forceLogin();
         }
+    }
+
+    private void forceLogin() {
+        SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("forced_login", true);
+        editor.commit();
+        startBaseActivity();
+    }
+
+    protected boolean wasForceLoggedIn() {
+        SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
+        return prefs.getBoolean("forced_login", false);
     }
 
     private void openSignUpPage() {
@@ -81,12 +97,20 @@ public class InitActivity extends Activity {
         (new AsyncTask<Void, Void, Token>() {
             @Override
             protected Token doInBackground(Void... params) {
-                return app.getOsmOauthService().getRequestToken();
+                try {
+                    return app.getOsmOauthService().getRequestToken();
+                } catch (Exception e) {
+                    return null;
+                }
             }
 
             @Override
             protected void onPostExecute(Token url) {
-                openLoginPage(url);
+                if (url != null) {
+                    openLoginPage(url);
+                } else {
+                    unableToLogInAction();
+                }
             }
         }).execute();
     }
@@ -120,18 +144,14 @@ public class InitActivity extends Activity {
         delayButtonHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                setMottoInvisible();
                 fadeInLoginView();
             }
         }, 2000);
     }
 
-    private void setMottoInvisible() {
-        findViewById(R.id.motto).setVisibility(LinearLayout.INVISIBLE);
-    }
-
     private void fadeOutMotto() {
         findViewById(R.id.motto).startAnimation(fadeOut);
+        findViewById(R.id.motto).setVisibility(LinearLayout.INVISIBLE);
     }
 
     private void fadeInLoginView() {
@@ -145,5 +165,11 @@ public class InitActivity extends Activity {
         fadeIn = AnimationUtils.loadAnimation(this, R.anim.fadein);
         fadeInSlow = AnimationUtils.loadAnimation(this, R.anim.fadeinslow);
         fadeOut = AnimationUtils.loadAnimation(this, R.anim.fadeout);
+    }
+
+    protected void unableToLogInAction() {
+        Toast.makeText(getApplicationContext(), getString(R.string.login_error),
+                Toast.LENGTH_LONG).show();
+        startBaseActivity();
     }
 }
