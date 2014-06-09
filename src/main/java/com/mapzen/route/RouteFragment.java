@@ -159,8 +159,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         addIgnoredPhrases();
         checkIfVoiceNavigationIsEnabled();
         playFirstInstruction();
-        notificationCreator.createNewNotification(
-                simpleFeature.getMarker().title, instructions.get(0).getFullInstruction());
+        notificationCreator.createNewNotification(simpleFeature.getMarker().title,
+                instructions.get(0).getFullInstruction());
     }
 
     private void addRemixPatterns() {
@@ -553,8 +553,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         getMapController().setMapPerspectiveForInstruction(instructions.get(i));
         speakerbox.stop();
         speakerbox.play(instructions.get(i).getFullInstruction());
-        notificationCreator.createNewNotification(
-                simpleFeature.getMarker().title, instructions.get(i).getFullInstruction());
+        notificationCreator.createNewNotification(simpleFeature.getMarker().title,
+                instructions.get(i).getFullInstruction());
     }
 
     @Override

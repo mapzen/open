@@ -508,6 +508,4 @@ public class BaseActivity extends MapActivity {
         editor.putString(SavedSearch.TAG, getSavedSearch().serialize());
         editor.commit();
     }
-
-
 }
