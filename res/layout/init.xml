@@ -16,10 +16,10 @@
                 android:id="@+id/logo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
                 android:layout_marginTop="@dimen/logo_top_margin"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_mapzen_logo_white" />
+                android:src="@drawable/ic_mapzen_logo_white"
+                android:contentDescription="@string/logo_description" />
 
     </LinearLayout>
 
@@ -59,8 +59,7 @@
                 android:textColor="@android:color/white"
                 android:fontFamily="sans-serif"
                 android:background="@color/button_red"
-                android:textSize="@dimen/button_font_size"
-                android:layout_alignParentBottom="true"/>
+                android:textSize="@dimen/button_font_size"/>
 
         <Button
                 android:id="@+id/log_in_button"
@@ -76,8 +75,7 @@
                 android:text="@string/osm_init_login"
                 android:fontFamily="sans-serif"
                 android:background="@color/button_dark_blue"
-                android:textSize="@dimen/button_font_size"
-                android:layout_alignParentBottom="true"/>
+                android:textSize="@dimen/button_font_size"/>
 
     </LinearLayout>
 

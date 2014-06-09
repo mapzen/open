@@ -84,6 +84,7 @@
     <string name="settings_turn_driving_over_50_title">Driving 50+ Mph</string>
 
     <string name="toast_fixed_location_is_malformed">Your fixed location is malformed</string>
+    <string name="logo_description">Mapzen Logo</string>
     <string name="osm_login">OpenStreetMap Login</string>
     <string name="osm_logout">OpenStreetMap Logout</string>
     <string name="osm_login_title">Please Authorize</string>
