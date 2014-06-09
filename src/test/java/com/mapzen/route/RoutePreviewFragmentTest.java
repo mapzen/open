@@ -284,7 +284,8 @@ public class RoutePreviewFragmentTest {
         fragment.createRouteToDestination();
         Route testRoute = new Route(getFixture("around_the_block"));
         fragment.success(testRoute);
-        TextView distanceToDestination =
+        fragment.reverse();
+        DistanceView distanceToDestination =
                 (DistanceView) fragment.getView().findViewById(R.id.destination_preview_distance);
         assertThat(distanceToDestination).
                 containsText(DistanceFormatter.format(testRoute.getTotalDistance()));

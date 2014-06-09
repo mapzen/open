@@ -47,6 +47,7 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
     private SimpleFeature destination;
     private boolean reverse = false;
     private Type transportationMode = DRIVING;
+    private Route route;
 
     @Inject PathLayer path;
     @Inject ItemizedLayer<MarkerItem> markers;
@@ -101,6 +102,9 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
             startingPointTextView.setText(destination.getProperty(NAME));
             destinationTextView.setText("Current Location");
             destinationPreview.setText("Current Location");
+        }
+        if (route != null) {
+            destinationPreviewDistance.setDistance(route.getTotalDistance());
         }
     }
 
@@ -166,6 +170,7 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
 
     @Override
     public void success(Route route) {
+        this.route = route;
         if (!isAdded()) {
             act.getSupportFragmentManager().beginTransaction()
                     .addToBackStack(null)
@@ -212,7 +217,6 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
         markers.removeAllItems();
         markers.addItem(getMarkerItem(points.get(0)));
         markers.addItem(getMarkerItem(points.get(points.size() - 1)));
-        destinationPreviewDistance.setDistance(route.getTotalDistance());
     }
 
     @Override
