@@ -76,12 +76,16 @@ public class InitActivity extends Activity {
 
             @Override
             protected void onPostExecute(Token url) {
-                String authenticationUrl = app.getOsmOauthService().getAuthorizationUrl(url);
-                Intent oauthIntent = new Intent(Intent.ACTION_VIEW);
-                oauthIntent.setData(Uri.parse(authenticationUrl));
-                startActivity(oauthIntent);
+                openLoginPage(url);
             }
         }).execute();
+    }
+
+    protected void openLoginPage(Token url) {
+        String authenticationUrl = app.getOsmOauthService().getAuthorizationUrl(url);
+        Intent oauthIntent = new Intent(Intent.ACTION_VIEW);
+        oauthIntent.setData(Uri.parse(authenticationUrl));
+        startActivity(oauthIntent);
     }
 
     private void startBaseActivity() {

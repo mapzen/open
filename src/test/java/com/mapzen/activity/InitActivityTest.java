@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
+import org.scribe.model.Token;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import android.net.Uri;
@@ -43,7 +44,8 @@ public class InitActivityTest {
 
     @Test
     public void shouldOpenLoginPage() {
-        activity.findViewById(R.id.log_in_button).callOnClick();
+        Token testToken = new Token("Bogus_key", "Bogus_verfier");
+        activity.openLoginPage(testToken);
         String urlOpened = shadowOf(activity).getNextStartedActivity().getDataString();
         assertThat(urlOpened).contains("http://www.openstreetmap.org/oauth/authorize?oauth_token=");
     }
