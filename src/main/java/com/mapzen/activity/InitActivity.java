@@ -24,12 +24,14 @@ public class InitActivity extends Activity {
     MapzenApplication app;
     Handler delayButtonHandler;
     Animation fadeIn, fadeInSlow, fadeOut;
+    int clickCount;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.init);
         View rootView = getWindow().getDecorView().getRootView();
         app = (MapzenApplication) getApplication();
+        clickCount = 0;
         ButterKnife.inject(this, rootView);
         getActionBar().hide();
         if (app.isLoggedIn()) {
@@ -59,6 +61,14 @@ public class InitActivity extends Activity {
     @SuppressWarnings("unused")
     protected void onClickLogIn() {
         loginRoutine();
+    }
+
+    @OnClick(R.id.logo)
+    protected void onClickLogo() {
+        clickCount++;
+        if (clickCount > 2) {
+            startBaseActivity();
+        }
     }
 
     private void openSignUpPage() {
