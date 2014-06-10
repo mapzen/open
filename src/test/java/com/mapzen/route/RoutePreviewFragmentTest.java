@@ -156,8 +156,8 @@ public class RoutePreviewFragmentTest {
         fragment.createRouteToDestination();
         Mockito.verify(router, Mockito.times(2)).setLocation(location.capture());
         List<double[]> values = location.getAllValues();
-        assertThat(values.get(0)).isEqualTo(new double[] {22.22, 44.44});
-        assertThat(values.get(1)).isEqualTo(new double[] {1.0, 1.0});
+        assertThat(values.get(0)).isEqualTo(new double[] { 22.22, 44.44 });
+        assertThat(values.get(1)).isEqualTo(new double[] { 1.0, 1.0 });
     }
 
     @Test
@@ -166,8 +166,8 @@ public class RoutePreviewFragmentTest {
         fragment.reverse();
         Mockito.verify(router, Mockito.times(2)).setLocation(location.capture());
         List<double[]> values = location.getAllValues();
-        assertThat(values.get(0)).isEqualTo(new double[] {1.0, 1.0});
-        assertThat(values.get(1)).isEqualTo(new double[] {22.22, 44.44});
+        assertThat(values.get(0)).isEqualTo(new double[] { 1.0, 1.0 });
+        assertThat(values.get(1)).isEqualTo(new double[] { 22.22, 44.44 });
     }
 
     @Test
@@ -302,4 +302,58 @@ public class RoutePreviewFragmentTest {
         assertThat(distanceToDestination).
                 containsText("Current Location");
     }
+
+    @Test
+    public void start_shouldStartRouting() throws Exception {
+        fragment.createRouteToDestination();
+        Route testRoute = new Route(getFixture("around_the_block"));
+        fragment.success(testRoute);
+        TextView startBtn = (TextView) fragment.getView().findViewById(R.id.start);
+        startBtn.performClick();
+        assertThat(activity.getSupportFragmentManager()).hasFragmentWithTag(RouteFragment.TAG);
+    }
+
+    @Test
+    public void start_shouldNotStartRouting() throws Exception {
+        fragment.createRouteToDestination();
+        Route testRoute = new Route(getFixture("around_the_block"));
+        fragment.success(testRoute);
+        fragment.reverse();
+        TextView startBtn = (TextView) fragment.getView().findViewById(R.id.start);
+        startBtn.performClick();
+        assertThat(activity.getSupportFragmentManager()).
+                doesNotHaveFragmentWithTag(RouteFragment.TAG);
+    }
+
+    @Test
+    public void start_shouldClearBubbles() throws Exception {
+        fragment.createRouteToDestination();
+        Route testRoute = new Route(getFixture("around_the_block"));
+        fragment.success(testRoute);
+        TextView startBtn = (TextView) fragment.getView().findViewById(R.id.start);
+        startBtn.performClick();
+        assertThat(getMapController().getMap().layers().contains(markers)).isFalse();
+    }
+
+    @Test
+    public void reverse_shouldSetStartToView() throws Exception {
+        fragment.createRouteToDestination();
+        Route testRoute = new Route(getFixture("around_the_block"));
+        fragment.success(testRoute);
+        fragment.reverse();
+        TextView startBtn = (TextView) fragment.getView().findViewById(R.id.start);
+        assertThat(startBtn).containsText("View");
+    }
+
+    @Test
+    public void reverse_shouldToggleViewStart() throws Exception {
+        fragment.createRouteToDestination();
+        Route testRoute = new Route(getFixture("around_the_block"));
+        fragment.success(testRoute);
+        fragment.reverse();
+        fragment.reverse();
+        TextView startBtn = (TextView) fragment.getView().findViewById(R.id.start);
+        assertThat(startBtn).containsText("Start");
+    }
+
 }

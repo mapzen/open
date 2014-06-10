@@ -90,6 +90,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="destination" />
+
+        <TextView
+            android:id="@+id/start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="8dp"
+            android:drawablePadding="-4dp"
+            android:drawableTop="@drawable/ic_lets_go"
+            android:textColor="@color/lets_go"
+            android:text="@string/start" />
+
     </LinearLayout>
 
 </RelativeLayout>

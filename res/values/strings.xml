@@ -17,6 +17,7 @@
     <string name="gps_positive_button">Yes</string>
     <string name="gps_negative_button">Dismiss</string>
     <string name="start">Start</string>
+    <string name="view">View</string>
     <string name="overflow_menu">More</string>
     <string name="route_steps_menu_option">Step-by-step list</string>
     <string name="waiting">Waiting for location</string>

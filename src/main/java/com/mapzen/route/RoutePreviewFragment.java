@@ -61,6 +61,7 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
     @InjectView(R.id.by_car) ImageButton byCar;
     @InjectView(R.id.by_foot) ImageButton byFoot;
     @InjectView(R.id.by_bike) ImageButton byBike;
+    @InjectView(R.id.start) TextView startBtn;
 
     public static RoutePreviewFragment newInstance(BaseActivity act,
             SimpleFeature destination) {
@@ -98,10 +99,12 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
             startingPointTextView.setText("Current Location");
             destinationTextView.setText(destination.getProperty(NAME));
             destinationPreview.setText(destination.getProperty(NAME));
+            startBtn.setText("Start");
         } else {
             startingPointTextView.setText(destination.getProperty(NAME));
             destinationTextView.setText("Current Location");
             destinationPreview.setText("Current Location");
+            startBtn.setText("View");
         }
         if (route != null) {
             destinationPreviewDistance.setDistance(route.getTotalDistance());
@@ -129,6 +132,19 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
     @OnClick(R.id.by_foot) public void byFoot() {
         transportationMode = WALKING;
         createRouteToDestination();
+    }
+
+    @SuppressWarnings("unused")
+    @OnClick(R.id.start) public void start() {
+        if (!reverse) {
+            RouteFragment routeFragment = RouteFragment.newInstance(act, destination);
+            routeFragment.setRoute(route);
+            act.getSupportFragmentManager().beginTransaction()
+                    .addToBackStack(null)
+                    .add(R.id.routes_container, routeFragment, RouteFragment.TAG)
+                    .commit();
+            getMapController().getMap().layers().remove(markers);
+        }
     }
 
     public void createRouteToDestination() {
