@@ -358,4 +358,21 @@ public class RoutePreviewFragmentTest {
         assertThat(startBtn).containsText("Start");
     }
 
+    @Test
+    public void detach_shouldRemoveMarkers() throws Exception {
+        fragment.createRouteToDestination();
+        Route testRoute = new Route(getFixture("around_the_block"));
+        fragment.success(testRoute);
+        fragment.onDetach();
+        assertThat(getMapController().getMap().layers().contains(markers)).isFalse();
+    }
+
+    @Test
+    public void detach_shouldRemovePath() throws Exception {
+        fragment.createRouteToDestination();
+        Route testRoute = new Route(getFixture("around_the_block"));
+        fragment.success(testRoute);
+        fragment.onDetach();
+        assertThat(getMapController().getMap().layers().contains(path)).isFalse();
+    }
 }
