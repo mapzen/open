@@ -33,6 +33,11 @@ import org.scribe.model.Verifier;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.SearchManager;
+import android.app.NotificationManager;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,10 +47,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -161,6 +162,18 @@ public class BaseActivity extends MapActivity {
     protected void onResume() {
         super.onResume();
         locationClient.connect();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        clearNotifications();
+    }
+
+    private void clearNotifications() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(
+                NOTIFICATION_SERVICE);
+        notificationManager.cancel(0);
     }
 
     public SQLiteDatabase getDb() {
@@ -347,6 +360,7 @@ public class BaseActivity extends MapActivity {
         } else {
             super.onBackPressed();
         }
+        clearNotifications();
     }
 
     @Override

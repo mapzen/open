@@ -1,5 +1,6 @@
 package com.mapzen.route;
 
+import android.app.NotificationManager;
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
@@ -16,6 +17,7 @@ import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.RouteLocationIndicator;
+import com.mapzen.util.MapzenNotificationCreator;
 import com.mapzen.widget.DistanceView;
 
 import org.json.JSONObject;
@@ -38,6 +40,8 @@ import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowTextToSpeech;
 import org.robolectric.shadows.ShadowToast;
+import org.robolectric.shadows.ShadowNotificationManager;
+import org.robolectric.shadows.ShadowNotification;
 import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.tester.android.view.TestMenuItem;
 import org.robolectric.util.FragmentTestUtil;
@@ -1110,6 +1114,56 @@ public class RouteFragmentTest {
         assertThat(fragment.getView().findViewById(R.id.debugging)).isVisible();
     }
 
+    @Test
+    public void shouldGenerateNotificationOnFirstInstruction() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction instruction = getTestInstruction(3, 3);
+        instructions.add(instruction);
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+
+        ShadowNotification sNotification = getRoutingNotification();
+        assertThat(sNotification.getContentTitle()).isEqualTo("Test SimpleFeature");
+        assertThat(sNotification.getContentText()).isEqualTo("Head on 19th Street for 520 ft");
+        assertThat(sNotification.getActions().get(0).title).isEqualTo("Exit Navigation");
+    }
+
+    @Test
+    public void shouldGenerateNotificationOnPageSelected() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction instruction = getTestInstruction(3, 3);
+        instructions.add(instruction);
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onPageSelected(0);
+
+        ShadowNotification sNotification = getRoutingNotification();
+        assertThat(sNotification.getContentTitle()).isEqualTo("Test SimpleFeature");
+        assertThat(sNotification.getContentText()).isEqualTo("Head on 19th Street for 520 ft");
+        assertThat(sNotification.getActions().get(0).title).isEqualTo("Exit Navigation");
+    }
+
+    @Test
+    public void shouldKillNotificationOnExitNavigation() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        Instruction instruction = getTestInstruction(3, 3);
+        instructions.add(instruction);
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onPageSelected(0);
+
+        ShadowNotification sNotification = getRoutingNotification();
+        sNotification.getActions().get(0).actionIntent.send();
+
+        ShadowApplication application = shadowOf(act.getApplication());
+        Intent broadcastIntent = application.getBroadcastIntents().get(0);
+        String broadcastClassName = broadcastIntent.getComponent().getClassName();
+        boolean shouldExit = broadcastIntent.getExtras()
+                .getBoolean(MapzenNotificationCreator.EXIT_NAVIGATION);
+        assertThat(shouldExit).isTrue();
+        assertThat(broadcastClassName).isEqualTo("com.mapzen.util.NotificationBroadcastReciever");
+    }
+
     private void assertZoomLevel(int expected, float milesPerHour, Location location) {
         location.setSpeed(ZoomController.milesPerHourToMetersPerSecond(milesPerHour));
         fragment.onLocationChanged(location);
@@ -1141,6 +1195,13 @@ public class RouteFragmentTest {
         testInstructions.add(getTestInstruction(1, 1));
         testInstructions.add(getTestInstruction(2, 2));
         fragment.setInstructions(testInstructions);
+    }
+
+    private ShadowNotification getRoutingNotification() {
+        NotificationManager manager = (NotificationManager) act.getSystemService(
+                act.getApplicationContext().NOTIFICATION_SERVICE);
+        ShadowNotificationManager sManager = shadowOf(manager);
+        return shadowOf(sManager.getAllNotifications().get(0));
     }
 
     private void setAdvanceRadiusPreference(int key, int value) {

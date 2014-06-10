@@ -14,6 +14,7 @@ import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.RouteLocationIndicator;
 import com.mapzen.util.Logger;
 import com.mapzen.widget.DebugView;
+import com.mapzen.util.MapzenNotificationCreator;
 import com.mapzen.widget.DistanceView;
 
 import com.bugsense.trace.BugSenseHandler;
@@ -97,6 +98,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private int pagerPositionWhenPaused = 0;
 
     Speakerbox speakerbox;
+    private MapzenNotificationCreator notificationCreator;
 
     private Set<Instruction> flippedInstructions = new HashSet<Instruction>();
     private boolean isRouting = false;
@@ -138,6 +140,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager.setOnPageChangeListener(this);
         adapter.notifyDataSetChanged();
         previousPosition = pager.getCurrentItem();
+        notificationCreator = new MapzenNotificationCreator(act);
         initSpeakerbox();
         pager.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -146,7 +149,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 return false;
             }
         });
-
         initDebugView(rootView);
         return rootView;
     }
@@ -157,6 +159,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         addIgnoredPhrases();
         checkIfVoiceNavigationIsEnabled();
         playFirstInstruction();
+        notificationCreator.createNewNotification(simpleFeature.getMarker().title,
+                instructions.get(0).getFullInstruction());
     }
 
     private void addRemixPatterns() {
@@ -549,6 +553,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         getMapController().setMapPerspectiveForInstruction(instructions.get(i));
         speakerbox.stop();
         speakerbox.play(instructions.get(i).getFullInstruction());
+        notificationCreator.createNewNotification(simpleFeature.getMarker().title,
+                instructions.get(i).getFullInstruction());
     }
 
     @Override
@@ -637,6 +643,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     public void run() {
                         pager.setAdapter(new RouteAdapter(act, instructions));
                         playFirstInstruction();
+                        notificationCreator.createNewNotification(simpleFeature.getMarker().title,
+                                instructions.get(0).getFullInstruction());
                     }
                 });
             }

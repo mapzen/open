@@ -50,5 +50,6 @@
             android:exported="false"
             android:enabled="true" >
         </service>
+    <receiver android:name="com.mapzen.util.NotificationBroadcastReciever" />
     </application>
 </manifest>
