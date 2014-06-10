@@ -4,7 +4,6 @@ import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
-import com.mapzen.fragment.DirectionListFragment;
 import com.mapzen.helpers.ZoomController;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;

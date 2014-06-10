@@ -5,7 +5,6 @@ import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.entity.SimpleFeature;
-import com.mapzen.fragment.DirectionListFragment;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.helpers.DistanceFormatter;
 import com.mapzen.helpers.ZoomController;
