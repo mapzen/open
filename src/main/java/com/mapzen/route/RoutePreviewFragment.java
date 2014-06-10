@@ -232,8 +232,8 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
             getMapController().getMap().layers().add(markers);
         }
         markers.removeAllItems();
-        markers.addItem(getMarkerItem(points.get(0)));
-        markers.addItem(getMarkerItem(points.get(points.size() - 1)));
+        markers.addItem(getMarkerItem(R.drawable.ic_a, points.get(0)));
+        markers.addItem(getMarkerItem(R.drawable.ic_b, points.get(points.size() - 1)));
     }
 
     @Override
@@ -242,11 +242,11 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
         onServerError(statusCode);
     }
 
-    private MarkerItem getMarkerItem(Location loc) {
+    private MarkerItem getMarkerItem(int icon, Location loc) {
         MarkerItem markerItem = new MarkerItem("Generic Marker",
                 "Generic Description", locationToGeoPoint(loc));
         markerItem.setMarker(new MarkerSymbol(
-                AndroidGraphics.drawableToBitmap(app.getResources().getDrawable(R.drawable.ic_a)),
+                AndroidGraphics.drawableToBitmap(app.getResources().getDrawable(icon)),
                 MarkerItem.HotspotPlace.BOTTOM_CENTER));
         return markerItem;
     }
