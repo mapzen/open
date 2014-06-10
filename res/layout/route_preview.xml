@@ -40,7 +40,6 @@
             android:contentDescription="reverse"
             android:src="@drawable/ic_switch" />
 
-
     </LinearLayout>
 
     <LinearLayout
@@ -74,22 +73,15 @@
             android:src="@drawable/ic_walk" />
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:paddingTop="@dimen/default_padding_vertical"
+        android:paddingBottom="@dimen/default_padding_vertical"
+        android:paddingLeft="@dimen/default_padding_horizontal"
+        android:paddingRight="@dimen/default_padding_horizontal"
         android:background="@android:color/white">
-
-        <TextView
-            android:id="@+id/destination_preview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="destination" />
-        <com.mapzen.widget.DistanceView
-            android:id="@+id/destination_preview_distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="destination" />
 
         <TextView
             android:id="@+id/start"
@@ -102,6 +94,28 @@
             android:textColor="@color/lets_go"
             android:text="@string/start" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/destination_preview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/start"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:text="destination_preview" />
+
+        <com.mapzen.widget.DistanceView
+            android:id="@+id/destination_preview_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/destination_preview"
+            android:textSize="16sp"
+            android:text="destination_preview_distance" />
+
+
+    </RelativeLayout>
 
 </RelativeLayout>
