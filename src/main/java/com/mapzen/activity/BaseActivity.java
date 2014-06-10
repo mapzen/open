@@ -123,7 +123,7 @@ public class BaseActivity extends MapActivity {
         }
     };
 
-    private boolean enableActionbar = true;
+    protected boolean enableActionbar = true;
 
     protected Executor debugDataExecutor = Executors.newSingleThreadExecutor();
 

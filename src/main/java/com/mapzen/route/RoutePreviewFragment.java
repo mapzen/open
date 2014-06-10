@@ -82,6 +82,7 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
     @Override
     public void onDetach() {
         super.onDetach();
+        act.enableActionbar();
         act.showActionBar();
     }
 

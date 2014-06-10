@@ -64,6 +64,7 @@ public class RoutePreviewFragmentTest {
         ((TestMapzenApplication) Robolectric.application).inject(this);
         MockitoAnnotations.initMocks(this);
         activity = initBaseActivity();
+        activity.disableActionbar();
         destination = getTestSimpleFeature();
         fragment = RoutePreviewFragment.newInstance(activity, destination);
         FragmentTestUtil.startFragment(fragment);
@@ -115,6 +116,7 @@ public class RoutePreviewFragmentTest {
     @Test
     public void onDetach_shouldShowActionbar() throws Exception {
         fragment.onDetach();
+        assertThat(activity.actionBarIsEnabled()).isTrue();
         assertThat(activity.getActionBar()).isShowing();
     }
 

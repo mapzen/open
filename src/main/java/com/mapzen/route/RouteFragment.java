@@ -245,8 +245,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onDetach() {
         super.onDetach();
-        act.enableActionbar();
-        act.showActionBar();
         markReadyForUpload(routeId);
         clearRoute();
         mapFragment.showLocationMarker();

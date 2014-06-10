@@ -567,13 +567,6 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onDetach_shouldEnableActionbar() throws Exception {
-        FragmentTestUtil.startFragment(fragment);
-        fragment.onDetach();
-        assertThat(act.getActionBar()).isShowing();
-    }
-
-    @Test
     public void onPause_shouldActivateActivitiesMapUpdates() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         fragment.onPause();

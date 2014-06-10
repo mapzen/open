@@ -76,4 +76,8 @@ public class TestBaseActivity extends BaseActivity {
     public void setDebugDataExecutor(Executor executor) {
         debugDataExecutor = executor;
     }
+
+    public boolean actionBarIsEnabled() {
+        return enableActionbar;
+    }
 }
