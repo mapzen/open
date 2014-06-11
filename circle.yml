@@ -14,7 +14,6 @@ dependencies:
 
 test:
   override:
-    - mvn generate-sources -Dosm_oauth.key=$OSM_AUTH_KEY -Dosm_oauth.secret=$OSM_AUTH_SECRET
     - mvn install -P jenkins -Dosm_oauth.key=$OSM_AUTH_KEY -Dosm_oauth.secret=$OSM_AUTH_SECRET
 
 deployment:
