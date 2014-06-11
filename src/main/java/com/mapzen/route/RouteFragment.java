@@ -669,9 +669,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public String getGPXDescription() {
         if (instructions.size() >= 1) {
             Instruction firstInstruction = instructions.get(0);
-            String destination = simpleFeature.getProperty(NAME);
+            String destination = simpleFeature.toString();
             return new StringBuilder().append("Route between: ")
-                    .append(firstInstruction.getName())
+                    .append(formatInstructionForDescription(firstInstruction))
                     .append(" -> ")
                     .append(destination).toString();
         } else {
@@ -679,6 +679,14 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
+    private String formatInstructionForDescription(Instruction instruction) {
+        String locationString = instruction.toString().split("Instruction: ")[1];
+        String[] locationStringSplit = locationString.split("\\(.*,\\s.*\\)");
+        String finalString = locationStringSplit[1].replace(instruction.getHumanTurnInstruction(), "");
+        String latLong = " [" + instruction.getLocation().getLatitude() + ", " + instruction.getLocation().getLongitude() + ']';
+        Logger.d("final is " + latLong);
+        return finalString + latLong;
+    }
 
 
     private void initDebugView(View view) {
