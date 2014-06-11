@@ -6,6 +6,7 @@ import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
+import com.mapzen.util.Logger;
 import com.mapzen.widget.DistanceView;
 
 import org.oscim.android.canvas.AndroidGraphics;
@@ -22,6 +23,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -30,6 +33,7 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
 import static com.mapzen.MapController.geoPointToPair;
@@ -58,10 +62,11 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
     @InjectView(R.id.destination_preview) TextView destinationPreview;
     @InjectView(R.id.destination_preview_distance) DistanceView destinationPreviewDistance;
     @InjectView(R.id.route_reverse) ImageButton routeReverse;
-    @InjectView(R.id.by_car) ImageButton byCar;
-    @InjectView(R.id.by_foot) ImageButton byFoot;
-    @InjectView(R.id.by_bike) ImageButton byBike;
+    @InjectView(R.id.by_car) RadioButton byCar;
+    @InjectView(R.id.by_foot) RadioButton byFoot;
+    @InjectView(R.id.by_bike) RadioButton byBike;
     @InjectView(R.id.start) TextView startBtn;
+    @InjectView(R.id.routing_mode) RadioGroup routingMode;
 
     public static RoutePreviewFragment newInstance(BaseActivity act,
             SimpleFeature destination) {
@@ -122,19 +127,25 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
     }
 
     @SuppressWarnings("unused")
-    @OnClick(R.id.by_car) public void byCar() {
-        transportationMode = DRIVING;
-        createRouteToDestination();
+    @OnCheckedChanged(R.id.by_car) public void byCar(boolean active) {
+        if (active) {
+            transportationMode = DRIVING;
+            createRouteToDestination();
+        }
     }
     @SuppressWarnings("unused")
-    @OnClick(R.id.by_bike) public void byBike() {
-        transportationMode = BIKING;
-        createRouteToDestination();
+    @OnCheckedChanged(R.id.by_bike) public void byBike(boolean active) {
+        if (active) {
+            transportationMode = BIKING;
+            createRouteToDestination();
+        }
     }
     @SuppressWarnings("unused")
-    @OnClick(R.id.by_foot) public void byFoot() {
-        transportationMode = WALKING;
-        createRouteToDestination();
+    @OnCheckedChanged(R.id.by_foot) public void byFoot(boolean active) {
+        if (active) {
+            transportationMode = WALKING;
+            createRouteToDestination();
+        }
     }
 
     @SuppressWarnings("unused")

@@ -49,28 +49,31 @@
         android:background="@android:color/white"
         android:divider="@color/dark_gray">
 
-        <ImageButton
-            android:id="@+id/by_car"
+        <RadioGroup
+            android:id="@+id/routing_mode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_car" />
+            android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@+id/by_bike"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_bike" />
+            <RadioButton
+                android:id="@+id/by_car"
+                android:checked="true"
+                android:button="@drawable/radio_button_car"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <RadioButton
+                android:id="@+id/by_bike"
+                android:button="@drawable/radio_button_bike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <RadioButton
+                android:id="@+id/by_foot"
+                android:button="@drawable/radio_button_walk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        <ImageButton
-            android:id="@+id/by_foot"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_walk" />
+            </RadioGroup>
     </LinearLayout>
 
     <RelativeLayout
