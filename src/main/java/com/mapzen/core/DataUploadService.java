@@ -73,7 +73,6 @@ public class DataUploadService extends Service {
                             new String[] { COLUMN_TABLE_ID, COLUMN_MSG },
                             COLUMN_UPLOADED + " is null AND " + COLUMN_READY_FOR_UPLOAD + " == ?",
                             new String[] { "1" }, null, null, null);
-
                     while (cursor.moveToNext()) {
                         int routeIdIndex = cursor.getColumnIndex(COLUMN_TABLE_ID);
                         int routeDescription = cursor.getColumnIndex(COLUMN_MSG);
@@ -244,7 +243,7 @@ public class DataUploadService extends Service {
         app.getOsmOauthService().signRequest(app.getAccessToken(), request);
         Response response = request.send();
 
-        Logger.d("DataUpload uplaoaded");
+        Logger.d("DataUpload uploaded");
         if (response.isSuccessful()) {
             ContentValues cv = new ContentValues();
             cv.put(DatabaseHelper.COLUMN_UPLOADED, 1);

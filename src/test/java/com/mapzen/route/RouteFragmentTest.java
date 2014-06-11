@@ -1031,6 +1031,16 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void getGPXDescription_shouldIncludeReturnBeginningAndEnd() throws Exception {
+        testInstructions = new ArrayList<Instruction>();
+        testInstructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(testInstructions);
+        String actual = fragment.getGPXDescription();
+        assertThat(actual).contains("Route between:  19th Street [0.0, 0.0]");
+        assertThat(actual).contains("Test SimpleFeature [1.0, 1.0]");
+    }
+
+    @Test
     public void toString_shouldIncludeReturnBeginningAndEnd() throws Exception {
         testInstructions = new ArrayList<Instruction>();
         testInstructions.add(getTestInstruction(0, 0));
@@ -1045,6 +1055,14 @@ public class RouteFragmentTest {
         String expected = "Route without instructions";
         fragment.setInstructions(new ArrayList<Instruction>());
         String actual = fragment.toString();
+        assertThat(actual).contains(expected);
+    }
+
+    @Test
+    public void getGPXDescription_shouldDisplay() throws Exception {
+        String expected = "Route without instructions";
+        fragment.setInstructions(new ArrayList<Instruction>());
+        String actual = fragment.getGPXDescription();
         assertThat(actual).contains(expected);
     }
 

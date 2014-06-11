@@ -37,7 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TABLE_ID = "_id";
     public static final String COLUMN_UPLOADED = "uploaded";
     public static final String COLUMN_READY_FOR_UPLOAD = "ready_for_upload";
-    public static final int VERSION = 6;
+    public static final int VERSION = 8;
 
     private final String createLocationsSql = "create table " + TABLE_LOCATIONS + " ("
             + COLUMN_TABLE_ID + " text primary key,"
