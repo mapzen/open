@@ -17,3 +17,4 @@ classes
 tmp/
 *.*~
 *.apk
+res/values/secrets.xml

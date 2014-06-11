@@ -328,14 +328,15 @@
                 <version>1.5.2</version>
                 <executions>
                     <execution>
-                        <phase>process-sources</phase>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>replace</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <file>${project.basedir}/res/values/secrets.xml</file>
+                    <file>${project.basedir}/secrets.xml.example</file>
+                    <outputFile>${project.basedir}/res/values/secrets.xml</outputFile>
                     <regex>true</regex>
                     <replacements>
                         <replacement>
