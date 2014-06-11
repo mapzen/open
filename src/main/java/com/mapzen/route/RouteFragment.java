@@ -66,16 +66,7 @@ import static com.mapzen.MapController.locationToPair;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.SimpleFeature.NAME;
 import static com.mapzen.helpers.ZoomController.DrivingSpeed;
-import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
-import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
-import static com.mapzen.util.DatabaseHelper.COLUMN_POSITION;
-import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
-import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
-import static com.mapzen.util.DatabaseHelper.COLUMN_TABLE_ID;
-import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
-import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
-import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
-import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
+import static com.mapzen.util.DatabaseHelper.*;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
         ViewPager.OnPageChangeListener, Router.Callback {
@@ -476,10 +467,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public boolean setRoute(Route route) {
-        storeRouteInDatabase(route.getRawRoute());
+
         if (route.foundRoute()) {
             this.route = route;
             this.instructions = route.getRouteInstructions();
+            storeRouteInDatabase(route.getRawRoute());
             getMapController().setMapPerspectiveForInstruction(instructions.get(0));
         } else {
             return false;
@@ -492,7 +484,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         routeId = UUID.randomUUID().toString();
         insertValues.put(COLUMN_TABLE_ID, routeId);
         insertValues.put(COLUMN_RAW, rawRoute.toString());
-
+        insertValues.put(COLUMN_MSG, getGPXDescription());
         insertIntoDb(TABLE_ROUTES, null, insertValues);
     }
 
@@ -674,19 +666,20 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         onServerError(statusCode);
     }
 
-    @Override
-    public String toString() {
+    public String getGPXDescription() {
         if (instructions.size() >= 1) {
             Instruction firstInstruction = instructions.get(0);
-            String destination = simpleFeature.toString();
+            String destination = simpleFeature.getProperty(NAME);
             return new StringBuilder().append("Route between: ")
-                    .append(firstInstruction.toString())
+                    .append(firstInstruction.getName())
                     .append(" -> ")
                     .append(destination).toString();
         } else {
             return "Route without instructions";
         }
     }
+
+
 
     private void initDebugView(View view) {
         debugView = (DebugView) view.findViewById(R.id.debugging);

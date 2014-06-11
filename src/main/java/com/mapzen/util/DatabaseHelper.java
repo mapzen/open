@@ -59,6 +59,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + COLUMN_TABLE_ID + " text primary key,"
             + COLUMN_UPLOADED + " integer,"
             + COLUMN_READY_FOR_UPLOAD + " integer,"
+            + COLUMN_MSG + " text not null,"
             + COLUMN_RAW + " text not null)";
 
     private final String createLogEntriesSql = "create table " + TABLE_LOG_ENTRIES + " ("
