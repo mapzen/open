@@ -18,8 +18,8 @@ import com.mapzen.search.SavedSearch;
 import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.DebugDataSubmitter;
 import com.mapzen.util.Logger;
-import com.mapzen.util.MapzenProgressDialogFragment;
 import com.mapzen.util.MapzenGPSPromptDialogFragment;
+import com.mapzen.util.MapzenProgressDialogFragment;
 
 import com.bugsense.trace.BugSenseHandler;
 import com.squareup.okhttp.OkHttpClient;
@@ -31,13 +31,9 @@ import org.scribe.model.Token;
 import org.scribe.model.Verifier;
 
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.SearchManager;
-import android.app.NotificationManager;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -47,6 +43,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -187,44 +187,47 @@ public class BaseActivity extends MapActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            final Fragment fragment = getSupportFragmentManager()
-                    .findFragmentByTag(ListResultsFragment.TAG);
-            if (fragment != null) {
-                return fragment.onOptionsItemSelected(item);
-            }
-        } else if (item.getItemId() == R.id.settings) {
-            final PreferenceFragment fragment = SettingsFragment.newInstance(this);
-            getFragmentManager().beginTransaction()
-                    .add(R.id.settings, fragment, SettingsFragment.TAG)
-                    .addToBackStack(null)
-                    .commit();
-            return true;
-        } else if (item.getItemId() == R.id.phone_home) {
-            initDebugDataSubmitter();
-            debugDataExecutor.execute(debugDataSubmitter);
-            return true;
-        } else if (item.getItemId() == R.id.login) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Fragment prev = getSupportFragmentManager().findFragmentByTag(OSMOauthFragment.TAG);
-            if (prev != null) {
-                ft.remove(prev);
-            }
-            ft.addToBackStack(null);
-            DialogFragment newFragment = OSMOauthFragment.newInstance(this);
-            newFragment.show(ft, OSMOauthFragment.TAG);
-            return true;
-        } else if (item.getItemId() == R.id.logout) {
-            SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.remove("token");
-            editor.remove("forced_login");
-            editor.commit();
-            toggleOSMLogin();
-            startActivity(new Intent(this, InitActivity.class));
-            finish();
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                final Fragment listResultsFragment = getSupportFragmentManager()
+                        .findFragmentByTag(ListResultsFragment.TAG);
+                if (listResultsFragment != null) {
+                    return listResultsFragment.onOptionsItemSelected(item);
+                }
+                break;
+            case R.id.settings:
+                final PreferenceFragment settingsFragment = SettingsFragment.newInstance(this);
+                getFragmentManager().beginTransaction()
+                        .add(R.id.settings, settingsFragment, SettingsFragment.TAG)
+                        .addToBackStack(null)
+                        .commit();
+                return true;
+            case R.id.phone_home:
+                initDebugDataSubmitter();
+                debugDataExecutor.execute(debugDataSubmitter);
+                return true;
+            case R.id.login:
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                Fragment prev = getSupportFragmentManager().findFragmentByTag(OSMOauthFragment.TAG);
+                if (prev != null) {
+                    ft.remove(prev);
+                }
+                ft.addToBackStack(null);
+                DialogFragment newFragment = OSMOauthFragment.newInstance(this);
+                newFragment.show(ft, OSMOauthFragment.TAG);
+                return true;
+            case R.id.logout:
+                SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.remove("token");
+                editor.remove("forced_login");
+                editor.commit();
+                toggleOSMLogin();
+                startActivity(new Intent(this, InitActivity.class));
+                finish();
+                return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
