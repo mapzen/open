@@ -328,7 +328,7 @@
                 <version>1.5.2</version>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
+                        <phase>initialize</phase>
                         <goals>
                             <goal>replace</goal>
                         </goals>
