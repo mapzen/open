@@ -16,20 +16,17 @@
             android:id="@+id/places"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/starting_point"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="start" />
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/destination"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="end" />
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <ImageButton
@@ -37,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
-            android:contentDescription="reverse"
+            android:contentDescription="@string/reverse"
             android:src="@drawable/ic_switch" />
 
     </LinearLayout>
@@ -108,7 +105,7 @@
             android:singleLine="true"
             android:textColor="@android:color/black"
             android:textSize="20sp"
-            android:text="destination_preview" />
+            android:text="@string/destination_preview" />
 
         <com.mapzen.widget.DistanceView
             android:id="@+id/destination_preview_distance"
@@ -116,7 +113,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/destination_preview"
             android:textSize="16sp"
-            android:text="destination_preview_distance" />
+            android:text="@string/destination_preview_distance" />
 
 
     </RelativeLayout>

@@ -104,15 +104,15 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
 
     private void setOriginAndDestination() {
         if (!reverse) {
-            startingPointTextView.setText("Current Location");
+            startingPointTextView.setText(getString(R.string.current_location));
             destinationTextView.setText(destination.getProperty(NAME));
             destinationPreview.setText(destination.getProperty(NAME));
-            startBtn.setText("Start");
+            startBtn.setText(getString(R.string.start));
         } else {
             startingPointTextView.setText(destination.getProperty(NAME));
-            destinationTextView.setText("Current Location");
-            destinationPreview.setText("Current Location");
-            startBtn.setText("View");
+            destinationTextView.setText(getString(R.string.current_location));
+            destinationPreview.setText(getString(R.string.current_location));
+            startBtn.setText(getString(R.string.view));
         }
         if (route != null) {
             destinationPreviewDistance.setDistance(route.getTotalDistance());

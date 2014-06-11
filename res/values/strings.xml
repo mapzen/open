@@ -101,5 +101,8 @@
     <string name="debug_current_location">Current Location</string>
     <string name="debug_snap_location">Snap Location</string>
     <string name="debug_closest_instruction">Closest Instruction</string>
+    <string name="destination_preview">destination_preview</string>
+    <string name="destination_preview_distance">destination_preview_distance</string>
+    <string name="reverse">reverse</string>
 
 </resources>
