@@ -34,7 +34,7 @@ public class MapzenApplication extends Application {
                 .provider(OSMApi.class)
                 .apiKey(getString(R.string.osm_key))
                 .debug()
-                .callback("http://mapzen.com")
+                .callback("mapzen://oauth-login/mapzen.com")
                 .apiSecret(getString(R.string.osm_secret)).build();
     }
 
@@ -63,6 +63,11 @@ public class MapzenApplication extends Application {
         return accessToken;
     }
 
+    public boolean isLoggedIn() {
+        Token accessToken = getAccessToken();
+        return accessToken != null;
+    }
+
     public OAuthService getOsmOauthService() {
         return osmOauthService;
     }
@@ -78,5 +83,4 @@ public class MapzenApplication extends Application {
         editor.putString("secret", accessToken.getSecret());
         editor.commit();
     }
-
 }

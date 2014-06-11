@@ -84,9 +84,16 @@
     <string name="settings_turn_driving_over_50_title">Driving 50+ Mph</string>
 
     <string name="toast_fixed_location_is_malformed">Your fixed location is malformed</string>
+    <string name="logo_description">Mapzen Logo</string>
     <string name="osm_login">OpenStreetMap Login</string>
     <string name="osm_logout">OpenStreetMap Logout</string>
     <string name="osm_login_title">Please Authorize</string>
+    <string name="osm_init_login">Log in with Open Street Map</string>
+    <string name="osm_init_sign_up">Sign up with Open Street Map</string>
+    <string name="osm_sign_up_url">https://www.openstreetmap.org/user/new</string>
+    <string name="login_explanation">Sign up or log in with Open Street Map to get started.</string>
+    <string name="motto">Start where you are.</string>
+    <string name="login_error">Unable to log in. You can try to log in again by restarting the application.</string>
 
     <!--Debug Strings-->
 
