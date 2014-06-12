@@ -3,6 +3,7 @@ package com.mapzen.route;
 import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
 import com.mapzen.entity.SimpleFeature;
+import com.mapzen.fragment.MapFragment;
 import com.mapzen.helpers.DistanceFormatter;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
@@ -20,6 +21,7 @@ import org.mockito.MockitoAnnotations;
 import org.oscim.layers.PathLayer;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
+import org.oscim.map.Map;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.FragmentTestUtil;
@@ -42,6 +44,9 @@ import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initBaseActivity;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
@@ -157,7 +162,7 @@ public class RoutePreviewFragmentTest {
     public void createRouteToDestination_shouldGetCurrentLocationFirst() throws Exception {
         getMapController().setLocation(getTestLocation(22.22, 44.44));
         fragment.createRouteToDestination();
-        Mockito.verify(router, Mockito.times(2)).setLocation(location.capture());
+        verify(router, Mockito.times(2)).setLocation(location.capture());
         List<double[]> values = location.getAllValues();
         assertThat(values.get(0)).isEqualTo(new double[] { 22.22, 44.44 });
         assertThat(values.get(1)).isEqualTo(new double[] { 1.0, 1.0 });
@@ -167,7 +172,7 @@ public class RoutePreviewFragmentTest {
     public void createRouteToDestination_shouldGetFeatureDestinationFirst() throws Exception {
         getMapController().setLocation(getTestLocation(22.22, 44.44));
         fragment.reverse();
-        Mockito.verify(router, Mockito.times(2)).setLocation(location.capture());
+        verify(router, Mockito.times(2)).setLocation(location.capture());
         List<double[]> values = location.getAllValues();
         assertThat(values.get(0)).isEqualTo(new double[] { 1.0, 1.0 });
         assertThat(values.get(1)).isEqualTo(new double[] { 22.22, 44.44 });
@@ -193,14 +198,14 @@ public class RoutePreviewFragmentTest {
     public void success_shouldClearPreviousRoutes() throws Exception {
         fragment.createRouteToDestination();
         fragment.success(new Route(getFixture("around_the_block")));
-        Mockito.verify(path).clearPath();
+        verify(path).clearPath();
     }
 
     @Test
     public void failure_shouldClearPreviousRoutes() throws Exception {
         fragment.createRouteToDestination();
         fragment.failure(500);
-        Mockito.verify(path).clearPath();
+        verify(path).clearPath();
     }
 
     @Test
@@ -209,7 +214,7 @@ public class RoutePreviewFragmentTest {
         Route route = new Route(getFixture("around_the_block"));
         fragment.success(route);
         for (Location loc : route.getGeometry()) {
-            Mockito.verify(path).addPoint(locationToGeoPoint(loc));
+            verify(path).addPoint(locationToGeoPoint(loc));
         }
     }
 
@@ -224,19 +229,19 @@ public class RoutePreviewFragmentTest {
         RadioButton byCar = (RadioButton) fragment.getView().findViewById(R.id.by_car);
         byCar.setChecked(false);
         byCar.performClick();
-        Mockito.verify(router).setDriving();
+        verify(router).setDriving();
     }
 
     @Test
     public void routeForFoot_shouldRouteByFoot() throws Exception {
         fragment.getView().findViewById(R.id.by_foot).performClick();
-        Mockito.verify(router).setWalking();
+        verify(router).setWalking();
     }
 
     @Test
     public void routeForBike_shouldRouteByBike() throws Exception {
         fragment.getView().findViewById(R.id.by_bike).performClick();
-        Mockito.verify(router).setBiking();
+        verify(router).setBiking();
     }
 
     @Test
@@ -258,7 +263,7 @@ public class RoutePreviewFragmentTest {
     public void success_shouldClearMarkerLayer() throws Exception {
         fragment.createRouteToDestination();
         fragment.success(new Route(getFixture("around_the_block")));
-        Mockito.verify(markers).removeAllItems();
+        verify(markers).removeAllItems();
     }
 
     @Test
@@ -267,7 +272,7 @@ public class RoutePreviewFragmentTest {
         ArrayList<Location> geometry = testRoute.getGeometry();
         fragment.createRouteToDestination();
         fragment.success(testRoute);
-        Mockito.verify(markers, Mockito.times(2)).addItem(marker.capture());
+        verify(markers, Mockito.times(2)).addItem(marker.capture());
         List<MarkerItem> values = marker.getAllValues();
         assertThat(values.get(0).getPoint().getLatitude()).
                 isEqualTo(geometry.get(0).getLatitude());
@@ -368,7 +373,7 @@ public class RoutePreviewFragmentTest {
     }
 
     @Test
-    public void detach_shouldRemoveMarkers() throws Exception {
+    public void onDetach_shouldRemoveMarkers() throws Exception {
         fragment.createRouteToDestination();
         Route testRoute = new Route(getFixture("around_the_block"));
         fragment.success(testRoute);
@@ -377,11 +382,22 @@ public class RoutePreviewFragmentTest {
     }
 
     @Test
-    public void detach_shouldRemovePath() throws Exception {
+    public void onDetach_shouldRemovePath() throws Exception {
         fragment.createRouteToDestination();
         Route testRoute = new Route(getFixture("around_the_block"));
         fragment.success(testRoute);
         fragment.onDetach();
         assertThat(getMapController().getMap().layers().contains(path)).isFalse();
+    }
+
+    @Test
+    public void onDetach_shouldRedrawMap() throws Exception {
+        MapFragment mockMapFragment = mock(MapFragment.class);
+        fragment.createRouteToDestination();
+        Route testRoute = new Route(getFixture("around_the_block"));
+        fragment.success(testRoute);
+        fragment.setMapFragment(mockMapFragment);
+        fragment.onDetach();
+        verify(mockMapFragment).updateMap();
     }
 }

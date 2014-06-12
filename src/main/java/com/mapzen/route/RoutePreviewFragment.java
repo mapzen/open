@@ -88,6 +88,7 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
         super.onDetach();
         getMapController().getMap().layers().remove(markers);
         getMapController().getMap().layers().remove(path);
+        mapFragment.updateMap();
         act.enableActionbar();
         act.showActionBar();
     }

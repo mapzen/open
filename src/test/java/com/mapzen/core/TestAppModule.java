@@ -1,5 +1,6 @@
 package com.mapzen.core;
 
+import com.mapzen.MapController;
 import com.mapzen.fragment.ItemFragment;
 import com.mapzen.fragment.ItemFragmentTest;
 import com.mapzen.fragment.MapFragment;
@@ -54,5 +55,4 @@ public class TestAppModule {
     ItemizedLayer<MarkerItem> provideItemizedLayer() {
         return Mockito.mock(ItemizedLayer.class);
     }
-
 }
