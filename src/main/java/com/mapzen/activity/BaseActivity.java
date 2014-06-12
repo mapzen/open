@@ -226,9 +226,11 @@ public class BaseActivity extends MapActivity {
                 startActivity(new Intent(this, InitActivity.class));
                 finish();
                 return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
 
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
     public void showProgressDialog() {
