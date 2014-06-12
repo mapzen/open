@@ -25,6 +25,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.util.FragmentTestUtil;
 
 import android.location.Location;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -213,8 +214,16 @@ public class RoutePreviewFragmentTest {
     }
 
     @Test
+    public void shouldDefaultToRouteByCare() throws Exception {
+        RadioButton byCar = (RadioButton) fragment.getView().findViewById(R.id.by_car);
+        assertThat(byCar).isChecked();
+    }
+
+    @Test
     public void routeForCar_shouldRouteByCar() throws Exception {
-        fragment.getView().findViewById(R.id.by_car).performClick();
+        RadioButton byCar = (RadioButton) fragment.getView().findViewById(R.id.by_car);
+        byCar.setChecked(false);
+        byCar.performClick();
         Mockito.verify(router).setDriving();
     }
 
