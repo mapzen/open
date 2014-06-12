@@ -147,12 +147,15 @@ public class BaseActivity extends MapActivity {
         app.inject(this);
         BugSenseHandler.initAndStartSession(this, "ebfa8fd7");
         BugSenseHandler.addCrashExtraData("OEM", Build.MANUFACTURER);
+        app = (MapzenApplication) getApplication();
         setContentView(R.layout.base);
         initMapFragment();
         gpsPromptDialogFragment = new MapzenGPSPromptDialogFragment();
         initMapController();
         initLocationClient();
-        initAlarm();
+        if(app.isLoggedIn()) {
+            initAlarm();
+        }
         initSavedSearches();
     }
 
@@ -231,10 +234,12 @@ public class BaseActivity extends MapActivity {
                 startActivity(new Intent(this, InitActivity.class));
                 finish();
                 return true;
+            case R.id.upload_traces:
+                uploadTraces();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-
         return false;
     }
 
@@ -533,13 +538,18 @@ public class BaseActivity extends MapActivity {
     }
 
     private void initAlarm() {
-        Calendar cal = Calendar.getInstance();
-        Intent intent = new Intent(this, DataUploadService.class);
-        PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
+            Calendar cal = Calendar.getInstance();
+            Intent intent = new Intent(this, DataUploadService.class);
+            PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
 
-        int hourInMillis = 3600000;
-        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), hourInMillis, pintent);
+            int hourInMillis = 60 * 60 * 1000;
+            AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), hourInMillis, pintent);
+    }
+
+    private void uploadTraces() {
+        Intent uploadIntent = new Intent(this, DataUploadService.class);
+        startService(uploadIntent);
     }
 
     private void initSavedSearches() {

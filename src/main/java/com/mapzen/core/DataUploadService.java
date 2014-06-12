@@ -1,5 +1,6 @@
 package com.mapzen.core;
 
+import android.util.Base64;
 import com.mapzen.MapzenApplication;
 import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.Logger;
@@ -30,7 +31,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.util.Properties;
+import java.util.zip.GZIPOutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -60,6 +63,7 @@ import static javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION;
 import static javax.xml.transform.OutputKeys.VERSION;
 
 import static org.apache.http.protocol.HTTP.UTF_8;
+import static org.scribe.model.Verb.GET;
 import static org.scribe.model.Verb.POST;
 
 public class DataUploadService extends Service {
@@ -78,6 +82,7 @@ public class DataUploadService extends Service {
         (new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
+                checkForUploadPermission();
                 Cursor cursor = null;
                 try {
                     cursor = app.getDb().query(
@@ -229,6 +234,12 @@ public class DataUploadService extends Service {
         return request;
     }
 
+    public OAuthRequest getPermissionsRequest() {
+        OAuthRequest request =
+                new OAuthRequest(GET, OSMApi.BASE_URL + OSMApi.CHECK_PERMISSIONS);
+        return request;
+    }
+
     public void submitTrace(String description, String path, String routeId) {
         Logger.d("DataUpload submitting trace");
 
@@ -250,6 +261,8 @@ public class DataUploadService extends Service {
         } catch (IOException e) {
             Logger.e("IOException: " + e.getMessage());
         }
+
+
         OAuthRequest request = getOAuthRequest();
         request.addPayload(bos.toByteArray());
 
@@ -268,4 +281,39 @@ public class DataUploadService extends Service {
             Logger.d("DataUpload: done uploading: " + routeId);
         }
     }
+
+    public void checkForUploadPermission() {
+        try {
+            String writePermission = "<permission name=\"allow_write_gpx\"/>";
+            OAuthRequest request = getPermissionsRequest();
+            app.getOsmOauthService().signRequest(app.getAccessToken(), request);
+            Response response = request.send();
+            if(!response.getBody().contains(writePermission)) {
+                stopSelf();
+            }
+        }
+        catch(Exception e) {
+
+        }
+    }
+
+    public static String compress(String str) throws IOException {
+
+        byte[] blockcopy = ByteBuffer
+                .allocate(4)
+                .order(java.nio.ByteOrder.LITTLE_ENDIAN)
+                .putInt(str.length())
+                .array();
+        ByteArrayOutputStream os = new ByteArrayOutputStream(str.length());
+        GZIPOutputStream gos = new GZIPOutputStream(os);
+        gos.write(str.getBytes());
+        gos.close();
+        os.close();
+        byte[] compressed = new byte[4 + os.toByteArray().length];
+        System.arraycopy(blockcopy, 0, compressed, 0, 4);
+        System.arraycopy(os.toByteArray(), 0, compressed, 4,
+                os.toByteArray().length);
+        return Base64.encode(compressed);
+    }
+
 }
