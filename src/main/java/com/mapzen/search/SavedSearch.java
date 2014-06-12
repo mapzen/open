@@ -2,6 +2,8 @@ package com.mapzen.search;
 
 import com.mapzen.util.Logger;
 
+import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.util.Base64;
 
 import java.io.ByteArrayInputStream;
@@ -12,10 +14,18 @@ import java.io.ObjectOutputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import static android.provider.BaseColumns._ID;
+
 public final class SavedSearch {
     public static final int DEFAULT_SIZE = 3;
     public static final int MAX_ENTRIES = 10;
     public static final String TAG = SavedSearch.class.getSimpleName();
+
+    public static final String TERM = "text";
+    public static final String[] COLUMNS = {
+            _ID, TERM
+    };
+
     private static SavedSearch instance;
     private LinkedList<String> store = new LinkedList<String>();
 
@@ -31,13 +41,14 @@ public final class SavedSearch {
         if (store.size() >= MAX_ENTRIES) {
             store.removeLast();
         }
+
         store.remove(term);
         store.addFirst(term);
         return 0;
     }
 
     public Iterator<String> get() {
-        return getSavedSearch().get(DEFAULT_SIZE);
+        return get(DEFAULT_SIZE);
     }
 
     public Iterator<String> get(int size) {
@@ -66,6 +77,7 @@ public final class SavedSearch {
         } catch (IOException ioException) {
             Logger.e("Serializing SavedSearch failed");
         }
+
         return serialized;
     }
 
@@ -81,5 +93,14 @@ public final class SavedSearch {
         } catch (ClassNotFoundException classNotFound) {
             Logger.e("Deserializing SavedSearch failed");
         }
+    }
+
+    public Cursor getCursor() {
+        final MatrixCursor cursor = new MatrixCursor(COLUMNS);
+        for (int i = 0; i < store.size(); i++) {
+            cursor.addRow(new Object[]{i, store.get(i)});
+        }
+
+        return cursor;
     }
 }
