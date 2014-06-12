@@ -21,7 +21,6 @@ import org.mockito.MockitoAnnotations;
 import org.oscim.layers.PathLayer;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
-import org.oscim.map.Map;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.FragmentTestUtil;
@@ -45,7 +44,6 @@ import static com.mapzen.support.TestHelper.initBaseActivity;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @Config(emulateSdk = 18)
