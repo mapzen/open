@@ -1,6 +1,8 @@
 package com.mapzen.core;
 
 import com.mapzen.MapzenApplication;
+import com.mapzen.util.MapzenProgressDialogFragment;
+
 import android.content.Context;
 import dagger.Module;
 import dagger.Provides;
@@ -12,6 +14,10 @@ public class CommonModule {
 
     public CommonModule(MapzenApplication application) {
         this.application = application;
+    }
+
+    @Provides @Singleton MapzenProgressDialogFragment provideMapzenProgressDialogFragment() {
+        return new MapzenProgressDialogFragment();
     }
 
     /**

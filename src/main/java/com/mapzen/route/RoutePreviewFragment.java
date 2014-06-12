@@ -6,7 +6,6 @@ import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
-import com.mapzen.util.Logger;
 import com.mapzen.widget.DistanceView;
 
 import org.oscim.android.canvas.AndroidGraphics;
@@ -16,7 +15,6 @@ import org.oscim.layers.PathLayer;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.marker.MarkerSymbol;
-import org.oscim.utils.FastMath;
 
 import android.location.Location;
 import android.os.Bundle;

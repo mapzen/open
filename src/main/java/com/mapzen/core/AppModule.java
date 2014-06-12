@@ -7,7 +7,6 @@ import com.mapzen.fragment.ItemFragment;
 import com.mapzen.osrm.Router;
 import com.mapzen.route.RouteFragment;
 import com.mapzen.route.RoutePreviewFragment;
-import com.mapzen.util.MapzenProgressDialogFragment;
 
 import org.oscim.android.canvas.AndroidGraphics;
 import org.oscim.backend.canvas.Color;
@@ -39,10 +38,6 @@ public class AppModule {
 
     public AppModule(Context context) {
         this.context = context;
-    }
-
-    @Provides @Singleton MapzenProgressDialogFragment provideMapzenProgressDialogFragment() {
-        return new MapzenProgressDialogFragment();
     }
 
     @Provides @Singleton Router provideRouter() {
