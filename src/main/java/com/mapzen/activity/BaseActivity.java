@@ -11,6 +11,7 @@ import com.mapzen.core.OSMOauthFragment;
 import com.mapzen.core.SettingsFragment;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.fragment.MapFragment;
+import com.mapzen.route.RoutePreviewFragment;
 import com.mapzen.search.AutoCompleteAdapter;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.search.PagerResultsFragment;
@@ -520,6 +521,15 @@ public class BaseActivity extends MapActivity {
 
     public void setRequestToken(Token requestToken) {
         this.requestToken = requestToken;
+    }
+
+    public void refreshRoutePreview() {
+        RoutePreviewFragment fragment =
+                (RoutePreviewFragment) getSupportFragmentManager().
+                        findFragmentByTag(RoutePreviewFragment.TAG);
+        if (fragment != null) {
+            fragment.createRouteToDestination();
+        }
     }
 
     private void initAlarm() {

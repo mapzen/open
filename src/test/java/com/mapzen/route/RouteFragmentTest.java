@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
+import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.helpers.DistanceFormatter;
@@ -349,6 +350,15 @@ public class RouteFragmentTest {
         fragment.onDetach();
         assertThat(fragment.getMapFragment().getMap().layers().
                 contains(fragment.getRouteLocationIndicator())).isFalse();
+    }
+
+    @Test
+    public void onDetach_shouldRefreshRoutePreview() throws Exception {
+        BaseActivity baseActivityMock = spy(act);
+        fragment.setAct(baseActivityMock);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onDetach();
+        verify(baseActivityMock).refreshRoutePreview();
     }
 
     @Test
