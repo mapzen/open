@@ -1,6 +1,6 @@
 package com.mapzen;
 
-import com.mapzen.core.AndroidModule;
+import com.mapzen.core.CommonModule;
 import com.mapzen.core.AppModule;
 import com.mapzen.core.OSMApi;
 import com.mapzen.util.DatabaseHelper;
@@ -26,7 +26,7 @@ public class MapzenApplication extends Application {
 
     protected List<Object> getModules() {
         return Arrays.asList(
-                new AndroidModule(this),
+                new CommonModule(this),
                 new AppModule(this)
         );
     }

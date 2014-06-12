@@ -7,10 +7,10 @@ import dagger.Provides;
 import javax.inject.Singleton;
 
 @Module(library = true)
-public class AndroidModule {
+public class CommonModule {
     private final MapzenApplication application;
 
-    public AndroidModule(MapzenApplication application) {
+    public CommonModule(MapzenApplication application) {
         this.application = application;
     }
 
