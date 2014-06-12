@@ -41,7 +41,18 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import static com.mapzen.util.DatabaseHelper.*;
+import static com.mapzen.util.DatabaseHelper.COLUMN_ALT;
+import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
+import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
+import static com.mapzen.util.DatabaseHelper.COLUMN_READY_FOR_UPLOAD;
+import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
+import static com.mapzen.util.DatabaseHelper.COLUMN_TABLE_ID;
+import static com.mapzen.util.DatabaseHelper.COLUMN_TIME;
+import static com.mapzen.util.DatabaseHelper.COLUMN_MSG;
+import static com.mapzen.util.DatabaseHelper.COLUMN_UPLOADED;
+import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
+import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
+
 import static javax.xml.transform.OutputKeys.ENCODING;
 import static javax.xml.transform.OutputKeys.INDENT;
 import static javax.xml.transform.OutputKeys.METHOD;
@@ -67,8 +78,9 @@ public class DataUploadService extends Service {
         (new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
+                Cursor cursor = null;
                 try {
-                    Cursor cursor = app.getDb().query(
+                    cursor = app.getDb().query(
                             TABLE_ROUTES,
                             new String[] { COLUMN_TABLE_ID, COLUMN_MSG },
                             COLUMN_UPLOADED + " is null AND " + COLUMN_READY_FOR_UPLOAD + " == ?",
@@ -76,15 +88,18 @@ public class DataUploadService extends Service {
                     while (cursor.moveToNext()) {
                         int routeIdIndex = cursor.getColumnIndex(COLUMN_TABLE_ID);
                         int routeDescription = cursor.getColumnIndex(COLUMN_MSG);
-                        generateGpxXmlFor(cursor.getString(routeIdIndex), cursor.getString(routeDescription));
+                        generateGpxXmlFor(cursor.getString(routeIdIndex),
+                                cursor.getString(routeDescription));
                     }
                 } catch (SQLiteDatabaseLockedException exception) {
                     Logger.d("DataUpload: database is locked lets try again later");
+                } finally {
+                    if (cursor != null) {
+                        cursor.close();
+                    }
                 }
-
                 return null;
             }
-
         }).execute();
         return Service.START_NOT_STICKY;
     }
@@ -116,11 +131,12 @@ public class DataUploadService extends Service {
         } catch (TransformerException e) {
             Logger.e("Transforming failed: " + e.getMessage());
         }
-        Logger.d("DataUpload gonna write " + description );
+        Logger.d("DataUpload gonna write " + description);
         writeToFileAndSubmit(output, routeId, description);
     }
 
-    private void writeToFileAndSubmit(ByteArrayOutputStream output, String routeId, String description) {
+    private void writeToFileAndSubmit(ByteArrayOutputStream output,
+                                      String routeId, String description) {
         Logger.d("DataUpload gonna submit");
         try {
             String fullPath = getApplicationContext().getExternalFilesDir(null).getAbsolutePath()

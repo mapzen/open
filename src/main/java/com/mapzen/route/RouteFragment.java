@@ -66,7 +66,17 @@ import static com.mapzen.MapController.locationToPair;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.SimpleFeature.NAME;
 import static com.mapzen.helpers.ZoomController.DrivingSpeed;
-import static com.mapzen.util.DatabaseHelper.*;
+import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
+import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
+import static com.mapzen.util.DatabaseHelper.COLUMN_POSITION;
+import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
+import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
+import static com.mapzen.util.DatabaseHelper.COLUMN_TABLE_ID;
+import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
+import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
+import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
+import static com.mapzen.util.DatabaseHelper.COLUMN_MSG;
+import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
         ViewPager.OnPageChangeListener, Router.Callback {

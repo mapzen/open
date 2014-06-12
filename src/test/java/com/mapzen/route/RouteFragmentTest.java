@@ -126,6 +126,7 @@ public class RouteFragmentTest {
 
     @After
     public void tearDown() throws Exception {
+        db.close();
         act.onPause();
     }
 
