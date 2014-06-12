@@ -18,6 +18,7 @@ import org.oscim.layers.marker.MarkerSymbol;
 
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -151,13 +152,9 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
     @SuppressWarnings("unused")
     @OnClick(R.id.start) public void start() {
         if (!reverse) {
-            RouteFragment routeFragment = RouteFragment.newInstance(act, destination);
-            routeFragment.setRoute(route);
-            act.getSupportFragmentManager().beginTransaction()
-                    .addToBackStack(null)
-                    .add(R.id.routes_container, routeFragment, RouteFragment.TAG)
-                    .commit();
-            getMapController().getMap().layers().remove(markers);
+            startRouting();
+        } else {
+            showDirectionListFragment();
         }
     }
 
@@ -265,5 +262,29 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
                 AndroidGraphics.drawableToBitmap(app.getResources().getDrawable(icon)),
                 MarkerItem.HotspotPlace.BOTTOM_CENTER));
         return markerItem;
+    }
+
+    private void showDirectionListFragment() {
+        final Fragment fragment = DirectionListFragment.
+                newInstance(route.getRouteInstructions(),
+                        new DirectionListFragment.DirectionListener() {
+                    @Override
+                    public void onInstructionSelected(int index) {
+                    }
+                });
+        act.getSupportFragmentManager().beginTransaction()
+                .add(R.id.full_list, fragment, DirectionListFragment.TAG)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void startRouting() {
+        RouteFragment routeFragment = RouteFragment.newInstance(act, destination);
+        routeFragment.setRoute(route);
+        act.getSupportFragmentManager().beginTransaction()
+                .addToBackStack(null)
+                .add(R.id.routes_container, routeFragment, RouteFragment.TAG)
+                .commit();
+        getMapController().getMap().layers().remove(markers);
     }
 }
