@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="default_margin">10dp</dimen>
+    <dimen name="default_padding">5dp</dimen>
     <dimen name="default_padding_vertical">8dp</dimen>
     <dimen name="default_padding_horizontal">16dp</dimen>
     <dimen name="narrow_padding_horizontal">8dp</dimen>
