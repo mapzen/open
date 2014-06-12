@@ -16,6 +16,7 @@ import org.oscim.layers.PathLayer;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.marker.MarkerSymbol;
+import org.oscim.utils.FastMath;
 
 import android.location.Location;
 import android.os.Bundle;
@@ -236,7 +237,10 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
         MapPosition position = new MapPosition();
         position.setByBoundingBox(bbox, w, h);
 
+        position.setScale(position.getZoomScale() * 0.85);
+
         getMapController().getMap().setMapPosition(position);
+
         if (!getMapController().getMap().layers().contains(path)) {
             getMapController().getMap().layers().add(path);
         }
