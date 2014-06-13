@@ -91,6 +91,9 @@ public class BaseActivityTest {
 
     @Test
     public void onCreate_shouldSetDataUploadServiceAlarm() throws Exception {
+        Token token = new Token("stuff", "fun");
+        activity.setAccessToken(token);
+        activity = initBaseActivityWithMenu(menu);
         AlarmManager alarmManager =
                 (AlarmManager) Robolectric.application.getSystemService(Context.ALARM_SERVICE);
         ShadowAlarmManager shadowAlarmManager = Robolectric.shadowOf(alarmManager);

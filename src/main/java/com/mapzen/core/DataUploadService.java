@@ -7,6 +7,7 @@ import com.mapzen.util.Logger;
 
 import com.google.common.io.Files;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.http.Header;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.FileBody;
@@ -251,17 +252,25 @@ public class DataUploadService extends Service {
         } catch (UnsupportedEncodingException e) {
             Logger.e(e.getMessage());
         }
-
-        reqEntity.addPart("file", new FileBody(new File(path)));
+        String compressedPath = "";
+        try {
+            String compressedFileString = compress(FileUtils.readFileToString(new File(path)));
+            compressedPath = getApplicationContext().getExternalFilesDir(null).getAbsolutePath()
+                    + "/" + routeId + ".gz";
+            FileUtils.writeStringToFile(new File(compressedPath), compressedFileString);
+        } catch (IOException e) {
+            Logger.d(e.getMessage());
+        }
+        reqEntity.addPart("file", new FileBody(new File(compressedPath)));
 
         ByteArrayOutputStream bos =
                 new ByteArrayOutputStream((int) reqEntity.getContentLength());
+
         try {
             reqEntity.writeTo(bos);
         } catch (IOException e) {
             Logger.e("IOException: " + e.getMessage());
         }
-
 
         OAuthRequest request = getOAuthRequest();
         request.addPayload(bos.toByteArray());
@@ -288,17 +297,15 @@ public class DataUploadService extends Service {
             OAuthRequest request = getPermissionsRequest();
             app.getOsmOauthService().signRequest(app.getAccessToken(), request);
             Response response = request.send();
-            if(!response.getBody().contains(writePermission)) {
+            if (!response.getBody().contains(writePermission)) {
                 stopSelf();
             }
-        }
-        catch(Exception e) {
-
+        } catch (Exception e) {
+            Logger.d(e.getMessage());
         }
     }
 
     public static String compress(String str) throws IOException {
-
         byte[] blockcopy = ByteBuffer
                 .allocate(4)
                 .order(java.nio.ByteOrder.LITTLE_ENDIAN)
@@ -313,7 +320,7 @@ public class DataUploadService extends Service {
         System.arraycopy(blockcopy, 0, compressed, 0, 4);
         System.arraycopy(os.toByteArray(), 0, compressed, 4,
                 os.toByteArray().length);
-        return Base64.encode(compressed);
+        return Base64.encodeToString(compressed, Base64.DEFAULT);
     }
 
 }

@@ -553,13 +553,13 @@ public class BaseActivity extends MapActivity {
     }
 
     private void initAlarm() {
-            Calendar cal = Calendar.getInstance();
-            Intent intent = new Intent(this, DataUploadService.class);
-            PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
+        Calendar cal = Calendar.getInstance();
+        Intent intent = new Intent(this, DataUploadService.class);
+        PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
 
-            int hourInMillis = 60 * 60 * 1000;
-            AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), hourInMillis, pintent);
+        int hourInMillis = 60 * 60 * 1000;
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), hourInMillis, pintent);
     }
 
     private void uploadTraces() {
