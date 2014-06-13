@@ -98,6 +98,7 @@
     </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/destination_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -140,5 +141,13 @@
             android:text="@string/destination_preview_distance" />
 
     </RelativeLayout>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/divider_height"
+        android:layout_above="@id/destination_container"
+        android:background="@color/dark_gray" />
+
 
 </RelativeLayout>
