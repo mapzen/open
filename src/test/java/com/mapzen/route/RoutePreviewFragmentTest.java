@@ -185,7 +185,6 @@ public class RoutePreviewFragmentTest {
 
     @Test
     public void success_shouldNotAddPathToMapMoreThanOnce() throws Exception {
-        int layersSize = getMapController().getMap().layers().size();
         fragment.createRouteToDestination();
         fragment.success(new Route(getFixture("around_the_block")));
         fragment.success(new Route(getFixture("around_the_block")));

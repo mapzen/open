@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
+import com.mapzen.TestMapzenApplication;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.MapFragment;
@@ -65,6 +66,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.SimpleFeature.NAME;
@@ -88,7 +91,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.robolectric.Robolectric.shadowOf;
 import static org.robolectric.Robolectric.shadowOf_;
 
@@ -107,8 +109,11 @@ public class RouteFragmentTest {
     @SuppressWarnings("unused")
     ArgumentCaptor<Router.Callback> callback;
 
+    @Inject PathLayer path;
+
     @Before
     public void setUp() throws Exception {
+        ((TestMapzenApplication) Robolectric.application).inject(this);
         MockitoAnnotations.initMocks(this);
         RouteFragment.setRouter(router);
         menu = new TestMenu();
@@ -943,17 +948,15 @@ public class RouteFragmentTest {
     public void createRouteTo_shouldRedrawPath() throws Exception {
         MapFragment mapFragmentMock = mock(MapFragment.class, Mockito.CALLS_REAL_METHODS);
         mapFragmentMock.setAct(act);
-        PathLayer pathLayerMock = mock(PathLayer.class);
-        when(mapFragmentMock.getPathLayer()).thenReturn(pathLayerMock);
         fragment.setMapFragment(mapFragmentMock);
         Location testLocation = getTestLocation(100.0, 100.0);
         FragmentTestUtil.startFragment(fragment);
         fragment.createRouteTo(testLocation);
         verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(MOCK_NY_TO_VT));
-        verify(pathLayerMock, Mockito.times(2)).clearPath();
+        verify(path, Mockito.times(2)).clearPath();
         for (Location location : fragment.getRoute().getGeometry()) {
-            verify(pathLayerMock).addPoint(
+            verify(path).addPoint(
                     new GeoPoint(location.getLatitude(), location.getLongitude()));
         }
     }
@@ -962,8 +965,6 @@ public class RouteFragmentTest {
     public void createRouteTo_shouldRedoUrl() throws Exception {
         MapFragment mapFragmentMock = mock(MapFragment.class, Mockito.CALLS_REAL_METHODS);
         mapFragmentMock.setAct(act);
-        PathLayer pathLayerMock = mock(PathLayer.class);
-        when(mapFragmentMock.getPathLayer()).thenReturn(pathLayerMock);
         fragment.setMapFragment(mapFragmentMock);
         FragmentTestUtil.startFragment(fragment);
         fragment.createRouteTo(getTestLocation(100.0, 200.0));
@@ -1186,9 +1187,11 @@ public class RouteFragmentTest {
     }
 
     private void initTestFragment() throws Exception {
+        // TODO make this call newInstance for consistency
         fragment = new RouteFragment();
         fragment.setSimpleFeature(getTestSimpleFeature());
         fragment.setAct(act);
+        fragment.inject();
         fragment.setMapFragment(initMapFragment(act));
         fragment.setRoute(new Route(MOCK_ROUTE_JSON));
         fragment.setRouteLocationIndicator(new RouteLocationIndicator(act.getMap()));

@@ -5,6 +5,7 @@ import com.mapzen.fragment.ItemFragmentTest;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.osrm.Router;
 import com.mapzen.route.RouteFragment;
+import com.mapzen.route.RouteFragmentTest;
 import com.mapzen.route.RoutePreviewFragment;
 import com.mapzen.route.RoutePreviewFragmentTest;
 import com.mapzen.support.TestBaseActivity;
@@ -27,6 +28,7 @@ import static com.mapzen.osrm.Router.getRouter;
         injects = {
                 TestBaseActivity.class,
                 RouteFragment.class,
+                RouteFragmentTest.class,
                 ItemFragment.class,
                 ItemFragmentTest.class,
                 MapFragment.class,

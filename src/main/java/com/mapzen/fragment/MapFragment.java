@@ -7,11 +7,9 @@ import com.mapzen.util.MapzenTheme;
 import com.mapzen.util.PoiLayer;
 
 import org.oscim.android.canvas.AndroidGraphics;
-import org.oscim.backend.canvas.Color;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 import org.oscim.event.Event;
-import org.oscim.layers.PathLayer;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.marker.MarkerSymbol;
@@ -42,14 +40,11 @@ import static com.mapzen.MapController.getMapController;
 import static org.oscim.layers.marker.ItemizedLayer.OnItemGestureListener;
 
 public class MapFragment extends BaseFragment {
-    public static final int ROUTE_LINE_WIDTH = 10;
     public static final int DURATION = 800;
     private VectorTileLayer baseLayer;
-    private Button myPosition;
     private ItemizedLayer<MarkerItem> locationMarkerLayer;
     private PoiItemizedLayer poiMarkersLayer;
     private MarkerSymbol highlightMarker;
-    private PathLayer pathLayer;
     private ArrayList<MarkerItem> meMarkers = new ArrayList<MarkerItem>(1);
     // TODO find ways to track state without two variables
     private boolean followMe = true;
@@ -175,8 +170,6 @@ public class MapFragment extends BaseFragment {
 
         highlightMarker = getHighlightMarkerSymbol();
 
-        pathLayer = new PathLayer(getMap(), Color.MAGENTA, ROUTE_LINE_WIDTH);
-        getMap().layers().add(pathLayer);
         getMap().layers().add(new LabelLayer(getMap(), baseLayer));
 
         poiMarkersLayer = buildPoiMarkersLayer();
@@ -218,13 +211,9 @@ public class MapFragment extends BaseFragment {
         return locationMarkerLayer;
     }
 
-    public PathLayer getPathLayer() {
-        return pathLayer;
-    }
-
     private void setupMyLocationBtn() {
         View view = getView();
-        myPosition = (Button) view.findViewById(R.id.btn_my_position);
+        Button myPosition = (Button) view.findViewById(R.id.btn_my_position);
         myPosition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
