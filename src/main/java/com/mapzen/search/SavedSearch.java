@@ -21,9 +21,9 @@ public final class SavedSearch {
     public static final int MAX_ENTRIES = 10;
     public static final String TAG = SavedSearch.class.getSimpleName();
 
-    public static final String TERM = "text";
+    public static final String SEARCH_TERM = "search_term";
     public static final String[] COLUMNS = {
-            _ID, TERM
+            _ID, SEARCH_TERM
     };
 
     private static SavedSearch instance;

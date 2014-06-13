@@ -1,9 +1,5 @@
 package com.mapzen.search;
 
-import android.support.v4.app.FragmentManager;
-import android.widget.FrameLayout;
-import android.widget.TextView;
-
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
@@ -13,12 +9,18 @@ import com.mapzen.fragment.ItemFragment;
 import com.mapzen.support.DummyActivity;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestHelper;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
 import org.robolectric.tester.android.database.TestCursor;
 import org.robolectric.util.ActivityController;
+
+import android.database.Cursor;
+import android.support.v4.app.FragmentManager;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import static com.mapzen.search.SavedSearch.getSavedSearch;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
@@ -39,6 +41,7 @@ public class AutoCompleteAdapterTest {
 
     @Before
     public void setUp() throws Exception {
+        getSavedSearch().clear();
         ActivityController<DummyActivity> controller = buildActivity(DummyActivity.class);
         controller.create().start().resume();
         fragmentManager = controller.get().getSupportFragmentManager();
@@ -102,5 +105,41 @@ public class AutoCompleteAdapterTest {
         baseActivity.executeSearchOnMap("query");
         adapter.onQueryTextChange("new query");
         assertThat(baseActivity.getSearchView().getSuggestionsAdapter()).isNotNull();
+    }
+
+    @Test
+    public void loadSavedSearches_shouldChangeCursor() throws Exception {
+        getSavedSearch().store("saved query 1");
+        getSavedSearch().store("saved query 2");
+        getSavedSearch().store("saved query 3");
+        adapter.loadSavedSearches();
+        Cursor cursor = adapter.getCursor();
+        cursor.moveToFirst();
+        assertThat(cursor.getString(1)).isEqualTo("saved query 3");
+        cursor.moveToNext();
+        assertThat(cursor.getString(1)).isEqualTo("saved query 2");
+        cursor.moveToNext();
+        assertThat(cursor.getString(1)).isEqualTo("saved query 1");
+    }
+
+    @Test
+    public void loadSavedSearches_shouldDisplayTerms() throws Exception {
+        getSavedSearch().store("saved query 1");
+        getSavedSearch().store("saved query 2");
+        getSavedSearch().store("saved query 3");
+        adapter.loadSavedSearches();
+        TextView tv1 = new TextView(application);
+        TextView tv2 = new TextView(application);
+        TextView tv3 = new TextView(application);
+        Cursor cursor = adapter.getCursor();
+        cursor.moveToFirst();
+        adapter.bindView(tv1, application, cursor);
+        cursor.moveToNext();
+        adapter.bindView(tv2, application, cursor);
+        cursor.moveToNext();
+        adapter.bindView(tv3, application, cursor);
+        assertThat(tv1).hasText("saved query 3");
+        assertThat(tv2).hasText("saved query 2");
+        assertThat(tv3).hasText("saved query 1");
     }
 }

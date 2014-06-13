@@ -50,6 +50,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -315,6 +317,7 @@ public class BaseActivity extends MapActivity {
 
         final SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        initSavedSearchAutoComplete(searchView);
         setupAdapter(searchView);
         searchView.setOnQueryTextListener(autoCompleteAdapter);
 
@@ -337,6 +340,28 @@ public class BaseActivity extends MapActivity {
         toggleOSMLogin();
 
         return true;
+    }
+
+    /**
+     * Sets auto-complete threshold to 0. Enables drop-down even when text view is empty. Triggers
+     * {@link AutoCompleteAdapter} when search view gets focus. Uses resource black magic to get a
+     * reference to the {@link AutoCompleteTextView} inside the {@link SearchView}.
+     */
+    private void initSavedSearchAutoComplete(final SearchView searchView) {
+        final AutoCompleteTextView autoCompleteTextView =
+                (AutoCompleteTextView) searchView.findViewById(searchView.getContext()
+                        .getResources().getIdentifier("android:id/search_src_text", null, null));
+        autoCompleteTextView.setThreshold(0);
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    menuItem.expandActionView();
+                    autoCompleteAdapter.loadSavedSearches();
+                    searchView.setQuery("", false);
+                }
+            }
+        });
     }
 
     private void toggleOSMLogin() {

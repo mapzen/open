@@ -43,6 +43,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AutoCompleteTextView;
 import android.widget.SearchView;
 
 import java.io.File;
@@ -341,6 +342,20 @@ public class BaseActivityTest {
     public void shouldHaveSuggestionsAdapter() throws Exception {
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         assertThat(searchView.getSuggestionsAdapter()).isNotNull();
+    }
+
+    @Test
+    public void shouldDisplaySavedSearchTermsOnFocus() throws Exception {
+        getSavedSearch().clear();
+        getSavedSearch().store("saved query 1");
+        getSavedSearch().store("saved query 2");
+        getSavedSearch().store("saved query 3");
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        final AutoCompleteTextView autoCompleteTextView =
+                (AutoCompleteTextView) searchView.findViewById(searchView.getContext()
+                        .getResources().getIdentifier("android:id/search_src_text", null, null));
+        autoCompleteTextView.getOnFocusChangeListener().onFocusChange(searchView, true);
+        assertThat(searchView.getSuggestionsAdapter().getCursor()).hasCount(3);
     }
 
     @Test
