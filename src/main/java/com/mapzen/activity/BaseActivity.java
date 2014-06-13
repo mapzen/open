@@ -527,7 +527,7 @@ public class BaseActivity extends MapActivity {
         RoutePreviewFragment fragment =
                 (RoutePreviewFragment) getSupportFragmentManager().
                         findFragmentByTag(RoutePreviewFragment.TAG);
-        if (fragment != null) {
+        if (fragment != null && fragment.isInLayout()) {
             fragment.createRouteToDestination();
         }
     }
