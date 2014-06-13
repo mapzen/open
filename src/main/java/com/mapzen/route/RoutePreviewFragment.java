@@ -48,6 +48,7 @@ import static com.mapzen.osrm.Router.Type.WALKING;
 
 public class RoutePreviewFragment extends BaseFragment implements Router.Callback {
     public static final String TAG = RoutePreviewFragment.class.getSimpleName();
+    public static final int ROUTE_ZOOM_LEVEL = 19;
     private SimpleFeature destination;
     private boolean reverse = false;
     private Type transportationMode = DRIVING;
@@ -165,7 +166,7 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
         router.clearLocations()
                 .setLocation(getOriginPoint())
                 .setLocation(getDestinationPoint())
-                .setZoomLevel(getRouteZoomLevel())
+                .setZoomLevel(ROUTE_ZOOM_LEVEL)
                 .setCallback(this);
         if (transportationMode.equals(DRIVING)) {
             router.setDriving();
@@ -175,10 +176,6 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
             router.setBiking();
         }
         router.fetch();
-    }
-
-    private double getRouteZoomLevel() {
-        return getMapController().getZoomLevel();
     }
 
     private double[] getDestinationPoint() {

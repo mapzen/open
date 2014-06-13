@@ -274,8 +274,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         router.clearLocations()
                 .setLocation(locationToPair(location))
                 .setLocation(geoPointToPair(simpleFeature.getGeoPoint()))
-                .setZoomLevel(getMapController().getZoomLevel())
-                .setDriving()
                 .setCallback(this)
                 .fetch();
     }
