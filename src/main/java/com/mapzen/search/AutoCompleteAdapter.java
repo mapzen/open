@@ -71,14 +71,16 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                 searchView.setQuery(tv.getText(), false);
                 mapFragment.clearMarkers();
                 mapFragment.updateMap();
-                mapFragment.centerOn(simpleFeature);
-                PagerResultsFragment pagerResultsFragment = PagerResultsFragment.newInstance(act);
-                fragmentManager.beginTransaction()
-                        .replace(R.id.pager_results_container, pagerResultsFragment,
-                                PagerResultsFragment.TAG).commit();
-                fragmentManager.executePendingTransactions();
-                pagerResultsFragment.add(simpleFeature);
-                pagerResultsFragment.displayResults(1, 0);
+                if (simpleFeature != null) {
+                    mapFragment.centerOn(simpleFeature);
+                    PagerResultsFragment pagerResultsFragment = PagerResultsFragment.newInstance(act);
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.pager_results_container, pagerResultsFragment,
+                                    PagerResultsFragment.TAG).commit();
+                    fragmentManager.executePendingTransactions();
+                    pagerResultsFragment.add(simpleFeature);
+                    pagerResultsFragment.displayResults(1, 0);
+                }
             }
         });
         parent.setOnTouchListener(new View.OnTouchListener() {
