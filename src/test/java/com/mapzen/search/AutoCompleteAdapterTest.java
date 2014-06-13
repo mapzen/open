@@ -19,6 +19,7 @@ import org.robolectric.util.ActivityController;
 
 import android.database.Cursor;
 import android.support.v4.app.FragmentManager;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -141,5 +142,17 @@ public class AutoCompleteAdapterTest {
         assertThat(tv1).hasText("saved query 3");
         assertThat(tv2).hasText("saved query 2");
         assertThat(tv3).hasText("saved query 1");
+    }
+
+    @Test
+    public void onClick_shouldExecuteSavedSearch() throws Exception {
+        getSavedSearch().store("saved query");
+        adapter.loadSavedSearches();
+        Cursor cursor = adapter.getCursor();
+        cursor.moveToFirst();
+        View view = adapter.newView(application, cursor, adapter.getSearchView());
+        adapter.bindView(view, application, cursor);
+        view.performClick();
+        assertThat(adapter.getSearchView().getQuery().toString()).isEqualTo("saved query");
     }
 }

@@ -50,6 +50,10 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         this.searchView = view;
     }
 
+    public SearchView getSearchView() {
+        return searchView;
+    }
+
     public void setMapFragment(MapFragment mapFragment) {
         this.mapFragment = mapFragment;
     }
@@ -81,6 +85,8 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                     fragmentManager.executePendingTransactions();
                     pagerResultsFragment.add(simpleFeature);
                     pagerResultsFragment.displayResults(1, 0);
+                } else {
+                    searchView.setQuery(tv.getText().toString(), true);
                 }
             }
         });
