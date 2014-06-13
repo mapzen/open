@@ -1,5 +1,15 @@
 package com.mapzen.search;
 
+import com.mapzen.MapzenApplication;
+import com.mapzen.R;
+import com.mapzen.activity.BaseActivity;
+import com.mapzen.android.gson.Feature;
+import com.mapzen.android.gson.Result;
+import com.mapzen.entity.SimpleFeature;
+import com.mapzen.fragment.MapFragment;
+import com.mapzen.util.Logger;
+import com.mapzen.util.ParcelableUtil;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -12,16 +22,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CursorAdapter;
 import android.widget.SearchView;
 import android.widget.TextView;
-
-import com.mapzen.MapzenApplication;
-import com.mapzen.R;
-import com.mapzen.activity.BaseActivity;
-import com.mapzen.android.gson.Feature;
-import com.mapzen.android.gson.Result;
-import com.mapzen.entity.SimpleFeature;
-import com.mapzen.fragment.MapFragment;
-import com.mapzen.util.Logger;
-import com.mapzen.util.ParcelableUtil;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -71,14 +71,17 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                 searchView.setQuery(tv.getText(), false);
                 mapFragment.clearMarkers();
                 mapFragment.updateMap();
-                mapFragment.centerOn(simpleFeature);
-                PagerResultsFragment pagerResultsFragment = PagerResultsFragment.newInstance(act);
-                fragmentManager.beginTransaction()
-                        .replace(R.id.pager_results_container, pagerResultsFragment,
-                                PagerResultsFragment.TAG).commit();
-                fragmentManager.executePendingTransactions();
-                pagerResultsFragment.add(simpleFeature);
-                pagerResultsFragment.displayResults(1, 0);
+                if (simpleFeature != null) {
+                    mapFragment.centerOn(simpleFeature);
+                    PagerResultsFragment pagerResultsFragment =
+                            PagerResultsFragment.newInstance(act);
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.pager_results_container, pagerResultsFragment,
+                                    PagerResultsFragment.TAG).commit();
+                    fragmentManager.executePendingTransactions();
+                    pagerResultsFragment.add(simpleFeature);
+                    pagerResultsFragment.displayResults(1, 0);
+                }
             }
         });
         parent.setOnTouchListener(new View.OnTouchListener() {
@@ -99,12 +102,16 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
 
     @Override
     public void bindView(View view, Context c, Cursor cursor) {
-        TextView tv = (TextView) view;
-        final int blobIndex = cursor.getColumnIndex(PELIAS_BLOB);
-        byte[] bytes = cursor.getBlob(blobIndex);
-        SimpleFeature simpleFeature = ParcelableUtil.unmarshall(bytes, SimpleFeature.CREATOR);
-        tv.setTag(simpleFeature);
-        tv.setText(simpleFeature.getHint());
+        final TextView tv = (TextView) view;
+        if (cursor.getColumnName(1).equals(SavedSearch.SEARCH_TERM)) {
+            tv.setText(cursor.getString(1));
+        } else {
+            final int blobIndex = cursor.getColumnIndex(PELIAS_BLOB);
+            byte[] bytes = cursor.getBlob(blobIndex);
+            SimpleFeature simpleFeature = ParcelableUtil.unmarshall(bytes, SimpleFeature.CREATOR);
+            tv.setTag(simpleFeature);
+            tv.setText(simpleFeature.getHint());
+        }
     }
 
     @Override
@@ -153,5 +160,9 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                 Logger.e("request: error: " + error.toString());
             }
         };
+    }
+
+    public void loadSavedSearches() {
+        changeCursor(getSavedSearch().getCursor());
     }
 }

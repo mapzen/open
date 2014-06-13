@@ -7,10 +7,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
 
+import android.database.Cursor;
+
 import java.util.Iterator;
 
+import static com.mapzen.search.SavedSearch.DEFAULT_SIZE;
 import static com.mapzen.search.SavedSearch.MAX_ENTRIES;
 import static com.mapzen.search.SavedSearch.getSavedSearch;
+import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @Config(emulateSdk = 18)
@@ -74,7 +78,7 @@ public class SavedSearchTest {
         getSavedSearch().store("search2");
         getSavedSearch().store("search3");
         getSavedSearch().store("search4");
-        assertThat(countTerms(getSavedSearch().get())).isEqualTo(getSavedSearch().DEFAULT_SIZE);
+        assertThat(countTerms(getSavedSearch().get())).isEqualTo(DEFAULT_SIZE);
     }
 
     @Test
@@ -135,6 +139,21 @@ public class SavedSearchTest {
         getSavedSearch().deserialize(serialized);
         Iterator<String> it = getSavedSearch().get();
         assertThat(it.hasNext()).isFalse();
+    }
+
+    @Test
+    public void getCursor_shouldReturnCursorWithSavedSearchTerms() throws Exception {
+        getSavedSearch().store("saved query 1");
+        getSavedSearch().store("saved query 2");
+        getSavedSearch().store("saved query 3");
+        Cursor cursor = getSavedSearch().getCursor();
+        assertThat(cursor).hasCount(3);
+        cursor.moveToFirst();
+        assertThat(cursor.getString(1)).isEqualTo("saved query 3");
+        cursor.moveToNext();
+        assertThat(cursor.getString(1)).isEqualTo("saved query 2");
+        cursor.moveToNext();
+        assertThat(cursor.getString(1)).isEqualTo("saved query 1");
     }
 
     private int countTerms(Iterator<String> results) {
