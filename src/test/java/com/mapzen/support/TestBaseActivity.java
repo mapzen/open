@@ -81,3 +81,4 @@ public class TestBaseActivity extends BaseActivity {
         return enableActionbar;
     }
 }
+

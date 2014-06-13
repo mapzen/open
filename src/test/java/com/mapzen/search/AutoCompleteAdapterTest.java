@@ -156,3 +156,4 @@ public class AutoCompleteAdapterTest {
         assertThat(adapter.getSearchView().getQuery().toString()).isEqualTo("saved query");
     }
 }
+

@@ -172,3 +172,4 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         changeCursor(getSavedSearch().getCursor());
     }
 }
+

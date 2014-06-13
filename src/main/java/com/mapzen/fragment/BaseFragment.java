@@ -59,3 +59,4 @@ public abstract class BaseFragment extends Fragment {
         Log.e(MapzenApplication.LOG_TAG, "request: error: " + error.toString());
     }
 }
+

@@ -105,3 +105,4 @@ public class MapzenApplication extends Application {
         editor.commit();
     }
 }
+

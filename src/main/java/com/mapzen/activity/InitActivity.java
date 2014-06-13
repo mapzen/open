@@ -173,3 +173,4 @@ public class InitActivity extends Activity {
         startBaseActivity();
     }
 }
+

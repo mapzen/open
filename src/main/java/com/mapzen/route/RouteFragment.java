@@ -695,3 +695,4 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 }
+

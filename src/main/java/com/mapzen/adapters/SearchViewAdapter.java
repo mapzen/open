@@ -30,3 +30,4 @@ public class SearchViewAdapter extends FragmentStatePagerAdapter {
         return fragments.indexOf(object);
     }
 }
+

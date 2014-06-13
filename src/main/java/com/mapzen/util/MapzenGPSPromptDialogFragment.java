@@ -34,3 +34,4 @@ public class MapzenGPSPromptDialogFragment extends DialogFragment {
         return dialog;
     }
 }
+
