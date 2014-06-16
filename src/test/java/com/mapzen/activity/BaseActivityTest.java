@@ -525,6 +525,41 @@ public class BaseActivityTest {
         assertThat(intents.get(0)).hasAction(BaseActivity.COM_MAPZEN_UPDATE_VIEW);
     }
 
+    @Test
+    public void hideOverflow_shouldHideOverflowMenuItems() throws Exception {
+        activity.hideOverflow();
+        assertThat(menu.findItem(R.id.settings)).isNotVisible();
+        assertThat(menu.findItem(R.id.phone_home)).isNotVisible();
+        assertThat(menu.findItem(R.id.login)).isNotVisible();
+        assertThat(menu.findItem(R.id.logout)).isNotVisible();
+    }
+
+    @Test
+    public void showOverflow_shouldShowSettingsAndPhoneHomeItems() throws Exception {
+        activity.hideOverflow();
+        activity.showOverflow();
+        assertThat(menu.findItem(R.id.settings)).isVisible();
+        assertThat(menu.findItem(R.id.phone_home)).isVisible();
+    }
+
+    @Test
+    public void showOverflow_shouldShowLoginItemIfLoggedOut() throws Exception {
+        activity.setAccessToken(new Token("", ""));
+        activity.hideOverflow();
+        activity.showOverflow();
+        assertThat(menu.findItem(R.id.login)).isVisible();
+        assertThat(menu.findItem(R.id.logout)).isNotVisible();
+    }
+
+    @Test
+    public void showOverflow_shouldShowLogoutItemIfLoggedIn() throws Exception {
+        activity.setAccessToken(new Token("stuff", "fun"));
+        activity.hideOverflow();
+        activity.showOverflow();
+        assertThat(menu.findItem(R.id.logout)).isVisible();
+        assertThat(menu.findItem(R.id.login)).isNotVisible();
+    }
+
     private Location initLastLocation() {
         Location location = new Location(GPS_PROVIDER);
         location.setLatitude(1.0);

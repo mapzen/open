@@ -527,6 +527,19 @@ public class BaseActivity extends MapActivity {
         sendBroadcast(new Intent(COM_MAPZEN_UPDATE_VIEW));
     }
 
+    public void hideOverflow() {
+        activityMenu.findItem(R.id.settings).setVisible(false);
+        activityMenu.findItem(R.id.phone_home).setVisible(false);
+        activityMenu.findItem(R.id.login).setVisible(false);
+        activityMenu.findItem(R.id.logout).setVisible(false);
+    }
+
+    public void showOverflow() {
+        activityMenu.findItem(R.id.settings).setVisible(true);
+        activityMenu.findItem(R.id.phone_home).setVisible(true);
+        toggleOSMLogin();
+    }
+
     public interface ViewUpdater {
         public void onViewUpdate();
     }
