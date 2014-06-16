@@ -1,16 +1,14 @@
 package com.mapzen.core;
 
-import android.util.Base64;
 import com.mapzen.MapzenApplication;
 import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.Logger;
 
 import com.google.common.io.Files;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.http.Header;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -29,10 +27,8 @@ import android.os.AsyncTask;
 import android.os.IBinder;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
 import java.util.Properties;
 import java.util.zip.GZIPOutputStream;
 
@@ -68,6 +64,7 @@ import static org.scribe.model.Verb.GET;
 import static org.scribe.model.Verb.POST;
 
 public class DataUploadService extends Service {
+    public static final int MIN_NUM_TRACKING_POINTS = 10;
     private MapzenApplication app;
 
     @Override
@@ -128,6 +125,11 @@ public class DataUploadService extends Service {
         ByteArrayOutputStream output = null;
         try {
             DOMSource domSource = getDocument(routeId);
+            if (domSource == null) {
+                Logger.d("There are 0 tracking points");
+                setRouteAsUploaded(routeId);
+                return;
+            }
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer();
             setOutputFormat(transformer);
@@ -138,17 +140,17 @@ public class DataUploadService extends Service {
             Logger.e("Transforming failed: " + e.getMessage());
         }
         Logger.d("DataUpload gonna write " + description);
-        writeToFileAndSubmit(output, routeId, description);
+        submitCompressedFile(output, routeId, description);
     }
 
-    private void writeToFileAndSubmit(ByteArrayOutputStream output,
+    private void submitCompressedFile(ByteArrayOutputStream output,
                                       String routeId, String description) {
         Logger.d("DataUpload gonna submit");
         try {
-            String fullPath = getApplicationContext().getExternalFilesDir(null).getAbsolutePath()
-                    + "/" + routeId + ".gpx";
-            Files.write(output.toByteArray(), new File(fullPath));
-            submitTrace(description, fullPath, routeId);
+            String GPXString = output.toString();
+            byte[] compressedGPX = compressGPX(GPXString);
+            submitTrace(description, routeId, compressedGPX);
+
         } catch (IOException e) {
             Logger.e("IOException occurred " + e.getMessage());
         }
@@ -179,11 +181,16 @@ public class DataUploadService extends Service {
                 addTrackPoint(isoDateParser, cursor, document, trksegElement);
             }
             trkElement.appendChild(trksegElement);
-            domSource = new DOMSource(document.getDocumentElement());
+            Element documentElement =  document.getDocumentElement();
+            int numberOfPoints = documentElement.getElementsByTagName("ele").getLength();
+            if(numberOfPoints < MIN_NUM_TRACKING_POINTS) {
+                return null;
+            }
+            domSource = new DOMSource(documentElement);
         } catch (ParserConfigurationException e) {
             Logger.e("Building xml failed: " + e.getMessage());
         }
-        return domSource;
+      return domSource;
     }
 
     private void setOutputFormat(Transformer transformer) {
@@ -241,7 +248,7 @@ public class DataUploadService extends Service {
         return request;
     }
 
-    public void submitTrace(String description, String path, String routeId) {
+    public void submitTrace(String description, String routeId, byte[] compressedGPX) {
         Logger.d("DataUpload submitting trace");
 
         MultipartEntity reqEntity = new MultipartEntity();
@@ -252,16 +259,8 @@ public class DataUploadService extends Service {
         } catch (UnsupportedEncodingException e) {
             Logger.e(e.getMessage());
         }
-        String compressedPath = "";
-        try {
-            String compressedFileString = compress(FileUtils.readFileToString(new File(path)));
-            compressedPath = getApplicationContext().getExternalFilesDir(null).getAbsolutePath()
-                    + "/" + routeId + ".gz";
-            FileUtils.writeStringToFile(new File(compressedPath), compressedFileString);
-        } catch (IOException e) {
-            Logger.d(e.getMessage());
-        }
-        reqEntity.addPart("file", new FileBody(new File(compressedPath)));
+
+        reqEntity.addPart("file", new ByteArrayBody(compressedGPX, routeId + ".gpx.gz"));
 
         ByteArrayOutputStream bos =
                 new ByteArrayOutputStream((int) reqEntity.getContentLength());
@@ -274,19 +273,15 @@ public class DataUploadService extends Service {
 
         OAuthRequest request = getOAuthRequest();
         request.addPayload(bos.toByteArray());
-
         Header contentType = reqEntity.getContentType();
         request.addHeader(contentType.getName(), contentType.getValue());
 
         app.getOsmOauthService().signRequest(app.getAccessToken(), request);
         Response response = request.send();
 
-        Logger.d("DataUpload uploaded");
+        Logger.d("DataUpload Response:" + response.getBody());
         if (response.isSuccessful()) {
-            ContentValues cv = new ContentValues();
-            cv.put(DatabaseHelper.COLUMN_UPLOADED, 1);
-            app.getDb().update(TABLE_ROUTES, cv, COLUMN_TABLE_ID + " = ?",
-                            new String[] { routeId });
+            setRouteAsUploaded(routeId);
             Logger.d("DataUpload: done uploading: " + routeId);
         }
     }
@@ -301,26 +296,25 @@ public class DataUploadService extends Service {
                 stopSelf();
             }
         } catch (Exception e) {
-            Logger.d(e.getMessage());
+            Logger.d(e.toString());
         }
     }
 
-    public static String compress(String str) throws IOException {
-        byte[] blockcopy = ByteBuffer
-                .allocate(4)
-                .order(java.nio.ByteOrder.LITTLE_ENDIAN)
-                .putInt(str.length())
-                .array();
-        ByteArrayOutputStream os = new ByteArrayOutputStream(str.length());
+    public void setRouteAsUploaded(String routeId) {
+        ContentValues cv = new ContentValues();
+        cv.put(DatabaseHelper.COLUMN_UPLOADED, 1);
+        app.getDb().update(TABLE_ROUTES, cv, COLUMN_TABLE_ID + " = ?",
+                new String[]{routeId});
+    }
+
+    public static byte[] compressGPX(String GPXString) throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream(GPXString.length());
         GZIPOutputStream gos = new GZIPOutputStream(os);
-        gos.write(str.getBytes());
+        gos.write(GPXString.getBytes());
         gos.close();
+        byte[] compressedGPX = os.toByteArray();
         os.close();
-        byte[] compressed = new byte[4 + os.toByteArray().length];
-        System.arraycopy(blockcopy, 0, compressed, 0, 4);
-        System.arraycopy(os.toByteArray(), 0, compressed, 4,
-                os.toByteArray().length);
-        return Base64.encodeToString(compressed, Base64.DEFAULT);
+        return compressedGPX;
     }
 
 }
