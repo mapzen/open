@@ -1,5 +1,9 @@
 package com.mapzen.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.widget.Toast;
@@ -9,7 +13,9 @@ import com.mapzen.activity.BaseActivity;
 
 import retrofit.RetrofitError;
 
-public abstract class BaseFragment extends Fragment {
+import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATE_VIEW;
+
+public abstract class BaseFragment extends Fragment implements BaseActivity.ViewUpdater {
     protected BaseActivity act;
     protected MapFragment mapFragment;
     protected MapzenApplication app;
@@ -63,5 +69,22 @@ public abstract class BaseFragment extends Fragment {
         Toast.makeText(act, act.getString(R.string.generic_server_error), Toast.LENGTH_LONG).show();
         act.dismissProgressDialog();
         Log.e(MapzenApplication.LOG_TAG, "request: error: " + error.toString());
+    }
+
+    protected void registerViewUpdater() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(COM_MAPZEN_UPDATE_VIEW);
+        act.registerReceiver(new ViewUpdatesReceiver(), filter);
+    }
+
+    @Override
+    public void onViewUpdate() {
+    }
+
+    public class ViewUpdatesReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            onViewUpdate();
+        }
     }
 }

@@ -252,7 +252,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         super.onDetach();
         markReadyForUpload(routeId);
         clearRoute();
-        act.refreshRoutePreview();
+        act.updateView();
         mapFragment.showLocationMarker();
         mapFragment.getMap().layers().remove(routeLocationIndicator);
     }

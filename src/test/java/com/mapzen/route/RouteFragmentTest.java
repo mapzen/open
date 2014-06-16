@@ -363,7 +363,7 @@ public class RouteFragmentTest {
         fragment.setAct(baseActivityMock);
         FragmentTestUtil.startFragment(fragment);
         fragment.onDetach();
-        verify(baseActivityMock).refreshRoutePreview();
+        verify(baseActivityMock).updateView();
     }
 
     @Test

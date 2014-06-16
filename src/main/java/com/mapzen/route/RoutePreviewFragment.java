@@ -46,7 +46,8 @@ import static com.mapzen.osrm.Router.Type.BIKING;
 import static com.mapzen.osrm.Router.Type.DRIVING;
 import static com.mapzen.osrm.Router.Type.WALKING;
 
-public class RoutePreviewFragment extends BaseFragment implements Router.Callback {
+public class RoutePreviewFragment extends BaseFragment
+        implements Router.Callback {
     public static final String TAG = RoutePreviewFragment.class.getSimpleName();
     public static final int ROUTE_ZOOM_LEVEL = 19;
     private SimpleFeature destination;
@@ -101,6 +102,7 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
         View view = inflater.inflate(R.layout.route_preview, container, false);
         ButterKnife.inject(this, view);
         setOriginAndDestination();
+        registerViewUpdater();
         return view;
     }
 
@@ -250,6 +252,11 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
     public void failure(int statusCode) {
         path.clearPath();
         onServerError(statusCode);
+    }
+
+    @Override
+    public void onViewUpdate() {
+        createRouteToDestination();
     }
 
     private MarkerItem getMarkerItem(int icon, Location loc) {

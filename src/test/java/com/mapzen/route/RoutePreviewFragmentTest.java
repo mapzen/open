@@ -23,8 +23,10 @@ import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.util.FragmentTestUtil;
 
+import android.content.Intent;
 import android.location.Location;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -36,6 +38,7 @@ import javax.inject.Inject;
 
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.MapController.locationToGeoPoint;
+import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATE_VIEW;
 import static com.mapzen.entity.SimpleFeature.NAME;
 import static com.mapzen.support.TestHelper.getFixture;
 import static com.mapzen.support.TestHelper.getTestLocation;
@@ -409,5 +412,17 @@ public class RoutePreviewFragmentTest {
         fragment.setMapFragment(mockMapFragment);
         fragment.onDetach();
         verify(mockMapFragment).updateMap();
+    }
+
+    @Test
+    public void onViewCreate_shouldSetViewUpdateReceiver() throws Exception {
+        ShadowApplication application = Robolectric.getShadowApplication();
+        assertThat(application.hasReceiverForIntent(new Intent(COM_MAPZEN_UPDATE_VIEW))).isTrue();
+    }
+
+    @Test
+    public void onUpdateView_shouldCreateRoute() throws Exception {
+        fragment.onViewUpdate();
+        Mockito.verify(router).fetch();
     }
 }
