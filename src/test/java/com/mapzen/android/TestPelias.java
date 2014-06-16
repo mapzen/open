@@ -14,4 +14,3 @@ public final class TestPelias extends Pelias {
         return service;
     }
 }
-

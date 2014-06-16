@@ -34,6 +34,4 @@ public class OSMOauthFragmentTest {
         assertThat(activity.getVerifier().getValue()).isEqualTo(expectedVerifier);
     }
 
-
 }
-

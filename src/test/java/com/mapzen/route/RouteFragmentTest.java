@@ -1017,7 +1017,6 @@ public class RouteFragmentTest {
         verify(spyFragment, Mockito.times(2)).createRouteTo(testLocation);
     }
 
-
     @Test
     public void onLocationChange_shouldBeReEnabledOnceReRoutingHasError() throws Exception {
         Location testLocation = getTestLocation(40.658563, -73.986853);
@@ -1223,4 +1222,3 @@ public class RouteFragmentTest {
         listener.onTouch(null, motionEvent);
     }
 }
-

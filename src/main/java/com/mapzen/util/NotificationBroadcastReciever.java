@@ -1,6 +1,5 @@
 package com.mapzen.util;
 
-
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -21,4 +20,3 @@ public class NotificationBroadcastReciever extends BroadcastReceiver {
         }
     }
 }
-

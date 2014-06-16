@@ -11,4 +11,3 @@ public class DummyActivity extends FragmentActivity {
         setContentView(R.layout.dummy);
     }
 }
-

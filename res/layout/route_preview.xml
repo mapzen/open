@@ -150,6 +150,4 @@
         android:layout_above="@id/destination_container"
         android:background="@color/dark_gray" />
 
-
 </RelativeLayout>
-

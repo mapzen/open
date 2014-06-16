@@ -41,4 +41,3 @@ public class PlaceArrayAdapter extends ArrayAdapter<SimpleFeature> {
         return v;
     }
 }
-

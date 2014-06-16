@@ -45,4 +45,3 @@ public enum MapzenTheme implements ThemeFile {
         return value;
     }
 }
-

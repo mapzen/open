@@ -132,4 +132,3 @@ public class PagerResultsFragmentTest {
         assertThat(fragment.multiResultHeader).isGone();
     }
 }
-

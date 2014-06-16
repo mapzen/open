@@ -92,4 +92,3 @@ public class ListResultsFragmentTest {
         assertThat(act.getSearchView().getQuery().toString()).isEqualTo("term");
     }
 }
-

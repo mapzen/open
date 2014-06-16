@@ -4,4 +4,3 @@
     <item android:state_pressed="true" android:color="@color/light_gray" />
     <item android:color="@color/dark_gray" />
 </selector>
-

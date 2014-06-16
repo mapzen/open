@@ -531,4 +531,3 @@ public class BaseActivityTest {
         callbacks.onConnected(new Bundle());
     }
 }
-

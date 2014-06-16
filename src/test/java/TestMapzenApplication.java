@@ -15,4 +15,3 @@ public class TestMapzenApplication extends MapzenApplication {
         );
     }
 }
-

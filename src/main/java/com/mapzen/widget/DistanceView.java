@@ -35,4 +35,3 @@ public class DistanceView extends TextView {
     }
 
 }
-

@@ -231,4 +231,3 @@ public class PagerResultsFragment extends BaseFragment {
         mapFragment.addPoi(simpleFeature);
     }
 }
-

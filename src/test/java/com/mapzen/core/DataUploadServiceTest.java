@@ -123,4 +123,3 @@ public class DataUploadServiceTest {
         app.getDb().insert(TABLE_ROUTES, null, insertValues);
     }
 }
-

@@ -58,7 +58,6 @@ public class TestBaseActivity extends BaseActivity {
         return connectionCallback;
     }
 
-
     @Override
     public void initDebugDataSubmitter() {
         super.initDebugDataSubmitter();
@@ -81,4 +80,3 @@ public class TestBaseActivity extends BaseActivity {
         return enableActionbar;
     }
 }
-

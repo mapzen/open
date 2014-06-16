@@ -26,4 +26,3 @@
         android:drawable="@drawable/spinner_ab_focused_mapzen" />
     <item android:drawable="@drawable/spinner_ab_default_mapzen" />
 </selector>
-

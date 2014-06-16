@@ -96,4 +96,3 @@ public class SettingsFragment extends PreferenceFragment {
         activity.showActionBar();
     }
 }
-

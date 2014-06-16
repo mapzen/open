@@ -34,4 +34,3 @@ public final class ShadowBugSenseHandler {
         return lastHandledException;
     }
 }
-

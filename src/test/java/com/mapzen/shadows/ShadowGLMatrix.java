@@ -12,4 +12,3 @@ public class ShadowGLMatrix {
     public void __constructor__() {
     }
 }
-

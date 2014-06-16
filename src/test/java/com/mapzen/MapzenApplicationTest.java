@@ -31,4 +31,3 @@ public class MapzenApplicationTest {
         assertThat(app).isSameAs((MapzenApplication) new Activity().getApplication());
     }
 }
-

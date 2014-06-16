@@ -164,4 +164,3 @@ public class DebugViewTest {
         assertThat(getDirectionForBearing(350.0f)).isEqualTo("N");
     }
 }
-

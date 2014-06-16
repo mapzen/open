@@ -90,4 +90,3 @@ public class ListResultsFragment extends ListFragment {
         return listResultsFragment;
     }
 }
-

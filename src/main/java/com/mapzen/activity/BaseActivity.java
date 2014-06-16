@@ -559,4 +559,3 @@ public class BaseActivity extends MapActivity {
         return pref.getBoolean("forced_login", false);
     }
 }
-

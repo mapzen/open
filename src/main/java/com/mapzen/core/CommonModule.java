@@ -28,4 +28,3 @@ public class CommonModule {
         return application;
     }
 }
-

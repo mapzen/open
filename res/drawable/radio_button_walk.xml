@@ -4,4 +4,3 @@
     <item android:state_checked="true" android:drawable="@drawable/ic_walk_checked" />
     <item android:drawable="@drawable/ic_walk" />
 </selector>
-

@@ -298,4 +298,3 @@ public class SettingsFragmentTest {
         return fragment.getPreferenceScreen().findPreference(application.getString(resId));
     }
 }
-
