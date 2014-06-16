@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -90,6 +91,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @InjectView(R.id.routes) ViewPager pager;
     @InjectView(R.id.resume_button) Button resume;
 
+    private int numberOfLocationForSpeedAverage = 10;
     private ArrayList<Instruction> instructions;
     private RouteAdapter adapter;
     private Route route;
@@ -306,7 +308,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void manageMap(Location location, Location originalLocation) {
         if (location != null) {
-            zoomController.setCurrentSpeed(originalLocation.getSpeed());
+            zoomController.setCurrentSpeed(getAverageSpeed());
             getMapController().setZoomLevel(zoomController.getZoom());
             getMapController().setLocation(location).centerOn(location);
             routeLocationIndicator.setPosition(location.getLatitude(), location.getLongitude());
@@ -375,6 +377,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         manageMap(correctedLocation, location);
 
         Instruction closestInstruction = route.getNextInstruction();
+        if (closestInstruction == null) {
+            return;
+        }
         int closestDistance =
                 (int) Math.floor(correctedLocation.distanceTo(closestInstruction.getLocation()));
 
@@ -566,6 +571,30 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     public Set<Instruction> getFlippedInstructions() {
         return flippedInstructions;
+    }
+
+    public void setNumberOfLocationForSpeedAverage(int numberOfLocationForSpeedAverage) {
+        this.numberOfLocationForSpeedAverage = numberOfLocationForSpeedAverage;
+    }
+
+    public int getNumberOfLocationsForAverageSpeed() {
+        return numberOfLocationForSpeedAverage;
+    }
+
+    public float getAverageSpeed() {
+        Cursor cursor = act.getDb().
+                rawQuery("SELECT AVG(speed) as avg_speed "
+                        + "from (select speed from "
+                        + TABLE_LOCATIONS
+                        + " where "
+                        + COLUMN_ROUTE_ID
+                        + " = '"
+                        + routeId
+                        + "' ORDER BY time DESC LIMIT "
+                        + getNumberOfLocationsForAverageSpeed()
+                        + ")", null);
+        cursor.moveToFirst();
+        return cursor.getFloat(0);
     }
 
     private void initLocationReceiver() {

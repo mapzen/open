@@ -212,11 +212,6 @@ public final class TestHelper {
     }
 
     public static class TestLocation extends Location {
-        private double distance;
-        private double bearing;
-        private double rLat, rLng;
-        private Location originalLocation;
-        private int R = 6371;
 
         public TestLocation(String provider) {
             super(provider);
@@ -224,52 +219,27 @@ public final class TestHelper {
 
         private TestLocation(Builder builder) {
             super("fake tester");
-            this.distance = builder.distance / R;
-            this.bearing = Math.toRadians(builder.bearing);
-            this.originalLocation = builder.originalLocation;
-            this.rLat = Math.toRadians(originalLocation.getLatitude());
-            this.rLng = Math.toRadians(originalLocation.getLongitude());
-            this.setLatitude(Math.toDegrees(getFarAwayLat()));
-            this.setLongitude(Math.toDegrees(getFarAwayLng()));
-        }
-
-        private double getFarAwayLat() {
-            double lat = Math.asin(Math.sin(rLat)
-                    * Math.cos(distance / R)
-                    + Math.cos(rLat * Math.sin(distance / R))
-                    * Math.cos(bearing));
-            return lat;
-        }
-
-        private double getFarAwayLng() {
-            double lng = rLng + Math.atan2(
-                    Math.sin(bearing)
-                            * Math.sin(distance)
-                            * Math.cos(rLat)
-                    ,
-                    Math.cos(distance)
-                            - Math.sin(rLat)
-                            * Math.sin(getFarAwayLat())
-            );
-
-            return lng;
+            this.setSpeed(builder.speed);
+            this.setBearing(builder.bearing);
+            this.setLatitude(builder.originalLocation.getLatitude());
+            this.setLongitude(builder.originalLocation.getLongitude());
         }
 
         public static class Builder {
-            private double distance;
-            private double bearing;
+            private float speed;
+            private float bearing;
             private Location originalLocation;
 
             public Builder(Location location) {
                 this.originalLocation = location;
             }
 
-            public Builder setDistance(double distance) {
-                this.distance = distance;
+            public Builder setSpeed(float speed) {
+                this.speed = speed;
                 return this;
             }
 
-            public Builder setBearing(double bearing) {
+            public Builder setBearing(float bearing) {
                 this.bearing = bearing;
                 return this;
             }
