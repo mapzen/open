@@ -84,6 +84,10 @@
     <string name="settings_turn_driving_over50_key">turn_driving_over_50</string>
     <string name="settings_turn_driving_over_50_title">Driving 50+ Mph</string>
 
+    <string name="settings_speed_title">Advance Radius</string>
+    <string name="settings_number_of_locations_for_average_speed_key">number_of_locations_for_average_speed</string>
+    <string name="settings_number_of_locations_for_average_speed_title">Number of Location for average speed</string>
+
     <string name="toast_fixed_location_is_malformed">Your fixed location is malformed</string>
     <string name="logo_description">Mapzen Logo</string>
     <string name="osm_login">OpenStreetMap Login</string>

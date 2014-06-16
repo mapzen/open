@@ -72,6 +72,7 @@ import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_POSITION;
 import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
 import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
+import static com.mapzen.util.DatabaseHelper.COLUMN_SPEED;
 import static com.mapzen.util.DatabaseHelper.COLUMN_TABLE_ID;
 import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
@@ -573,18 +574,16 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return flippedInstructions;
     }
 
-    public void setNumberOfLocationForSpeedAverage(int numberOfLocationForSpeedAverage) {
-        this.numberOfLocationForSpeedAverage = numberOfLocationForSpeedAverage;
-    }
-
     public int getNumberOfLocationsForAverageSpeed() {
-        return numberOfLocationForSpeedAverage;
+        return getDefaultSharedPreferences(act).
+                getInt(getString(R.string.settings_number_of_locations_for_average_speed_key),
+                        R.integer.number_of_locations_for_average_speed);
     }
 
     public float getAverageSpeed() {
         Cursor cursor = act.getDb().
-                rawQuery("SELECT AVG(speed) as avg_speed "
-                        + "from (select speed from "
+                rawQuery("SELECT AVG(" + COLUMN_SPEED + ") as avg_speed "
+                        + "from (select " + COLUMN_SPEED + " from "
                         + TABLE_LOCATIONS
                         + " where "
                         + COLUMN_ROUTE_ID

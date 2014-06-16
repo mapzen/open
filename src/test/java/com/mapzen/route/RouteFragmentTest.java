@@ -754,7 +754,7 @@ public class RouteFragmentTest {
         setAdvanceRadiusPreference(R.string.settings_turn_driving_25to35_key, 300);
         setAdvanceRadiusPreference(R.string.settings_turn_driving_35to50_key, 400);
         setAdvanceRadiusPreference(R.string.settings_turn_driving_over50_key, 500);
-        fragment.setNumberOfLocationForSpeedAverage(1);
+        setNumberOfLocationForAverageSpeed(1);
 
         FragmentTestUtil.startFragment(fragment);
         Location location = fragment.getRoute().getRouteInstructions().get(0).getLocation();
@@ -1108,7 +1108,7 @@ public class RouteFragmentTest {
         Resources res = act.getResources();
         FragmentTestUtil.startFragment(fragment);
         Location location = fragment.getRoute().getRouteInstructions().get(0).getLocation();
-        fragment.setNumberOfLocationForSpeedAverage(1);
+        setNumberOfLocationForAverageSpeed(1);
 
         assertZoomLevel(res.getInteger(R.integer.zoom_driving_0to15), 10, location);
         assertZoomLevel(res.getInteger(R.integer.zoom_driving_15to25), 20, location);
@@ -1130,7 +1130,7 @@ public class RouteFragmentTest {
 
         editPrefs.commit();
 
-        fragment.setNumberOfLocationForSpeedAverage(1);
+        setNumberOfLocationForAverageSpeed(1);
         FragmentTestUtil.startFragment(fragment);
         Location location = fragment.getRoute().getRouteInstructions().get(0).getLocation();
 
@@ -1220,7 +1220,9 @@ public class RouteFragmentTest {
         locationBuilder.setSpeed(200.0f);
         fragment.onLocationChanged(locationBuilder.build());
         locationBuilder.setSpeed(expectedSpeed);
+        setNumberOfLocationForAverageSpeed(10);
         for (int i = 0; i < fragment.getNumberOfLocationsForAverageSpeed(); i++) {
+            System.out.println(i);
             fragment.onLocationChanged(locationBuilder.build());
         }
         assertThat(fragment.getAverageSpeed()).isEqualTo(expectedSpeed);
@@ -1272,6 +1274,14 @@ public class RouteFragmentTest {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
         SharedPreferences.Editor prefEditor = prefs.edit();
         prefEditor.putInt(act.getString(key), value);
+        prefEditor.commit();
+    }
+
+    private void setNumberOfLocationForAverageSpeed(int value) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
+        SharedPreferences.Editor prefEditor = prefs.edit();
+        prefEditor.putInt(
+                act.getString(R.string.settings_number_of_locations_for_average_speed_key), value);
         prefEditor.commit();
     }
 

@@ -290,6 +290,27 @@ public class SettingsFragmentTest {
         assertThat(findPreferenceById(R.string.settings_turn_driving_over50_key)).hasSummary("7");
     }
 
+    @Test
+    public void shouldHaveNumberOfLocationForAverageSpeed() throws Exception {
+        Preference preference =
+                findPreferenceById(R.string.settings_number_of_locations_for_average_speed_key);
+        assertThat(preference).
+                hasTitle(R.string.settings_number_of_locations_for_average_speed_title);
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("10");
+    }
+
+    @Test
+    public void shouldDisplayUpdatedNumberOfLocationsForAverageSpeed() throws Exception {
+        SharedPreferences prefs = fragment.getPreferenceManager().getSharedPreferences();
+        SharedPreferences.Editor editPrefs = prefs.edit();
+        editPrefs.putInt(fragment.
+                getString(R.string.settings_number_of_locations_for_average_speed_key), 1);
+        editPrefs.commit();
+        fragment.onStart();
+        assertThat(findPreferenceById(
+                R.string.settings_number_of_locations_for_average_speed_key)).hasSummary("1");
+    }
+
     private PreferenceCategory findCategoryByIndex(int index) {
         return (PreferenceCategory) fragment.getPreferenceScreen().getPreference(index);
     }
