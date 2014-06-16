@@ -23,6 +23,7 @@ import dagger.Module;
 import dagger.Provides;
 
 import static com.mapzen.osrm.Router.getRouter;
+import static org.mockito.Mockito.doNothing;
 
 @Module(
         injects = {
@@ -45,7 +46,9 @@ public class TestAppModule {
     }
 
     @Provides @Singleton Router provideRouter() {
-        return Mockito.spy(getRouter());
+        Router router = Mockito.spy(getRouter());
+        doNothing().when(router).fetch();
+        return router;
     }
 
     @Provides @Singleton PathLayer providePathLayer() {
