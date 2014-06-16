@@ -93,4 +93,3 @@ public class DebugDataSubmitter implements Runnable {
         }
     }
 }
-
