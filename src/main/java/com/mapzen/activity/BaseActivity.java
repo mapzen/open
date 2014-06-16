@@ -11,7 +11,6 @@ import com.mapzen.core.OSMOauthFragment;
 import com.mapzen.core.SettingsFragment;
 import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.fragment.MapFragment;
-import com.mapzen.route.RoutePreviewFragment;
 import com.mapzen.search.AutoCompleteAdapter;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.search.PagerResultsFragment;
@@ -71,6 +70,7 @@ import static com.mapzen.search.SavedSearch.getSavedSearch;
 public class BaseActivity extends MapActivity {
     @Inject MapzenProgressDialogFragment progressDialogFragment;
     public static final int LOCATION_INTERVAL = 1000;
+    public static final String COM_MAPZEN_UPDATE_VIEW = "com.mapzen.updates.view";
     public static final String COM_MAPZEN_UPDATES_LOCATION = "com.mapzen.updates.location";
     public static final String
             DEBUG_DATA_ENDPOINT = "http://on-the-road.dev.mapzen.com/upload";
@@ -523,13 +523,12 @@ public class BaseActivity extends MapActivity {
         this.requestToken = requestToken;
     }
 
-    public void refreshRoutePreview() {
-        RoutePreviewFragment fragment =
-                (RoutePreviewFragment) getSupportFragmentManager().
-                        findFragmentByTag(RoutePreviewFragment.TAG);
-        if (fragment != null) {
-            fragment.createRouteToDestination();
-        }
+    public void updateView() {
+        sendBroadcast(new Intent(COM_MAPZEN_UPDATE_VIEW));
+    }
+
+    public interface ViewUpdater {
+        public void onViewUpdate();
     }
 
     private void initAlarm() {

@@ -517,6 +517,14 @@ public class BaseActivityTest {
                 .hasFragmentWithTag(OSMOauthFragment.TAG);
     }
 
+    @Test
+    public void updateView_shouldSendUpdateViewBroadcast() throws Exception {
+        activity.updateView();
+        List<Intent> intents = Robolectric.getShadowApplication().getBroadcastIntents();
+        assertThat(intents).hasSize(1);
+        assertThat(intents.get(0)).hasAction(BaseActivity.COM_MAPZEN_UPDATE_VIEW);
+    }
+
     private Location initLastLocation() {
         Location location = new Location(GPS_PROVIDER);
         location.setLatitude(1.0);
