@@ -477,7 +477,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public boolean setRoute(Route route) {
-
         if (route.foundRoute()) {
             this.route = route;
             this.instructions = route.getRouteInstructions();

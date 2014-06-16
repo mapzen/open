@@ -20,14 +20,19 @@ import butterknife.OnClick;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import org.scribe.model.Token;
+import org.scribe.model.Verifier;
 
 public class InitActivity extends Activity {
     @InjectView(R.id.sign_up_button) Button signUp;
     @InjectView(R.id.log_in_button) Button logIn;
     MapzenApplication app;
+    private Token requestToken = null;
     Handler delayButtonHandler;
     Animation fadeIn, fadeInSlow, fadeOut;
+    Verifier verifier;
     int clickCount;
+
+    public static final String OSM_VERIFIER_KEY = "oauth_verifier";
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,11 +52,8 @@ public class InitActivity extends Activity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Token userAuthenticationToken = getTokenFromCallback(intent);
-        if (userAuthenticationToken != null) {
-            app.setAccessToken(userAuthenticationToken);
-            startBaseActivity();
-        }
+        getTokenFromCallback(intent);
+
     }
 
     @OnClick(R.id.sign_up_button)
@@ -98,7 +100,8 @@ public class InitActivity extends Activity {
             @Override
             protected Token doInBackground(Void... params) {
                 try {
-                    return app.getOsmOauthService().getRequestToken();
+                    requestToken = app.getOsmOauthService().getRequestToken();
+                    return requestToken;
                 } catch (Exception e) {
                     return null;
                 }
@@ -128,14 +131,21 @@ public class InitActivity extends Activity {
         finish();
     }
 
-    private Token getTokenFromCallback(Intent intent) {
+    private void getTokenFromCallback(Intent intent) {
         Uri uri = intent.getData();
-        if (uri == null) {
-            return null;
-        }
-        String token = uri.getQueryParameter("oauth_token");
-        String verifier = uri.getQueryParameter("oauth_verifier");
-        return new Token(token, verifier);
+        verifier = new Verifier(uri.getQueryParameter(OSM_VERIFIER_KEY));
+        setAccessToken();
+    }
+
+    public void setAccessToken() {
+        (new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                app.setAccessToken(app.getOsmOauthService().getAccessToken(requestToken, verifier));
+                return null;
+            }
+        }).execute();
+        startBaseActivity();
     }
 
     private void animateViewTransitions() {
