@@ -100,7 +100,6 @@ public final class MapController {
         map.updateMap(true);
     }
 
-
     public double getZoomScale() {
         return mapPosition.scale;
     }

@@ -10,7 +10,6 @@ import com.mapzen.R;
 
 import static android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS;
 
-
 public class MapzenGPSPromptDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

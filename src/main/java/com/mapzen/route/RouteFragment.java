@@ -4,7 +4,6 @@ import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
-import com.mapzen.fragment.DirectionListFragment;
 import com.mapzen.helpers.ZoomController;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
@@ -53,6 +52,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -81,6 +82,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public static final String TAG = RouteFragment.class.getSimpleName();
     public static final int ROUTE_ZOOM_LEVEL = 17;
     public static final String ROUTE_TAG = "route";
+
+    @Inject PathLayer path;
 
     @InjectView(R.id.overflow_menu) ImageButton overflowMenu;
     @InjectView(R.id.routes) ViewPager pager;
@@ -120,6 +123,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         fragment.setMapFragment(act.getMapFragment());
         fragment.setSimpleFeature(simpleFeature);
         fragment.setRouteLocationIndicator(new RouteLocationIndicator(act.getMap()));
+        fragment.inject();
         return fragment;
     }
 
@@ -246,10 +250,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onDetach() {
         super.onDetach();
-        act.enableActionbar();
-        act.showActionBar();
         markReadyForUpload(routeId);
         clearRoute();
+        act.refreshRoutePreview();
         mapFragment.showLocationMarker();
         mapFragment.getMap().layers().remove(routeLocationIndicator);
     }
@@ -271,8 +274,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         router.clearLocations()
                 .setLocation(locationToPair(location))
                 .setLocation(geoPointToPair(simpleFeature.getGeoPoint()))
-                .setZoomLevel(getMapController().getZoomLevel())
-                .setDriving()
                 .setCallback(this)
                 .fetch();
     }
@@ -496,15 +497,17 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void drawRoute() {
-        PathLayer layer = mapFragment.getPathLayer();
-        layer.clearPath();
+        if (!getMapController().getMap().layers().contains(path)) {
+            getMapController().getMap().layers().add(path);
+        }
+        path.clearPath();
         if (route != null) {
             ArrayList<Location> geometry = route.getGeometry();
             ArrayList<ContentValues> databaseValues = new ArrayList<ContentValues>();
             for (int index = 0; index < geometry.size(); index++) {
                 Location location = geometry.get(index);
                 databaseValues.add(buildContentValues(location, index));
-                layer.addPoint(locationToGeoPoint(location));
+                path.addPoint(locationToGeoPoint(location));
             }
             insertIntoDb(TABLE_ROUTE_GEOMETRY, null, databaseValues);
         }
@@ -525,8 +528,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void clearRoute() {
-        PathLayer layer = mapFragment.getPathLayer();
-        layer.clearPath();
+        path.clearPath();
         mapFragment.updateMap();
     }
 

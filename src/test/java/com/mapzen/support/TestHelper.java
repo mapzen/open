@@ -117,7 +117,6 @@ public final class TestHelper {
         return instruction;
     }
 
-
     public static SimpleFeature getTestSimpleFeature() {
         SimpleFeature simpleFeature = new SimpleFeature();
         simpleFeature.setLat(1.0);

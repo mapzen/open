@@ -73,4 +73,3 @@ public class MapzenNotificationCreator {
         builder.setPriority(Notification.PRIORITY_MAX);
     }
 }
-

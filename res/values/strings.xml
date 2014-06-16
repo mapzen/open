@@ -17,6 +17,7 @@
     <string name="gps_positive_button">Yes</string>
     <string name="gps_negative_button">Dismiss</string>
     <string name="start">Start</string>
+    <string name="view">View</string>
     <string name="overflow_menu">More</string>
     <string name="route_steps_menu_option">Step-by-step list</string>
     <string name="waiting">Waiting for location</string>
@@ -100,5 +101,8 @@
     <string name="debug_current_location">Current Location</string>
     <string name="debug_snap_location">Snap Location</string>
     <string name="debug_closest_instruction">Closest Instruction</string>
+    <string name="destination_preview">destination_preview</string>
+    <string name="destination_preview_distance">destination_preview_distance</string>
+    <string name="reverse">reverse</string>
 
 </resources>

@@ -63,11 +63,6 @@ public class MapFragmentTest {
     }
 
     @Test
-    public void shouldHavePathLayer() throws Exception {
-        assertThat(mapFragment.getPathLayer()).isNotNull();
-    }
-
-    @Test
     public void onItemSingleTapUp_shouldNotifyListener() throws Exception {
         ItemizedLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
         poiLayer.addItem(new MarkerItem("Title", "Description", new GeoPoint(0, 0)));

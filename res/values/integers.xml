@@ -16,4 +16,3 @@
     <integer name="turn_driving_35to50">200</integer>
     <integer name="turn_driving_over50">300</integer>
 </resources>
-

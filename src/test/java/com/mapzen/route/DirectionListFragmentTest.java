@@ -1,4 +1,4 @@
-package com.mapzen.fragment;
+package com.mapzen.route;
 
 import com.mapzen.R;
 import com.mapzen.osrm.Instruction;

@@ -139,7 +139,7 @@
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
         <module name="MagicNumber">
-          <property name="severity" value="warning"/>
+          <property name="severity" value="ignore"/>
         </module>
         <module name="MissingSwitchDefault"/>
         <!-- Problem with finding exception types... -->
