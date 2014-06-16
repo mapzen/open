@@ -4,8 +4,6 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.Logger;
 
-import com.google.common.io.Files;
-
 import org.apache.http.Header;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ByteArrayBody;
@@ -147,8 +145,8 @@ public class DataUploadService extends Service {
                                       String routeId, String description) {
         Logger.d("DataUpload gonna submit");
         try {
-            String GPXString = output.toString();
-            byte[] compressedGPX = compressGPX(GPXString);
+            String gpxString = output.toString();
+            byte[] compressedGPX = compressGPX(gpxString);
             submitTrace(description, routeId, compressedGPX);
 
         } catch (IOException e) {
@@ -183,7 +181,7 @@ public class DataUploadService extends Service {
             trkElement.appendChild(trksegElement);
             Element documentElement =  document.getDocumentElement();
             int numberOfPoints = documentElement.getElementsByTagName("ele").getLength();
-            if(numberOfPoints < MIN_NUM_TRACKING_POINTS) {
+            if (numberOfPoints < MIN_NUM_TRACKING_POINTS) {
                 return null;
             }
             domSource = new DOMSource(documentElement);
@@ -307,10 +305,10 @@ public class DataUploadService extends Service {
                 new String[]{routeId});
     }
 
-    public static byte[] compressGPX(String GPXString) throws IOException {
-        ByteArrayOutputStream os = new ByteArrayOutputStream(GPXString.length());
+    public static byte[] compressGPX(String gpxString) throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream(gpxString.length());
         GZIPOutputStream gos = new GZIPOutputStream(os);
-        gos.write(GPXString.getBytes());
+        gos.write(gpxString.getBytes());
         gos.close();
         byte[] compressedGPX = os.toByteArray();
         os.close();

@@ -19,18 +19,19 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
+import com.mapzen.util.Logger;
 import org.scribe.model.Token;
 import org.scribe.model.Verifier;
 
 public class InitActivity extends Activity {
     @InjectView(R.id.sign_up_button) Button signUp;
     @InjectView(R.id.log_in_button) Button logIn;
-    MapzenApplication app;
+    private MapzenApplication app;
     private Token requestToken = null;
-    Handler delayButtonHandler;
-    Animation fadeIn, fadeInSlow, fadeOut;
-    Verifier verifier;
-    int clickCount;
+    private Handler delayButtonHandler;
+    private Animation fadeIn, fadeInSlow, fadeOut;
+    private Verifier verifier;
+    private int clickCount;
 
     public static final String OSM_VERIFIER_KEY = "oauth_verifier";
     @Override
@@ -95,7 +96,7 @@ public class InitActivity extends Activity {
         startActivity(signUpIntent);
     }
 
-    private void loginRoutine() {
+    public void loginRoutine() {
         (new AsyncTask<Void, Void, Token>() {
             @Override
             protected Token doInBackground(Void... params) {
@@ -137,14 +138,18 @@ public class InitActivity extends Activity {
         setAccessToken();
     }
 
-    public void setAccessToken() {
-        (new AsyncTask<Void, Void, Void>() {
+    private void setAccessToken() {
+        try {
+            (new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 app.setAccessToken(app.getOsmOauthService().getAccessToken(requestToken, verifier));
                 return null;
             }
         }).execute();
+        } catch (Exception e) {
+            Logger.d("Unable to set the access token");
+        }
         startBaseActivity();
     }
 
