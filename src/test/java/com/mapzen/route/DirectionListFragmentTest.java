@@ -2,7 +2,6 @@ package com.mapzen.route;
 
 import com.mapzen.R;
 import com.mapzen.osrm.Instruction;
-import com.mapzen.route.DirectionListFragment;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.widget.DistanceView;
 
