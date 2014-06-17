@@ -102,7 +102,7 @@ public class PagerResultsFragment extends BaseFragment {
         final SearchView searchView = act.getSearchView();
         final AutoCompleteAdapter adapter = (AutoCompleteAdapter) searchView
                 .getSuggestionsAdapter();
-        final AutoCompleteTextView textView = act.getSearchQueryTextView(searchView);
+        final AutoCompleteTextView textView = act.getQueryAutoCompleteTextView(searchView);
         final ImageView closeButton = (ImageView) act.getSearchView().findViewById(getResources()
                 .getIdentifier("android:id/search_close_btn", null, null));
         closeButton.setOnClickListener(new View.OnClickListener() {
