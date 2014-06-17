@@ -62,7 +62,7 @@ import static org.scribe.model.Verb.GET;
 import static org.scribe.model.Verb.POST;
 
 public class DataUploadService extends Service {
-    public static final int MIN_NUM_TRACKING_POINTS = 10;
+    private static final int MIN_NUM_TRACKING_POINTS = 10;
     private MapzenApplication app;
 
     @Override
@@ -141,7 +141,7 @@ public class DataUploadService extends Service {
         submitCompressedFile(output, routeId, description);
     }
 
-    private void submitCompressedFile(ByteArrayOutputStream output,
+    public void submitCompressedFile(ByteArrayOutputStream output,
                                       String routeId, String description) {
         Logger.d("DataUpload gonna submit");
         try {
@@ -154,7 +154,7 @@ public class DataUploadService extends Service {
         }
     }
 
-    private DOMSource getDocument(String routeId) {
+    public DOMSource getDocument(String routeId) {
         DOMSource domSource = null;
         try {
             DateTimeFormatter isoDateParser = ISODateTimeFormat.dateTimeNoMillis();
@@ -236,7 +236,6 @@ public class DataUploadService extends Service {
     public OAuthRequest getOAuthRequest() {
         OAuthRequest request =
                 new OAuthRequest(POST, OSMApi.BASE_URL + OSMApi.CREATE_GPX);
-
         return request;
     }
 
@@ -254,15 +253,12 @@ public class DataUploadService extends Service {
             reqEntity.addPart("description", new StringBody(description));
             reqEntity.addPart("visibility", new StringBody("private"));
             reqEntity.addPart("public", new StringBody("0"));
+            reqEntity.addPart("file", new ByteArrayBody(compressedGPX, routeId + ".gpx.gz"));
         } catch (UnsupportedEncodingException e) {
             Logger.e(e.getMessage());
         }
-
-        reqEntity.addPart("file", new ByteArrayBody(compressedGPX, routeId + ".gpx.gz"));
-
         ByteArrayOutputStream bos =
                 new ByteArrayOutputStream((int) reqEntity.getContentLength());
-
         try {
             reqEntity.writeTo(bos);
         } catch (IOException e) {
@@ -298,14 +294,14 @@ public class DataUploadService extends Service {
         }
     }
 
-    public void setRouteAsUploaded(String routeId) {
+    private void setRouteAsUploaded(String routeId) {
         ContentValues cv = new ContentValues();
         cv.put(DatabaseHelper.COLUMN_UPLOADED, 1);
         app.getDb().update(TABLE_ROUTES, cv, COLUMN_TABLE_ID + " = ?",
                 new String[]{routeId});
     }
 
-    public static byte[] compressGPX(String gpxString) throws IOException {
+    private byte[] compressGPX(String gpxString) throws IOException {
         ByteArrayOutputStream os = new ByteArrayOutputStream(gpxString.length());
         GZIPOutputStream gos = new GZIPOutputStream(os);
         gos.write(gpxString.getBytes());
@@ -314,5 +310,4 @@ public class DataUploadService extends Service {
         os.close();
         return compressedGPX;
     }
-
 }
