@@ -22,6 +22,7 @@ import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.util.FragmentTestUtil;
 
+import android.view.Menu;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -130,5 +131,26 @@ public class PagerResultsFragmentTest {
         fragment.add(new SimpleFeature());
         fragment.displayResults(1, 0);
         assertThat(fragment.multiResultHeader).isGone();
+    }
+
+    @Test
+    public void onAttach_shouldHideOverflowMenu() throws Exception {
+        Menu menu = new TestMenu();
+        act.onCreateOptionsMenu(menu);
+        fragment.onAttach(act);
+        assertThat(menu.findItem(R.id.settings)).isNotVisible();
+        assertThat(menu.findItem(R.id.phone_home)).isNotVisible();
+        assertThat(menu.findItem(R.id.login)).isNotVisible();
+    }
+
+    @Test
+    public void onDetach_shouldShowOverflowMenu() throws Exception {
+        Menu menu = new TestMenu();
+        act.onCreateOptionsMenu(menu);
+        act.hideOverflowMenu();
+        fragment.onDetach();
+        assertThat(menu.findItem(R.id.settings)).isVisible();
+        assertThat(menu.findItem(R.id.phone_home)).isVisible();
+        assertThat(menu.findItem(R.id.login)).isVisible();
     }
 }

@@ -527,7 +527,7 @@ public class BaseActivityTest {
 
     @Test
     public void hideOverflow_shouldHideOverflowMenuItems() throws Exception {
-        activity.hideOverflow();
+        activity.hideOverflowMenu();
         assertThat(menu.findItem(R.id.settings)).isNotVisible();
         assertThat(menu.findItem(R.id.phone_home)).isNotVisible();
         assertThat(menu.findItem(R.id.login)).isNotVisible();
@@ -536,8 +536,8 @@ public class BaseActivityTest {
 
     @Test
     public void showOverflow_shouldShowSettingsAndPhoneHomeItems() throws Exception {
-        activity.hideOverflow();
-        activity.showOverflow();
+        activity.hideOverflowMenu();
+        activity.showOverflowMenu();
         assertThat(menu.findItem(R.id.settings)).isVisible();
         assertThat(menu.findItem(R.id.phone_home)).isVisible();
     }
@@ -545,8 +545,8 @@ public class BaseActivityTest {
     @Test
     public void showOverflow_shouldShowLoginItemIfLoggedOut() throws Exception {
         activity.setAccessToken(new Token("", ""));
-        activity.hideOverflow();
-        activity.showOverflow();
+        activity.hideOverflowMenu();
+        activity.showOverflowMenu();
         assertThat(menu.findItem(R.id.login)).isVisible();
         assertThat(menu.findItem(R.id.logout)).isNotVisible();
     }
@@ -554,8 +554,8 @@ public class BaseActivityTest {
     @Test
     public void showOverflow_shouldShowLogoutItemIfLoggedIn() throws Exception {
         activity.setAccessToken(new Token("stuff", "fun"));
-        activity.hideOverflow();
-        activity.showOverflow();
+        activity.hideOverflowMenu();
+        activity.showOverflowMenu();
         assertThat(menu.findItem(R.id.logout)).isVisible();
         assertThat(menu.findItem(R.id.login)).isNotVisible();
     }

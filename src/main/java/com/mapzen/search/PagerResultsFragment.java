@@ -1,21 +1,5 @@
 package com.mapzen.search;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.SearchView;
-import android.widget.TextView;
-import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.SearchViewAdapter;
@@ -31,9 +15,27 @@ import com.mapzen.util.Logger;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 
+import android.app.Activity;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.SearchView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+import retrofit.Callback;
+import retrofit.RetrofitError;
 
 import static com.mapzen.MapController.DEFAULT_ZOOMLEVEL;
 import static com.mapzen.MapController.getMapController;
@@ -73,6 +75,18 @@ public class PagerResultsFragment extends BaseFragment {
         ButterKnife.inject(this, view);
         initOnPageChangeListener();
         return view;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        act.hideOverflowMenu();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        act.showOverflowMenu();
     }
 
     @Override
