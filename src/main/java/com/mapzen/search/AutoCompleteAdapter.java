@@ -76,6 +76,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                 mapFragment.clearMarkers();
                 mapFragment.updateMap();
                 if (simpleFeature != null) {
+                    app.setCurrentSearchTerm(simpleFeature.getHint());
                     mapFragment.centerOn(simpleFeature);
                     PagerResultsFragment pagerResultsFragment =
                             PagerResultsFragment.newInstance(act);

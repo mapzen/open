@@ -1,21 +1,5 @@
 package com.mapzen.search;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.SearchView;
-import android.widget.TextView;
-import android.widget.Toast;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.SearchViewAdapter;
@@ -31,9 +15,29 @@ import com.mapzen.util.Logger;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 
+import android.app.Activity;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.SearchView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+import retrofit.Callback;
+import retrofit.RetrofitError;
 
 import static com.mapzen.MapController.DEFAULT_ZOOMLEVEL;
 import static com.mapzen.MapController.getMapController;
@@ -73,6 +77,52 @@ public class PagerResultsFragment extends BaseFragment {
         ButterKnife.inject(this, view);
         initOnPageChangeListener();
         return view;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        act.hideOverflowMenu();
+        initOnFocusChangeListener();
+        initSearchCloseButton();
+    }
+
+    private void initOnFocusChangeListener() {
+        act.getSearchView().setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    act.getSearchView().setQuery(app.getCurrentSearchTerm(), false);
+                }
+            }
+        });
+    }
+
+    private void initSearchCloseButton() {
+        final SearchView searchView = act.getSearchView();
+        final AutoCompleteAdapter adapter = (AutoCompleteAdapter) searchView
+                .getSuggestionsAdapter();
+        final AutoCompleteTextView textView = act.getSearchQueryTextView(searchView);
+        final ImageView closeButton = (ImageView) act.getSearchView().findViewById(getResources()
+                .getIdentifier("android:id/search_close_btn", null, null));
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (adapter != null) {
+                    adapter.loadSavedSearches();
+                }
+
+                textView.requestFocus();
+                searchView.setQuery("", false);
+                app.setCurrentSearchTerm("");
+            }
+        });
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        act.showOverflowMenu();
     }
 
     @Override
@@ -140,11 +190,6 @@ public class PagerResultsFragment extends BaseFragment {
     public void clearMap() {
         mapFragment.clearMarkers();
         mapFragment.updateMap();
-    }
-
-    public void flipTo(SimpleFeature simpleFeature) {
-        int pos = simpleFeatures.indexOf(simpleFeature);
-        pager.setCurrentItem(pos);
     }
 
     public void clearAll() {

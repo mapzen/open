@@ -155,4 +155,11 @@ public class AutoCompleteAdapterTest {
         view.performClick();
         assertThat(adapter.getSearchView().getQuery().toString()).isEqualTo("saved query");
     }
+
+    @Test
+    public void onClick_shouldSaveCurrentAutoCompleteQuery() throws Exception {
+        view.performClick();
+        assertThat(((MapzenApplication) application).getCurrentSearchTerm())
+                .isEqualTo(simpleFeature.getHint());
+    }
 }

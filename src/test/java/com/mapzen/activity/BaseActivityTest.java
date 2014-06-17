@@ -44,6 +44,7 @@ import android.support.v4.app.Fragment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 
 import java.io.File;
@@ -523,6 +524,50 @@ public class BaseActivityTest {
         List<Intent> intents = Robolectric.getShadowApplication().getBroadcastIntents();
         assertThat(intents).hasSize(1);
         assertThat(intents.get(0)).hasAction(BaseActivity.COM_MAPZEN_UPDATE_VIEW);
+    }
+
+    @Test
+    public void hideOverflow_shouldHideOverflowMenuItems() throws Exception {
+        activity.hideOverflowMenu();
+        assertThat(menu.findItem(R.id.settings)).isNotVisible();
+        assertThat(menu.findItem(R.id.phone_home)).isNotVisible();
+        assertThat(menu.findItem(R.id.login)).isNotVisible();
+        assertThat(menu.findItem(R.id.logout)).isNotVisible();
+    }
+
+    @Test
+    public void showOverflow_shouldShowSettingsAndPhoneHomeItems() throws Exception {
+        activity.hideOverflowMenu();
+        activity.showOverflowMenu();
+        assertThat(menu.findItem(R.id.settings)).isVisible();
+        assertThat(menu.findItem(R.id.phone_home)).isVisible();
+    }
+
+    @Test
+    public void showOverflow_shouldShowLoginItemIfLoggedOut() throws Exception {
+        activity.setAccessToken(new Token("", ""));
+        activity.hideOverflowMenu();
+        activity.showOverflowMenu();
+        assertThat(menu.findItem(R.id.login)).isVisible();
+        assertThat(menu.findItem(R.id.logout)).isNotVisible();
+    }
+
+    @Test
+    public void showOverflow_shouldShowLogoutItemIfLoggedIn() throws Exception {
+        activity.setAccessToken(new Token("stuff", "fun"));
+        activity.hideOverflowMenu();
+        activity.showOverflowMenu();
+        assertThat(menu.findItem(R.id.logout)).isVisible();
+        assertThat(menu.findItem(R.id.login)).isNotVisible();
+    }
+
+    @Test
+    public void getSearchQueryTextView_shouldReturnAutoCompleteTextView() throws Exception {
+        AutoCompleteTextView textView = activity.getSearchQueryTextView(activity.getSearchView());
+        LinearLayout linearLayout1 = (LinearLayout) activity.getSearchView().getChildAt(0);
+        LinearLayout linearLayout2 = (LinearLayout) linearLayout1.getChildAt(2);
+        LinearLayout linearLayout3 = (LinearLayout) linearLayout2.getChildAt(1);
+        assertThat(linearLayout3.indexOfChild(textView)).isGreaterThanOrEqualTo(0);
     }
 
     private Location initLastLocation() {
