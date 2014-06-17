@@ -44,6 +44,7 @@ import android.support.v4.app.Fragment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 
 import java.io.File;
@@ -558,6 +559,15 @@ public class BaseActivityTest {
         activity.showOverflowMenu();
         assertThat(menu.findItem(R.id.logout)).isVisible();
         assertThat(menu.findItem(R.id.login)).isNotVisible();
+    }
+
+    @Test
+    public void getSearchQueryTextView_shouldReturnAutoCompleteTextView() throws Exception {
+        AutoCompleteTextView textView = activity.getSearchQueryTextView(activity.getSearchView());
+        LinearLayout linearLayout1 = (LinearLayout) activity.getSearchView().getChildAt(0);
+        LinearLayout linearLayout2 = (LinearLayout) linearLayout1.getChildAt(2);
+        LinearLayout linearLayout3 = (LinearLayout) linearLayout2.getChildAt(1);
+        assertThat(linearLayout3.indexOfChild(textView)).isGreaterThanOrEqualTo(0);
     }
 
     private Location initLastLocation() {

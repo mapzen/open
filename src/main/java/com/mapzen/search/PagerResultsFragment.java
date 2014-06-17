@@ -22,7 +22,9 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -81,6 +83,40 @@ public class PagerResultsFragment extends BaseFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         act.hideOverflowMenu();
+        initOnFocusChangeListener();
+        initSearchCloseButton();
+    }
+
+    private void initOnFocusChangeListener() {
+        act.getSearchView().setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    act.getSearchView().setQuery(app.getCurrentSearchTerm(), false);
+                }
+            }
+        });
+    }
+
+    private void initSearchCloseButton() {
+        final SearchView searchView = act.getSearchView();
+        final AutoCompleteAdapter adapter = (AutoCompleteAdapter) searchView
+                .getSuggestionsAdapter();
+        final AutoCompleteTextView textView = act.getSearchQueryTextView(searchView);
+        final ImageView closeButton = (ImageView) act.getSearchView().findViewById(getResources()
+                .getIdentifier("android:id/search_close_btn", null, null));
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (adapter != null) {
+                    adapter.loadSavedSearches();
+                }
+
+                textView.requestFocus();
+                searchView.setQuery("", false);
+                app.setCurrentSearchTerm("");
+            }
+        });
     }
 
     @Override

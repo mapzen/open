@@ -124,6 +124,7 @@ public final class TestHelper {
         simpleFeature.setProperty(NAME, "Test SimpleFeature");
         simpleFeature.setProperty(ADMIN1_NAME, "New York");
         simpleFeature.setProperty(ADMIN1_ABBR, "NY");
+        simpleFeature.setHint("Test Hint");
         return simpleFeature;
     }
 

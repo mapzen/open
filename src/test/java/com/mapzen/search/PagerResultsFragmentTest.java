@@ -23,6 +23,8 @@ import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.util.FragmentTestUtil;
 
 import android.view.Menu;
+import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -152,5 +154,50 @@ public class PagerResultsFragmentTest {
         assertThat(menu.findItem(R.id.settings)).isVisible();
         assertThat(menu.findItem(R.id.phone_home)).isVisible();
         assertThat(menu.findItem(R.id.login)).isVisible();
+    }
+
+    @Test
+    public void onFocusChange_shouldShowMostRecentQuery() throws Exception {
+        app.setCurrentSearchTerm("current query");
+        fragment.onAttach(act);
+        SearchView searchView = act.getSearchView();
+        AutoCompleteTextView autoCompleteTextView = act.getSearchQueryTextView(searchView);
+        autoCompleteTextView.getOnFocusChangeListener().onFocusChange(autoCompleteTextView, true);
+        assertThat(act.getSearchView().getQuery().toString()).isEqualTo("current query");
+    }
+
+    @Test
+    public void onClickCloseButton_shouldClearQuery() throws Exception {
+        app.setCurrentSearchTerm("current query");
+        SearchView searchView = act.getSearchView();
+        searchView.setQuery("current query", false);
+        ImageView closeButton = (ImageView) act.getSearchView().findViewById(act.getResources()
+                .getIdentifier("android:id/search_close_btn", null, null));
+        closeButton.performClick();
+        assertThat(searchView.getQuery().toString()).isEmpty();
+        assertThat(app.getCurrentSearchTerm()).isEmpty();
+    }
+
+    @Test
+    public void onClickCloseButton_shouldFocusQueryTextView() throws Exception {
+        SearchView searchView = act.getSearchView();
+        AutoCompleteTextView autoCompleteTextView = act.getSearchQueryTextView(searchView);
+        ImageView closeButton = (ImageView) act.getSearchView().findViewById(act.getResources()
+                .getIdentifier("android:id/search_close_btn", null, null));
+
+        closeButton.performClick();
+        assertThat(autoCompleteTextView).hasFocus();
+    }
+
+    @Test
+    public void onClickCloseButton_shouldLoadSavedSearches() throws Exception {
+        getSavedSearch().clear();
+        getSavedSearch().store("saved query 1");
+        getSavedSearch().store("saved query 2");
+        getSavedSearch().store("saved query 3");
+        ImageView closeButton = (ImageView) act.getSearchView().findViewById(act.getResources()
+                .getIdentifier("android:id/search_close_btn", null, null));
+        closeButton.performClick();
+        assertThat(act.getSearchView().getSuggestionsAdapter()).hasCount(3);
     }
 }
