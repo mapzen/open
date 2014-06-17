@@ -1222,7 +1222,6 @@ public class RouteFragmentTest {
         locationBuilder.setSpeed(expectedSpeed);
         setNumberOfLocationForAverageSpeed(10);
         for (int i = 0; i < fragment.getNumberOfLocationsForAverageSpeed(); i++) {
-            System.out.println(i);
             fragment.onLocationChanged(locationBuilder.build());
         }
         assertThat(fragment.getAverageSpeed()).isEqualTo(expectedSpeed);

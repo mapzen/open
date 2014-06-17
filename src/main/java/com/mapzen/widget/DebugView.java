@@ -20,6 +20,7 @@ public class DebugView extends RelativeLayout {
     @InjectView(R.id.current_coordinates) TextView currentCoordinates;
     @InjectView(R.id.current_bearing) TextView currentBearing;
     @InjectView(R.id.current_speed) TextView currentSpeed;
+    @InjectView(R.id.average_speed) TextView averageSpeed;
     @InjectView(R.id.snap_coordinates) TextView snapCoordinates;
     @InjectView(R.id.instruction_coordinates) TextView instructionCoordinates;
     @InjectView(R.id.instruction_bearing) TextView instructionBearing;
@@ -51,6 +52,11 @@ public class DebugView extends RelativeLayout {
         currentCoordinates.setText(formatCoordinates(location));
         currentBearing.setText(formatBearing(location));
         currentSpeed.setText(formatSpeed(location));
+    }
+
+    public void setAverageSpeed(float speed) {
+        String formatted = "(Avg: " + Math.round(metersPerSecondToMilesPerHour(speed)) + " mph)";
+        averageSpeed.setText(formatted);
     }
 
     public void setSnapLocation(Location location) {

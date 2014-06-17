@@ -92,7 +92,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @InjectView(R.id.routes) ViewPager pager;
     @InjectView(R.id.resume_button) Button resume;
 
-    private int numberOfLocationForSpeedAverage = 10;
     private ArrayList<Instruction> instructions;
     private RouteAdapter adapter;
     private Route route;
@@ -411,6 +410,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         debugView.setCurrentLocation(location);
         debugView.setSnapLocation(correctedLocation);
         debugView.setClosestInstruction(closestInstruction, closestDistance);
+        debugView.setAverageSpeed(getAverageSpeed());
         logForDebugging(location, correctedLocation);
     }
 
