@@ -308,7 +308,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void manageMap(Location location, Location originalLocation) {
         if (location != null) {
-            zoomController.setCurrentSpeed(getAverageSpeed());
+            zoomController.setAverageSpeed(getAverageSpeed());
+            zoomController.setCurrentSpeed(originalLocation.getSpeed());
             getMapController().setZoomLevel(zoomController.getZoom());
             getMapController().setLocation(location).centerOn(location);
             routeLocationIndicator.setPosition(location.getLatitude(), location.getLongitude());
