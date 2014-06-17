@@ -351,7 +351,7 @@ public class BaseActivity extends MapActivity {
      * reference to the {@link AutoCompleteTextView} inside the {@link SearchView}.
      */
     private void initSavedSearchAutoComplete(final SearchView searchView) {
-        final AutoCompleteTextView autoCompleteTextView = getSearchQueryTextView(searchView);
+        final AutoCompleteTextView autoCompleteTextView = getQueryAutoCompleteTextView(searchView);
         autoCompleteTextView.setThreshold(0);
         searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -365,10 +365,7 @@ public class BaseActivity extends MapActivity {
         });
     }
 
-    /**
-     * Returns a reference to the {@link AutoCompleteTextView} inside the given {@link SearchView}.
-     */
-    public AutoCompleteTextView getSearchQueryTextView(SearchView searchView) {
+    public AutoCompleteTextView getQueryAutoCompleteTextView(SearchView searchView) {
         return (AutoCompleteTextView) searchView.findViewById(searchView.getContext()
                 .getResources().getIdentifier("android:id/search_src_text", null, null));
     }

@@ -563,7 +563,8 @@ public class BaseActivityTest {
 
     @Test
     public void getSearchQueryTextView_shouldReturnAutoCompleteTextView() throws Exception {
-        AutoCompleteTextView textView = activity.getSearchQueryTextView(activity.getSearchView());
+        SearchView searchView = activity.getSearchView();
+        AutoCompleteTextView textView = activity.getQueryAutoCompleteTextView(searchView);
         LinearLayout linearLayout1 = (LinearLayout) activity.getSearchView().getChildAt(0);
         LinearLayout linearLayout2 = (LinearLayout) linearLayout1.getChildAt(2);
         LinearLayout linearLayout3 = (LinearLayout) linearLayout2.getChildAt(1);

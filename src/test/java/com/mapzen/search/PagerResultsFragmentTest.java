@@ -161,7 +161,7 @@ public class PagerResultsFragmentTest {
         app.setCurrentSearchTerm("current query");
         fragment.onAttach(act);
         SearchView searchView = act.getSearchView();
-        AutoCompleteTextView autoCompleteTextView = act.getSearchQueryTextView(searchView);
+        AutoCompleteTextView autoCompleteTextView = act.getQueryAutoCompleteTextView(searchView);
         autoCompleteTextView.getOnFocusChangeListener().onFocusChange(autoCompleteTextView, true);
         assertThat(act.getSearchView().getQuery().toString()).isEqualTo("current query");
     }
@@ -181,7 +181,7 @@ public class PagerResultsFragmentTest {
     @Test
     public void onClickCloseButton_shouldFocusQueryTextView() throws Exception {
         SearchView searchView = act.getSearchView();
-        AutoCompleteTextView autoCompleteTextView = act.getSearchQueryTextView(searchView);
+        AutoCompleteTextView autoCompleteTextView = act.getQueryAutoCompleteTextView(searchView);
         ImageView closeButton = (ImageView) act.getSearchView().findViewById(act.getResources()
                 .getIdentifier("android:id/search_close_btn", null, null));
 
