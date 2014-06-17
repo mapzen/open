@@ -23,6 +23,8 @@ import com.mapzen.util.Logger;
 import org.scribe.model.Token;
 import org.scribe.model.Verifier;
 
+import static com.mapzen.core.OSMOauthFragment.OSM_VERIFIER_KEY;
+
 public class InitActivity extends Activity {
     @InjectView(R.id.sign_up_button) Button signUp;
     @InjectView(R.id.log_in_button) Button logIn;
@@ -33,7 +35,7 @@ public class InitActivity extends Activity {
     private Verifier verifier;
     private int clickCount;
 
-    public static final String OSM_VERIFIER_KEY = "oauth_verifier";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +56,6 @@ public class InitActivity extends Activity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         getTokenFromCallback(intent);
-
     }
 
     @OnClick(R.id.sign_up_button)
@@ -101,7 +102,8 @@ public class InitActivity extends Activity {
             @Override
             protected Token doInBackground(Void... params) {
                 try {
-                    requestToken = app.getOsmOauthService().getRequestToken();
+                    requestToken =
+                            app.getOsmOauthService().getRequestToken();
                     return requestToken;
                 } catch (Exception e) {
                     return null;
@@ -141,14 +143,15 @@ public class InitActivity extends Activity {
     private void setAccessToken() {
         try {
             (new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                app.setAccessToken(app.getOsmOauthService().getAccessToken(requestToken, verifier));
-                return null;
-            }
-        }).execute();
+                @Override
+                protected Void doInBackground(Void... params) {
+                    app.setAccessToken(app.getOsmOauthService()
+                            .getAccessToken(requestToken, verifier));
+                    return null;
+                }
+            }).execute();
         } catch (Exception e) {
-            Logger.d("Unable to set the access token");
+            Logger.d("Unable to set access token");
         }
         startBaseActivity();
     }
@@ -186,5 +189,9 @@ public class InitActivity extends Activity {
         Toast.makeText(getApplicationContext(), getString(R.string.login_error),
                 Toast.LENGTH_LONG).show();
         startBaseActivity();
+    }
+
+    public String getOSMVerifierKey() {
+    return OSM_VERIFIER_KEY;
     }
 }

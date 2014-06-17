@@ -90,7 +90,7 @@ public class BaseActivityTest {
 
     @Test
     public void onCreate_shouldSetDataUploadServiceAlarm() throws Exception {
-        Token token = new Token("stuff", "fun");
+        Token token = new Token("yo", "yo");
         activity.setAccessToken(token);
         activity = initBaseActivityWithMenu(menu);
         AlarmManager alarmManager =
@@ -216,6 +216,15 @@ public class BaseActivityTest {
         MenuItem menuItem = menu.findItem(R.id.settings);
         activity.onOptionsItemSelected(menuItem);
         assertThat(activity.getFragmentManager()).hasFragmentWithTag(SettingsFragment.TAG);
+    }
+
+    @Test
+    public void onOptionsItemSelected_shouldLaunchDataUploadService() throws Exception {
+        MenuItem menuItem = menu.findItem(R.id.upload_traces);
+        activity.onOptionsItemSelected(menuItem);
+        Intent serviceIntent = Robolectric.getShadowApplication().peekNextStartedService();
+        String serviceStarted = serviceIntent.getComponent().getClassName();
+        assertThat(serviceStarted).isEqualTo("com.mapzen.core.DataUploadService");
     }
 
     @Test
