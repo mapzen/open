@@ -192,11 +192,6 @@ public class PagerResultsFragment extends BaseFragment {
         mapFragment.updateMap();
     }
 
-    public void flipTo(SimpleFeature simpleFeature) {
-        int pos = simpleFeatures.indexOf(simpleFeature);
-        pager.setCurrentItem(pos);
-    }
-
     public void clearAll() {
         Logger.d(String.format(Locale.US, "clearing all items: %d", currentCollection.size()));
         ItemizedLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
