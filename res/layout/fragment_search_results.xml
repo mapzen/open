@@ -17,7 +17,7 @@
         android:paddingLeft="@dimen/default_padding_horizontal"
         android:paddingRight="@dimen/default_padding_horizontal">
 
-    <TextView
+        <TextView
             android:id="@+id/pagination"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

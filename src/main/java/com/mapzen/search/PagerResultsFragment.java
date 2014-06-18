@@ -48,7 +48,7 @@ public class PagerResultsFragment extends BaseFragment {
     public static final String TAG = PagerResultsFragment.class.getSimpleName();
     private List<ItemFragment> currentCollection = new ArrayList<ItemFragment>();
     private ArrayList<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
-    private static final String PAGINATE_TEMPLATE = "%2d of %2d RESULTS";
+    private static final String PAGINATE_TEMPLATE = "Viewing %d of %d results";
 
     @InjectView(R.id.multi_result_header)
     View multiResultHeader;

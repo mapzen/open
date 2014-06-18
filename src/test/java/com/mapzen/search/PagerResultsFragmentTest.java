@@ -32,6 +32,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 
 import static com.mapzen.search.SavedSearch.getSavedSearch;
+import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
@@ -78,6 +79,15 @@ public class PagerResultsFragmentTest {
     @Test
     public void shouldInjectPaginationIndicator() throws Exception {
         assertThat(fragment.indicator).isNotNull();
+    }
+
+    @Test
+    public void displayResults_shouldSetPaginationIndicatorText() throws Exception {
+        fragment.add(getTestSimpleFeature());
+        fragment.add(getTestSimpleFeature());
+        fragment.add(getTestSimpleFeature());
+        fragment.displayResults(3, 0);
+        assertThat(fragment.indicator).hasText("Viewing 1 of 3 results");
     }
 
     @Test
