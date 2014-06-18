@@ -1042,24 +1042,6 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void toString_shouldIncludeReturnBeginningAndEnd() throws Exception {
-        testInstructions = new ArrayList<Instruction>();
-        testInstructions.add(getTestInstruction(0, 0));
-        fragment.setInstructions(testInstructions);
-        String actual = fragment.toString();
-        assertThat(actual).contains(getTestInstruction(0, 0).toString());
-        assertThat(actual).contains(getTestSimpleFeature().toString());
-    }
-
-    @Test
-    public void toString_shouldDisplay() throws Exception {
-        String expected = "Route without instructions";
-        fragment.setInstructions(new ArrayList<Instruction>());
-        String actual = fragment.toString();
-        assertThat(actual).contains(expected);
-    }
-
-    @Test
     public void getGPXDescription_shouldDisplay() throws Exception {
         String expected = "Route without instructions";
         fragment.setInstructions(new ArrayList<Instruction>());
