@@ -58,7 +58,6 @@ public class InitActivityTest {
         Uri.Builder oauthTokenBuilder = new Uri.Builder();
         oauthTokenBuilder.appendQueryParameter(activity.getOSMVerifierKey(), "Bogus verifier");
         Uri oauthToken = oauthTokenBuilder.build();
-        activity.setRequestToken(new Token("bogus", "bogus"));
         Intent intent = new Intent();
         intent.setData(oauthToken);
         activity.onNewIntent(intent);

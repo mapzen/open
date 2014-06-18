@@ -138,16 +138,19 @@ public class InitActivity extends Activity {
     private void setAccessToken(Intent intent) {
         Uri uri = intent.getData();
         verifier = new Verifier(uri.getQueryParameter(OSM_VERIFIER_KEY));
-            (new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... params) {
-                    if (requestToken == null) {
-                        app.setAccessToken(app.getOsmOauthService()
-                                .getAccessToken(requestToken, verifier));
-                    }
-                    return null;
+        (new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try{
+                    app.setAccessToken(app.getOsmOauthService()
+                            .getAccessToken(requestToken, verifier));
+                } catch(Exception e) {
+                    Toast.makeText(getApplicationContext(), "Unable to log in", Toast.LENGTH_LONG).show();
                 }
-            }).execute();
+
+                return null;
+            }
+        }).execute();
     }
 
 

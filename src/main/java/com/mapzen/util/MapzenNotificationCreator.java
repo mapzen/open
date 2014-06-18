@@ -35,7 +35,7 @@ public class MapzenNotificationCreator {
         builder.addAction(R.drawable.ic_dismiss, "Exit Navigation", pendingExitNavigationIntent);
         builder.setContentIntent(pendingNotificationIntent.getActivity(
                 baseActivity.getBaseContext(), 0, notificationIntent, 0));
-        mNotificationManager.notify(0, builder.build());
+        mNotificationManager.notify("route", 0, builder.build());
     }
 
     private void initExitNavigationIntent() {

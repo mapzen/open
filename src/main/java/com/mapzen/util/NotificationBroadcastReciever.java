@@ -13,7 +13,7 @@ public class NotificationBroadcastReciever extends BroadcastReceiver {
         if (intent.getBooleanExtra(MapzenNotificationCreator.EXIT_NAVIGATION, false)) {
             NotificationManager nm = (NotificationManager) context
                     .getSystemService(Activity.NOTIFICATION_SERVICE);
-            nm.cancel(0);
+            nm.cancelAll();
             Intent exitRouting = new Intent();
             exitRouting.setClass(context, BaseActivity.class);
             exitRouting.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
