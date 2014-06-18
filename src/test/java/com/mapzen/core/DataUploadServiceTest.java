@@ -18,8 +18,21 @@ import org.scribe.oauth.OAuthService;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.StringWriter;
 
 import static com.mapzen.support.TestHelper.getTestInstruction;
 import static com.mapzen.support.TestHelper.getTestLocation;
@@ -33,6 +46,7 @@ import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
 import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
 
 import static org.fest.assertions.api.ANDROID.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -160,6 +174,22 @@ public class DataUploadServiceTest {
                 eq(expectedRouteDescription));
     }
 
+    @Test
+    public void shouldNotHaveOauthPermissions_shouldNotCreateXML() {
+        DataUploadService spy = spy(service);
+        spy.onStartCommand(null, 0, 0);
+        verify(spy).hasWritePermission(service.getPermissionResponse());
+        verify(spy, never()).generateGpxXmlFor(anyString(),
+                anyString());
+    }
+
+    @Test
+    public void shouldHaveOauthPermission() throws IOException, ParserConfigurationException,
+            TransformerException {
+        String fakePermission = generatePermissionXml();
+        assertThat(service.hasWritePermission(fakePermission)).isTrue();
+    }
+
     private void makeRouteReady(String routeId) {
         ContentValues insertValues = new ContentValues();
         insertValues.put(COLUMN_TABLE_ID, routeId);
@@ -189,5 +219,24 @@ public class DataUploadServiceTest {
         insertValues.put(COLUMN_RAW, "does not matter");
         insertValues.put(COLUMN_UPLOADED, 1);
         app.getDb().insert(TABLE_ROUTES, null, insertValues);
+    }
+
+    public String generatePermissionXml() throws ParserConfigurationException,
+            TransformerException {
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document document = builder.newDocument();
+        Element rootElement = document.createElement("Permissions");
+        document.appendChild(rootElement);
+        Element permission = document.createElement("permission");
+        rootElement.appendChild(permission);
+        Attr nameAttribute = document.createAttribute("name");
+        nameAttribute.setValue("allow_write_gpx");
+        permission.setAttributeNode(nameAttribute);
+
+        DOMSource source = new DOMSource(document);
+        StreamResult result = new StreamResult(new StringWriter());
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.transform(source, result);
+        return result.getWriter().toString();
     }
 }

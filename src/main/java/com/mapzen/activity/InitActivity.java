@@ -19,7 +19,6 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
-import com.mapzen.util.Logger;
 import org.scribe.model.Token;
 import org.scribe.model.Verifier;
 
@@ -55,7 +54,10 @@ public class InitActivity extends Activity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        getTokenFromCallback(intent);
+        if (intent.getData() != null) {
+            setAccessToken(intent);
+            startBaseActivity();
+        }
     }
 
     @OnClick(R.id.sign_up_button)
@@ -102,8 +104,7 @@ public class InitActivity extends Activity {
             @Override
             protected Token doInBackground(Void... params) {
                 try {
-                    requestToken =
-                            app.getOsmOauthService().getRequestToken();
+                    setRequestToken(app.getOsmOauthService().getRequestToken());
                     return requestToken;
                 } catch (Exception e) {
                     return null;
@@ -134,26 +135,24 @@ public class InitActivity extends Activity {
         finish();
     }
 
-    private void getTokenFromCallback(Intent intent) {
+    private void setAccessToken(Intent intent) {
         Uri uri = intent.getData();
         verifier = new Verifier(uri.getQueryParameter(OSM_VERIFIER_KEY));
-        setAccessToken();
-    }
-
-    private void setAccessToken() {
-        try {
             (new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... params) {
-                    app.setAccessToken(app.getOsmOauthService()
-                            .getAccessToken(requestToken, verifier));
+                    if (requestToken == null) {
+                        app.setAccessToken(app.getOsmOauthService()
+                                .getAccessToken(requestToken, verifier));
+                    }
                     return null;
                 }
             }).execute();
-        } catch (Exception e) {
-            Logger.d("Unable to set access token");
-        }
-        startBaseActivity();
+    }
+
+
+    public void setRequestToken(Token token) {
+        requestToken = token;
     }
 
     private void animateViewTransitions() {
@@ -192,6 +191,6 @@ public class InitActivity extends Activity {
     }
 
     public String getOSMVerifierKey() {
-    return OSM_VERIFIER_KEY;
+        return OSM_VERIFIER_KEY;
     }
 }
