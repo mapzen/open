@@ -93,6 +93,7 @@ public class PagerResultsFragmentTest {
     @Test
     public void shouldInjectViewAllButton() throws Exception {
         assertThat(fragment.viewAll).isNotNull();
+        assertThat(fragment.viewAll).hasText("View All");
     }
 
     @Test
