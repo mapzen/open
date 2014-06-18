@@ -147,7 +147,6 @@ public class BaseActivity extends MapActivity {
         app.inject(this);
         BugSenseHandler.initAndStartSession(this, "ebfa8fd7");
         BugSenseHandler.addCrashExtraData("OEM", Build.MANUFACTURER);
-        app = (MapzenApplication) getApplication();
         setContentView(R.layout.base);
         initMapFragment();
         gpsPromptDialogFragment = new MapzenGPSPromptDialogFragment();

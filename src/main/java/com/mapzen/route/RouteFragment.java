@@ -688,20 +688,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    @Override
-    public String toString() {
-        if (instructions.size() >= 1) {
-            Instruction firstInstruction = instructions.get(0);
-            String destination = simpleFeature.toString();
-            return new StringBuilder().append("Route between: ")
-                    .append(firstInstruction.toString())
-                    .append(" -> ")
-                    .append(destination).toString();
-        } else {
-            return "Route without instructions";
-        }
-    }
-
     private String formatInstructionForDescription(Instruction instruction) {
         Location loc = instruction.getLocation();
         String locationName = instruction.getSimpleInstruction()
