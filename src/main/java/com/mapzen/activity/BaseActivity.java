@@ -153,9 +153,7 @@ public class BaseActivity extends MapActivity {
         gpsPromptDialogFragment = new MapzenGPSPromptDialogFragment();
         initMapController();
         initLocationClient();
-        if (app.isLoggedIn()) {
-            initAlarm();
-        }
+        initAlarm();
         initSavedSearches();
     }
 
@@ -567,6 +565,5 @@ public class BaseActivity extends MapActivity {
     private boolean wasForceLoggedIn() {
         SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
         return prefs.getBoolean("forced_login", false);
-
     }
 }

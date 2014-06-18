@@ -23,9 +23,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 import java.util.zip.GZIPOutputStream;
@@ -75,10 +78,13 @@ public class DataUploadService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Logger.d("DataUploadService: onStartCommand");
+        String permissionResponse = getPermissionResponse();
+        if (!hasWritePermission(permissionResponse)) {
+            stopSelf();
+        }
         (new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                checkForUploadPermission();
                 Cursor cursor = null;
                 try {
                     cursor = app.getDb().query(
@@ -124,7 +130,7 @@ public class DataUploadService extends Service {
         try {
             DOMSource domSource = getDocument(routeId);
             if (domSource == null) {
-                Logger.d("There are 0 tracking points");
+                Logger.d("There are not enough tracking points");
                 setRouteAsUploaded(routeId);
                 return;
             }
@@ -142,7 +148,7 @@ public class DataUploadService extends Service {
     }
 
     public void submitCompressedFile(ByteArrayOutputStream output,
-                                      String routeId, String description) {
+                                     String routeId, String description) {
         Logger.d("DataUpload gonna submit");
         try {
             String gpxString = output.toString();
@@ -188,7 +194,7 @@ public class DataUploadService extends Service {
         } catch (ParserConfigurationException e) {
             Logger.e("Building xml failed: " + e.getMessage());
         }
-      return domSource;
+        return domSource;
     }
 
     private void setOutputFormat(Transformer transformer) {
@@ -202,7 +208,7 @@ public class DataUploadService extends Service {
     }
 
     private void addTrackPoint(DateTimeFormatter isoDateParser, Cursor cursor, Document document,
-            Element trksegElement) {
+                               Element trksegElement) {
         int latIndex = cursor.getColumnIndex(COLUMN_LAT);
         int lonIndex = cursor.getColumnIndex(COLUMN_LNG);
         int altIndex = cursor.getColumnIndex(COLUMN_ALT);
@@ -280,18 +286,38 @@ public class DataUploadService extends Service {
         }
     }
 
-    public void checkForUploadPermission() {
+    public boolean hasWritePermission(String response) {
+        if (response == null) {
+            return false;
+        }
         try {
-            String writePermission = "<permission name=\"allow_write_gpx\"/>";
-            OAuthRequest request = getPermissionsRequest();
-            app.getOsmOauthService().signRequest(app.getAccessToken(), request);
-            Response response = request.send();
-            if (!response.getBody().contains(writePermission)) {
-                stopSelf();
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            InputSource xmlSource = new InputSource(new StringReader(response));
+            Document doc = builder.parse(xmlSource);
+            NodeList permissionList = doc.getElementsByTagName("permission");
+            for (int i = 0; i < permissionList.getLength(); i++) {
+                String nodeContent = permissionList.item(i).getAttributes().item(0)
+                        .getTextContent();
+                if (nodeContent.equals("allow_write_gpx")) {
+                    return true;
+                }
             }
         } catch (Exception e) {
             Logger.d(e.toString());
         }
+        return false;
+    }
+
+    public String getPermissionResponse() {
+        try {
+            OAuthRequest request = getPermissionsRequest();
+            app.getOsmOauthService().signRequest(app.getAccessToken(), request);
+            Response response = request.send();
+            return response.getBody();
+        } catch (Exception e) {
+            Logger.d("Unable to get permissions");
+        }
+        return null;
     }
 
     private void setRouteAsUploaded(String routeId) {
