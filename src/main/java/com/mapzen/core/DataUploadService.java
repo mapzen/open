@@ -4,11 +4,9 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.Logger;
 
-import com.google.common.io.Files;
-
 import org.apache.http.Header;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -25,12 +23,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
+import java.util.zip.GZIPOutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -48,10 +49,11 @@ import static com.mapzen.util.DatabaseHelper.COLUMN_READY_FOR_UPLOAD;
 import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
 import static com.mapzen.util.DatabaseHelper.COLUMN_TABLE_ID;
 import static com.mapzen.util.DatabaseHelper.COLUMN_TIME;
+import static com.mapzen.util.DatabaseHelper.COLUMN_MSG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_UPLOADED;
 import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
-
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
+
 import static javax.xml.transform.OutputKeys.ENCODING;
 import static javax.xml.transform.OutputKeys.INDENT;
 import static javax.xml.transform.OutputKeys.METHOD;
@@ -59,9 +61,11 @@ import static javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION;
 import static javax.xml.transform.OutputKeys.VERSION;
 
 import static org.apache.http.protocol.HTTP.UTF_8;
+import static org.scribe.model.Verb.GET;
 import static org.scribe.model.Verb.POST;
 
 public class DataUploadService extends Service {
+    private static final int MIN_NUM_TRACKING_POINTS = 10;
     private MapzenApplication app;
 
     @Override
@@ -74,27 +78,35 @@ public class DataUploadService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Logger.d("DataUploadService: onStartCommand");
+        String permissionResponse = getPermissionResponse();
+        if (!hasWritePermission(permissionResponse)) {
+            stopSelf();
+        }
         (new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
+                Cursor cursor = null;
                 try {
-                    Cursor cursor = app.getDb().query(
+                    cursor = app.getDb().query(
                             TABLE_ROUTES,
-                            new String[] { COLUMN_TABLE_ID },
+                            new String[] { COLUMN_TABLE_ID, COLUMN_MSG },
                             COLUMN_UPLOADED + " is null AND " + COLUMN_READY_FOR_UPLOAD + " == ?",
                             new String[] { "1" }, null, null, null);
-
                     while (cursor.moveToNext()) {
                         int routeIdIndex = cursor.getColumnIndex(COLUMN_TABLE_ID);
-                        generateGpxXmlFor(cursor.getString(routeIdIndex));
+                        int routeDescription = cursor.getColumnIndex(COLUMN_MSG);
+                        generateGpxXmlFor(cursor.getString(routeIdIndex),
+                                cursor.getString(routeDescription));
                     }
                 } catch (SQLiteDatabaseLockedException exception) {
                     Logger.d("DataUpload: database is locked lets try again later");
+                } finally {
+                    if (cursor != null) {
+                        cursor.close();
+                    }
                 }
-
                 return null;
             }
-
         }).execute();
         return Service.START_NOT_STICKY;
     }
@@ -108,7 +120,7 @@ public class DataUploadService extends Service {
         Logger.d("DataUploadService: constructor");
     }
 
-    public void generateGpxXmlFor(String routeId) {
+    public void generateGpxXmlFor(String routeId, String description) {
         if (app.getAccessToken() == null) {
             Logger.d("DataUploadService: user not logged into OSM");
             return;
@@ -117,6 +129,11 @@ public class DataUploadService extends Service {
         ByteArrayOutputStream output = null;
         try {
             DOMSource domSource = getDocument(routeId);
+            if (domSource == null) {
+                Logger.d("There are not enough tracking points");
+                setRouteAsUploaded(routeId);
+                return;
+            }
             TransformerFactory factory = TransformerFactory.newInstance();
             Transformer transformer = factory.newTransformer();
             setOutputFormat(transformer);
@@ -126,23 +143,24 @@ public class DataUploadService extends Service {
         } catch (TransformerException e) {
             Logger.e("Transforming failed: " + e.getMessage());
         }
-        Logger.d("DataUpload gonna write");
-        writeToFileAndSubmit(output, routeId);
+        Logger.d("DataUpload gonna write " + description);
+        submitCompressedFile(output, routeId, description);
     }
 
-    private void writeToFileAndSubmit(ByteArrayOutputStream output, String routeId) {
+    public void submitCompressedFile(ByteArrayOutputStream output,
+                                     String routeId, String description) {
         Logger.d("DataUpload gonna submit");
         try {
-            String fullPath = getApplicationContext().getExternalFilesDir(null).getAbsolutePath()
-                    + "/" + routeId + ".gpx";
-            Files.write(output.toByteArray(), new File(fullPath));
-            submitTrace(toString(), fullPath, routeId);
+            String gpxString = output.toString();
+            byte[] compressedGPX = compressGPX(gpxString);
+            submitTrace(description, routeId, compressedGPX);
+
         } catch (IOException e) {
             Logger.e("IOException occurred " + e.getMessage());
         }
     }
 
-    private DOMSource getDocument(String routeId) {
+    public DOMSource getDocument(String routeId) {
         DOMSource domSource = null;
         try {
             DateTimeFormatter isoDateParser = ISODateTimeFormat.dateTimeNoMillis();
@@ -167,7 +185,12 @@ public class DataUploadService extends Service {
                 addTrackPoint(isoDateParser, cursor, document, trksegElement);
             }
             trkElement.appendChild(trksegElement);
-            domSource = new DOMSource(document.getDocumentElement());
+            Element documentElement =  document.getDocumentElement();
+            int numberOfPoints = documentElement.getElementsByTagName("ele").getLength();
+            if (numberOfPoints < MIN_NUM_TRACKING_POINTS) {
+                return null;
+            }
+            domSource = new DOMSource(documentElement);
         } catch (ParserConfigurationException e) {
             Logger.e("Building xml failed: " + e.getMessage());
         }
@@ -185,7 +208,7 @@ public class DataUploadService extends Service {
     }
 
     private void addTrackPoint(DateTimeFormatter isoDateParser, Cursor cursor, Document document,
-            Element trksegElement) {
+                               Element trksegElement) {
         int latIndex = cursor.getColumnIndex(COLUMN_LAT);
         int lonIndex = cursor.getColumnIndex(COLUMN_LNG);
         int altIndex = cursor.getColumnIndex(COLUMN_ALT);
@@ -219,11 +242,16 @@ public class DataUploadService extends Service {
     public OAuthRequest getOAuthRequest() {
         OAuthRequest request =
                 new OAuthRequest(POST, OSMApi.BASE_URL + OSMApi.CREATE_GPX);
-
         return request;
     }
 
-    public void submitTrace(String description, String path, String routeId) {
+    public OAuthRequest getPermissionsRequest() {
+        OAuthRequest request =
+                new OAuthRequest(GET, OSMApi.BASE_URL + OSMApi.CHECK_PERMISSIONS);
+        return request;
+    }
+
+    public void submitTrace(String description, String routeId, byte[] compressedGPX) {
         Logger.d("DataUpload submitting trace");
 
         MultipartEntity reqEntity = new MultipartEntity();
@@ -231,12 +259,10 @@ public class DataUploadService extends Service {
             reqEntity.addPart("description", new StringBody(description));
             reqEntity.addPart("visibility", new StringBody("private"));
             reqEntity.addPart("public", new StringBody("0"));
+            reqEntity.addPart("file", new ByteArrayBody(compressedGPX, routeId + ".gpx.gz"));
         } catch (UnsupportedEncodingException e) {
             Logger.e(e.getMessage());
         }
-
-        reqEntity.addPart("file", new FileBody(new File(path)));
-
         ByteArrayOutputStream bos =
                 new ByteArrayOutputStream((int) reqEntity.getContentLength());
         try {
@@ -244,22 +270,70 @@ public class DataUploadService extends Service {
         } catch (IOException e) {
             Logger.e("IOException: " + e.getMessage());
         }
+
         OAuthRequest request = getOAuthRequest();
         request.addPayload(bos.toByteArray());
-
         Header contentType = reqEntity.getContentType();
         request.addHeader(contentType.getName(), contentType.getValue());
 
         app.getOsmOauthService().signRequest(app.getAccessToken(), request);
         Response response = request.send();
 
-        Logger.d("DataUpload uplaoaded");
+        Logger.d("DataUpload Response:" + response.getBody());
         if (response.isSuccessful()) {
-            ContentValues cv = new ContentValues();
-            cv.put(DatabaseHelper.COLUMN_UPLOADED, 1);
-            app.getDb().update(TABLE_ROUTES, cv, COLUMN_TABLE_ID + " = ?",
-                            new String[] { routeId });
+            setRouteAsUploaded(routeId);
             Logger.d("DataUpload: done uploading: " + routeId);
         }
+    }
+
+    public boolean hasWritePermission(String response) {
+        if (response == null) {
+            return false;
+        }
+        try {
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            InputSource xmlSource = new InputSource(new StringReader(response));
+            Document doc = builder.parse(xmlSource);
+            NodeList permissionList = doc.getElementsByTagName("permission");
+            for (int i = 0; i < permissionList.getLength(); i++) {
+                String nodeContent = permissionList.item(i).getAttributes().item(0)
+                        .getTextContent();
+                if (nodeContent.equals("allow_write_gpx")) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            Logger.d(e.toString());
+        }
+        return false;
+    }
+
+    public String getPermissionResponse() {
+        try {
+            OAuthRequest request = getPermissionsRequest();
+            app.getOsmOauthService().signRequest(app.getAccessToken(), request);
+            Response response = request.send();
+            return response.getBody();
+        } catch (Exception e) {
+            Logger.d("Unable to get permissions");
+        }
+        return null;
+    }
+
+    private void setRouteAsUploaded(String routeId) {
+        ContentValues cv = new ContentValues();
+        cv.put(DatabaseHelper.COLUMN_UPLOADED, 1);
+        app.getDb().update(TABLE_ROUTES, cv, COLUMN_TABLE_ID + " = ?",
+                new String[]{routeId});
+    }
+
+    private byte[] compressGPX(String gpxString) throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream(gpxString.length());
+        GZIPOutputStream gos = new GZIPOutputStream(os);
+        gos.write(gpxString.getBytes());
+        gos.close();
+        byte[] compressedGPX = os.toByteArray();
+        os.close();
+        return compressedGPX;
     }
 }

@@ -9,6 +9,7 @@ public class OSMApi extends DefaultApi10a {
     private static final String OAUTH_URL = BASE_URL + "/oauth/";
     private static final String AUTHORIZATION_URL = OAUTH_URL + "authorize?oauth_token=%s";
     public static final String CREATE_GPX = "/api/0.6/gpx/create";
+    public static final String CHECK_PERMISSIONS = "/api/0.6/permissions";
 
     public OSMApi() {
         super();

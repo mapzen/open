@@ -59,7 +59,6 @@ public class OSMOauthFragment extends DialogFragment {
                 }
             }
         });
-
         loadAuthorizationUrl(webview);
         return view;
     }

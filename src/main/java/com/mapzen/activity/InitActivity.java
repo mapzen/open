@@ -20,14 +20,21 @@ import butterknife.OnClick;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import org.scribe.model.Token;
+import org.scribe.model.Verifier;
+
+import static com.mapzen.core.OSMOauthFragment.OSM_VERIFIER_KEY;
 
 public class InitActivity extends Activity {
     @InjectView(R.id.sign_up_button) Button signUp;
     @InjectView(R.id.log_in_button) Button logIn;
-    MapzenApplication app;
-    Handler delayButtonHandler;
-    Animation fadeIn, fadeInSlow, fadeOut;
-    int clickCount;
+    private MapzenApplication app;
+    private Token requestToken = null;
+    private Handler delayButtonHandler;
+    private Animation fadeIn, fadeInSlow, fadeOut;
+    private Verifier verifier;
+    private int clickCount;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,9 +54,8 @@ public class InitActivity extends Activity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Token userAuthenticationToken = getTokenFromCallback(intent);
-        if (userAuthenticationToken != null) {
-            app.setAccessToken(userAuthenticationToken);
+        if (intent.getData() != null) {
+            setAccessToken(intent);
             startBaseActivity();
         }
     }
@@ -93,12 +99,13 @@ public class InitActivity extends Activity {
         startActivity(signUpIntent);
     }
 
-    private void loginRoutine() {
+    public void loginRoutine() {
         (new AsyncTask<Void, Void, Token>() {
             @Override
             protected Token doInBackground(Void... params) {
                 try {
-                    return app.getOsmOauthService().getRequestToken();
+                    setRequestToken(app.getOsmOauthService().getRequestToken());
+                    return requestToken;
                 } catch (Exception e) {
                     return null;
                 }
@@ -128,14 +135,28 @@ public class InitActivity extends Activity {
         finish();
     }
 
-    private Token getTokenFromCallback(Intent intent) {
+    private void setAccessToken(Intent intent) {
         Uri uri = intent.getData();
-        if (uri == null) {
-            return null;
-        }
-        String token = uri.getQueryParameter("oauth_token");
-        String verifier = uri.getQueryParameter("oauth_verifier");
-        return new Token(token, verifier);
+        verifier = new Verifier(uri.getQueryParameter(OSM_VERIFIER_KEY));
+        (new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    app.setAccessToken(app.getOsmOauthService()
+                            .getAccessToken(requestToken, verifier));
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(),
+                            "Unable to log in", Toast.LENGTH_LONG).show();
+                }
+
+                return null;
+            }
+        }).execute();
+    }
+
+
+    public void setRequestToken(Token token) {
+        requestToken = token;
     }
 
     private void animateViewTransitions() {
@@ -171,5 +192,9 @@ public class InitActivity extends Activity {
         Toast.makeText(getApplicationContext(), getString(R.string.login_error),
                 Toast.LENGTH_LONG).show();
         startBaseActivity();
+    }
+
+    public String getOSMVerifierKey() {
+        return OSM_VERIFIER_KEY;
     }
 }

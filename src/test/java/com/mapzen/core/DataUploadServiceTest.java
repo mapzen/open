@@ -18,14 +18,38 @@ import org.scribe.oauth.OAuthService;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+
+import static com.mapzen.support.TestHelper.getTestInstruction;
+import static com.mapzen.support.TestHelper.getTestLocation;
 import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
 import static com.mapzen.util.DatabaseHelper.COLUMN_READY_FOR_UPLOAD;
 import static com.mapzen.util.DatabaseHelper.COLUMN_TABLE_ID;
 import static com.mapzen.util.DatabaseHelper.COLUMN_UPLOADED;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
+import static com.mapzen.util.DatabaseHelper.COLUMN_MSG;
+import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
+import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
+
 import static org.fest.assertions.api.ANDROID.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -54,7 +78,7 @@ public class DataUploadServiceTest {
     public void onStartCommand_shouldNotAttemptToGenerateGPX() throws Exception {
         DataUploadService spy = spy(service);
         spy.onStartCommand(null, 0, 0);
-        verify(spy, never()).generateGpxXmlFor(anyString());
+        verify(spy, never()).generateGpxXmlFor(anyString(), anyString());
     }
 
     @Test
@@ -62,7 +86,7 @@ public class DataUploadServiceTest {
         DataUploadService spy = spy(service);
         makeRouteUploaded("does-not-matter");
         spy.onStartCommand(null, 0, 0);
-        verify(spy, never()).generateGpxXmlFor("does-not-matter");
+        verify(spy, never()).generateGpxXmlFor("does-not-matter", "description");
     }
 
     @Test
@@ -71,7 +95,7 @@ public class DataUploadServiceTest {
         makeRouteReady(expectedRouteId);
         DataUploadService spy = spy(service);
         spy.onStartCommand(null, 0, 0);
-        verify(spy).generateGpxXmlFor(expectedRouteId);
+        verify(spy).generateGpxXmlFor(expectedRouteId, "does not matter");
     }
 
     @Test
@@ -107,12 +131,86 @@ public class DataUploadServiceTest {
         assertThat(cursor).hasCount(1);
     }
 
+    @Test
+    public void onStartCommand_shouldCreateButNotUploadXML() throws Exception {
+        String expectedRouteId = "route-1";
+        makeRouteReady(expectedRouteId);
+        DataUploadService spy = spy(service);
+        spy.onStartCommand(null, 0, 0);
+        verify(spy).generateGpxXmlFor(expectedRouteId, "does not matter");
+    }
+
+    @Test
+    public void shouldGenerateGPX_shouldSubmit() {
+        Token token = new Token("stuff", "fun");
+        app.setAccessToken(token);
+
+        String expectedRouteId = "test_route";
+        String expectedRouteDescription = "does not matter";
+        fillLocationsTable(expectedRouteId, 10);
+        DataUploadService spy = spy(service);
+        spy.onStartCommand(null, 0, 0);
+        verify(spy).generateGpxXmlFor(expectedRouteId, expectedRouteDescription);
+        verify(spy).getDocument(expectedRouteId);
+        verify(spy).submitCompressedFile(any(ByteArrayOutputStream.class),
+                eq(expectedRouteId),
+                eq(expectedRouteDescription));
+    }
+
+    @Test
+    public void shouldGenerateGPX_shouldNotSubmit() {
+        Token token = new Token("stuff", "fun");
+        app.setAccessToken(token);
+
+        String expectedRouteId = "test_route";
+        String expectedRouteDescription = "does not matter";
+        fillLocationsTable(expectedRouteId, 4);
+        DataUploadService spy = spy(service);
+        spy.onStartCommand(null, 0, 0);
+        verify(spy).generateGpxXmlFor(expectedRouteId, expectedRouteDescription);
+        verify(spy).getDocument(expectedRouteId);
+        verify(spy, never()).submitCompressedFile(any(ByteArrayOutputStream.class),
+                eq(expectedRouteId),
+                eq(expectedRouteDescription));
+    }
+
+    @Test
+    public void shouldNotHaveOauthPermissions_shouldNotCreateXML() {
+        DataUploadService spy = spy(service);
+        spy.onStartCommand(null, 0, 0);
+        verify(spy).hasWritePermission(service.getPermissionResponse());
+        verify(spy, never()).generateGpxXmlFor(anyString(),
+                anyString());
+    }
+
+    @Test
+    public void shouldHaveOauthPermission() throws IOException, ParserConfigurationException,
+            TransformerException {
+        String fakePermission = generatePermissionXml();
+        assertThat(service.hasWritePermission(fakePermission)).isTrue();
+    }
+
     private void makeRouteReady(String routeId) {
         ContentValues insertValues = new ContentValues();
         insertValues.put(COLUMN_TABLE_ID, routeId);
         insertValues.put(COLUMN_RAW, "does not matter");
+        insertValues.put(COLUMN_MSG, "does not matter");
         insertValues.put(COLUMN_READY_FOR_UPLOAD, 1);
         app.getDb().insert(TABLE_ROUTES, null, insertValues);
+    }
+
+    private void fillLocationsTable(String routeId, double numPoints) {
+        makeRouteReady(routeId);
+        ContentValues cv;
+        for (int i = 0; i < numPoints; i++) {
+            try {
+                cv = valuesForLocationCorrection(getTestLocation(i, i),
+                        getTestLocation(i, i), getTestInstruction(i, i), routeId);
+                app.getDb().insert(TABLE_LOCATIONS, null, cv);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void makeRouteUploaded(String routeId) {
@@ -121,5 +219,24 @@ public class DataUploadServiceTest {
         insertValues.put(COLUMN_RAW, "does not matter");
         insertValues.put(COLUMN_UPLOADED, 1);
         app.getDb().insert(TABLE_ROUTES, null, insertValues);
+    }
+
+    public String generatePermissionXml() throws ParserConfigurationException,
+            TransformerException {
+        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document document = builder.newDocument();
+        Element rootElement = document.createElement("Permissions");
+        document.appendChild(rootElement);
+        Element permission = document.createElement("permission");
+        rootElement.appendChild(permission);
+        Attr nameAttribute = document.createAttribute("name");
+        nameAttribute.setValue("allow_write_gpx");
+        permission.setAttributeNode(nameAttribute);
+
+        DOMSource source = new DOMSource(document);
+        StreamResult result = new StreamResult(new StringWriter());
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.transform(source, result);
+        return result.getWriter().toString();
     }
 }

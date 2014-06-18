@@ -1,6 +1,7 @@
 package com.mapzen.activity;
 
 import android.content.Intent;
+import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.support.MapzenTestRunner;
 import org.junit.Before;
@@ -20,7 +21,7 @@ import static org.robolectric.Robolectric.shadowOf;
 @RunWith(MapzenTestRunner.class)
 public class InitActivityTest {
     private InitActivity activity;
-
+    private MapzenApplication app;
     @Before
     public void setUp() throws Exception {
         activity = initInitActivity();
@@ -55,8 +56,7 @@ public class InitActivityTest {
     @Test
     public void shouldStartBaseActivityOnTokenReturn() {
         Uri.Builder oauthTokenBuilder = new Uri.Builder();
-        oauthTokenBuilder.appendQueryParameter("oauth_token", "Bogus token");
-        oauthTokenBuilder.appendQueryParameter("oauth_verifier", "Bogus verifier");
+        oauthTokenBuilder.appendQueryParameter(activity.getOSMVerifierKey(), "Bogus verifier");
         Uri oauthToken = oauthTokenBuilder.build();
         Intent intent = new Intent();
         intent.setData(oauthToken);

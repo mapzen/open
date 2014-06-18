@@ -75,6 +75,7 @@ import static com.mapzen.util.DatabaseHelper.COLUMN_TABLE_ID;
 import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
+import static com.mapzen.util.DatabaseHelper.COLUMN_MSG;
 import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
@@ -476,10 +477,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public boolean setRoute(Route route) {
-        storeRouteInDatabase(route.getRawRoute());
         if (route.foundRoute()) {
             this.route = route;
             this.instructions = route.getRouteInstructions();
+            storeRouteInDatabase(route.getRawRoute());
             getMapController().setMapPerspectiveForInstruction(instructions.get(0));
         } else {
             return false;
@@ -492,7 +493,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         routeId = UUID.randomUUID().toString();
         insertValues.put(COLUMN_TABLE_ID, routeId);
         insertValues.put(COLUMN_RAW, rawRoute.toString());
-
+        insertValues.put(COLUMN_MSG, getGPXDescription());
         insertIntoDb(TABLE_ROUTES, null, insertValues);
     }
 
@@ -674,18 +675,26 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         onServerError(statusCode);
     }
 
-    @Override
-    public String toString() {
+    public String getGPXDescription() {
         if (instructions.size() >= 1) {
             Instruction firstInstruction = instructions.get(0);
-            String destination = simpleFeature.toString();
+            String destination = simpleFeature.getFullLocationString();
             return new StringBuilder().append("Route between: ")
-                    .append(firstInstruction.toString())
+                    .append(formatInstructionForDescription(firstInstruction))
                     .append(" -> ")
                     .append(destination).toString();
         } else {
             return "Route without instructions";
         }
+    }
+
+    private String formatInstructionForDescription(Instruction instruction) {
+        Location loc = instruction.getLocation();
+        String locationName = instruction.getSimpleInstruction()
+                .replace(instruction.getHumanTurnInstruction(), "");
+        String latLong = " [" + loc.getLatitude() + ", " + loc.getLongitude() + ']';
+        String startLocationString = locationName + latLong;
+        return startLocationString;
     }
 
     private void initDebugView(View view) {

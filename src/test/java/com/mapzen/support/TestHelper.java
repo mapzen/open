@@ -201,6 +201,7 @@ public final class TestHelper {
         String routeId = UUID.randomUUID().toString();
         insertValues.put(DatabaseHelper.COLUMN_TABLE_ID, routeId);
         insertValues.put(DatabaseHelper.COLUMN_RAW, "blabla");
+        insertValues.put(DatabaseHelper.COLUMN_MSG, "everything is awesome");
         act.getDb().insert(DatabaseHelper.TABLE_ROUTES, null, insertValues);
     }
 

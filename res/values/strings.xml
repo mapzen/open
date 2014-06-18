@@ -22,7 +22,7 @@
     <string name="route_steps_menu_option">Step-by-step list</string>
     <string name="waiting">Waiting for location</string>
     <string name="recalculating">Recalculating</string>
-
+    <string name="upload_traces">Upload GPS Traces</string>
     <!--Settings-->
 
     <string name="settings">Settings</string>
