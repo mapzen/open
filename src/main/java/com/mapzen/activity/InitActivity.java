@@ -141,11 +141,12 @@ public class InitActivity extends Activity {
         (new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                try{
+                try {
                     app.setAccessToken(app.getOsmOauthService()
                             .getAccessToken(requestToken, verifier));
-                } catch(Exception e) {
-                    Toast.makeText(getApplicationContext(), "Unable to log in", Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(),
+                            "Unable to log in", Toast.LENGTH_LONG).show();
                 }
 
                 return null;
