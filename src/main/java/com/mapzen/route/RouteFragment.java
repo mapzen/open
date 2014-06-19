@@ -87,6 +87,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public static final String ROUTE_TAG = "route";
 
     @Inject PathLayer path;
+    @Inject ZoomController zoomController;
 
     @InjectView(R.id.overflow_menu) ImageButton overflowMenu;
     @InjectView(R.id.routes) ViewPager pager;
@@ -111,7 +112,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private boolean autoPaging = true;
 
     private static Router router = Router.getRouter();
-    private ZoomController zoomController;
     private SharedPreferences prefs;
     private Resources res;
     private DebugView debugView;
@@ -237,7 +237,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void onResume() {
         super.onResume();
         initLocationReceiver();
-        initZoomController();
+        setupZoomController();
         act.disableActionbar();
         act.hideActionBar();
         act.deactivateMapLocationUpdates();
@@ -324,10 +324,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    private ZoomController initZoomController() {
+    private ZoomController setupZoomController() {
         res = act.getResources();
         prefs = getDefaultSharedPreferences(act);
-        zoomController = new ZoomController();
 
         initZoomLevel(DrivingSpeed.MPH_0_TO_15, R.string.settings_zoom_driving_0to15_key,
                 R.integer.zoom_driving_0to15);
