@@ -34,7 +34,7 @@ public class MapzenNotificationCreator {
         initStackBuilder(notificationIntent);
         builder.addAction(R.drawable.ic_dismiss, "Exit Navigation", pendingExitNavigationIntent);
         builder.setContentIntent(pendingNotificationIntent.getActivity(
-                baseActivity.getBaseContext(), 0, notificationIntent, 0));
+                baseActivity.getApplicationContext(), 0, notificationIntent, 0));
         mNotificationManager.notify("route", 0, builder.build());
     }
 
@@ -42,13 +42,15 @@ public class MapzenNotificationCreator {
         exitNavigationIntent = new Intent(baseActivity, NotificationBroadcastReciever.class);
         exitNavigationIntent.putExtra(EXIT_NAVIGATION, true);
         pendingExitNavigationIntent = PendingIntent.getBroadcast(
-                baseActivity, 0, exitNavigationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                baseActivity, 0, exitNavigationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
     }
 
     private void initNotificationIntent() {
         notificationIntent = new Intent(baseActivity, BaseActivity.class);
         notificationIntent.setAction(Intent.ACTION_MAIN);
         notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        notificationIntent
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         pendingNotificationIntent = PendingIntent.getActivity(
                 baseActivity, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }

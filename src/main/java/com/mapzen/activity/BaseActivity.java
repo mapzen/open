@@ -178,7 +178,7 @@ public class BaseActivity extends MapActivity {
     private void clearNotifications() {
         NotificationManager notificationManager = (NotificationManager) getSystemService(
                 NOTIFICATION_SERVICE);
-        notificationManager.cancel(0);
+        notificationManager.cancelAll();
     }
 
     public SQLiteDatabase getDb() {
