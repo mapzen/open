@@ -81,9 +81,11 @@ public class PagerResultsFragment extends BaseFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        act.hideOverflowMenu();
-        initOnFocusChangeListener();
-        initSearchCloseButton();
+        if (act != null) {
+            act.hideOverflowMenu();
+            initOnFocusChangeListener();
+            initSearchCloseButton();
+        }
     }
 
     private void initOnFocusChangeListener() {
