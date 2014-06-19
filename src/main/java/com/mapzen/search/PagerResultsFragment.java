@@ -8,7 +8,6 @@ import com.mapzen.android.gson.Result;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
 import com.mapzen.fragment.ItemFragment;
-import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.util.ApiHelper;
 import com.mapzen.util.Logger;
 
@@ -16,8 +15,8 @@ import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -132,14 +131,8 @@ public class PagerResultsFragment extends BaseFragment {
         ButterKnife.reset(this);
     }
 
-    @OnClick(R.id.view_all)
-    @SuppressWarnings("unused")
-    public void onClickViewAll() {
-        final Fragment fragment = ListResultsFragment.newInstance(act, simpleFeatures);
-        act.getSupportFragmentManager().beginTransaction()
-                .add(R.id.full_list, fragment, ListResultsFragment.TAG)
-                .addToBackStack(null)
-                .commit();
+    @OnClick(R.id.view_all) @SuppressWarnings("unused") public void onClickViewAll() {
+        startActivity(new Intent(getActivity(), ListResultsActivity.class));
     }
 
     public void setCurrentItem(int position) {

@@ -51,12 +51,15 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"></action>
-                <category android:name="android.intent.category.DEFAULT"></category>
-                <category android:name="android.intent.category.BROWSABLE"></category>
-                <data android:scheme="mapzen" android:host="oauth-login"></data>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="mapzen" android:host="oauth-login" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".search.ListResultsActivity"
+            android:label="@string/results_title" />
         <service android:name="com.mapzen.core.DataUploadService"
             android:exported="false"
             android:enabled="true" >

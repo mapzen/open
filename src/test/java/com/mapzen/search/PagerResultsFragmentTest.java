@@ -7,7 +7,6 @@ import com.mapzen.android.PeliasService;
 import com.mapzen.android.TestPelias;
 import com.mapzen.android.gson.Result;
 import com.mapzen.entity.SimpleFeature;
-import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
@@ -41,6 +40,7 @@ import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Robolectric.application;
+import static org.robolectric.Robolectric.getShadowApplication;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
@@ -126,9 +126,10 @@ public class PagerResultsFragmentTest {
     }
 
     @Test
-    public void viewAll_shouldAddListResultsFragment() throws Exception {
+    public void viewAll_shouldStartListResultsActivity() throws Exception {
         fragment.viewAll.performClick();
-        assertThat(act.getSupportFragmentManager()).hasFragmentWithTag(ListResultsFragment.TAG);
+        assertThat(getShadowApplication().getNextStartedActivity())
+                .hasComponent(application.getPackageName(), ListResultsActivity.class);
     }
 
     @Test

@@ -2,8 +2,8 @@
 <resources>
 
     <string name="application_name">Mapzen</string>
-    <string name="results_title">Results</string>
     <string name="search_title">Search</string>
+    <string name="results_title">Search Results</string>
     <string name="route_description">Turn Icon</string>
     <string name="route_resume_button">Resume</string>
     <string name="view_all">View All</string>
