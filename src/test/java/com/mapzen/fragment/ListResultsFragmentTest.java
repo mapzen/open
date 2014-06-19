@@ -1,35 +1,33 @@
 package com.mapzen.fragment;
 
 import com.mapzen.entity.SimpleFeature;
+import com.mapzen.search.ListResultsActivity;
 import com.mapzen.support.MapzenTestRunner;
-import com.mapzen.support.TestBaseActivity;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
-import org.robolectric.tester.android.view.TestMenu;
 
 import java.util.ArrayList;
 
-import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
+import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static org.fest.assertions.api.ANDROID.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.util.FragmentTestUtil.startFragment;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class ListResultsFragmentTest {
     private ListResultsFragment fragment;
-    private TestBaseActivity act;
-    private TestMenu menu;
 
     @Before
     public void setUp() throws Exception {
-        menu = new TestMenu();
-        act = initBaseActivityWithMenu(menu);
-        SimpleFeature simpleFeature = new SimpleFeature();
         ArrayList<SimpleFeature> list = new ArrayList<SimpleFeature>();
-        list.add(simpleFeature);
+        list.add(getTestSimpleFeature());
+        list.add(getTestSimpleFeature());
+        list.add(getTestSimpleFeature());
         fragment = ListResultsFragment.newInstance(list);
         startFragment(fragment);
     }
@@ -41,6 +39,20 @@ public class ListResultsFragmentTest {
 
     @Test
     public void shouldHaveListAdapter() throws Exception {
-        assertThat(fragment.getListAdapter()).hasCount(1);
+        assertThat(fragment.getListAdapter()).hasCount(3);
+    }
+
+    @Test
+    public void onListItemClick_shouldSetResult() throws Exception {
+        final int expected = 2;
+        fragment.onListItemClick(fragment.getListView(), null, expected, 0);
+        assertThat(Robolectric.shadowOf(fragment.getActivity()).getResultIntent()
+                .getIntExtra(ListResultsActivity.EXTRA_INDEX, 0)).isEqualTo(expected);
+    }
+
+    @Test
+    public void onListItemClick_shouldFinishActivity() throws Exception {
+        fragment.onListItemClick(fragment.getListView(), null, 0, 0);
+        assertThat(fragment.getActivity()).isFinishing();
     }
 }

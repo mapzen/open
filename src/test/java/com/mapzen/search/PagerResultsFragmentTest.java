@@ -21,6 +21,8 @@ import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.util.FragmentTestUtil;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
@@ -218,5 +220,18 @@ public class PagerResultsFragmentTest {
                 .getIdentifier("android:id/search_close_btn", null, null));
         closeButton.performClick();
         assertThat(act.getSearchView().getSuggestionsAdapter()).hasCount(3);
+    }
+
+    @Test
+    public void onActivityResult_shouldSetPagerIndex() throws Exception {
+        final int expected = 2;
+        Intent intent = new Intent();
+        intent.putExtra(ListResultsActivity.EXTRA_INDEX, expected);
+        fragment.add(getTestSimpleFeature());
+        fragment.add(getTestSimpleFeature());
+        fragment.add(getTestSimpleFeature());
+        fragment.displayResults(3, 0);
+        fragment.onActivityResult(0, Activity.RESULT_OK, intent);
+        assertThat(fragment.pager).hasCurrentItem(expected);
     }
 }

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 public class ListResultsActivity extends FragmentActivity {
     public static final String EXTRA_FEATURE_LIST = "com.mapzen.search.features";
+    public static final String EXTRA_INDEX = "com.mapzen.search.index";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -134,7 +134,7 @@ public class PagerResultsFragment extends BaseFragment {
     @OnClick(R.id.view_all) @SuppressWarnings("unused") public void onClickViewAll() {
         final Intent intent = new Intent(getActivity(), ListResultsActivity.class);
         intent.putExtra(ListResultsActivity.EXTRA_FEATURE_LIST, simpleFeatures);
-        startActivity(intent);
+        startActivityForResult(intent, 0);
     }
 
     public void setCurrentItem(int position) {
@@ -269,5 +269,13 @@ public class PagerResultsFragment extends BaseFragment {
 
     private void addMarker(SimpleFeature simpleFeature) {
         mapFragment.addPoi(simpleFeature);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            final int index = data.getIntExtra(ListResultsActivity.EXTRA_INDEX, 0);
+            pager.setCurrentItem(index);
+        }
     }
 }
