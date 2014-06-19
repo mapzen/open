@@ -193,7 +193,7 @@ public class BaseActivityTest {
     public void onPrepareOptionsMenu_shouldHideSearchWhenResultsVisible() throws Exception {
         ArrayList<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
         simpleFeatures.add(new SimpleFeature());
-        Fragment fragment = ListResultsFragment.newInstance(activity, simpleFeatures);
+        Fragment fragment = ListResultsFragment.newInstance(simpleFeatures);
         activity.getSupportFragmentManager().beginTransaction()
                 .add(fragment, ListResultsFragment.TAG)
                 .commit();
