@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 public class ListResultsFragment extends ListFragment {
-    public static final String TAG = ListResultsFragment.class.getSimpleName();
     private ArrayList<SimpleFeature> features;
 
     @Override

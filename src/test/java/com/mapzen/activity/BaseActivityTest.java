@@ -6,8 +6,6 @@ import com.mapzen.R;
 import com.mapzen.android.gson.Feature;
 import com.mapzen.core.OSMOauthFragment;
 import com.mapzen.core.SettingsFragment;
-import com.mapzen.entity.SimpleFeature;
-import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.search.PagerResultsFragment;
 import com.mapzen.search.SavedSearch;
 import com.mapzen.support.MapzenTestRunner;
@@ -40,7 +38,6 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
@@ -187,21 +184,6 @@ public class BaseActivityTest {
     @Test
     public void onResume_shouldGetWritableLocationDatabase() throws Exception {
         assertThat(activity.getDb()).isOpen();
-    }
-
-    @Test
-    public void onPrepareOptionsMenu_shouldHideSearchWhenResultsVisible() throws Exception {
-        ArrayList<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
-        simpleFeatures.add(new SimpleFeature());
-        Fragment fragment = ListResultsFragment.newInstance(simpleFeatures);
-        activity.getSupportFragmentManager().beginTransaction()
-                .add(fragment, ListResultsFragment.TAG)
-                .commit();
-
-        Menu menu = new TestMenu();
-        activity.onCreateOptionsMenu(menu);
-        activity.onPrepareOptionsMenu(menu);
-        assertThat(menu.findItem(R.id.search)).isNotVisible();
     }
 
     @Test

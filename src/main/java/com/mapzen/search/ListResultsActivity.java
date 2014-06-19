@@ -18,8 +18,7 @@ public class ListResultsActivity extends FragmentActivity {
         final ArrayList<SimpleFeature> simpleFeatures =
                 getIntent().getParcelableArrayListExtra(EXTRA_FEATURE_LIST);
         final ListResultsFragment fragment = ListResultsFragment.newInstance(simpleFeatures);
-        getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragment,
-                ListResultsFragment.TAG).commit();
+        getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragment).commit();
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
