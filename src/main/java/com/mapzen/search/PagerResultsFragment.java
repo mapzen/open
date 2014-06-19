@@ -132,7 +132,9 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     @OnClick(R.id.view_all) @SuppressWarnings("unused") public void onClickViewAll() {
-        startActivity(new Intent(getActivity(), ListResultsActivity.class));
+        final Intent intent = new Intent(getActivity(), ListResultsActivity.class);
+        intent.putExtra(ListResultsActivity.EXTRA_FEATURE_LIST, simpleFeatures);
+        startActivity(intent);
     }
 
     public void setCurrentItem(int position) {

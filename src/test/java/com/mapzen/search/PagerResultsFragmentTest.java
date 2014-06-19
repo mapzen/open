@@ -133,6 +133,13 @@ public class PagerResultsFragmentTest {
     }
 
     @Test
+    public void viewAll_shouldParcelFeatureList() throws Exception {
+        fragment.viewAll.performClick();
+        assertThat(getShadowApplication().getNextStartedActivity())
+                .hasExtra(ListResultsActivity.EXTRA_FEATURE_LIST);
+    }
+
+    @Test
     public void displayResults_shouldShowMultiResultHeaderForMultipleResults() throws Exception {
         fragment.add(new SimpleFeature());
         fragment.add(new SimpleFeature());
