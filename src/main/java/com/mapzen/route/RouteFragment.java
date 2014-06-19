@@ -314,6 +314,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             getMapController().setLocation(location).centerOn(location);
             routeLocationIndicator.setPosition(location.getLatitude(), location.getLongitude());
             routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
+            getMapController().setPosition(location);
+            getMapController().setRotation((float) route.getCurrentRotationBearing());
             Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChange: Corrected: "
                     + location.toString());
         } else {
@@ -550,6 +552,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (pager.getCurrentItem() != 0) {
             speakerbox.stop();
         }
+        getMapController().setMapPerspectiveForInstruction(instructions.get(i));
     }
 
     @Override
@@ -560,7 +563,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             changeDistance(-instructions.get(previousPosition).getDistance());
         }
         previousPosition = i;
-        getMapController().setMapPerspectiveForInstruction(instructions.get(i));
         speakerbox.stop();
         speakerbox.play(instructions.get(i).getFullInstruction());
         notificationCreator.createNewNotification(simpleFeature.getMarker().title,

@@ -96,7 +96,18 @@ public final class MapController {
         Location location = instruction.getLocation();
         map.setMapPosition(location.getLatitude(), location.getLongitude(),
                 Math.pow(2, ROUTE_ZOOM_LEVEL));
-        map.viewport().setRotation(instruction.getRotationBearing());
+        setRotation(instruction.getRotationBearing());
+        map.updateMap(true);
+    }
+
+    public void setRotation(float rotation) {
+        map.viewport().setRotation(rotation);
+        map.updateMap(true);
+    }
+
+    public void setPosition(Location location) {
+        map.setMapPosition(location.getLatitude(), location.getLongitude(),
+                Math.pow(2, ROUTE_ZOOM_LEVEL));
         map.updateMap(true);
     }
 
