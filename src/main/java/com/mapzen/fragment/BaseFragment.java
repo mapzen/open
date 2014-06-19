@@ -19,6 +19,7 @@ public abstract class BaseFragment extends Fragment implements BaseActivity.View
     protected BaseActivity act;
     protected MapFragment mapFragment;
     protected MapzenApplication app;
+    protected ViewUpdatesReceiver viewUpdatesReceiver;
 
     public void setAct(BaseActivity act) {
         this.act = act;
@@ -72,9 +73,14 @@ public abstract class BaseFragment extends Fragment implements BaseActivity.View
     }
 
     protected void registerViewUpdater() {
+        viewUpdatesReceiver = new ViewUpdatesReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction(COM_MAPZEN_UPDATE_VIEW);
-        act.registerReceiver(new ViewUpdatesReceiver(), filter);
+        act.registerReceiver(viewUpdatesReceiver, filter);
+    }
+
+    protected void unregisterViewUpdater() {
+        act.unregisterReceiver(viewUpdatesReceiver);
     }
 
     @Override

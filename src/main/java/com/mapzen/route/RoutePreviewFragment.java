@@ -94,6 +94,7 @@ public class RoutePreviewFragment extends BaseFragment
         mapFragment.updateMap();
         act.enableActionbar();
         act.showActionBar();
+        unregisterViewUpdater();
     }
 
     @Override

@@ -421,6 +421,13 @@ public class RoutePreviewFragmentTest {
     }
 
     @Test
+    public void onDetach_shouldRemoveViewUpdateReceiver() throws Exception {
+        fragment.onDetach();
+        ShadowApplication application = Robolectric.getShadowApplication();
+        assertThat(application.hasReceiverForIntent(new Intent(COM_MAPZEN_UPDATE_VIEW))).isFalse();
+    }
+
+    @Test
     public void onUpdateView_shouldCreateRoute() throws Exception {
         fragment.onViewUpdate();
         Mockito.verify(router).fetch();
