@@ -486,6 +486,8 @@ public class RouteFragmentTest {
     public void onTouch_shouldStoreCurrentItemWhenPagerWasFirstTouched() throws Exception {
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
+        route.addSeenInstruction(instructions.get(0));
+        route.addSeenInstruction(instructions.get(1));
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
         fragment.onLocationChanged(instructions.get(2).getLocation());
@@ -512,6 +514,8 @@ public class RouteFragmentTest {
     public void onClickResume_shouldStartAtPagerLocation() throws Exception {
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
+        route.addSeenInstruction(instructions.get(0));
+        route.addSeenInstruction(instructions.get(1));
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
         fragment.onLocationChanged(instructions.get(2).getLocation());
@@ -622,6 +626,8 @@ public class RouteFragmentTest {
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
         fragment.setInstructions(instructions);
+        route.addSeenInstruction(instructions.get(0));
+        route.addSeenInstruction(instructions.get(1));
         FragmentTestUtil.startFragment(fragment);
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
         fragment.onLocationChanged(instructions.get(2).getLocation());
@@ -644,6 +650,8 @@ public class RouteFragmentTest {
     public void onLocationChange_shouldAdvanceWhenUserHasResumed() throws Exception {
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
+        route.addSeenInstruction(instructions.get(0));
+        route.addSeenInstruction(instructions.get(1));
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
         simulateUserPagerTouch();
