@@ -25,7 +25,7 @@ public class ItemFragment extends BaseFragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.search_item, container, false);
+        final View view = inflater.inflate(R.layout.search_result_pager_item, container, false);
         ButterKnife.inject(this, view);
         initView();
         return view;

@@ -1,92 +1,54 @@
 package com.mapzen.fragment;
 
-import android.app.ActionBar;
+import com.mapzen.R;
+import com.mapzen.adapters.PlaceArrayAdapter;
+import com.mapzen.entity.SimpleFeature;
+import com.mapzen.search.ListResultsActivity;
+
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import com.mapzen.MapzenApplication;
-import com.mapzen.R;
-import com.mapzen.activity.BaseActivity;
-import com.mapzen.adapters.PlaceArrayAdapter;
-import com.mapzen.entity.SimpleFeature;
-import com.mapzen.search.PagerResultsFragment;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class ListResultsFragment extends ListFragment {
-    public static final String TAG = ListResultsFragment.class.getSimpleName();
-    private static ListResultsFragment listResultsFragment;
-    private BaseActivity act;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
-    public void setAct(BaseActivity act) {
-        this.act = act;
+public class ListResultsFragment extends ListFragment {
+    @InjectView(R.id.term) TextView termTextView;
+    private ArrayList<SimpleFeature> features;
+    private String currentSearchTerm;
+
+    public static ListResultsFragment newInstance(ArrayList<SimpleFeature> simpleFeatures,
+            String currentSearchTerm) {
+        final ListResultsFragment listResultsFragment = new ListResultsFragment();
+        listResultsFragment.features = simpleFeatures;
+        listResultsFragment.currentSearchTerm = currentSearchTerm;
+        return listResultsFragment;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.full_results_list, container, false);
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        final ActionBar actionBar = act.getActionBar();
-        if (actionBar != null) {
-            actionBar.setHomeButtonEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(R.string.results_title);
-        }
-
-        act.supportInvalidateOptionsMenu();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            act.onBackPressed();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        final View view = inflater.inflate(R.layout.full_results_list, container, false);
+        ButterKnife.inject(this, view);
+        termTextView.setText("\"" + currentSearchTerm + "\"");
+        setListAdapter(new PlaceArrayAdapter(getActivity(),
+                android.R.layout.simple_list_item_1, features));
+        return view;
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        PagerResultsFragment pagerResultsFragment = (PagerResultsFragment)
-                act.getSupportFragmentManager().findFragmentByTag(PagerResultsFragment.TAG);
-
-        pagerResultsFragment.setCurrentItem(position);
-        act.getSearchView().getSuggestionsAdapter().swapCursor(null);
-        act.onBackPressed();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        final ActionBar actionBar = act.getActionBar();
-        if (actionBar != null) {
-            actionBar.setHomeButtonEnabled(false);
-            actionBar.setDisplayHomeAsUpEnabled(false);
-            actionBar.setTitle(R.string.application_name);
-        }
-
-        act.supportInvalidateOptionsMenu();
-        act.getSearchView().setQuery(((MapzenApplication) act.getApplication())
-                .getCurrentSearchTerm(), false);
-    }
-
-    public static ListResultsFragment newInstance(BaseActivity act,
-            ArrayList<SimpleFeature> simpleFeatures) {
-        listResultsFragment = new ListResultsFragment();
-        PlaceArrayAdapter placeArrayAdapter = new PlaceArrayAdapter(act,
-                android.R.layout.simple_list_item_1, simpleFeatures);
-        listResultsFragment.setListAdapter(placeArrayAdapter);
-        listResultsFragment.setAct(act);
-        return listResultsFragment;
+        final Intent resultIntent = new Intent();
+        resultIntent.putExtra(ListResultsActivity.EXTRA_INDEX, position);
+        getActivity().setResult(Activity.RESULT_OK, resultIntent);
+        getActivity().finish();
     }
 }

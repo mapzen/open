@@ -1,22 +1,18 @@
 package com.mapzen.fragment;
 
-import android.view.MenuItem;
-import com.mapzen.MapzenApplication;
 import com.mapzen.entity.SimpleFeature;
+import com.mapzen.search.ListResultsActivity;
 import com.mapzen.support.MapzenTestRunner;
-import com.mapzen.support.TestActionBar;
-import com.mapzen.support.TestBaseActivity;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
-import org.robolectric.tester.android.view.TestMenu;
-import org.robolectric.tester.android.view.TestMenuItem;
 
 import java.util.ArrayList;
 
-import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
+import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.util.FragmentTestUtil.startFragment;
@@ -25,17 +21,14 @@ import static org.robolectric.util.FragmentTestUtil.startFragment;
 @RunWith(MapzenTestRunner.class)
 public class ListResultsFragmentTest {
     private ListResultsFragment fragment;
-    private TestBaseActivity act;
-    private TestMenu menu;
 
     @Before
     public void setUp() throws Exception {
-        menu = new TestMenu();
-        act = initBaseActivityWithMenu(menu);
-        SimpleFeature simpleFeature = new SimpleFeature();
         ArrayList<SimpleFeature> list = new ArrayList<SimpleFeature>();
-        list.add(simpleFeature);
-        fragment = ListResultsFragment.newInstance(act, list);
+        list.add(getTestSimpleFeature());
+        list.add(getTestSimpleFeature());
+        list.add(getTestSimpleFeature());
+        fragment = ListResultsFragment.newInstance(list, "term");
         startFragment(fragment);
     }
 
@@ -46,49 +39,25 @@ public class ListResultsFragmentTest {
 
     @Test
     public void shouldHaveListAdapter() throws Exception {
-        assertThat(fragment.getListAdapter()).hasCount(1);
+        assertThat(fragment.getListAdapter()).hasCount(3);
     }
 
     @Test
-    public void onViewCreated_shouldEnableHomeAsUp() throws Exception {
-        assertThat(((TestActionBar) act.getActionBar()).getHomeButtonEnabled()).isTrue();
-        assertThat(((TestActionBar) act.getActionBar()).getDisplayHomeAsUpEnabled()).isTrue();
+    public void shouldDisplayCurrentSearchTerm() throws Exception {
+        assertThat(fragment.termTextView).hasText("\"term\"");
     }
 
     @Test
-    public void onViewCreated_shouldSetActionBarTitle() throws Exception {
-        assertThat(act.getActionBar().getTitle()).isEqualTo("Results");
+    public void onListItemClick_shouldSetResult() throws Exception {
+        final int expected = 2;
+        fragment.onListItemClick(fragment.getListView(), null, expected, 0);
+        assertThat(Robolectric.shadowOf(fragment.getActivity()).getResultIntent()
+                .getIntExtra(ListResultsActivity.EXTRA_INDEX, 0)).isEqualTo(expected);
     }
 
     @Test
-    public void onViewCreated_shouldInvalidateOptionsMenu() throws Exception {
-        assertThat(act.isOptionsMenuInvalidated()).isTrue();
-    }
-
-    @Test
-    public void onOptionsItemSelected_shouldPopBackStack() throws Exception {
-        MenuItem menu = new TestMenuItem(android.R.id.home);
-        fragment.onOptionsItemSelected(menu);
-        assertThat(act.isBackPressed()).isTrue();
-    }
-
-    @Test
-    public void onDetach_shouldDisableHomeAsUp() throws Exception {
-        fragment.onDetach();
-        assertThat(((TestActionBar) act.getActionBar()).getHomeButtonEnabled()).isFalse();
-        assertThat(((TestActionBar) act.getActionBar()).getDisplayHomeAsUpEnabled()).isFalse();
-    }
-
-    @Test
-    public void onDetach_shouldResetActionBarTitle() throws Exception {
-        fragment.onDetach();
-        assertThat(act.getActionBar().getTitle()).isEqualTo("Mapzen");
-    }
-
-    @Test
-    public void onDetach_shouldSetSearchQuery() throws Exception {
-        ((MapzenApplication) Robolectric.application).setCurrentSearchTerm("term");
-        fragment.onDetach();
-        assertThat(act.getSearchView().getQuery().toString()).isEqualTo("term");
+    public void onListItemClick_shouldFinishActivity() throws Exception {
+        fragment.onListItemClick(fragment.getListView(), null, 0, 0);
+        assertThat(fragment.getActivity()).isFinishing();
     }
 }

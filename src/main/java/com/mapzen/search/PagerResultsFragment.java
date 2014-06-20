@@ -8,7 +8,6 @@ import com.mapzen.android.gson.Result;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
 import com.mapzen.fragment.ItemFragment;
-import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.util.ApiHelper;
 import com.mapzen.util.Logger;
 
@@ -16,8 +15,8 @@ import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,7 +47,7 @@ public class PagerResultsFragment extends BaseFragment {
     public static final String TAG = PagerResultsFragment.class.getSimpleName();
     private List<ItemFragment> currentCollection = new ArrayList<ItemFragment>();
     private ArrayList<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
-    private static final String PAGINATE_TEMPLATE = "%2d of %2d RESULTS";
+    private static final String PAGINATE_TEMPLATE = "Viewing %d of %d results";
 
     @InjectView(R.id.multi_result_header)
     View multiResultHeader;
@@ -82,9 +81,11 @@ public class PagerResultsFragment extends BaseFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        act.hideOverflowMenu();
-        initOnFocusChangeListener();
-        initSearchCloseButton();
+        if (act != null) {
+            act.hideOverflowMenu();
+            initOnFocusChangeListener();
+            initSearchCloseButton();
+        }
     }
 
     private void initOnFocusChangeListener() {
@@ -132,14 +133,10 @@ public class PagerResultsFragment extends BaseFragment {
         ButterKnife.reset(this);
     }
 
-    @OnClick(R.id.view_all)
-    @SuppressWarnings("unused")
-    public void onClickViewAll() {
-        final Fragment fragment = ListResultsFragment.newInstance(act, simpleFeatures);
-        act.getSupportFragmentManager().beginTransaction()
-                .add(R.id.full_list, fragment, ListResultsFragment.TAG)
-                .addToBackStack(null)
-                .commit();
+    @OnClick(R.id.view_all) @SuppressWarnings("unused") public void onClickViewAll() {
+        final Intent intent = new Intent(getActivity(), ListResultsActivity.class);
+        intent.putExtra(ListResultsActivity.EXTRA_FEATURE_LIST, simpleFeatures);
+        startActivityForResult(intent, 0);
     }
 
     public void setCurrentItem(int position) {
@@ -274,5 +271,13 @@ public class PagerResultsFragment extends BaseFragment {
 
     private void addMarker(SimpleFeature simpleFeature) {
         mapFragment.addPoi(simpleFeature);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            final int index = data.getIntExtra(ListResultsActivity.EXTRA_INDEX, 0);
+            pager.setCurrentItem(index);
+        }
     }
 }

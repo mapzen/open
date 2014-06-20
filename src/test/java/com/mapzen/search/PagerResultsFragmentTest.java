@@ -7,7 +7,6 @@ import com.mapzen.android.PeliasService;
 import com.mapzen.android.TestPelias;
 import com.mapzen.android.gson.Result;
 import com.mapzen.entity.SimpleFeature;
-import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
@@ -22,6 +21,8 @@ import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.util.FragmentTestUtil;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
@@ -32,6 +33,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 
 import static com.mapzen.search.SavedSearch.getSavedSearch;
+import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
@@ -40,6 +42,7 @@ import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Robolectric.application;
+import static org.robolectric.Robolectric.getShadowApplication;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
@@ -81,8 +84,18 @@ public class PagerResultsFragmentTest {
     }
 
     @Test
+    public void displayResults_shouldSetPaginationIndicatorText() throws Exception {
+        fragment.add(getTestSimpleFeature());
+        fragment.add(getTestSimpleFeature());
+        fragment.add(getTestSimpleFeature());
+        fragment.displayResults(3, 0);
+        assertThat(fragment.indicator).hasText("Viewing 1 of 3 results");
+    }
+
+    @Test
     public void shouldInjectViewAllButton() throws Exception {
         assertThat(fragment.viewAll).isNotNull();
+        assertThat(fragment.viewAll).hasText("View All");
     }
 
     @Test
@@ -115,9 +128,17 @@ public class PagerResultsFragmentTest {
     }
 
     @Test
-    public void viewAll_shouldAddListResultsFragment() throws Exception {
+    public void viewAll_shouldStartListResultsActivity() throws Exception {
         fragment.viewAll.performClick();
-        assertThat(act.getSupportFragmentManager()).hasFragmentWithTag(ListResultsFragment.TAG);
+        assertThat(getShadowApplication().getNextStartedActivity())
+                .hasComponent(application.getPackageName(), ListResultsActivity.class);
+    }
+
+    @Test
+    public void viewAll_shouldParcelFeatureList() throws Exception {
+        fragment.viewAll.performClick();
+        assertThat(getShadowApplication().getNextStartedActivity())
+                .hasExtra(ListResultsActivity.EXTRA_FEATURE_LIST);
     }
 
     @Test
@@ -199,5 +220,18 @@ public class PagerResultsFragmentTest {
                 .getIdentifier("android:id/search_close_btn", null, null));
         closeButton.performClick();
         assertThat(act.getSearchView().getSuggestionsAdapter()).hasCount(3);
+    }
+
+    @Test
+    public void onActivityResult_shouldSetPagerIndex() throws Exception {
+        final int expected = 2;
+        Intent intent = new Intent();
+        intent.putExtra(ListResultsActivity.EXTRA_INDEX, expected);
+        fragment.add(getTestSimpleFeature());
+        fragment.add(getTestSimpleFeature());
+        fragment.add(getTestSimpleFeature());
+        fragment.displayResults(3, 0);
+        fragment.onActivityResult(0, Activity.RESULT_OK, intent);
+        assertThat(fragment.pager).hasCurrentItem(expected);
     }
 }

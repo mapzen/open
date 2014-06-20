@@ -29,7 +29,7 @@ public class PlaceArrayAdapter extends ArrayAdapter<SimpleFeature> {
         if (v == null) {
             LayoutInflater vi =
                     (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.search_item, null);
+            v = vi.inflate(R.layout.search_result_list_item, null);
             holder = new SimpleFeature.ViewHolder();
             holder.setTitle((TextView) v.findViewById(R.id.title));
             holder.setAddress((TextView) v.findViewById(R.id.address));

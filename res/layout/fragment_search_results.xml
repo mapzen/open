@@ -12,27 +12,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/darker_gray"
-        android:paddingTop="@dimen/default_padding_vertical"
-        android:paddingBottom="@dimen/default_padding_vertical"
         android:paddingLeft="@dimen/default_padding_horizontal"
         android:paddingRight="@dimen/default_padding_horizontal">
 
-    <TextView
+        <TextView
             android:id="@+id/pagination"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:textColor="@android:color/white"
-            android:textStyle="bold" />
+            android:textColor="@android:color/white" />
 
         <Button
             android:id="@+id/view_all"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="96dp"
+            android:layout_height="36dp"
             android:layout_alignParentRight="true"
-            android:background="@android:color/transparent"
-            android:textColor="@color/view_all"
-            android:text="@string/view_all" />
+            android:text="@string/view_all"
+            style="@android:style/Widget.Holo.Light.Button.Small" />
     </RelativeLayout>
 
     <android.support.v4.view.ViewPager

@@ -9,7 +9,6 @@ import com.mapzen.android.lost.LocationRequest;
 import com.mapzen.core.DataUploadService;
 import com.mapzen.core.OSMOauthFragment;
 import com.mapzen.core.SettingsFragment;
-import com.mapzen.fragment.ListResultsFragment;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.search.AutoCompleteAdapter;
 import com.mapzen.search.OnPoiClickListener;
@@ -193,13 +192,6 @@ public class BaseActivity extends MapActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                final Fragment listResultsFragment = getSupportFragmentManager()
-                        .findFragmentByTag(ListResultsFragment.TAG);
-                if (listResultsFragment != null) {
-                    return listResultsFragment.onOptionsItemSelected(item);
-                }
-                break;
             case R.id.settings:
                 final PreferenceFragment settingsFragment = SettingsFragment.newInstance(this);
                 getFragmentManager().beginTransaction()
@@ -237,7 +229,6 @@ public class BaseActivity extends MapActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-        return false;
     }
 
     public void showProgressDialog() {
@@ -309,10 +300,7 @@ public class BaseActivity extends MapActivity {
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 final PagerResultsFragment pagerResultsFragment = getPagerResultsFragment();
-                final ListResultsFragment listResultsFragment = (ListResultsFragment)
-                        getSupportFragmentManager().findFragmentByTag(ListResultsFragment.TAG);
-                if (pagerResultsFragment != null && pagerResultsFragment.isAdded()
-                        && listResultsFragment == null) {
+                if (pagerResultsFragment != null && pagerResultsFragment.isAdded()) {
                     getSupportFragmentManager().beginTransaction().remove(pagerResultsFragment)
                             .commit();
                 }
@@ -402,17 +390,6 @@ public class BaseActivity extends MapActivity {
             super.onBackPressed();
         }
         clearNotifications();
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(ListResultsFragment.TAG);
-        if (fragment != null && fragment.isAdded()) {
-            collapseSearchView();
-            menu.findItem(R.id.search).setVisible(false);
-        }
-
-        return super.onPrepareOptionsMenu(menu);
     }
 
     private void handleGeoIntent(SearchView searchView, Uri data) {
