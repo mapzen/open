@@ -822,6 +822,37 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onPageSelected_shouldTurnMap() throws Exception {
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        fragment.setInstructions(instructions);
+        route.addSeenInstruction(instructions.get(0));
+        route.addSeenInstruction(instructions.get(1));
+        FragmentTestUtil.startFragment(fragment);
+        simulateUserPagerTouch();
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
+        fragment.onPageSelected(2);
+        Instruction i = instructions.get(2);
+        TestViewport viewport = (TestViewport) act.getMap().viewport();
+        assertThat(viewport.getRotation()).isEqualTo(i.getRotationBearing());
+    }
+
+    @Test
+    public void onPageSelected_shouldNotTurnMap() throws Exception {
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        fragment.setInstructions(instructions);
+        route.addSeenInstruction(instructions.get(0));
+        route.addSeenInstruction(instructions.get(1));
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
+        fragment.onPageSelected(2);
+        Instruction i = instructions.get(2);
+        TestViewport viewport = (TestViewport) act.getMap().viewport();
+        assertThat(viewport.getRotation()).isNotEqualTo(i.getRotationBearing());
+    }
+
+    @Test
     public void onPageScrolled_shouldNotSpeakInstruction() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         fragment.onPageScrolled(1, (float) 0.1, 1);
