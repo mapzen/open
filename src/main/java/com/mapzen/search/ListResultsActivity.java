@@ -1,5 +1,6 @@
 package com.mapzen.search;
 
+import com.mapzen.MapzenApplication;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.ListResultsFragment;
 
@@ -18,7 +19,8 @@ public class ListResultsActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         final ArrayList<SimpleFeature> simpleFeatures =
                 getIntent().getParcelableArrayListExtra(EXTRA_FEATURE_LIST);
-        final ListResultsFragment fragment = ListResultsFragment.newInstance(simpleFeatures);
+        final ListResultsFragment fragment = ListResultsFragment.newInstance(simpleFeatures,
+                ((MapzenApplication) getApplication()).getCurrentSearchTerm());
         getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragment).commit();
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
@@ -29,7 +31,6 @@ public class ListResultsActivity extends FragmentActivity {
             finish();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

@@ -28,7 +28,7 @@ public class ListResultsFragmentTest {
         list.add(getTestSimpleFeature());
         list.add(getTestSimpleFeature());
         list.add(getTestSimpleFeature());
-        fragment = ListResultsFragment.newInstance(list);
+        fragment = ListResultsFragment.newInstance(list, "term");
         startFragment(fragment);
     }
 
@@ -40,6 +40,11 @@ public class ListResultsFragmentTest {
     @Test
     public void shouldHaveListAdapter() throws Exception {
         assertThat(fragment.getListAdapter()).hasCount(3);
+    }
+
+    @Test
+    public void shouldDisplayCurrentSearchTerm() throws Exception {
+        assertThat(fragment.termTextView).hasText("\"term\"");
     }
 
     @Test
