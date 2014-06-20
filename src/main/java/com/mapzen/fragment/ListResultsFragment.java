@@ -40,7 +40,7 @@ public class ListResultsFragment extends ListFragment {
         ButterKnife.inject(this, view);
         termTextView.setText("\"" + currentSearchTerm + "\"");
         setListAdapter(new PlaceArrayAdapter(getActivity(),
-                android.R.layout.simple_list_item_1,features));
+                android.R.layout.simple_list_item_1, features));
         return view;
     }
 
