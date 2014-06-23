@@ -10,6 +10,7 @@ import com.mapzen.core.DataUploadService;
 import com.mapzen.core.OSMOauthFragment;
 import com.mapzen.core.SettingsFragment;
 import com.mapzen.fragment.MapFragment;
+import com.mapzen.route.RoutePreviewFragment;
 import com.mapzen.search.AutoCompleteAdapter;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.search.PagerResultsFragment;
@@ -21,6 +22,7 @@ import com.mapzen.util.MapzenGPSPromptDialogFragment;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
 import com.bugsense.trace.BugSenseHandler;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.squareup.okhttp.OkHttpClient;
 
 import org.oscim.android.MapActivity;
@@ -78,6 +80,7 @@ public class BaseActivity extends MapActivity {
     protected DebugDataSubmitter debugDataSubmitter;
     protected LocationClient locationClient;
     private Menu activityMenu;
+    private SlidingUpPanelLayout slideLayout;
     private AutoCompleteAdapter autoCompleteAdapter;
     private MapzenApplication app;
     private MapFragment mapFragment;
@@ -150,6 +153,9 @@ public class BaseActivity extends MapActivity {
         BugSenseHandler.initAndStartSession(this, "ebfa8fd7");
         BugSenseHandler.addCrashExtraData("OEM", Build.MANUFACTURER);
         setContentView(R.layout.base);
+//        slideLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+//        slideLayout.setSlidingEnabled(false);
+//        slideLayout.setVisibility(slideLayout.INVISIBLE);
         initMapFragment();
         gpsPromptDialogFragment = new MapzenGPSPromptDialogFragment();
         initMapController();
@@ -393,12 +399,17 @@ public class BaseActivity extends MapActivity {
 
     @Override
     public void onBackPressed() {
-        SettingsFragment fragment = (SettingsFragment) getFragmentManager()
+        SettingsFragment settingsFragment = (SettingsFragment) getFragmentManager()
                 .findFragmentByTag(SettingsFragment.TAG);
-        if (fragment != null && fragment.isAdded()) {
+        RoutePreviewFragment routePreviewFragment = (RoutePreviewFragment)
+                getSupportFragmentManager().findFragmentByTag(RoutePreviewFragment.TAG);
+        if (settingsFragment != null && settingsFragment.isAdded()) {
             getFragmentManager().beginTransaction()
-                    .detach(fragment)
+                    .detach(settingsFragment)
                     .commit();
+        }  else if (routePreviewFragment != null && routePreviewFragment.isAdded()
+                && routePreviewFragment.slideLayoutIsExpanded()) {
+            routePreviewFragment.collapseSlideLayout();
         } else {
             super.onBackPressed();
         }

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 public class ItemFragment extends BaseFragment {
     @InjectView(R.id.title)
@@ -22,6 +23,7 @@ public class ItemFragment extends BaseFragment {
     @InjectView(R.id.start)
     TextView startButton;
     private SimpleFeature simpleFeature;
+
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
