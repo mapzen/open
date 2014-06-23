@@ -1,13 +1,20 @@
 package com.mapzen.route;
 
+import android.app.FragmentTransaction;
+import android.view.MotionEvent;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
+import com.mapzen.util.Logger;
 import com.mapzen.widget.DistanceView;
 
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.sun.javafx.scene.control.behavior.SliderBehavior;
 import org.oscim.android.canvas.AndroidGraphics;
 import org.oscim.core.BoundingBox;
 import org.oscim.core.MapPosition;
@@ -54,6 +61,8 @@ public class RoutePreviewFragment extends BaseFragment
     private boolean reverse = false;
     private Type transportationMode = DRIVING;
     private Route route;
+    private Fragment fragment = null;
+    private SlidingUpPanelLayout slideLayout;
 
     @Inject PathLayer path;
     @Inject ItemizedLayer<MarkerItem> markers;
@@ -69,7 +78,7 @@ public class RoutePreviewFragment extends BaseFragment
     @InjectView(R.id.by_bike) RadioButton byBike;
     @InjectView(R.id.start) TextView startBtn;
     @InjectView(R.id.routing_mode) RadioGroup routingMode;
-
+    @InjectView(R.id.destination_container) RelativeLayout destinationContainer;
     public static RoutePreviewFragment newInstance(BaseActivity act,
             SimpleFeature destination) {
         final RoutePreviewFragment fragment = new RoutePreviewFragment();
@@ -104,7 +113,68 @@ public class RoutePreviewFragment extends BaseFragment
         ButterKnife.inject(this, view);
         setOriginAndDestination();
         registerViewUpdater();
+        initSlideLayout(view);
         return view;
+    }
+
+    private void initSlideLayout(View view) {
+        slideLayout = (SlidingUpPanelLayout)  view.findViewById(R.id.sliding_layout);
+        slideLayout.setSlidingEnabled(true);
+        slideLayout.setVisibility(slideLayout.VISIBLE);
+        slideLayout.setDragView(view.findViewById(R.id.destination_preview));
+        slideLayout.setSlidingEnabled(false);
+        addTouchListener();
+        slideLayout.setPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
+                if (slideOffset < .99) {
+                    if(fragment == null) {
+                        showDirectionListFragmentInExpanded();
+                    }
+                }
+                if (slideOffset > .99 && fragment != null) {
+                    hideDirectionListFragment();
+                    slideLayout.collapsePane();
+                }
+                if(slideOffset == 1.0) {
+                    slideLayout.setSlidingEnabled(false);
+                }
+            }
+
+            @Override
+            public void onPanelExpanded(View panel) {
+
+            }
+
+            @Override
+            public void onPanelCollapsed(View panel) {
+                slideLayout.setSlidingEnabled(false);
+            }
+
+            @Override
+            public void onPanelAnchored(View panel) {
+            }
+        });
+    }
+
+    private void addTouchListener() {
+        destinationContainer.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                slideLayout.setSlidingEnabled(true);
+                return false;
+            }
+        });
+    }
+
+    public void collapseSlideLayout() {
+        if(slideLayout.isExpanded()) {
+            slideLayout.collapsePane();
+        }
+    }
+
+    public boolean slideLayoutIsExpanded() {
+        return slideLayout.isExpanded();
     }
 
     private void setOriginAndDestination() {
@@ -269,8 +339,8 @@ public class RoutePreviewFragment extends BaseFragment
         return markerItem;
     }
 
-    private void showDirectionListFragment() {
-        final Fragment fragment = DirectionListFragment.
+    private void showDirectionListFragmentInExpanded() {
+         fragment = DirectionListFragment.
                 newInstance(route.getRouteInstructions(),
                         new DirectionListFragment.DirectionListener() {
                     @Override
@@ -278,9 +348,24 @@ public class RoutePreviewFragment extends BaseFragment
                     }
                 });
         act.getSupportFragmentManager().beginTransaction()
-                .add(R.id.full_list, fragment, DirectionListFragment.TAG)
-                .addToBackStack(null)
+                .replace(R.id.destination_container, fragment, DirectionListFragment.TAG)
+                .disallowAddToBackStack()
                 .commit();
+    }
+
+    private void showDirectionListFragment() {
+       slideLayout.expandPane();
+    }
+
+    private void hideDirectionListFragment() {
+        if(fragment != null) {
+        act.getSupportFragmentManager()
+                .beginTransaction()
+                .disallowAddToBackStack()
+                .remove(fragment)
+                .commit();
+        }
+        fragment = null;
     }
 
     private void startRouting() {
@@ -290,6 +375,11 @@ public class RoutePreviewFragment extends BaseFragment
                 .addToBackStack(null)
                 .add(R.id.routes_container, routeFragment, RouteFragment.TAG)
                 .commit();
+        act.getSupportFragmentManager().beginTransaction()
+                .disallowAddToBackStack()
+                .remove(this)
+                .commit();
         getMapController().getMap().layers().remove(markers);
+
     }
 }
