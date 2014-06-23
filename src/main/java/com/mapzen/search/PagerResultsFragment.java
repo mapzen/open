@@ -62,6 +62,8 @@ public class PagerResultsFragment extends BaseFragment {
     @InjectView(R.id.results)
     ViewPager pager;
 
+    private String searchTermForCurrentResults;
+
     public static PagerResultsFragment newInstance(BaseActivity act) {
         PagerResultsFragment pagerResultsFragment = new PagerResultsFragment();
         pagerResultsFragment.setAct(act);
@@ -137,6 +139,7 @@ public class PagerResultsFragment extends BaseFragment {
     @OnClick(R.id.view_all) @SuppressWarnings("unused") public void onClickViewAll() {
         final Intent intent = new Intent(getActivity(), ListResultsActivity.class);
         intent.putExtra(ListResultsActivity.EXTRA_FEATURE_LIST, simpleFeatures);
+        intent.putExtra(ListResultsActivity.EXTRA_SEARCH_TERM, searchTermForCurrentResults);
         startActivityForResult(intent, 0);
     }
 
@@ -230,6 +233,7 @@ public class PagerResultsFragment extends BaseFragment {
     public boolean executeSearchOnMap(final SearchView view, String query) {
         act.showProgressDialog();
         app.setCurrentSearchTerm(query);
+        searchTermForCurrentResults = query;
         getSavedSearch().store(query);
         getPelias().search(query, ApiHelper.getViewBox(mapFragment.getMap()),
                 getSearchCallback(view));

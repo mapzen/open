@@ -1,8 +1,6 @@
 package com.mapzen.search;
 
-import com.mapzen.MapzenApplication;
 import com.mapzen.entity.SimpleFeature;
-import com.mapzen.fragment.ListResultsFragment;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -12,6 +10,7 @@ import java.util.ArrayList;
 
 public class ListResultsActivity extends FragmentActivity {
     public static final String EXTRA_FEATURE_LIST = "com.mapzen.search.features";
+    public static final String EXTRA_SEARCH_TERM = "com.mapzen.search.term";
     public static final String EXTRA_INDEX = "com.mapzen.search.index";
 
     @Override
@@ -20,7 +19,7 @@ public class ListResultsActivity extends FragmentActivity {
         final ArrayList<SimpleFeature> simpleFeatures =
                 getIntent().getParcelableArrayListExtra(EXTRA_FEATURE_LIST);
         final ListResultsFragment fragment = ListResultsFragment.newInstance(simpleFeatures,
-                ((MapzenApplication) getApplication()).getCurrentSearchTerm());
+                getIntent().getStringExtra(EXTRA_SEARCH_TERM));
         getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragment).commit();
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }

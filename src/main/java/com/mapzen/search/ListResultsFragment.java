@@ -1,9 +1,8 @@
-package com.mapzen.fragment;
+package com.mapzen.search;
 
 import com.mapzen.R;
 import com.mapzen.adapters.PlaceArrayAdapter;
 import com.mapzen.entity.SimpleFeature;
-import com.mapzen.search.ListResultsActivity;
 
 import android.app.Activity;
 import android.content.Intent;
