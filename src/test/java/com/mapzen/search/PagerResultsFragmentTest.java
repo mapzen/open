@@ -234,4 +234,11 @@ public class PagerResultsFragmentTest {
         fragment.onActivityResult(0, Activity.RESULT_OK, intent);
         assertThat(fragment.pager).hasCurrentItem(expected);
     }
+
+    @Test
+    public void onResume_shouldPostRunnableToClearSearchViewFocus() throws Exception {
+        act.getSearchView().requestFocus();
+        fragment.onResume();
+        assertThat(act.getSearchView()).isNotFocused();
+    }
 }

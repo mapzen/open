@@ -565,6 +565,12 @@ public class BaseActivityTest {
         assertThat(linearLayout3.indexOfChild(textView)).isGreaterThanOrEqualTo(0);
     }
 
+    @Test
+    public void getSearchView_shouldReturnNullIfMenuItemNotAvailable() throws Exception {
+        activity.searchMenuItem = null;
+        assertThat(activity.getSearchView()).isNull();
+    }
+
     private Location initLastLocation() {
         Location location = new Location(GPS_PROVIDER);
         location.setLatitude(1.0);
