@@ -17,6 +17,7 @@ import org.oscim.layers.marker.MarkerItem;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -279,5 +280,21 @@ public class PagerResultsFragment extends BaseFragment {
             final int index = data.getIntExtra(ListResultsActivity.EXTRA_INDEX, 0);
             pager.setCurrentItem(index);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                if (act != null) {
+                    final View view = act.getSearchView();
+                    if (view != null) {
+                        view.clearFocus();
+                    }
+                }
+            }
+        });
     }
 }

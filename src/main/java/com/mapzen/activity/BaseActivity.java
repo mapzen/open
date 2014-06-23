@@ -78,7 +78,6 @@ public class BaseActivity extends MapActivity {
     protected LocationClient locationClient;
     private Menu activityMenu;
     private AutoCompleteAdapter autoCompleteAdapter;
-    private MenuItem menuItem;
     private MapzenApplication app;
     private MapFragment mapFragment;
     private MapzenGPSPromptDialogFragment gpsPromptDialogFragment;
@@ -97,6 +96,7 @@ public class BaseActivity extends MapActivity {
             sendBroadcast(toBroadcast);
         }
     };
+
     protected ConnectionCallbacks connectionCallback = new ConnectionCallbacks() {
         @Override
         public void onConnected(Bundle bundle) {
@@ -126,6 +126,8 @@ public class BaseActivity extends MapActivity {
     protected boolean enableActionbar = true;
 
     protected Executor debugDataExecutor = Executors.newSingleThreadExecutor();
+
+    MenuItem searchMenuItem;
 
     public void deactivateMapLocationUpdates() {
         updateMapLocation = false;
@@ -290,8 +292,8 @@ public class BaseActivity extends MapActivity {
         inflater.inflate(R.menu.options_menu, menu);
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        menuItem = menu.findItem(R.id.search);
-        menuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+        searchMenuItem = menu.findItem(R.id.search);
+        searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 return true;
@@ -308,14 +310,14 @@ public class BaseActivity extends MapActivity {
             }
         });
 
-        final SearchView searchView = (SearchView) menuItem.getActionView();
+        final SearchView searchView = (SearchView) searchMenuItem.getActionView();
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         initSavedSearchAutoComplete(searchView);
         setupAdapter(searchView);
         searchView.setOnQueryTextListener(autoCompleteAdapter);
 
         if (!app.getCurrentSearchTerm().isEmpty()) {
-            menuItem.expandActionView();
+            searchMenuItem.expandActionView();
             Logger.d("search: " + app.getCurrentSearchTerm());
             searchView.setQuery(app.getCurrentSearchTerm(), false);
             searchView.clearFocus();
@@ -347,7 +349,7 @@ public class BaseActivity extends MapActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    menuItem.expandActionView();
+                    searchMenuItem.expandActionView();
                     autoCompleteAdapter.loadSavedSearches();
                     searchView.setQuery("", false);
                 }
@@ -394,7 +396,7 @@ public class BaseActivity extends MapActivity {
 
     private void handleGeoIntent(SearchView searchView, Uri data) {
         if (data.toString().contains("q=")) {
-            menuItem.expandActionView();
+            searchMenuItem.expandActionView();
             String queryString = Uri.decode(data.toString().split("q=")[1]);
             app.setCurrentSearchTerm(queryString);
             searchView.setQuery(queryString, true);
@@ -403,7 +405,7 @@ public class BaseActivity extends MapActivity {
 
     private void handleMapsIntent(SearchView searchView, Uri data) {
         if (data.toString().contains("q=")) {
-            menuItem.expandActionView();
+            searchMenuItem.expandActionView();
             String queryString = Uri.decode(data.toString().split("q=")[1].split("@")[0]);
             app.setCurrentSearchTerm(queryString);
             searchView.setQuery(queryString, true);
@@ -415,11 +417,15 @@ public class BaseActivity extends MapActivity {
     }
 
     public SearchView getSearchView() {
-        return (SearchView) menuItem.getActionView();
+        if (searchMenuItem != null) {
+            return (SearchView) searchMenuItem.getActionView();
+        }
+
+        return null;
     }
 
     public MenuItem getSearchMenu() {
-        return menuItem;
+        return searchMenuItem;
     }
 
     public void setupAdapter(SearchView searchView) {
@@ -465,7 +471,7 @@ public class BaseActivity extends MapActivity {
     }
 
     public boolean executeSearchOnMap(String query) {
-        final SearchView searchView = (SearchView) menuItem.getActionView();
+        final SearchView searchView = (SearchView) searchMenuItem.getActionView();
         searchView.setSuggestionsAdapter(null);
 
         PagerResultsFragment pagerResultsFragment = PagerResultsFragment.newInstance(this);
