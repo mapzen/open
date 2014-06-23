@@ -679,6 +679,7 @@ public class RouteFragmentTest {
         ArrayList<Instruction> instructions = route.getRouteInstructions();
         fragment.onLocationChanged(instructions.get(0).getLocation());
         fragment.onLocationChanged(instructions.get(1).getLocation());
+        fragment.onLocationChanged(instructions.get(1).getLocation());
         fragment.onLocationChanged(instructions.get(2).getLocation());
         assertThat(fragment.getFlippedInstructions().contains(instructions.get(0))).isTrue();
         assertThat(fragment.getFlippedInstructions().contains(instructions.get(1))).isTrue();

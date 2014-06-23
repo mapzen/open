@@ -362,6 +362,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 res.getInteger(defKey)), speed);
     }
 
+    int recordedDistance = 10000;
+    Instruction activeInstruction;
     public void onLocationChanged(Location location) {
         if (!autoPaging || isRouting) {
             return;
@@ -377,21 +379,38 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         storeLocationInfo(location, correctedLocation);
         manageMap(correctedLocation, location);
 
-        Instruction closestInstruction = route.getNextInstruction();
-        if (closestInstruction == null) {
-            return;
+        Instruction closestInstruction;
+        int closestDistance = 0;
+        if (activeInstruction == null) {
+            closestInstruction = route.getClosestInstruction(correctedLocation);
+            if (closestInstruction == null) {
+                return;
+            }
+            closestDistance =
+                    (int) Math.floor(correctedLocation
+                            .distanceTo(closestInstruction.getLocation()));
+            activeInstruction = closestInstruction;
+            recordedDistance = closestDistance;
         }
-        int closestDistance =
-                (int) Math.floor(correctedLocation.distanceTo(closestInstruction.getLocation()));
 
-        final int instructionIndex = instructions.indexOf(closestInstruction);
+        closestDistance =
+                (int) Math.floor(correctedLocation.distanceTo(activeInstruction.getLocation()));
+
+        final int instructionIndex = instructions.indexOf(activeInstruction);
         if (closestDistance <= getAdvanceRadius()) {
             Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: "
-                    + closestInstruction.toString());
+                    + activeInstruction.toString());
             pager.setCurrentItem(instructionIndex);
-            if (!route.getSeenInstructions().contains(closestInstruction)) {
-                route.addSeenInstruction(closestInstruction);
+            if (!route.getSeenInstructions().contains(activeInstruction)) {
+                route.addSeenInstruction(activeInstruction);
             }
+        }
+
+        if (recordedDistance < closestDistance) {
+            activeInstruction = null;
+            recordedDistance = 100000;
+        } else {
+            recordedDistance = closestDistance;
         }
 
         final Iterator it = route.getSeenInstructions().iterator();
@@ -410,7 +429,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
         debugView.setCurrentLocation(location);
         debugView.setSnapLocation(correctedLocation);
-        debugView.setClosestInstruction(closestInstruction, closestDistance);
+        if (activeInstruction != null) {
+            debugView.setClosestInstruction(activeInstruction, closestDistance);
+        }
         debugView.setAverageSpeed(getAverageSpeed());
         logForDebugging(location, correctedLocation);
     }
