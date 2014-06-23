@@ -142,6 +142,18 @@ public class PagerResultsFragmentTest {
     }
 
     @Test
+    public void viewAll_shouldParcelSearchTermForCurrentResults() throws Exception {
+        fragment.executeSearchOnMap(new SearchView(app), "Some fantastic term");
+        ImageView closeButton = (ImageView) act.getSearchView().findViewById(act.getResources()
+                .getIdentifier("android:id/search_close_btn", null, null));
+        closeButton.performClick();
+        fragment.viewAll.performClick();
+        assertThat(getShadowApplication().getNextStartedActivity()
+                .getStringExtra(ListResultsActivity.EXTRA_SEARCH_TERM))
+                .isEqualTo("Some fantastic term");
+    }
+
+    @Test
     public void displayResults_shouldShowMultiResultHeaderForMultipleResults() throws Exception {
         fragment.add(new SimpleFeature());
         fragment.add(new SimpleFeature());

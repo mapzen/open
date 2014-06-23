@@ -1,7 +1,6 @@
-package com.mapzen.fragment;
+package com.mapzen.search;
 
 import com.mapzen.entity.SimpleFeature;
-import com.mapzen.search.ListResultsActivity;
 import com.mapzen.support.MapzenTestRunner;
 
 import org.junit.Before;

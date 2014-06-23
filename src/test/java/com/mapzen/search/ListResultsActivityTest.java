@@ -2,7 +2,6 @@ package com.mapzen.search;
 
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.support.MapzenTestRunner;
-import com.mapzen.support.TestHelper;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +14,7 @@ import android.content.Intent;
 
 import java.util.ArrayList;
 
+import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.buildActivity;
@@ -24,13 +24,15 @@ import static org.robolectric.Robolectric.getShadowApplication;
 @RunWith(MapzenTestRunner.class)
 public class ListResultsActivityTest {
     private ListResultsActivity activity;
+    private ListResultsFragment fragment;
 
     @Before
     public void setUp() throws Exception {
         ArrayList<SimpleFeature> features = new ArrayList<SimpleFeature>();
-        features.add(TestHelper.getTestSimpleFeature());
+        features.add(getTestSimpleFeature());
         Intent intent = new Intent();
         intent.putParcelableArrayListExtra(ListResultsActivity.EXTRA_FEATURE_LIST, features);
+        intent.putExtra(ListResultsActivity.EXTRA_SEARCH_TERM, "term");
         activity = buildActivity(ListResultsActivity.class)
                 .withIntent(intent)
                 .create()
@@ -38,6 +40,7 @@ public class ListResultsActivityTest {
                 .resume()
                 .visible()
                 .get();
+        fragment = (ListResultsFragment) activity.getSupportFragmentManager().getFragments().get(0);
     }
 
     @Test
@@ -63,5 +66,16 @@ public class ListResultsActivityTest {
     public void shouldFinishActivityOnOptionsItemHomeSelected() throws Exception {
         activity.onOptionsItemSelected(new TestMenuItem(android.R.id.home));
         assertThat(activity).isFinishing();
+    }
+
+    @Test
+    public void shouldDisplayFeaturesFromIntentExtra() throws Exception {
+        assertThat(fragment.getListAdapter().getItem(0))
+                .isEqualsToByComparingFields(getTestSimpleFeature());
+    }
+
+    @Test
+    public void shouldDisplaySearchTermFromIntentExtra() throws Exception {
+        assertThat(fragment.termTextView).hasText("\"term\"");
     }
 }
