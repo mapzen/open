@@ -15,6 +15,8 @@ import org.scribe.model.OAuthRequest;
 import org.scribe.model.Response;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import android.app.Service;
 import android.content.ContentValues;
@@ -23,8 +25,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.os.AsyncTask;
 import android.os.IBinder;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -33,6 +33,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 import java.util.zip.GZIPOutputStream;
 
+import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -45,34 +46,33 @@ import javax.xml.transform.stream.StreamResult;
 import static com.mapzen.util.DatabaseHelper.COLUMN_ALT;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
+import static com.mapzen.util.DatabaseHelper.COLUMN_MSG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_READY_FOR_UPLOAD;
 import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
 import static com.mapzen.util.DatabaseHelper.COLUMN_TABLE_ID;
 import static com.mapzen.util.DatabaseHelper.COLUMN_TIME;
-import static com.mapzen.util.DatabaseHelper.COLUMN_MSG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_UPLOADED;
 import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
-
 import static javax.xml.transform.OutputKeys.ENCODING;
 import static javax.xml.transform.OutputKeys.INDENT;
 import static javax.xml.transform.OutputKeys.METHOD;
 import static javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION;
 import static javax.xml.transform.OutputKeys.VERSION;
-
 import static org.apache.http.protocol.HTTP.UTF_8;
-import static org.scribe.model.Verb.GET;
-import static org.scribe.model.Verb.POST;
 
 public class DataUploadService extends Service {
     private static final int MIN_NUM_TRACKING_POINTS = 10;
     private MapzenApplication app;
+
+    @Inject OAuthRequestFactory requestFactory;
 
     @Override
     public void onCreate() {
         super.onCreate();
         app = (MapzenApplication) getApplication();
         Logger.d("DataUploadService: oncreate");
+        app.inject(this);
     }
 
     @Override
@@ -239,18 +239,6 @@ public class DataUploadService extends Service {
         return rootElement;
     }
 
-    public OAuthRequest getOAuthRequest() {
-        OAuthRequest request =
-                new OAuthRequest(POST, OSMApi.BASE_URL + OSMApi.CREATE_GPX);
-        return request;
-    }
-
-    public OAuthRequest getPermissionsRequest() {
-        OAuthRequest request =
-                new OAuthRequest(GET, OSMApi.BASE_URL + OSMApi.CHECK_PERMISSIONS);
-        return request;
-    }
-
     public void submitTrace(String description, String routeId, byte[] compressedGPX) {
         Logger.d("DataUpload submitting trace");
 
@@ -271,7 +259,7 @@ public class DataUploadService extends Service {
             Logger.e("IOException: " + e.getMessage());
         }
 
-        OAuthRequest request = getOAuthRequest();
+        OAuthRequest request = requestFactory.getOAuthRequest();
         request.addPayload(bos.toByteArray());
         Header contentType = reqEntity.getContentType();
         request.addHeader(contentType.getName(), contentType.getValue());
@@ -310,7 +298,7 @@ public class DataUploadService extends Service {
 
     public String getPermissionResponse() {
         try {
-            OAuthRequest request = getPermissionsRequest();
+            OAuthRequest request = requestFactory.getPermissionsRequest();
             app.getOsmOauthService().signRequest(app.getAccessToken(), request);
             Response response = request.send();
             return response.getBody();
