@@ -22,7 +22,6 @@ import com.mapzen.util.MapzenGPSPromptDialogFragment;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
 import com.bugsense.trace.BugSenseHandler;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.squareup.okhttp.OkHttpClient;
 
 import org.oscim.android.MapActivity;
@@ -80,7 +79,6 @@ public class BaseActivity extends MapActivity {
     protected DebugDataSubmitter debugDataSubmitter;
     protected LocationClient locationClient;
     private Menu activityMenu;
-    private SlidingUpPanelLayout slideLayout;
     private AutoCompleteAdapter autoCompleteAdapter;
     private MapzenApplication app;
     private MapFragment mapFragment;
@@ -153,9 +151,6 @@ public class BaseActivity extends MapActivity {
         BugSenseHandler.initAndStartSession(this, "ebfa8fd7");
         BugSenseHandler.addCrashExtraData("OEM", Build.MANUFACTURER);
         setContentView(R.layout.base);
-//        slideLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-//        slideLayout.setSlidingEnabled(false);
-//        slideLayout.setVisibility(slideLayout.INVISIBLE);
         initMapFragment();
         gpsPromptDialogFragment = new MapzenGPSPromptDialogFragment();
         initMapController();

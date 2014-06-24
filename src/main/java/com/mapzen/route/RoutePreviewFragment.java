@@ -1,20 +1,16 @@
 package com.mapzen.route;
 
-import android.app.FragmentTransaction;
 import android.view.MotionEvent;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
-import com.mapzen.util.Logger;
 import com.mapzen.widget.DistanceView;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-import com.sun.javafx.scene.control.behavior.SliderBehavior;
 import org.oscim.android.canvas.AndroidGraphics;
 import org.oscim.core.BoundingBox;
 import org.oscim.core.MapPosition;
@@ -128,7 +124,7 @@ public class RoutePreviewFragment extends BaseFragment
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
                 if (slideOffset < .99) {
-                    if(fragment == null) {
+                    if (fragment == null) {
                         showDirectionListFragmentInExpanded();
                     }
                 }
@@ -136,7 +132,7 @@ public class RoutePreviewFragment extends BaseFragment
                     hideDirectionListFragment();
                     slideLayout.collapsePane();
                 }
-                if(slideOffset == 1.0) {
+                if (slideOffset == 1.0) {
                     slideLayout.setSlidingEnabled(false);
                 }
             }
@@ -168,7 +164,7 @@ public class RoutePreviewFragment extends BaseFragment
     }
 
     public void collapseSlideLayout() {
-        if(slideLayout.isExpanded()) {
+        if (slideLayout.isExpanded()) {
             slideLayout.collapsePane();
         }
     }
@@ -358,7 +354,7 @@ public class RoutePreviewFragment extends BaseFragment
     }
 
     private void hideDirectionListFragment() {
-        if(fragment != null) {
+        if (fragment != null) {
         act.getSupportFragmentManager()
                 .beginTransaction()
                 .disallowAddToBackStack()
