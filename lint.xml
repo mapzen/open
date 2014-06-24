@@ -5,7 +5,36 @@
     <issue id="IconLocation" severity="ignore" />
     <issue id="UnusedResources">
         <ignore path="res/layout/dummy.xml" />
-        <ignore path="res/xml/accessoryservices.xml" />
+        <ignore path="res/drawable/ic_route_bl_1.png" />
+        <ignore path="res/drawable/ic_route_bl_2.png" />
+        <ignore path="res/drawable/ic_route_bl_3.png" />
+        <ignore path="res/drawable/ic_route_bl_4.png" />
+        <ignore path="res/drawable/ic_route_bl_5.png" />
+        <ignore path="res/drawable/ic_route_bl_6.png" />
+        <ignore path="res/drawable/ic_route_bl_7.png" />
+        <ignore path="res/drawable/ic_route_bl_8.png" />
+        <ignore path="res/drawable/ic_route_bl_9.png" />
+        <ignore path="res/drawable/ic_route_bl_10.png" />
+        <ignore path="res/drawable/ic_route_bl_11.png" />
+        <ignore path="res/drawable/ic_route_bl_12.png" />
+        <ignore path="res/drawable/ic_route_bl_13.png" />
+        <ignore path="res/drawable/ic_route_bl_14.png" />
+        <ignore path="res/drawable/ic_route_bl_15.png" />
+        <ignore path="res/drawable/ic_route_wh_1.png" />
+        <ignore path="res/drawable/ic_route_wh_2.png" />
+        <ignore path="res/drawable/ic_route_wh_3.png" />
+        <ignore path="res/drawable/ic_route_wh_4.png" />
+        <ignore path="res/drawable/ic_route_wh_5.png" />
+        <ignore path="res/drawable/ic_route_wh_6.png" />
+        <ignore path="res/drawable/ic_route_wh_7.png" />
+        <ignore path="res/drawable/ic_route_wh_8.png" />
+        <ignore path="res/drawable/ic_route_wh_9.png" />
+        <ignore path="res/drawable/ic_route_wh_10.png" />
+        <ignore path="res/drawable/ic_route_wh_11.png" />
+        <ignore path="res/drawable/ic_route_wh_12.png" />
+        <ignore path="res/drawable/ic_route_wh_13.png" />
+        <ignore path="res/drawable/ic_route_wh_14.png" />
+        <ignore path="res/drawable/ic_route_wh_15.png" />
     </issue>
     <issue id="MissingRegistered" severity="ignore" />
     <issue id="InvalidPackage" severity="ignore" />
