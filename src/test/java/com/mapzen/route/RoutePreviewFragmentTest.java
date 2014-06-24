@@ -74,6 +74,7 @@ public class RoutePreviewFragmentTest {
         activity.disableActionbar();
         destination = getTestSimpleFeature();
         fragment = RoutePreviewFragment.newInstance(activity, destination);
+        fragment.createRouteToDestination();
         FragmentTestUtil.startFragment(fragment);
     }
 
