@@ -13,7 +13,6 @@ import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 public class ItemFragment extends BaseFragment {
     @InjectView(R.id.title)
