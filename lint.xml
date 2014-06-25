@@ -4,6 +4,8 @@
     <issue id="IconMissingDensityFolder" severity="ignore" />
     <issue id="IconLocation" severity="ignore" />
     <issue id="UnusedResources">
+        <ignore path="res/values/colors.xml" />
+        <ignore path="res/values/dimens.xml" />
         <ignore path="res/layout/dummy.xml" />
         <ignore path="res/drawable/ic_route_bl_1.png" />
         <ignore path="res/drawable/ic_route_bl_2.png" />
