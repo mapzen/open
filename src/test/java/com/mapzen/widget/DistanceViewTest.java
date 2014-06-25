@@ -46,3 +46,4 @@ public class DistanceViewTest {
         assertThat(view.getText()).isEqualTo(DistanceFormatter.format(100, false));
     }
 }
+

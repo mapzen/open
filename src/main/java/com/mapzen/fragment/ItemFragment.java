@@ -55,3 +55,4 @@ public class ItemFragment extends BaseFragment {
         this.simpleFeature = simpleFeature;
     }
 }
+

@@ -15,3 +15,4 @@ public class MapzenProgressDialogFragment extends DialogFragment {
         return progressDialog;
     }
 }
+

@@ -303,3 +303,4 @@ public class MapFragment extends BaseFragment {
         }
     }
 }
+
