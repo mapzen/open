@@ -161,3 +161,4 @@ public class DebugDataSubmitterTest {
         assertThat(cursor.getCount()).isGreaterThan(0);
     }
 }
+

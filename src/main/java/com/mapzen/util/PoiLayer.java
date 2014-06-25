@@ -67,3 +67,4 @@ public class PoiLayer extends ItemizedLayer<MarkerItem> {
 
     }
 }
+

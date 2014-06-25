@@ -27,3 +27,4 @@ public final class ParcelableUtil {
         return parcel;
     }
 }
+

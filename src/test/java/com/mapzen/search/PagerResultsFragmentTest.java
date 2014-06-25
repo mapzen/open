@@ -254,3 +254,4 @@ public class PagerResultsFragmentTest {
         assertThat(act.getSearchView()).isNotFocused();
     }
 }
+

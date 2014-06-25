@@ -49,3 +49,4 @@ public class LoggerTest {
         assertThat(cursor).hasCount(0);
     }
 }
+

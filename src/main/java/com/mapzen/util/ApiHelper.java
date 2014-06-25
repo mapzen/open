@@ -14,3 +14,4 @@ public abstract class ApiHelper {
                         + String.valueOf(boundingBox.getMinLatitude());
     }
 }
+

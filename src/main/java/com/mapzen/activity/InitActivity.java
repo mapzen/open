@@ -198,3 +198,4 @@ public class InitActivity extends Activity {
         return OSM_VERIFIER_KEY;
     }
 }
+

@@ -28,3 +28,4 @@ public class EditIntPreference extends EditTextPreference {
         return persistInt(Integer.valueOf(value));
     }
 }
+
