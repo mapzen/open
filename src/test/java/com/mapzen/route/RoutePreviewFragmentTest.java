@@ -363,10 +363,6 @@ public class RoutePreviewFragmentTest {
                 hasFragmentWithTag(DirectionListFragment.TAG);
     }
 
-    private void simulatePaneOpenSlide() {
-        fragment.getPanelSlideListener().onPanelSlide(fragment.getSlideLayout(), 0.95f);
-    }
-
     @Test
     public void expandedPaneReversed_shouldShowDirectionListFragment() {
         fragment.createRouteToDestination();
@@ -387,10 +383,6 @@ public class RoutePreviewFragmentTest {
         simulatePaneCloseSlide();
         assertThat(activity.getSupportFragmentManager())
                 .doesNotHaveFragmentWithTag(DirectionListFragment.TAG);
-    }
-
-    private void simulatePaneCloseSlide() {
-        fragment.getPanelSlideListener().onPanelSlide(fragment.getSlideLayout(), 1.0f);
     }
 
     @Test
@@ -472,7 +464,15 @@ public class RoutePreviewFragmentTest {
         Mockito.verify(router).fetch();
     }
 
-     private void simulateViewButtonClick(RoutePreviewFragment spy) {
-       spy.start();
-     }
+    private void simulateViewButtonClick(RoutePreviewFragment spy) {
+        spy.start();
+    }
+
+    private void simulatePaneOpenSlide() {
+        fragment.getPanelSlideListener().onPanelSlide(fragment.getSlideLayout(), 0.95f);
+    }
+
+    private void simulatePaneCloseSlide() {
+        fragment.getPanelSlideListener().onPanelSlide(fragment.getSlideLayout(), 1.0f);
+    }
 }
