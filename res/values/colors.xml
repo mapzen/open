@@ -2,10 +2,17 @@
 <resources>
     <color name="lets_go_light_blue">#50a4db</color>
     <color name="lets_go_dark_blue">#007bb2</color>
-    <color name="dark_gray">#333</color>
     <color name="destination_green">#68a547</color>
     <color name="teal_background">#6da1a5</color>
     <color name="button_red">#d46a5f</color>
     <color name="button_dark_blue">#345557</color>
     <color name="sign_up_text">#3b3b3b</color>
+
+    <!-- new colors -->
+    <color name="dark_gray">#727272</color>
+    <color name="red">#d4645c</color>
+    <color name="blue">#6ea0a4</color>
+    <color name="yellow">#e6ead2</color>
+    <color name="brown">#563630</color>
+    <color name="light_grey">#898989</color>
 </resources>
