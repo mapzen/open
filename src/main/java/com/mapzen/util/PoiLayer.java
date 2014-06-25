@@ -61,5 +61,9 @@ public class PoiLayer extends ItemizedLayer<MarkerItem> {
             return false;
         }
 
+        @Override
+        public void complete(MapTile mapTile, boolean b) {
+        }
+
     }
 }
