@@ -21,7 +21,7 @@
     <dimen name="motto_font_size">16pt</dimen>
 
     <!-- fonts -->
-    <dimen name="big">32sp</dimen>
+    <dimen name="large">32sp</dimen>
     <dimen name="medium">21sp</dimen>
     <dimen name="small">15sp</dimen>
 </resources>
