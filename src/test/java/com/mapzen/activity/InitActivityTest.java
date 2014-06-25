@@ -105,3 +105,4 @@ public class InitActivityTest {
         assertThat(showedToast).isTrue();
     }
 }
+

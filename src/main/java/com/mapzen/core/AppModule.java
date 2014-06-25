@@ -62,3 +62,4 @@ public class AppModule {
                 MarkerItem.HotspotPlace.BOTTOM_CENTER), null);
     }
 }
+

@@ -50,3 +50,4 @@ public class EditIntPreference extends EditTextPreference {
         return s;
     }
 }
+

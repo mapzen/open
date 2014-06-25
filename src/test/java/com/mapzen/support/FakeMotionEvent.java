@@ -46,3 +46,4 @@ public class FakeMotionEvent extends MotionEvent {
         return 0;
     }
 }
+

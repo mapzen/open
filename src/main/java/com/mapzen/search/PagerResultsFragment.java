@@ -302,3 +302,4 @@ public class PagerResultsFragment extends BaseFragment {
         });
     }
 }
+

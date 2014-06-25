@@ -36,3 +36,4 @@ public final class DisplayHelper {
         public static final String BLACK = "bl";
     }
 }
+

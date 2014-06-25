@@ -2,14 +2,14 @@
 
     <com.sothree.slidinguppanel.SlidingUpPanelLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:sothree="http://schemas.android.com/apk/res/com.mapzen"
+            xmlns:sothree="http://schemas.android.com/apk/res-auto"
             android:id="@+id/sliding_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            sothree:paralaxOffset="200dp"
             android:gravity="bottom"
             sothree:panelHeight="68dp"
-            sothree:shadowHeight="4dp">
+            sothree:shadowHeight="4dp"
+            sothree:paralaxOffset="200dp">
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                         android:layout_width="match_parent"

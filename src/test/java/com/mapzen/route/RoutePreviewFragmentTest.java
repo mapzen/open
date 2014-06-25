@@ -47,6 +47,7 @@ import static com.mapzen.support.TestHelper.initBaseActivity;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @Config(emulateSdk = 18)
@@ -74,7 +75,6 @@ public class RoutePreviewFragmentTest {
         activity.disableActionbar();
         destination = getTestSimpleFeature();
         fragment = RoutePreviewFragment.newInstance(activity, destination);
-        fragment.createRouteToDestination();
         FragmentTestUtil.startFragment(fragment);
     }
 
@@ -176,6 +176,7 @@ public class RoutePreviewFragmentTest {
         fragment.reverse();
         verify(router, Mockito.times(2)).setLocation(location.capture());
         List<double[]> values = location.getAllValues();
+        System.out.println(values.size());
         assertThat(values.get(0)).isEqualTo(new double[] { 1.0, 1.0 });
         assertThat(values.get(1)).isEqualTo(new double[] { 22.22, 44.44 });
     }
@@ -343,16 +344,54 @@ public class RoutePreviewFragmentTest {
     }
 
     @Test
-    public void start_shouldShowDirectionListFragmentWhenReversed() throws Exception {
+    public void start_shouldShowExpandPaneWhenReversed() throws Exception {
         fragment.createRouteToDestination();
         Route testRoute = new Route(getFixture("around_the_block"));
         fragment.success(testRoute);
         fragment.reverse();
-        TextView startBtn = (TextView) fragment.getView().findViewById(R.id.start);
-        startBtn.performClick();
-        FragmentTestUtil.startFragment(fragment);
-        assertThat(activity.getSupportFragmentManager()).
+        RoutePreviewFragment spy = spy(fragment);
+        simulateViewButtonClick(spy);
+        verify(spy).expandInstructionsPane();
+        }
+
+    @Test
+    public void expandedPaneNotReversed_shouldShowDirectionListFragment() {
+        fragment.createRouteToDestination();
+        Route testRoute = new Route(getFixture("around_the_block"));
+        fragment.success(testRoute);
+        simulatePaneOpenSlide();
+        assertThat(fragment.getChildFragmentManager()).
                 hasFragmentWithTag(DirectionListFragment.TAG);
+    }
+
+    private void simulatePaneOpenSlide() {
+        fragment.getPanelSlideListener().onPanelSlide(fragment.getSlideLayout(), 0.95f);
+    }
+
+    @Test
+    public void expandedPaneReversed_shouldShowDirectionListFragment() {
+        fragment.createRouteToDestination();
+        Route testRoute = new Route(getFixture("around_the_block"));
+        fragment.success(testRoute);
+        fragment.reverse();
+        simulatePaneOpenSlide();
+        assertThat(fragment.getChildFragmentManager()).
+                hasFragmentWithTag(DirectionListFragment.TAG);
+    }
+
+    @Test
+    public void collapsedPane_shouldNotShowDirectionListFragment() {
+        fragment.createRouteToDestination();
+        Route testRoute = new Route(getFixture("around_the_block"));
+        fragment.success(testRoute);
+        fragment.getSlideLayout().expandPane();
+        simulatePaneCloseSlide();
+        assertThat(activity.getSupportFragmentManager())
+                .doesNotHaveFragmentWithTag(DirectionListFragment.TAG);
+    }
+
+    private void simulatePaneCloseSlide() {
+        fragment.getPanelSlideListener().onPanelSlide(fragment.getSlideLayout(), 1.0f);
     }
 
     @Test
@@ -433,4 +472,8 @@ public class RoutePreviewFragmentTest {
         fragment.onViewUpdate();
         Mockito.verify(router).fetch();
     }
+
+     private void simulateViewButtonClick(RoutePreviewFragment spy) {
+       spy.start();
+     }
 }

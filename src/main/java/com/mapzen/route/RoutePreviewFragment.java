@@ -108,19 +108,23 @@ public class RoutePreviewFragment extends BaseFragment
         View view = inflater.inflate(R.layout.route_preview, container, false);
         ButterKnife.inject(this, view);
         setOriginAndDestination();
-        registerViewUpdater();
         initSlideLayout(view);
+        registerViewUpdater();
         return view;
     }
 
-    private void initSlideLayout(View view) {
-        slideLayout = (SlidingUpPanelLayout)  view.findViewById(R.id.sliding_layout);
-        slideLayout.setSlidingEnabled(true);
-        slideLayout.setVisibility(slideLayout.VISIBLE);
-        slideLayout.setDragView(view.findViewById(R.id.destination_preview));
-        slideLayout.setSlidingEnabled(false);
+    public void initSlideLayout(View view) {
+        setSlideLayout((SlidingUpPanelLayout)  view.findViewById(R.id.sliding_layout));
+        getSlideLayout().setSlidingEnabled(true);
+        getSlideLayout().setVisibility(getSlideLayout().VISIBLE);
+        getSlideLayout().setDragView(view.findViewById(R.id.destination_preview));
+        getSlideLayout().setSlidingEnabled(false);
         addTouchListener();
-        slideLayout.setPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+        getSlideLayout().setPanelSlideListener(getPanelSlideListener());
+    }
+
+    public SlidingUpPanelLayout.PanelSlideListener getPanelSlideListener() {
+        return (new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
                 if (slideOffset < .99) {
@@ -130,21 +134,20 @@ public class RoutePreviewFragment extends BaseFragment
                 }
                 if (slideOffset > .99 && fragment != null) {
                     hideDirectionListFragment();
-                    slideLayout.collapsePane();
+                    getSlideLayout().collapsePane();
                 }
                 if (slideOffset == 1.0) {
-                    slideLayout.setSlidingEnabled(false);
+                    getSlideLayout().setSlidingEnabled(false);
                 }
             }
 
             @Override
             public void onPanelExpanded(View panel) {
-
             }
 
             @Override
             public void onPanelCollapsed(View panel) {
-                slideLayout.setSlidingEnabled(false);
+                getSlideLayout().setSlidingEnabled(false);
             }
 
             @Override
@@ -157,20 +160,20 @@ public class RoutePreviewFragment extends BaseFragment
         destinationContainer.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                slideLayout.setSlidingEnabled(true);
+                getSlideLayout().setSlidingEnabled(true);
                 return false;
             }
         });
     }
 
     public void collapseSlideLayout() {
-        if (slideLayout.isExpanded()) {
-            slideLayout.collapsePane();
+        if (getSlideLayout().isExpanded()) {
+            getSlideLayout().collapsePane();
         }
     }
 
     public boolean slideLayoutIsExpanded() {
-        return slideLayout.isExpanded();
+        return getSlideLayout().isExpanded();
     }
 
     private void setOriginAndDestination() {
@@ -224,7 +227,7 @@ public class RoutePreviewFragment extends BaseFragment
         if (!reverse) {
             startRouting();
         } else {
-            showDirectionListFragment();
+            expandInstructionsPane();
         }
     }
 
@@ -336,26 +339,26 @@ public class RoutePreviewFragment extends BaseFragment
     }
 
     private void showDirectionListFragmentInExpanded() {
-         fragment = DirectionListFragment.
+        fragment = DirectionListFragment.
                 newInstance(route.getRouteInstructions(),
                         new DirectionListFragment.DirectionListener() {
                     @Override
                     public void onInstructionSelected(int index) {
                     }
                 });
-        act.getSupportFragmentManager().beginTransaction()
+        getChildFragmentManager().beginTransaction()
                 .replace(R.id.destination_container, fragment, DirectionListFragment.TAG)
                 .disallowAddToBackStack()
                 .commit();
     }
 
-    private void showDirectionListFragment() {
-       slideLayout.expandPane();
+    public void expandInstructionsPane() {
+       getSlideLayout().expandPane();
     }
 
     private void hideDirectionListFragment() {
         if (fragment != null) {
-        act.getSupportFragmentManager()
+        getChildFragmentManager()
                 .beginTransaction()
                 .disallowAddToBackStack()
                 .remove(fragment)
@@ -376,6 +379,14 @@ public class RoutePreviewFragment extends BaseFragment
                 .remove(this)
                 .commit();
         getMapController().getMap().layers().remove(markers);
+    }
 
+    public SlidingUpPanelLayout getSlideLayout() {
+        return slideLayout;
+    }
+
+    public void setSlideLayout(SlidingUpPanelLayout slideLayout) {
+        this.slideLayout = slideLayout;
     }
 }
+

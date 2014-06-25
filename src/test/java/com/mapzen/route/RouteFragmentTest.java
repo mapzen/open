@@ -540,6 +540,7 @@ public class RouteFragmentTest {
     @Test
     public void shouldShowDirectionListFragment() throws Exception {
         FragmentTestUtil.startFragment(fragment);
+        act.setContentView(R.layout.route_widget);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
         ImageButton overFlowMenu = (ImageButton) view.findViewById(R.id.overflow_menu);
         overFlowMenu.performClick();
@@ -549,6 +550,7 @@ public class RouteFragmentTest {
         item.setItemId(R.id.route_menu_steps);
         listener.onMenuItemClick(item);
         assertThat(act.getSupportFragmentManager()).hasFragmentWithTag(DirectionListFragment.TAG);
+
     }
 
     @Test
@@ -1331,3 +1333,4 @@ public class RouteFragmentTest {
         listener.onTouch(null, motionEvent);
     }
 }
+
