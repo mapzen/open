@@ -12,15 +12,18 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.scribe.model.OAuthRequest;
-import org.scribe.model.Response;
 import org.scribe.model.Token;
 import org.scribe.oauth.OAuthService;
-
-import android.content.ContentValues;
-import android.database.Cursor;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import android.content.ContentValues;
+import android.database.Cursor;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.StringWriter;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -30,27 +33,22 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.StringWriter;
 
 import static com.mapzen.support.TestHelper.getTestInstruction;
 import static com.mapzen.support.TestHelper.getTestLocation;
+import static com.mapzen.util.DatabaseHelper.COLUMN_MSG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
 import static com.mapzen.util.DatabaseHelper.COLUMN_READY_FOR_UPLOAD;
 import static com.mapzen.util.DatabaseHelper.COLUMN_TABLE_ID;
 import static com.mapzen.util.DatabaseHelper.COLUMN_UPLOADED;
-import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
-import static com.mapzen.util.DatabaseHelper.COLUMN_MSG;
 import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
+import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
 import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
-
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -102,8 +100,7 @@ public class DataUploadServiceTest {
     public void onStartCommand_shouldNotMarkUploaded() throws Exception {
         String expectedRouteId = "route-1";
         makeRouteReady(expectedRouteId);
-        DataUploadService spy = spy(service);
-        spy.onStartCommand(null, 0, 0);
+        service.onStartCommand(null, 0, 0);
         Cursor cursor = app.getDb().query(TABLE_ROUTES, new String[] {COLUMN_UPLOADED},
                 COLUMN_TABLE_ID + " = ? AND " + COLUMN_UPLOADED + " = 1",
                 new String[] {expectedRouteId}, null, null, null);
@@ -118,13 +115,7 @@ public class DataUploadServiceTest {
         String expectedRouteId = "route-1";
         makeRouteReady(expectedRouteId);
         app.setAccessToken(token);
-        DataUploadService spy = spy(service);
-        OAuthRequest mockRequest = mock(OAuthRequest.class);
-        doReturn(mockRequest).when(spy).getOAuthRequest();
-        Response responseMock = mock(Response.class);
-        doReturn(responseMock).when(mockRequest).send();
-        doReturn(true).when(responseMock).isSuccessful();
-        spy.onStartCommand(null, 0, 0);
+        service.onStartCommand(null, 0, 0);
         Cursor cursor = app.getDb().query(TABLE_ROUTES, new String[] {COLUMN_UPLOADED},
                 COLUMN_TABLE_ID + " = ? AND " + COLUMN_UPLOADED + " = 1",
                 new String[] {expectedRouteId}, null, null, null);

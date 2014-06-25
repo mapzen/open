@@ -34,7 +34,8 @@ import static org.mockito.Mockito.doNothing;
                 ItemFragmentTest.class,
                 MapFragment.class,
                 RoutePreviewFragment.class,
-                RoutePreviewFragmentTest.class
+                RoutePreviewFragmentTest.class,
+                DataUploadService.class
         },
         complete = false
 )
@@ -49,6 +50,10 @@ public class TestAppModule {
         Router router = Mockito.spy(getRouter());
         doNothing().when(router).fetch();
         return router;
+    }
+
+    @Provides OAuthRequestFactory provideOAuthRequestFactory() {
+        return new TestOAuthRequestFactory();
     }
 
     @Provides @Singleton PathLayer providePathLayer() {

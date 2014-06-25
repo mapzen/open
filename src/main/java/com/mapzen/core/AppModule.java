@@ -28,7 +28,8 @@ import dagger.Provides;
                 BaseActivity.class,
                 ItemFragment.class,
                 RouteFragment.class,
-                RoutePreviewFragment.class
+                RoutePreviewFragment.class,
+                DataUploadService.class
         },
         complete = false,
         library = true
@@ -42,6 +43,10 @@ public class AppModule {
 
     @Provides @Singleton Router provideRouter() {
         return Router.getRouter();
+    }
+
+    @Provides OAuthRequestFactory provideOAuthRequestFactory() {
+        return new OAuthRequestFactory();
     }
 
     @Provides @Singleton
