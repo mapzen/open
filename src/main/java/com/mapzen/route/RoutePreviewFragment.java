@@ -113,69 +113,6 @@ public class RoutePreviewFragment extends BaseFragment
         return view;
     }
 
-    public void initSlideLayout(View view) {
-        setSlideLayout((SlidingUpPanelLayout)  view.findViewById(R.id.sliding_layout));
-        getSlideLayout().setSlidingEnabled(true);
-        getSlideLayout().setVisibility(getSlideLayout().VISIBLE);
-        getSlideLayout().setDragView(view.findViewById(R.id.destination_preview));
-        getSlideLayout().setSlidingEnabled(false);
-        addTouchListener();
-        getSlideLayout().setPanelSlideListener(getPanelSlideListener());
-    }
-
-    public SlidingUpPanelLayout.PanelSlideListener getPanelSlideListener() {
-        return (new SlidingUpPanelLayout.PanelSlideListener() {
-            @Override
-            public void onPanelSlide(View panel, float slideOffset) {
-                if (slideOffset < .99) {
-                    if (fragment == null) {
-                        showDirectionListFragmentInExpanded();
-                    }
-                }
-                if (slideOffset > .99 && fragment != null) {
-                    hideDirectionListFragment();
-                    getSlideLayout().collapsePane();
-                }
-                if (slideOffset == 1.0) {
-                    getSlideLayout().setSlidingEnabled(false);
-                }
-            }
-
-            @Override
-            public void onPanelExpanded(View panel) {
-            }
-
-            @Override
-            public void onPanelCollapsed(View panel) {
-                getSlideLayout().setSlidingEnabled(false);
-            }
-
-            @Override
-            public void onPanelAnchored(View panel) {
-            }
-        });
-    }
-
-    private void addTouchListener() {
-        destinationContainer.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                getSlideLayout().setSlidingEnabled(true);
-                return false;
-            }
-        });
-    }
-
-    public void collapseSlideLayout() {
-        if (getSlideLayout().isExpanded()) {
-            getSlideLayout().collapsePane();
-        }
-    }
-
-    public boolean slideLayoutIsExpanded() {
-        return getSlideLayout().isExpanded();
-    }
-
     private void setOriginAndDestination() {
         if (!reverse) {
             startingPointTextView.setText(getString(R.string.current_location));
@@ -379,6 +316,67 @@ public class RoutePreviewFragment extends BaseFragment
                 .remove(this)
                 .commit();
         getMapController().getMap().layers().remove(markers);
+    }
+
+    public void initSlideLayout(View view) {
+        setSlideLayout((SlidingUpPanelLayout) view.findViewById(R.id.sliding_layout));
+        getSlideLayout().setDragView(view.findViewById(R.id.destination_preview));
+        getSlideLayout().setSlidingEnabled(false);
+        addSlideLayoutTouchListener();
+        getSlideLayout().setPanelSlideListener(getPanelSlideListener());
+    }
+
+    public SlidingUpPanelLayout.PanelSlideListener getPanelSlideListener() {
+        return (new SlidingUpPanelLayout.PanelSlideListener() {
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
+                if (slideOffset < .99) {
+                    if (fragment == null) {
+                        showDirectionListFragmentInExpanded();
+                    }
+                }
+                if (slideOffset > .99 && fragment != null) {
+                    hideDirectionListFragment();
+                    getSlideLayout().collapsePane();
+                }
+                if (slideOffset == 1.0) {
+                    getSlideLayout().setSlidingEnabled(false);
+                }
+            }
+
+            @Override
+            public void onPanelExpanded(View panel) {
+            }
+
+            @Override
+            public void onPanelCollapsed(View panel) {
+                getSlideLayout().setSlidingEnabled(false);
+            }
+
+            @Override
+            public void onPanelAnchored(View panel) {
+            }
+        });
+    }
+
+    private void addSlideLayoutTouchListener() {
+        destinationContainer.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                getSlideLayout().setSlidingEnabled(true);
+                return false;
+            }
+        });
+    }
+
+    public void collapseSlideLayout() {
+        if (getSlideLayout().isExpanded()) {
+            getSlideLayout().collapsePane();
+        }
+    }
+
+    public boolean slideLayoutIsExpanded() {
+        return getSlideLayout().isExpanded();
     }
 
     public SlidingUpPanelLayout getSlideLayout() {
