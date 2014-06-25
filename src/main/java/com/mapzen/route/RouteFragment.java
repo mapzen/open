@@ -374,7 +374,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         storeLocationInfo(location, correctedLocation);
         manageMap(correctedLocation, location);
 
-        Instruction closestInstruction = route.getClosestInstruction(correctedLocation);
+        Instruction closestInstruction = route.getNextInstruction();
         int closestDistance =
                 (int) Math.floor(correctedLocation.distanceTo(closestInstruction.getLocation()));
 
