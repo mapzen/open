@@ -382,7 +382,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         Instruction closestInstruction;
         int closestDistance = 0;
         if (activeInstruction == null) {
-            closestInstruction = route.getClosestInstruction(correctedLocation);
+            closestInstruction = route.getNextInstruction();
             if (closestInstruction == null) {
                 return;
             }
