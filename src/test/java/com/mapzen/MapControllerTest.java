@@ -14,6 +14,7 @@ import org.oscim.core.MapPosition;
 import org.oscim.map.Animator;
 import org.oscim.map.Map;
 import org.oscim.map.TestMap;
+import org.oscim.map.TestViewport;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 
@@ -213,6 +214,21 @@ public class MapControllerTest {
         Map map = getMapController().getMap();
         assertThat(Math.round(map.getMapPosition().getLatitude())).isEqualTo(40);
         assertThat(Math.round(map.getMapPosition().getLongitude())).isEqualTo(100);
+    }
+
+    @Test
+    public void setRoatation_shouldSetRotation() throws Exception {
+        getMapController().setRotation(55f);
+        assertThat(((TestViewport) getMapController().getMap().viewport()).getRotation())
+                .isEqualTo(55f);
+    }
+
+    @Test
+    public void setPosition_shouldSetRotation() throws Exception {
+        getMapController().setPosition(getTestLocation(33.3, 44.4));
+        MapPosition pos = getMapController().getMap().getMapPosition();
+        assertThat(Math.round(pos.getLatitude())).isEqualTo(Math.round(33.3));
+        assertThat(Math.round(pos.getLongitude())).isEqualTo(Math.round(44.4));
     }
 
     @Test

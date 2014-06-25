@@ -29,6 +29,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -71,6 +72,7 @@ import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_POSITION;
 import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
 import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
+import static com.mapzen.util.DatabaseHelper.COLUMN_SPEED;
 import static com.mapzen.util.DatabaseHelper.COLUMN_TABLE_ID;
 import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
@@ -85,6 +87,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public static final String ROUTE_TAG = "route";
 
     @Inject PathLayer path;
+    @Inject ZoomController zoomController;
 
     @InjectView(R.id.overflow_menu) ImageButton overflowMenu;
     @InjectView(R.id.routes) ViewPager pager;
@@ -109,7 +112,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private boolean autoPaging = true;
 
     private static Router router = Router.getRouter();
-    private ZoomController zoomController;
     private SharedPreferences prefs;
     private Resources res;
     private DebugView debugView;
@@ -235,7 +237,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void onResume() {
         super.onResume();
         initLocationReceiver();
-        initZoomController();
+        setupZoomController();
         act.disableActionbar();
         act.hideActionBar();
         act.deactivateMapLocationUpdates();
@@ -306,9 +308,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void manageMap(Location location, Location originalLocation) {
         if (location != null) {
+            zoomController.setAverageSpeed(getAverageSpeed());
             zoomController.setCurrentSpeed(originalLocation.getSpeed());
             getMapController().setZoomLevel(zoomController.getZoom());
             getMapController().setLocation(location).centerOn(location);
+            getMapController().setRotation((float) route.getCurrentRotationBearing());
             routeLocationIndicator.setPosition(location.getLatitude(), location.getLongitude());
             routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
             Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChange: Corrected: "
@@ -320,10 +324,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    private ZoomController initZoomController() {
+    private ZoomController setupZoomController() {
         res = act.getResources();
         prefs = getDefaultSharedPreferences(act);
-        zoomController = new ZoomController();
 
         initZoomLevel(DrivingSpeed.MPH_0_TO_15, R.string.settings_zoom_driving_0to15_key,
                 R.integer.zoom_driving_0to15);
@@ -359,6 +362,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 res.getInteger(defKey)), speed);
     }
 
+    int recordedDistance = 10000;
+    Instruction activeInstruction;
     public void onLocationChanged(Location location) {
         if (!autoPaging || isRouting) {
             return;
@@ -374,18 +379,38 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         storeLocationInfo(location, correctedLocation);
         manageMap(correctedLocation, location);
 
-        Instruction closestInstruction = route.getNextInstruction();
-        int closestDistance =
-                (int) Math.floor(correctedLocation.distanceTo(closestInstruction.getLocation()));
+        Instruction closestInstruction;
+        int closestDistance = 0;
+        if (activeInstruction == null) {
+            closestInstruction = route.getNextInstruction();
+            if (closestInstruction == null) {
+                return;
+            }
+            closestDistance =
+                    (int) Math.floor(correctedLocation
+                            .distanceTo(closestInstruction.getLocation()));
+            activeInstruction = closestInstruction;
+            recordedDistance = closestDistance;
+        }
 
-        final int instructionIndex = instructions.indexOf(closestInstruction);
+        closestDistance =
+                (int) Math.floor(correctedLocation.distanceTo(activeInstruction.getLocation()));
+
+        final int instructionIndex = instructions.indexOf(activeInstruction);
         if (closestDistance <= getAdvanceRadius()) {
             Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: "
-                    + closestInstruction.toString());
+                    + activeInstruction.toString());
             pager.setCurrentItem(instructionIndex);
-            if (!route.getSeenInstructions().contains(closestInstruction)) {
-                route.addSeenInstruction(closestInstruction);
+            if (!route.getSeenInstructions().contains(activeInstruction)) {
+                route.addSeenInstruction(activeInstruction);
             }
+        }
+
+        if (recordedDistance < closestDistance) {
+            activeInstruction = null;
+            recordedDistance = 100000;
+        } else {
+            recordedDistance = closestDistance;
         }
 
         final Iterator it = route.getSeenInstructions().iterator();
@@ -404,7 +429,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
         debugView.setCurrentLocation(location);
         debugView.setSnapLocation(correctedLocation);
-        debugView.setClosestInstruction(closestInstruction, closestDistance);
+        if (activeInstruction != null) {
+            debugView.setClosestInstruction(activeInstruction, closestDistance);
+        }
+        debugView.setAverageSpeed(getAverageSpeed());
         logForDebugging(location, correctedLocation);
     }
 
@@ -553,7 +581,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             changeDistance(-instructions.get(previousPosition).getDistance());
         }
         previousPosition = i;
-        getMapController().setMapPerspectiveForInstruction(instructions.get(i));
+        if (!autoPaging) {
+            getMapController().setMapPerspectiveForInstruction(instructions.get(i));
+        }
         speakerbox.stop();
         speakerbox.play(instructions.get(i).getFullInstruction());
         notificationCreator.createNewNotification(simpleFeature.getMarker().title,
@@ -566,6 +596,28 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     public Set<Instruction> getFlippedInstructions() {
         return flippedInstructions;
+    }
+
+    public int getNumberOfLocationsForAverageSpeed() {
+        return getDefaultSharedPreferences(act).
+                getInt(getString(R.string.settings_number_of_locations_for_average_speed_key),
+                        R.integer.number_of_locations_for_average_speed);
+    }
+
+    public float getAverageSpeed() {
+        Cursor cursor = act.getDb().
+                rawQuery("SELECT AVG(" + COLUMN_SPEED + ") as avg_speed "
+                        + "from (select " + COLUMN_SPEED + " from "
+                        + TABLE_LOCATIONS
+                        + " where "
+                        + COLUMN_ROUTE_ID
+                        + " = '"
+                        + routeId
+                        + "' ORDER BY time DESC LIMIT "
+                        + getNumberOfLocationsForAverageSpeed()
+                        + ")", null);
+        cursor.moveToFirst();
+        return cursor.getFloat(0);
     }
 
     private void initLocationReceiver() {

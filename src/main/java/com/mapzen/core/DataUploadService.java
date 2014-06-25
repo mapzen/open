@@ -245,8 +245,8 @@ public class DataUploadService extends Service {
         MultipartEntity reqEntity = new MultipartEntity();
         try {
             reqEntity.addPart("description", new StringBody(description));
-            reqEntity.addPart("visibility", new StringBody("private"));
-            reqEntity.addPart("public", new StringBody("0"));
+            reqEntity.addPart("visibility", new StringBody("public"));
+            reqEntity.addPart("public", new StringBody("1"));
             reqEntity.addPart("file", new ByteArrayBody(compressedGPX, routeId + ".gpx.gz"));
         } catch (UnsupportedEncodingException e) {
             Logger.e(e.getMessage());
