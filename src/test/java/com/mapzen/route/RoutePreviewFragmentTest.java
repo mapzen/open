@@ -176,7 +176,6 @@ public class RoutePreviewFragmentTest {
         fragment.reverse();
         verify(router, Mockito.times(2)).setLocation(location.capture());
         List<double[]> values = location.getAllValues();
-        System.out.println(values.size());
         assertThat(values.get(0)).isEqualTo(new double[] { 1.0, 1.0 });
         assertThat(values.get(1)).isEqualTo(new double[] { 22.22, 44.44 });
     }
