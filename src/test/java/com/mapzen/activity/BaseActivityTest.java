@@ -525,6 +525,7 @@ public class BaseActivityTest {
         activity.hideOverflowMenu();
         assertThat(menu.findItem(R.id.settings)).isNotVisible();
         assertThat(menu.findItem(R.id.phone_home)).isNotVisible();
+        assertThat(menu.findItem(R.id.upload_traces)).isNotVisible();
         assertThat(menu.findItem(R.id.login)).isNotVisible();
         assertThat(menu.findItem(R.id.logout)).isNotVisible();
     }
@@ -535,6 +536,7 @@ public class BaseActivityTest {
         activity.showOverflowMenu();
         assertThat(menu.findItem(R.id.settings)).isVisible();
         assertThat(menu.findItem(R.id.phone_home)).isVisible();
+        assertThat(menu.findItem(R.id.upload_traces)).isVisible();
     }
 
     @Test
