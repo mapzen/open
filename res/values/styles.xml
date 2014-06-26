@@ -20,9 +20,6 @@
         <item name="android:backgroundStacked">@drawable/ab_stacked_solid_mapzen</item>
         <item name="android:backgroundSplit">@drawable/ab_bottom_solid_mapzen</item>
         <item name="android:progressBarStyle">@style/ProgressBar.Mapzen</item>
-        <item name="android:layout_marginTop">2dp</item>
-        <item name="android:layout_marginLeft">2dp</item>
-        <item name="android:layout_marginRight">2dp</item>
     </style>
 
     <style name="ActionBar.Transparent.Mapzen" parent="@android:style/Widget.Holo.Light.ActionBar">
