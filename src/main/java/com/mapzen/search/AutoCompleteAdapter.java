@@ -13,6 +13,7 @@ import com.mapzen.util.ParcelableUtil;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.graphics.Typeface;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -61,9 +62,13 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     @Override
     public View newView(final Context c, Cursor cursor, ViewGroup parent) {
         LayoutInflater inflater = LayoutInflater.from(c);
-        View v = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
-        assert v != null;
-        v.setOnClickListener(new View.OnClickListener() {
+        final TextView textView =
+                (TextView) inflater.inflate(R.layout.search_dropdown_item, parent, false);
+        final Typeface typeface = Typeface.createFromAsset(c.getAssets(),
+                "fonts/RobotoCondensed-Light.ttf");
+        textView.setTypeface(typeface);
+        assert textView != null;
+        textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 TextView tv = (TextView) view;
@@ -98,7 +103,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                 return false;
             }
         });
-        return v;
+        return textView;
     }
 
     private void dismissKeyboard() {
