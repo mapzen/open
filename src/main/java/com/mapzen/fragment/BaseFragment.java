@@ -94,4 +94,3 @@ public abstract class BaseFragment extends Fragment implements BaseActivity.View
         }
     }
 }
-

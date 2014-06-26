@@ -387,4 +387,3 @@ public class RoutePreviewFragment extends BaseFragment
         this.slideLayout = slideLayout;
     }
 }
-

@@ -232,4 +232,3 @@ public class TestActionBar extends ActionBar {
     public void removeOnMenuVisibilityListener(OnMenuVisibilityListener listener) {
     }
 }
-

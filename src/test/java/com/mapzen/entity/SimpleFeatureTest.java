@@ -111,4 +111,3 @@ public class SimpleFeatureTest {
         assertThat(simpleFeature.getAbbr()).isEqualTo(simpleFeature.getProperty(ADMIN0_ABBR));
     }
 }
-
