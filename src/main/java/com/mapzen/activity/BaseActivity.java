@@ -345,6 +345,7 @@ public class BaseActivity extends MapActivity {
     private void initSavedSearchAutoComplete(final SearchView searchView) {
         final AutoCompleteTextView autoCompleteTextView = getQueryAutoCompleteTextView(searchView);
         autoCompleteTextView.setThreshold(0);
+        autoCompleteTextView.setTextAppearance(this, R.style.MapzenSearchText);
         searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -518,6 +519,7 @@ public class BaseActivity extends MapActivity {
     public void hideOverflowMenu() {
         activityMenu.findItem(R.id.settings).setVisible(false);
         activityMenu.findItem(R.id.phone_home).setVisible(false);
+        activityMenu.findItem(R.id.upload_traces).setVisible(false);
         activityMenu.findItem(R.id.login).setVisible(false);
         activityMenu.findItem(R.id.logout).setVisible(false);
     }
@@ -525,6 +527,7 @@ public class BaseActivity extends MapActivity {
     public void showOverflowMenu() {
         activityMenu.findItem(R.id.settings).setVisible(true);
         activityMenu.findItem(R.id.phone_home).setVisible(true);
+        activityMenu.findItem(R.id.upload_traces).setVisible(true);
         toggleOSMLogin();
     }
 
