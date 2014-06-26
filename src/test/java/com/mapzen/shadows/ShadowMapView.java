@@ -28,4 +28,3 @@ public class ShadowMapView extends ShadowView {
         return new TestMap();
     }
 }
-

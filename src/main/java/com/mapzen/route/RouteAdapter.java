@@ -107,4 +107,3 @@ public class RouteAdapter extends PagerAdapter {
         return view == object;
     }
 }
-

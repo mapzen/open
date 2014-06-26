@@ -176,4 +176,3 @@ public class SimpleFeature implements Parcelable {
         }
     }
 }
-
