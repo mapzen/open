@@ -325,4 +325,3 @@ public class DataUploadService extends Service {
         return compressedGPX;
     }
 }
-

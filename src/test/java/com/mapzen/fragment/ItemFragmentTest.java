@@ -169,4 +169,3 @@ public class ItemFragmentTest {
                 act.getString(R.string.gps_dialog_message));
     }
 }
-

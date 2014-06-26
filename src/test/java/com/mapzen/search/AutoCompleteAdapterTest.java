@@ -163,4 +163,3 @@ public class AutoCompleteAdapterTest {
                 .isEqualTo(simpleFeature.getHint());
     }
 }
-

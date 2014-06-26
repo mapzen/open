@@ -30,4 +30,3 @@ public class OSMApi extends DefaultApi10a {
         return String.format(AUTHORIZATION_URL, requestToken.getToken());
     }
 }
-

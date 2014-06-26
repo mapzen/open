@@ -30,4 +30,3 @@ public class ShadowVectorTileLayer {
                 .in(realVectorTileLayer).set(new VectorTileLayer.TileLoaderProcessHook[0]);
     }
 }
-
