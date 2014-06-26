@@ -20,6 +20,12 @@
         <item name="android:backgroundStacked">@drawable/ab_stacked_solid_mapzen</item>
         <item name="android:backgroundSplit">@drawable/ab_bottom_solid_mapzen</item>
         <item name="android:progressBarStyle">@style/ProgressBar.Mapzen</item>
+        <item name="android:titleTextStyle">@style/MapzenTitleText</item>
+    </style>
+
+    <style name="MapzenTitleText" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/red</item>
+        <item name="android:textSize">@dimen/medium</item>
     </style>
 
     <style name="ActionBar.Transparent.Mapzen" parent="@android:style/Widget.Holo.Light.ActionBar">
