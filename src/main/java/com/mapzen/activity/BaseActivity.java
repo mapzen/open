@@ -51,6 +51,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -356,6 +357,15 @@ public class BaseActivity extends MapActivity {
                 }
             }
         });
+
+        final ImageView close = (ImageView) searchView.findViewById(searchView.getContext()
+                .getResources().getIdentifier("android:id/search_close_btn", null, null));
+        close.setImageDrawable(getResources().getDrawable(R.drawable.ic_cancel));
+
+        // TODO: Set hint icon. Why doesn't this work?
+        final ImageView hint = (ImageView) searchView.findViewById(searchView.getContext()
+                .getResources().getIdentifier("android:id/search_mag_icon", null, null));
+        hint.setImageDrawable(getResources().getDrawable(R.drawable.ic_search_results_pin));
     }
 
     public AutoCompleteTextView getQueryAutoCompleteTextView(SearchView searchView) {
