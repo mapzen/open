@@ -16,6 +16,7 @@ import com.mapzen.osrm.Router;
 import com.mapzen.shadows.ShadowBugSenseHandler;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
+import com.mapzen.support.TestHelper;
 import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.RouteLocationIndicator;
 import com.mapzen.util.MapzenNotificationCreator;
@@ -286,6 +287,22 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onLocationChange_shouldStoreSpeedInDatabase() throws Exception {
+        initTestFragment();
+        FragmentTestUtil.startFragment(fragment);
+        Location testLocation = fragment.getRoute().getGeometry().get(2);
+        float expectedSpeed = 44.0f;
+        testLocation.setSpeed(expectedSpeed);
+        fragment.onLocationChanged(testLocation);
+        Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
+                new String[] { DatabaseHelper.COLUMN_SPEED },
+                null, null, null, null, null);
+        assertThat(cursor).hasCount(1);
+        cursor.moveToNext();
+        assertThat(cursor.getFloat(0)).isEqualTo(expectedSpeed);
+    }
+
+    @Test
     public void onLocationChange_shouldNotStoreDatabaseRecord() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(99.0, 89.0));
@@ -469,6 +486,8 @@ public class RouteFragmentTest {
     public void onTouch_shouldStoreCurrentItemWhenPagerWasFirstTouched() throws Exception {
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
+        route.addSeenInstruction(instructions.get(0));
+        route.addSeenInstruction(instructions.get(1));
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
         fragment.onLocationChanged(instructions.get(2).getLocation());
@@ -495,6 +514,8 @@ public class RouteFragmentTest {
     public void onClickResume_shouldStartAtPagerLocation() throws Exception {
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
+        route.addSeenInstruction(instructions.get(0));
+        route.addSeenInstruction(instructions.get(1));
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
         fragment.onLocationChanged(instructions.get(2).getLocation());
@@ -605,6 +626,8 @@ public class RouteFragmentTest {
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
         fragment.setInstructions(instructions);
+        route.addSeenInstruction(instructions.get(0));
+        route.addSeenInstruction(instructions.get(1));
         FragmentTestUtil.startFragment(fragment);
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
         fragment.onLocationChanged(instructions.get(2).getLocation());
@@ -627,6 +650,8 @@ public class RouteFragmentTest {
     public void onLocationChange_shouldAdvanceWhenUserHasResumed() throws Exception {
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
+        route.addSeenInstruction(instructions.get(0));
+        route.addSeenInstruction(instructions.get(1));
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
         simulateUserPagerTouch();
@@ -654,10 +679,27 @@ public class RouteFragmentTest {
         ArrayList<Instruction> instructions = route.getRouteInstructions();
         fragment.onLocationChanged(instructions.get(0).getLocation());
         fragment.onLocationChanged(instructions.get(1).getLocation());
+        fragment.onLocationChanged(instructions.get(1).getLocation());
         fragment.onLocationChanged(instructions.get(2).getLocation());
         assertThat(fragment.getFlippedInstructions().contains(instructions.get(0))).isTrue();
         assertThat(fragment.getFlippedInstructions().contains(instructions.get(1))).isTrue();
         assertThat(fragment.getFlippedInstructions().contains(instructions.get(2))).isFalse();
+    }
+
+    @Test
+    public void onLocationChange_shouldNotCrashIfClosestInstructionsAreExhausted()
+            throws Exception {
+        fragment.setRoute(new Route(MOCK_ROUTE_JSON));
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onResume();
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        for (Instruction instruction: instructions) {
+            route.addSeenInstruction(instruction);
+        }
+        fragment.onLocationChanged(instructions.get(0).getLocation());
+        fragment.onLocationChanged(instructions.get(1).getLocation());
+        fragment.onLocationChanged(instructions.get(2).getLocation());
     }
 
     @Test
@@ -721,6 +763,7 @@ public class RouteFragmentTest {
         setAdvanceRadiusPreference(R.string.settings_turn_driving_25to35_key, 300);
         setAdvanceRadiusPreference(R.string.settings_turn_driving_35to50_key, 400);
         setAdvanceRadiusPreference(R.string.settings_turn_driving_over50_key, 500);
+        setNumberOfLocationForAverageSpeed(1);
 
         FragmentTestUtil.startFragment(fragment);
         Location location = fragment.getRoute().getRouteInstructions().get(0).getLocation();
@@ -777,6 +820,37 @@ public class RouteFragmentTest {
         shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
         assertThat(shadowTextToSpeech.getLastSpokenText())
                 .isEqualTo("Head on 19th Street for 0.1 miles");
+    }
+
+    @Test
+    public void onPageSelected_shouldTurnMap() throws Exception {
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        fragment.setInstructions(instructions);
+        route.addSeenInstruction(instructions.get(0));
+        route.addSeenInstruction(instructions.get(1));
+        FragmentTestUtil.startFragment(fragment);
+        simulateUserPagerTouch();
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
+        fragment.onPageSelected(2);
+        Instruction i = instructions.get(2);
+        TestViewport viewport = (TestViewport) act.getMap().viewport();
+        assertThat(viewport.getRotation()).isEqualTo(i.getRotationBearing());
+    }
+
+    @Test
+    public void onPageSelected_shouldNotTurnMap() throws Exception {
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        fragment.setInstructions(instructions);
+        route.addSeenInstruction(instructions.get(0));
+        route.addSeenInstruction(instructions.get(1));
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
+        fragment.onPageSelected(2);
+        Instruction i = instructions.get(2);
+        TestViewport viewport = (TestViewport) act.getMap().viewport();
+        assertThat(viewport.getRotation()).isNotEqualTo(i.getRotationBearing());
     }
 
     @Test
@@ -1074,6 +1148,7 @@ public class RouteFragmentTest {
         Resources res = act.getResources();
         FragmentTestUtil.startFragment(fragment);
         Location location = fragment.getRoute().getRouteInstructions().get(0).getLocation();
+        setNumberOfLocationForAverageSpeed(1);
 
         assertZoomLevel(res.getInteger(R.integer.zoom_driving_0to15), 10, location);
         assertZoomLevel(res.getInteger(R.integer.zoom_driving_15to25), 20, location);
@@ -1094,6 +1169,8 @@ public class RouteFragmentTest {
         editPrefs.putInt(act.getString(R.string.settings_zoom_driving_over50_key), 10);
 
         editPrefs.commit();
+
+        setNumberOfLocationForAverageSpeed(1);
         FragmentTestUtil.startFragment(fragment);
         Location location = fragment.getRoute().getRouteInstructions().get(0).getLocation();
 
@@ -1167,6 +1244,29 @@ public class RouteFragmentTest {
         assertThat(broadcastClassName).isEqualTo("com.mapzen.util.NotificationBroadcastReciever");
     }
 
+    @Test
+    public void getAverageSpeed_shouldDefaultToZero() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(fragment.getAverageSpeed()).isEqualTo(0);
+    }
+
+    @Test
+    public void getAverageSpeed_shouldReturnAverageOfLastNLocationUpdates() throws Exception {
+        initTestFragment();
+        FragmentTestUtil.startFragment(fragment);
+        TestHelper.TestLocation.Builder locationBuilder =
+                new TestHelper.TestLocation.Builder(fragment.getRoute().getGeometry().get(2));
+        float expectedSpeed = 10.0f;
+        locationBuilder.setSpeed(200.0f);
+        fragment.onLocationChanged(locationBuilder.build());
+        locationBuilder.setSpeed(expectedSpeed);
+        setNumberOfLocationForAverageSpeed(10);
+        for (int i = 0; i < fragment.getNumberOfLocationsForAverageSpeed(); i++) {
+            fragment.onLocationChanged(locationBuilder.build());
+        }
+        assertThat(fragment.getAverageSpeed()).isEqualTo(expectedSpeed);
+    }
+
     private void assertZoomLevel(int expected, float milesPerHour, Location location) {
         location.setSpeed(ZoomController.milesPerHourToMetersPerSecond(milesPerHour));
         fragment.onLocationChanged(location);
@@ -1213,6 +1313,14 @@ public class RouteFragmentTest {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
         SharedPreferences.Editor prefEditor = prefs.edit();
         prefEditor.putInt(act.getString(key), value);
+        prefEditor.commit();
+    }
+
+    private void setNumberOfLocationForAverageSpeed(int value) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
+        SharedPreferences.Editor prefEditor = prefs.edit();
+        prefEditor.putInt(
+                act.getString(R.string.settings_number_of_locations_for_average_speed_key), value);
         prefEditor.commit();
     }
 

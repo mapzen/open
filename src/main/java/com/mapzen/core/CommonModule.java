@@ -1,6 +1,7 @@
 package com.mapzen.core;
 
 import com.mapzen.MapzenApplication;
+import com.mapzen.helpers.ZoomController;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
 import android.content.Context;
@@ -18,6 +19,10 @@ public class CommonModule {
 
     @Provides @Singleton MapzenProgressDialogFragment provideMapzenProgressDialogFragment() {
         return new MapzenProgressDialogFragment();
+    }
+
+    @Provides @Singleton ZoomController provideZoomController() {
+        return new ZoomController();
     }
 
     /**

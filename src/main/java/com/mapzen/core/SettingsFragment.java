@@ -67,6 +67,9 @@ public class SettingsFragment extends PreferenceFragment {
         displayValue(R.string.settings_turn_driving_25to35_key, R.integer.turn_driving_25to35);
         displayValue(R.string.settings_turn_driving_35to50_key, R.integer.turn_driving_35to50);
         displayValue(R.string.settings_turn_driving_over50_key, R.integer.turn_driving_over50);
+
+        displayValue(R.string.settings_number_of_locations_for_average_speed_key,
+                R.integer.number_of_locations_for_average_speed);
     }
 
     private void initSharedPrefsListener() {

@@ -15,4 +15,6 @@
     <integer name="turn_driving_25to35">150</integer>
     <integer name="turn_driving_35to50">200</integer>
     <integer name="turn_driving_over50">300</integer>
+
+    <integer name="number_of_locations_for_average_speed">10</integer>
 </resources>

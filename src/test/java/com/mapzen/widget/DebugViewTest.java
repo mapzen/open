@@ -71,6 +71,12 @@ public class DebugViewTest {
     }
 
     @Test
+    public void currentLocation_shouldHaveAverageSpeed() throws Exception {
+        debugView.setAverageSpeed(milesPerHourToMetersPerSecond(45));
+        assertThat(debugView.averageSpeed).hasText("(Avg: 45 mph)");
+    }
+
+    @Test
     public void snapLocation_shouldHaveTitle() throws Exception {
         assertThat((TextView) debugView.findViewById(R.id.snap_location))
                 .hasText("Snap Location");

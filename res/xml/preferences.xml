@@ -113,4 +113,11 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/settings_speed_title">
+        <com.mapzen.widget.EditIntPreference
+            android:defaultValue="@integer/number_of_locations_for_average_speed"
+            android:key="@string/settings_number_of_locations_for_average_speed_key"
+            android:title="@string/settings_number_of_locations_for_average_speed_title" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

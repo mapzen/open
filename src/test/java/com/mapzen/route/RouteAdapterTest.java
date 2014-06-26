@@ -47,14 +47,16 @@ public class RouteAdapterTest {
     public void firstInstruction_shouldHaveDarkGrayBackground() throws Exception {
         View view = (View) routeAdapter.instantiateItem(viewGroup, 0);
         ColorDrawable background = (ColorDrawable) view.getBackground();
-        assertThat(background.getColor()).isEqualTo(0xff333333);
+        int expectedColor = application.getResources().getColor(R.color.dark_gray);
+        assertThat(background.getColor()).isEqualTo(expectedColor);
     }
 
     @Test
     public void lastInstruction_shouldHaveGreenBackground() throws Exception {
         View view = (View) routeAdapter.instantiateItem(viewGroup, 1);
         ColorDrawable background = (ColorDrawable) view.getBackground();
-        assertThat(background.getColor()).isEqualTo(0xff68a547);
+        int expectedColor = application.getResources().getColor(R.color.destination_green);
+        assertThat(background.getColor()).isEqualTo(expectedColor);
     }
 
     @Test
