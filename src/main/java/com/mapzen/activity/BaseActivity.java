@@ -345,6 +345,7 @@ public class BaseActivity extends MapActivity {
     private void initSavedSearchAutoComplete(final SearchView searchView) {
         final AutoCompleteTextView autoCompleteTextView = getQueryAutoCompleteTextView(searchView);
         autoCompleteTextView.setThreshold(0);
+        autoCompleteTextView.setTextAppearance(this, R.style.MapzenSearchText);
         searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
