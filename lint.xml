@@ -41,6 +41,6 @@
     <issue id="MissingRegistered" severity="ignore" />
     <issue id="InvalidPackage" severity="ignore" />
     <issue id="UseCompoundDrawables" severity="ignore" />
+    <issue id="IconColors" severity="ignore" />
 
 </lint>
-
