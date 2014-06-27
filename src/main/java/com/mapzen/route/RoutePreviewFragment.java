@@ -1,5 +1,6 @@
 package com.mapzen.route;
 
+import android.widget.FrameLayout;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
@@ -69,6 +70,7 @@ public class RoutePreviewFragment extends BaseFragment
     @InjectView(R.id.by_bike) RadioButton byBike;
     @InjectView(R.id.start) TextView startBtn;
     @InjectView(R.id.routing_mode) RadioGroup routingMode;
+    @InjectView(R.id.routes_preview_container) FrameLayout routePreviewContainer;
 
     public static RoutePreviewFragment newInstance(BaseActivity act,
                                                    SimpleFeature destination) {
@@ -83,6 +85,7 @@ public class RoutePreviewFragment extends BaseFragment
     @Override
     public void onResume() {
         super.onResume();
+        routePreviewContainer.setVisibility(View.VISIBLE);
         act.hideActionBar();
     }
 
@@ -291,5 +294,6 @@ public class RoutePreviewFragment extends BaseFragment
                 .add(R.id.routes_container, routeFragment, RouteFragment.TAG)
                 .commit();
         getMapController().getMap().layers().remove(markers);
+        routePreviewContainer.setVisibility(View.INVISIBLE);
     }
 }
