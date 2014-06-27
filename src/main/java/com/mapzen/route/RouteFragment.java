@@ -1,5 +1,7 @@
 package com.mapzen.route;
 
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
@@ -18,6 +20,7 @@ import com.mapzen.widget.DistanceView;
 
 import com.bugsense.trace.BugSenseHandler;
 
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.PathLayer;
@@ -92,6 +95,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @InjectView(R.id.overflow_menu) ImageButton overflowMenu;
     @InjectView(R.id.routes) ViewPager pager;
     @InjectView(R.id.resume_button) Button resume;
+    @InjectView(R.id.footer) LinearLayout footer;
 
     private ArrayList<Instruction> instructions;
     private RouteAdapter adapter;
@@ -115,6 +119,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private SharedPreferences prefs;
     private Resources res;
     private DebugView debugView;
+    private SlidingUpPanelLayout slideLayout;
+    private DirectionListFragment directionListFragmentragment = null;
 
     public static void setRouter(Router router) {
         RouteFragment.router = router;
@@ -157,6 +163,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             }
         });
         initDebugView(rootView);
+        initSlideLayout(rootView);
         return rootView;
     }
 
@@ -492,7 +499,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void showDirectionListFragment() {
         final Fragment fragment = DirectionListFragment.newInstance(instructions, this);
         act.getSupportFragmentManager().beginTransaction()
-                .add(R.id.routing_widget, fragment, DirectionListFragment.TAG)
+                .add(R.id.routes, fragment, DirectionListFragment.TAG)
                 .addToBackStack(null)
                 .commit();
     }
@@ -754,5 +761,103 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (act.isInDebugMode()) {
             debugView.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void initSlideLayout(View view) {
+        setSlideLayout((SlidingUpPanelLayout) view.findViewById(R.id.sliding_layout));
+        getSlideLayout().setDragView(view.findViewById(R.id.destination_name));
+       w getSlideLayout().setSlidingEnabled(false);
+        addSlideLayoutTouchListener();
+        getSlideLayout().setPanelSlideListener(getPanelSlideListener());
+    }
+
+    public SlidingUpPanelLayout.PanelSlideListener getPanelSlideListener() {
+        return (new SlidingUpPanelLayout.PanelSlideListener() {
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
+                if (slideOffset < .99) {
+                    if (directionListFragmentragment == null) {
+                        showDirectionListFragmentInExpanded();
+                    }
+                }
+                if (slideOffset > .99 && directionListFragmentragment != null) {
+                    hideDirectionListFragment();
+                    getSlideLayout().collapsePane();
+                }
+                if (slideOffset == 1.0) {
+                    getSlideLayout().setSlidingEnabled(false);
+                }
+            }
+
+            @Override
+            public void onPanelExpanded(View panel) {
+            }
+
+            @Override
+            public void onPanelCollapsed(View panel) {
+                getSlideLayout().setSlidingEnabled(false);
+            }
+
+            @Override
+            public void onPanelAnchored(View panel) {
+            }
+        });
+    }
+
+    private void showDirectionListFragmentInExpanded() {
+        directionListFragmentragment = DirectionListFragment.
+                newInstance(route.getRouteInstructions(),
+                        new DirectionListFragment.DirectionListener() {
+                            @Override
+                            public void onInstructionSelected(int index) {
+                            }
+                        });
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.footer, directionListFragmentragment, DirectionListFragment.TAG)
+                .disallowAddToBackStack()
+                .commit();
+    }
+
+    private void hideDirectionListFragment() {
+        if (directionListFragmentragment != null) {
+            getChildFragmentManager()
+                    .beginTransaction()
+                    .disallowAddToBackStack()
+                    .remove(directionListFragmentragment)
+                    .commit();
+        }
+        directionListFragmentragment = null;
+    }
+
+    private void addSlideLayoutTouchListener() {
+        footer.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                getSlideLayout().setSlidingEnabled(true);
+                return false;
+            }
+        });
+    }
+
+    public void collapseSlideLayout() {
+        if (getSlideLayout().isExpanded()) {
+            getSlideLayout().collapsePane();
+        }
+    }
+
+    public void expandInstructionsPane() {
+        getSlideLayout().expandPane();
+    }
+
+    public boolean slideLayoutIsExpanded() {
+        return getSlideLayout().isExpanded();
+    }
+
+    public SlidingUpPanelLayout getSlideLayout() {
+        return slideLayout;
+    }
+
+    public void setSlideLayout(SlidingUpPanelLayout slideLayout) {
+        this.slideLayout = slideLayout;
     }
 }

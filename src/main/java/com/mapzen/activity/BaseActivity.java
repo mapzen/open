@@ -10,6 +10,7 @@ import com.mapzen.core.DataUploadService;
 import com.mapzen.core.OSMOauthFragment;
 import com.mapzen.core.SettingsFragment;
 import com.mapzen.fragment.MapFragment;
+import com.mapzen.route.RouteFragment;
 import com.mapzen.route.RoutePreviewFragment;
 import com.mapzen.search.AutoCompleteAdapter;
 import com.mapzen.search.OnPoiClickListener;
@@ -396,15 +397,15 @@ public class BaseActivity extends MapActivity {
     public void onBackPressed() {
         SettingsFragment settingsFragment = (SettingsFragment) getFragmentManager()
                 .findFragmentByTag(SettingsFragment.TAG);
-        RoutePreviewFragment routePreviewFragment = (RoutePreviewFragment)
+        RouteFragment routeFragment = (RouteFragment)
                 getSupportFragmentManager().findFragmentByTag(RoutePreviewFragment.TAG);
         if (settingsFragment != null && settingsFragment.isAdded()) {
             getFragmentManager().beginTransaction()
                     .detach(settingsFragment)
                     .commit();
-        }  else if (routePreviewFragment != null && routePreviewFragment.isAdded()
-                && routePreviewFragment.slideLayoutIsExpanded()) {
-            routePreviewFragment.collapseSlideLayout();
+        }  else if (routeFragment != null && routeFragment.isAdded()
+                && routeFragment.slideLayoutIsExpanded()) {
+            routeFragment.collapseSlideLayout();
         } else {
             super.onBackPressed();
         }
