@@ -1,7 +1,6 @@
 package com.mapzen.route;
 
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
@@ -766,7 +765,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void initSlideLayout(View view) {
         setSlideLayout((SlidingUpPanelLayout) view.findViewById(R.id.sliding_layout));
         getSlideLayout().setDragView(view.findViewById(R.id.destination_name));
-       w getSlideLayout().setSlidingEnabled(false);
+        getSlideLayout().setSlidingEnabled(false);
         addSlideLayoutTouchListener();
         getSlideLayout().setPanelSlideListener(getPanelSlideListener());
     }
