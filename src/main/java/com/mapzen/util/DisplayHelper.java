@@ -15,8 +15,8 @@ public final class DisplayHelper {
      * @param turnInstruction the integer value representing this turn instruction.
      * @return the resource ID of the turn icon to display.
      */
-    public static int getRouteDrawable(Context context, int turnInstruction) {
-        int drawableId = context.getResources().getIdentifier("ic_route"  + "_"
+    public static int getRouteDrawable(Context context, int turnInstruction, String iconStyle) {
+        int drawableId = context.getResources().getIdentifier("ic_route"  + iconStyle
                 + turnInstruction, "drawable", context.getPackageName());
 
         if (drawableId == 0) {
@@ -24,5 +24,10 @@ public final class DisplayHelper {
         }
 
         return drawableId;
+    }
+
+    public static class IconStyle {
+        public static final String STANDARD = "_";
+        public static final String GRAY = "_gr_";
     }
 }
