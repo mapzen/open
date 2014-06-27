@@ -1,85 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/routing_widget"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@android:color/transparent">
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/routes"
+<com.sothree.slidinguppanel.SlidingUpPanelLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:sothree="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/route_header_height"
-        android:keepScreenOn="true" />
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        sothree:panelHeight="@dimen/route_footer_height"
+        sothree:shadowHeight="4dp"
+        sothree:paralaxOffset="200dp">
 
-    <LinearLayout
-        android:id="@+id/footer"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/route_footer_height"
-        android:layout_alignParentBottom="true"
-        android:background="@android:color/white"
-        android:orientation="horizontal"
-        android:paddingBottom="@dimen/default_padding_vertical"
-        android:paddingLeft="@dimen/default_padding_horizontal"
-        android:paddingRight="@dimen/narrow_padding_horizontal"
-        android:paddingTop="@dimen/default_padding_vertical">
+    <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/destination_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textColor="@android:color/black"
-            android:textSize="16sp" />
+        <android.support.v4.view.ViewPager
+                android:id="@+id/routes"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/route_header_height"
+                android:keepScreenOn="true" />
 
-        <com.mapzen.widget.DistanceView
-            android:id="@+id/destination_distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/narrow_padding_horizontal"
-            android:layout_weight="0"
-            android:textColor="@android:color/black"
-            android:textSize="16sp" />
+    </RelativeLayout>
 
-        <ImageButton
-            android:id="@+id/overflow_menu"
-            android:layout_width="@dimen/icon_width"
-            android:layout_height="@dimen/icon_height"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/narrow_padding_horizontal"
-            android:layout_weight="0"
-            android:background="@drawable/selectable_background_mapzen"
-            android:contentDescription="@string/overflow_menu"
-            android:src="@drawable/ic_menu_moreoverflow_normal_holo_light" />
+    <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    </LinearLayout>
+        <LinearLayout
+                android:id="@+id/footer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="top"
 
-    <Button
-        android:id="@+id/resume_button"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/route_resume_height"
-        android:layout_above="@id/footer"
-        android:text="@string/route_resume_button"
-        android:visibility="gone" />
+                android:background="@android:color/white"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/default_padding_vertical"
+                android:paddingLeft="@dimen/default_padding_horizontal"
+                android:paddingRight="@dimen/narrow_padding_horizontal"
+                android:paddingTop="@dimen/default_padding_vertical">
 
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/divider_height"
-        android:layout_above="@id/footer"
-        android:background="@color/dark_gray" />
+            <TextView
+                    android:id="@+id/destination_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
 
-    <com.mapzen.widget.DebugView
-        android:id="@+id/debugging"
-        android:layout_width="match_parent"
-        android:layout_height="148dp"
-        android:layout_above="@id/divider"
-        android:background="#66000000"
-        android:visibility="gone" />
+            <com.mapzen.widget.DistanceView
+                    android:id="@+id/destination_distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/narrow_padding_horizontal"
+                    android:layout_weight="0"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
 
-</RelativeLayout>
+            <ImageButton
+                    android:id="@+id/overflow_menu"
+                    android:layout_width="@dimen/icon_width"
+                    android:layout_height="@dimen/icon_height"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/narrow_padding_horizontal"
+                    android:layout_weight="0"
+                    android:background="@drawable/selectable_background_mapzen"
+                    android:contentDescription="@string/overflow_menu"
+                    android:src="@drawable/ic_menu_moreoverflow_normal_holo_light" />
+
+        </LinearLayout>
+
+        <Button
+                android:id="@+id/resume_button"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/route_resume_height"
+                android:layout_above="@id/footer"
+                android:text="@string/route_resume_button"
+                android:visibility="gone" />
+
+        <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_height"
+                android:layout_above="@id/footer"
+                android:background="@color/dark_gray" />
+
+        <com.mapzen.widget.DebugView
+                android:id="@+id/debugging"
+                android:layout_width="match_parent"
+                android:layout_height="148dp"
+                android:layout_above="@id/divider"
+                android:background="#66000000"
+                android:visibility="gone" />
+
+    </RelativeLayout>
+
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>
