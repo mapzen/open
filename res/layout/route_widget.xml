@@ -19,6 +19,7 @@
         <android.support.v4.view.ViewPager
                 android:id="@+id/routes"
                 android:layout_width="match_parent"
+                android:background="@color/transparent_white"
                 android:layout_height="@dimen/route_header_height"
                 android:keepScreenOn="true" />
 
@@ -34,7 +35,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="top"
-
                 android:background="@android:color/white"
                 android:orientation="horizontal"
                 android:paddingBottom="@dimen/default_padding_vertical"
@@ -51,7 +51,8 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/brown"
+                    android:fontFamily="sans-serif-condensed"
                     android:textSize="16sp" />
 
             <com.mapzen.widget.DistanceView
@@ -61,7 +62,9 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/narrow_padding_horizontal"
                     android:layout_weight="0"
-                    android:textColor="@android:color/black"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textStyle="bold"
+                    android:textColor="@color/brown"
                     android:textSize="16sp" />
 
             <ImageButton
