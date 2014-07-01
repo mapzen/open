@@ -16,4 +16,5 @@
     <color name="brown">#563630</color>
     <color name="light_gray">#898989</color>
     <color name="transparent_white">#CCFFFFFF</color>
+    <color name="transparent_gray">#CCCECECE</color>
 </resources>

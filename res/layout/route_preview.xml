@@ -10,7 +10,21 @@
             android:id="@+id/top_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white">
+            android:gravity="center"
+            android:paddingLeft="15dp"
+            android:paddingTop="15dp"
+            android:background="@color/transparent_white">
+
+        <ImageButton
+                android:id="@+id/route_reverse"
+                android:layout_gravity="center_horizontal|center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/reverse"
+                android:src="@drawable/ic_switch" />
+
 
         <LinearLayout
                 android:id="@+id/places"
@@ -18,57 +32,123 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/default_margin"
-                android:background="@color/dark_gray"
                 android:orientation="vertical">
+
+            <LinearLayout
+                    android:id="@+id/start_location_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                <TextView
+                        android:id="@+id/from_text"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="@color/dark_gray"
+                        android:textSize="16sp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="From:"
+                        android:fontFamily="sans-serif-condensed"/>
+            <ImageView
+                    android:id="@+id/starting_location_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_locate"/>
 
             <TextView
                     android:id="@+id/starting_point"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:textColor="@android:color/black"
-                    android:background="@android:color/white"
+                    android:textColor="@color/brown"
                     android:textSize="20sp"
                     android:padding="@dimen/default_padding"
                     android:layout_width="match_parent"
                     android:layout_marginBottom="1dp"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed"/>
+            </LinearLayout>
 
+            <View
+                    android:id="@+id/border"
+                    android:layout_width="wrap_content"
+                    android:layout_marginRight="30dp"
+                    android:layout_height="1dp"
+                    android:background="@color/transparent_gray" />
+
+            <LinearLayout
+                    android:id="@+id/destination_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+
+                <TextView
+                        android:id="@+id/to_text"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="@color/dark_gray"
+                        android:textSize="16sp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"
+                        android:text="To:"
+                        android:fontFamily="sans-serif-condensed"/>
+                <ImageView
+                        android:id="@+id/destination_location_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_locate"
+                        android:visibility="gone"/>
             <TextView
                     android:id="@+id/destination"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:textColor="@android:color/black"
-                    android:background="@android:color/white"
+                    android:textColor="@color/brown"
                     android:textSize="20sp"
                     android:padding="@dimen/default_padding"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed"/>
+
+                </LinearLayout>
         </LinearLayout>
 
-        <ImageButton
-                android:id="@+id/route_reverse"
-                android:layout_weight="1"
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:contentDescription="@string/reverse"
-                android:src="@drawable/ic_switch" />
 
     </LinearLayout>
 
-    <View
-            android:id="@+id/border"
-            android:layout_below="@id/top_row"
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:background="@color/dark_gray" />
-
     <LinearLayout
+            android:id="@+id/location_divider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/border"
-            android:background="@android:color/white"
+            android:layout_below="@id/top_row"
+            android:paddingRight="15dp"
+            android:background="@color/transparent_white"
+            android:orientation="vertical">
+
+     <View
+                android:layout_below="@id/top_row"
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginLeft="15dp"
+                android:background="@color/brown" />
+
+    <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="2dp"
+            android:background="@color/brown" />
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/routing_options"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/location_divider"
+            android:gravity="center_horizontal"
+            android:background="@color/transparent_white"
             android:divider="@color/dark_gray">
 
         <RadioGroup
