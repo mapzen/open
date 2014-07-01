@@ -1,6 +1,10 @@
 package com.mapzen.route;
 
-import android.widget.FrameLayout;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
@@ -25,7 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -69,9 +72,17 @@ public class RoutePreviewFragment extends BaseFragment
     @InjectView(R.id.by_foot) RadioButton byFoot;
     @InjectView(R.id.by_bike) RadioButton byBike;
     @InjectView(R.id.start) TextView startBtn;
-    @InjectView(R.id.routing_mode) RadioGroup routingMode;
-    @InjectView(R.id.routes_preview_container) FrameLayout routePreviewContainer;
-
+    @InjectView(R.id.top_row) LinearLayout topRow;
+    @InjectView(R.id.routing_options) LinearLayout routingMode;
+    @InjectView(R.id.border) View border;
+    @InjectView(R.id.destination_container) RelativeLayout destinationContainer;
+    @InjectView(R.id.divider) View divider;
+    @InjectView(R.id.starting_location_icon) ImageView startLocationIcon;
+    @InjectView(R.id.destination_location_icon) ImageView destinationLocationIcon;
+    @InjectView(R.id.start_location_layout) LinearLayout startLocationLayout;
+    @InjectView(R.id.destination_layout) LinearLayout destinationLayout;
+    @InjectView(R.id.to_text) TextView toTextView;
+    @InjectView(R.id.from_text) TextView fromTextView;
     public static RoutePreviewFragment newInstance(BaseActivity act,
                                                    SimpleFeature destination) {
         final RoutePreviewFragment fragment = new RoutePreviewFragment();
@@ -85,7 +96,7 @@ public class RoutePreviewFragment extends BaseFragment
     @Override
     public void onResume() {
         super.onResume();
-        routePreviewContainer.setVisibility(View.VISIBLE);
+        showFragmentContents();
         act.hideActionBar();
     }
 
@@ -111,15 +122,23 @@ public class RoutePreviewFragment extends BaseFragment
     }
 
     private void setOriginAndDestination() {
+        toTextView.setVisibility(View.VISIBLE);
+        fromTextView.setVisibility(View.VISIBLE);
+
         if (!reverse) {
             startingPointTextView.setText(getString(R.string.current_location));
             destinationTextView.setText(destination.getProperty(NAME));
             destinationPreview.setText(destination.getProperty(NAME));
+            startLocationIcon.setVisibility(View.VISIBLE);
+            destinationLocationIcon.setVisibility(View.GONE);
             startBtn.setText(getString(R.string.start));
+
         } else {
             startingPointTextView.setText(destination.getProperty(NAME));
             destinationTextView.setText(getString(R.string.current_location));
             destinationPreview.setText(getString(R.string.current_location));
+            startLocationIcon.setVisibility(View.GONE);
+            destinationLocationIcon.setVisibility(View.VISIBLE);
             startBtn.setText(getString(R.string.view));
         }
         if (route != null) {
@@ -130,6 +149,16 @@ public class RoutePreviewFragment extends BaseFragment
     @SuppressWarnings("unused")
     @OnClick(R.id.route_reverse) public void reverse() {
         reverse = !reverse;
+        toTextView.setVisibility(View.GONE);
+        fromTextView.setVisibility(View.GONE);
+
+        Animation rotateAnimation = AnimationUtils.loadAnimation(act, R.anim.rotate180);
+        routeReverse.startAnimation(rotateAnimation);
+        Animation slideOut = AnimationUtils.loadAnimation(act, R.anim.moveout);
+        Animation slideIn = AnimationUtils.loadAnimation(act, R.anim.movein);
+
+        startLocationLayout.startAnimation(slideOut);
+        destinationLayout.startAnimation(slideIn);
         setOriginAndDestination();
         createRouteToDestination();
     }
@@ -287,6 +316,7 @@ public class RoutePreviewFragment extends BaseFragment
     }
 
     private void startRouting() {
+        hideFragmentContents();
         RouteFragment routeFragment = RouteFragment.newInstance(act, destination);
         routeFragment.setRoute(route);
         act.getSupportFragmentManager().beginTransaction()
@@ -294,6 +324,24 @@ public class RoutePreviewFragment extends BaseFragment
                 .add(R.id.routes_container, routeFragment, RouteFragment.TAG)
                 .commit();
         getMapController().getMap().layers().remove(markers);
-        routePreviewContainer.setVisibility(View.INVISIBLE);
+    }
+
+    private void hideFragmentContents() {
+            topRow.setVisibility(View.INVISIBLE);
+            routingMode.setVisibility(View.INVISIBLE);
+            border.setVisibility(View.INVISIBLE);
+            destinationContainer.setVisibility(View.INVISIBLE);
+        divider.setVisibility(View.INVISIBLE);
+    }
+
+    public void showFragmentContents() {
+        if (act.getSupportFragmentManager().findFragmentByTag(RouteFragment.TAG) == null) {
+            topRow.setVisibility(View.VISIBLE);
+            routingMode.setVisibility(View.VISIBLE);
+            border.setVisibility(View.VISIBLE);
+            destinationContainer.setVisibility(View.VISIBLE);
+            divider.setVisibility(View.VISIBLE);
+
+        }
     }
 }

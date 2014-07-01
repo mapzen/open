@@ -92,7 +92,7 @@ public class DirectionListFragment extends ListFragment {
             } else {
                 final Instruction current = instructions.get(position - CURRENT_LOCATION_OFFSET);
                 icon.setImageResource(DisplayHelper.getRouteDrawable(context,
-                        current.getTurnInstruction(), DisplayHelper.IconStyle.BLACK));
+                        current.getTurnInstruction()));
                 simpleInstruction.setText(current.getSimpleInstruction());
                 distance.setDistance(current.getDistance());
             }
