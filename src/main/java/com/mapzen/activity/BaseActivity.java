@@ -398,7 +398,7 @@ public class BaseActivity extends MapActivity {
         SettingsFragment settingsFragment = (SettingsFragment) getFragmentManager()
                 .findFragmentByTag(SettingsFragment.TAG);
         RouteFragment routeFragment = (RouteFragment)
-                getSupportFragmentManager().findFragmentByTag(RoutePreviewFragment.TAG);
+                getSupportFragmentManager().findFragmentByTag(RouteFragment.TAG);
         if (settingsFragment != null && settingsFragment.isAdded()) {
             getFragmentManager().beginTransaction()
                     .detach(settingsFragment)
