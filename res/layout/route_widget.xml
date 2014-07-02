@@ -93,7 +93,7 @@
                 android:layout_gravity="right"
                 android:layout_alignRight="@id/footer"
                 android:background="@drawable/selectable_background_mapzen"
-                android:src="@drawable/ic_menu_overflow_normal" />
+                android:src="@drawable/ic_menu_overflow" />
 
         <View
                 android:id="@+id/divider"

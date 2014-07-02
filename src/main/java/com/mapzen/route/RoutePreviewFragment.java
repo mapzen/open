@@ -83,6 +83,7 @@ public class RoutePreviewFragment extends BaseFragment
     @InjectView(R.id.destination_layout) LinearLayout destinationLayout;
     @InjectView(R.id.to_text) TextView toTextView;
     @InjectView(R.id.from_text) TextView fromTextView;
+    @InjectView(R.id.location_divider) LinearLayout locationDivider;
     public static RoutePreviewFragment newInstance(BaseActivity act,
                                                    SimpleFeature destination) {
         final RoutePreviewFragment fragment = new RoutePreviewFragment();
@@ -154,11 +155,11 @@ public class RoutePreviewFragment extends BaseFragment
 
         Animation rotateAnimation = AnimationUtils.loadAnimation(act, R.anim.rotate180);
         routeReverse.startAnimation(rotateAnimation);
-        Animation slideOut = AnimationUtils.loadAnimation(act, R.anim.moveout);
-        Animation slideIn = AnimationUtils.loadAnimation(act, R.anim.movein);
+        Animation moveDown = AnimationUtils.loadAnimation(act, R.anim.move_down);
+        Animation moveUp = AnimationUtils.loadAnimation(act, R.anim.move_up);
 
-        startLocationLayout.startAnimation(slideOut);
-        destinationLayout.startAnimation(slideIn);
+        startLocationLayout.startAnimation(moveDown);
+        destinationLayout.startAnimation(moveUp);
         setOriginAndDestination();
         createRouteToDestination();
     }
@@ -332,16 +333,15 @@ public class RoutePreviewFragment extends BaseFragment
             border.setVisibility(View.INVISIBLE);
             destinationContainer.setVisibility(View.INVISIBLE);
         divider.setVisibility(View.INVISIBLE);
+        locationDivider.setVisibility(View.INVISIBLE);
     }
 
     public void showFragmentContents() {
-        if (act.getSupportFragmentManager().findFragmentByTag(RouteFragment.TAG) == null) {
             topRow.setVisibility(View.VISIBLE);
             routingMode.setVisibility(View.VISIBLE);
             border.setVisibility(View.VISIBLE);
             destinationContainer.setVisibility(View.VISIBLE);
             divider.setVisibility(View.VISIBLE);
-
-        }
+            locationDivider.setVisibility(View.VISIBLE);
     }
 }
