@@ -3,15 +3,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/darker_gray"
     android:paddingTop="@dimen/divider_height"
-    android:orientation="vertical">
+    android:orientation="vertical"
+        android:layout_gravity="bottom">
 
     <RelativeLayout
         android:id="@+id/multi_result_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/darker_gray"
+        android:background="@color/transparent_white"
         android:paddingLeft="@dimen/default_padding_horizontal"
         android:paddingRight="@dimen/default_padding_horizontal">
 
@@ -20,22 +20,61 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:textColor="@android:color/white" />
+            android:textColor="@color/dark_gray" />
 
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentRight="true"
+                android:gravity="right">
         <Button
             android:id="@+id/view_all"
-            android:layout_width="96dp"
-            android:layout_height="36dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:text="@string/view_all"
-            style="@android:style/Widget.Holo.Light.Button.Small" />
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="@dimen/small"
+            android:textColor="@color/red"
+            android:background="@android:color/transparent"/>
+
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_right_arrow"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+                android:id="@+id/multi_result_divider"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/pagination"
+
+                android:paddingTop="20dp"
+                android:orientation="vertical">
+
+            <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/brown" />
+
+            <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="2dp"
+                    android:background="@color/brown" />
+
+        </LinearLayout>
+
     </RelativeLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/results"
-        android:background="@android:color/white"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:layout_gravity="bottom" />
+        android:layout_height="80dp"
+        android:layout_gravity="bottom"/>
 
 </LinearLayout>

@@ -15,12 +15,12 @@
         android:paddingBottom="@dimen/default_padding_vertical"
         android:paddingLeft="@dimen/default_padding_horizontal"
         android:paddingRight="@dimen/default_padding_horizontal"
-        android:textColor="@android:color/white"
+        android:textColor="@color/brown"
         android:textSize="16sp" />
 
     <ListView
         android:id="@android:id/list"
-        android:background="@android:color/white"
+        android:background="@android:color/transparent"
         android:layout_height="match_parent"
         android:layout_width="match_parent" />
 </LinearLayout>
