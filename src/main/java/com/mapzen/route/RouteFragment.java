@@ -276,6 +276,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.updateView();
         mapFragment.showLocationMarker();
         mapFragment.getMap().layers().remove(routeLocationIndicator);
+        ((RoutePreviewFragment)act.getSupportFragmentManager().findFragmentByTag(RoutePreviewFragment.TAG)).showFragmentContents();
     }
 
     public RouteLocationIndicator getRouteLocationIndicator() {

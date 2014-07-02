@@ -59,9 +59,11 @@ public class RouteAdapter extends PagerAdapter {
     private void showLeftAndRightArrows(int position, View view) {
         if(position == 0) {
             view.findViewById(R.id.left_arrow).setVisibility(View.INVISIBLE);
-        }
-        else {
+        } else if(position == instructions.size() - 1) {
+            view.findViewById(R.id.right_arrow).setVisibility(View.INVISIBLE);
+        } else {
             view.findViewById(R.id.left_arrow).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.right_arrow).setVisibility(View.VISIBLE);
         }
     }
 

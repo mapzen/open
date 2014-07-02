@@ -121,8 +121,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/top_row"
             android:paddingRight="15dp"
-            android:background="@color/transparent_white"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@color/transparent_white">
 
      <View
                 android:layout_below="@id/top_row"

@@ -497,7 +497,6 @@ public class BaseActivity extends MapActivity {
                 .replace(R.id.pager_results_container, pagerResultsFragment,
                         PagerResultsFragment.TAG)
                 .commit();
-
         return pagerResultsFragment.executeSearchOnMap(getSearchView(), query);
     }
 
