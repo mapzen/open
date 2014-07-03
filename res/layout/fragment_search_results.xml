@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="@dimen/divider_height"
     android:orientation="vertical"
-        android:layout_gravity="bottom">
+    android:layout_gravity="bottom">
 
     <RelativeLayout
         android:id="@+id/multi_result_header"
@@ -20,14 +19,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:textSize="@dimen/small"
             android:textColor="@color/dark_gray" />
 
         <LinearLayout
+            android:id="@+id/view_all_layout"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:orientation="horizontal"
             android:layout_alignParentRight="true"
-                android:gravity="right">
+            android:gravity="right">
+
         <Button
             android:id="@+id/view_all"
             android:layout_width="wrap_content"
@@ -44,37 +46,31 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/ic_right_arrow"/>
-
         </LinearLayout>
 
         <LinearLayout
-                android:id="@+id/multi_result_divider"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/pagination"
-
-                android:paddingTop="20dp"
-                android:orientation="vertical">
+            android:id="@+id/multi_result_divider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/view_all_layout"
+            android:orientation="vertical">
 
             <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/brown" />
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/divider_height"
+                android:background="@color/brown" />
 
             <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="2dp"
-                    android:background="@color/brown" />
-
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/divider_height"
+                android:layout_marginTop="2dp"
+                android:background="@color/brown" />
         </LinearLayout>
-
     </RelativeLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/results"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="@dimen/result_pager_height"
         android:layout_gravity="bottom"/>
-
 </LinearLayout>

@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@android:color/transparent" />
+        android:background="@android:color/white" />
 
     <FrameLayout
         android:id="@+id/routes_container"
