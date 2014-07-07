@@ -97,7 +97,6 @@ public class RoutePreviewFragment extends BaseFragment
     @Override
     public void onResume() {
         super.onResume();
-        showFragmentContents();
         act.hideActionBar();
     }
 
@@ -152,7 +151,12 @@ public class RoutePreviewFragment extends BaseFragment
         reverse = !reverse;
         toTextView.setVisibility(View.GONE);
         fromTextView.setVisibility(View.GONE);
+        animateDestinationReverse();
+        setOriginAndDestination();
+        createRouteToDestination();
+    }
 
+    private void animateDestinationReverse() {
         Animation rotateAnimation = AnimationUtils.loadAnimation(act, R.anim.rotate180);
         routeReverse.startAnimation(rotateAnimation);
         Animation moveDown = AnimationUtils.loadAnimation(act, R.anim.move_down);
@@ -160,8 +164,6 @@ public class RoutePreviewFragment extends BaseFragment
 
         startLocationLayout.startAnimation(moveDown);
         destinationLayout.startAnimation(moveUp);
-        setOriginAndDestination();
-        createRouteToDestination();
     }
 
     @SuppressWarnings("unused")
@@ -328,20 +330,20 @@ public class RoutePreviewFragment extends BaseFragment
     }
 
     private void hideFragmentContents() {
-            topRow.setVisibility(View.INVISIBLE);
-            routingMode.setVisibility(View.INVISIBLE);
-            border.setVisibility(View.INVISIBLE);
-            destinationContainer.setVisibility(View.INVISIBLE);
+        topRow.setVisibility(View.INVISIBLE);
+        routingMode.setVisibility(View.INVISIBLE);
+        border.setVisibility(View.INVISIBLE);
+        destinationContainer.setVisibility(View.INVISIBLE);
         divider.setVisibility(View.INVISIBLE);
         locationDivider.setVisibility(View.INVISIBLE);
     }
 
     public void showFragmentContents() {
-            topRow.setVisibility(View.VISIBLE);
-            routingMode.setVisibility(View.VISIBLE);
-            border.setVisibility(View.VISIBLE);
-            destinationContainer.setVisibility(View.VISIBLE);
-            divider.setVisibility(View.VISIBLE);
-            locationDivider.setVisibility(View.VISIBLE);
+        topRow.setVisibility(View.VISIBLE);
+        routingMode.setVisibility(View.VISIBLE);
+        border.setVisibility(View.VISIBLE);
+        destinationContainer.setVisibility(View.VISIBLE);
+        divider.setVisibility(View.VISIBLE);
+        locationDivider.setVisibility(View.VISIBLE);
     }
 }

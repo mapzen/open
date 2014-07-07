@@ -23,6 +23,8 @@
     <string name="waiting">Waiting for location</string>
     <string name="recalculating">Recalculating</string>
     <string name="upload_traces">Upload GPS Traces</string>
+    <string name="from_text">From:</string>
+    <string name="to_text">To:</string>
     <!--Settings-->
 
     <string name="settings">Settings</string>

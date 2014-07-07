@@ -403,9 +403,14 @@ public class BaseActivity extends MapActivity {
             getFragmentManager().beginTransaction()
                     .detach(settingsFragment)
                     .commit();
-        }  else if (routeFragment != null && routeFragment.isAdded()
-                && routeFragment.slideLayoutIsExpanded()) {
-            routeFragment.collapseSlideLayout();
+        }  else if (routeFragment != null && routeFragment.isAdded()) {
+            if(routeFragment.slideLayoutIsExpanded()){
+                routeFragment.collapseSlideLayout();
+            } else {
+                ((RoutePreviewFragment)getSupportFragmentManager()
+                        .findFragmentByTag(RoutePreviewFragment.TAG)).showFragmentContents();
+                super.onBackPressed();
+            }
         } else {
             super.onBackPressed();
         }

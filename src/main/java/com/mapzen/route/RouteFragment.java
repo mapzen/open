@@ -276,7 +276,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.updateView();
         mapFragment.showLocationMarker();
         mapFragment.getMap().layers().remove(routeLocationIndicator);
-        ((RoutePreviewFragment)act.getSupportFragmentManager().findFragmentByTag(RoutePreviewFragment.TAG)).showFragmentContents();
     }
 
     public RouteLocationIndicator getRouteLocationIndicator() {
@@ -679,7 +678,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    private void turnAutoPageOff() {
+    public void turnAutoPageOff() {
         if (autoPaging) {
             pagerPositionWhenPaused = pager.getCurrentItem();
         }

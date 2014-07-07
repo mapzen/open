@@ -16,12 +16,14 @@ import android.text.style.StyleSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import org.robolectric.shadows.ShadowView;
 
 import java.util.ArrayList;
 
 import static com.mapzen.support.TestHelper.getTestInstruction;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
+import static org.robolectric.Robolectric.shadowOf;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
@@ -44,10 +46,10 @@ public class RouteAdapterTest {
     }
 
     @Test
-    public void firstInstruction_shouldHaveDarkGrayBackground() throws Exception {
+    public void firstInstruction_shouldHaveTransparentWhiteBackground() throws Exception {
         View view = (View) routeAdapter.instantiateItem(viewGroup, 0);
         ColorDrawable background = (ColorDrawable) view.getBackground();
-        int expectedColor = application.getResources().getColor(R.color.dark_gray);
+        int expectedColor = application.getResources().getColor(R.color.transparent_white);
         assertThat(background.getColor()).isEqualTo(expectedColor);
     }
 

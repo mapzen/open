@@ -13,10 +13,10 @@
         android:paddingLeft="@dimen/arrow_padding"/>
 
     <LinearLayout
-        android:layout_width="48dp"
+        android:layout_width="@dimen/turn_info_width"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingLeft="10dp">
+        android:paddingLeft="@dimen/instruction_horizontal_padding">
 
     <ImageView
         android:id="@+id/turn_icon"
@@ -46,10 +46,10 @@
         android:id="@+id/full_instruction"
         android:layout_width="wrap_content"
         android:layout_weight="1"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
         android:maxLines="2"
         android:fontFamily="sans-serif-regular"
-        android:gravity="center"
-        android:layout_gravity="center_vertical"
         android:textAlignment="center"
         android:textColor="@color/brown"
         android:textSize="@dimen/big"
@@ -58,19 +58,20 @@
 
     <TextView
         android:id="@+id/full_instruction_after_action"
+        android:layout_height="wrap_content"
         android:layout_width="0dip"
         android:layout_weight="1"
         android:textColor="@color/brown"
         android:textSize="@dimen/big"
         android:layout_margin="@dimen/default_margin"
-        android:visibility="gone"
-        android:layout_height="wrap_content" />
+        android:visibility="gone" />
+
     <ImageView
         android:id="@+id/right_arrow"
-        android:src="@drawable/ic_right_arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:src="@drawable/ic_right_arrow"
         android:paddingRight="@dimen/arrow_padding"/>
 
 </LinearLayout>
