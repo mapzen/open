@@ -164,5 +164,4 @@ public class SavedSearchTest {
         }
         return count;
     }
-
 }
