@@ -47,7 +47,6 @@ import static com.mapzen.support.TestHelper.initBaseActivity;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @Config(emulateSdk = 18)
@@ -420,16 +419,4 @@ public class RoutePreviewFragmentTest {
         fragment.onViewUpdate();
         Mockito.verify(router).fetch();
     }
-
-    private void simulateViewButtonClick(RoutePreviewFragment spy) {
-        spy.start();
-    }
-
-//    private void simulatePaneOpenSlide() {
-//        fragment.getPanelSlideListener().onPanelSlide(fragment.getSlideLayout(), 0.95f);
-//    }
-//
-//    private void simulatePaneCloseSlide() {
-//        fragment.getPanelSlideListener().onPanelSlide(fragment.getSlideLayout(), 1.0f);
-//    }
 }

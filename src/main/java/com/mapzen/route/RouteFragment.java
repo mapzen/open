@@ -1,6 +1,5 @@
 package com.mapzen.route;
 
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import com.mapzen.R;
@@ -44,7 +43,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -98,7 +96,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @InjectView(R.id.resume_button) ImageButton resume;
     @InjectView(R.id.footer_wrapper) RelativeLayout footerWrapper;
     @InjectView(R.id.footer) LinearLayout footer;
-
 
     private ArrayList<Instruction> instructions;
     private RouteAdapter adapter;
@@ -218,7 +215,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void onClickResume() {
         turnAutoPageOn();
         Instruction instruction = instructions.get(pager.getCurrentItem());
-        updateRemainingDistance(instruction, instruction.getLocation() );
+        updateRemainingDistance(instruction, instruction.getLocation());
     }
 
     @OnClick(R.id.overflow_menu)
@@ -590,9 +587,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             speakerbox.stop();
         }
 
-        if(pager.getCurrentItem() == pagerPositionWhenPaused) {
+        if (pager.getCurrentItem() == pagerPositionWhenPaused) {
             resume.setVisibility(View.GONE);
-            getView().findViewById(R.id.routes).setBackgroundColor(act.getBaseContext().getResources().getColor(R.color.transparent_white));
+            getView().findViewById(R.id.routes).setBackgroundColor(act.getBaseContext()
+                    .getResources().getColor(R.color.transparent_white));
         }
     }
 
@@ -683,14 +681,16 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             pagerPositionWhenPaused = pager.getCurrentItem();
         }
         autoPaging = false;
-        getView().findViewById(R.id.routes).setBackgroundColor(R.color.transparent_gray);
+        getView().findViewById(R.id.routes).setBackgroundColor(app
+                .getResources().getColor(R.color.transparent_gray));
         resume.setVisibility(View.VISIBLE);
     }
 
     private void turnAutoPageOn() {
         pager.setCurrentItem(pagerPositionWhenPaused);
         resume.setVisibility(View.GONE);
-        getView().findViewById(R.id.routes).setBackgroundColor(act.getBaseContext().getResources().getColor(R.color.transparent_white));
+        getView().findViewById(R.id.routes).setBackgroundColor(act
+                .getBaseContext().getResources().getColor(R.color.transparent_white));
         autoPaging = true;
     }
 
@@ -832,7 +832,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                             }
                         });
         getChildFragmentManager().beginTransaction()
-                .replace(R.id.footer_wrapper, directionListFragmentragment, DirectionListFragment.TAG)
+                .replace(R.id.footer_wrapper, directionListFragmentragment
+                        , DirectionListFragment.TAG)
                 .disallowAddToBackStack()
                 .commit();
     }

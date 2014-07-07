@@ -24,4 +24,5 @@ public class DisplayHelperTest {
         assertThat(getRouteDrawable(new Activity(), 99))
                 .isEqualTo(R.drawable.ic_route_1);
     }
-    }
+}
+

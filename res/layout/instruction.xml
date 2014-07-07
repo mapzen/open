@@ -4,13 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/instruction_height">
 
-    <ImageView
+    <ImageButton
         android:id="@+id/left_arrow"
         android:src="@drawable/ic_left_arrow"
         android:layout_gravity="center_vertical"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingLeft="@dimen/arrow_padding"/>
+        android:paddingLeft="@dimen/arrow_padding"
+        android:background="@android:color/transparent"
+        android:onClick="onLeftArrowClick"/>
 
     <LinearLayout
         android:layout_width="@dimen/turn_info_width"
@@ -66,12 +68,14 @@
         android:layout_margin="@dimen/default_margin"
         android:visibility="gone" />
 
-    <ImageView
+    <ImageButton
         android:id="@+id/right_arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:src="@drawable/ic_right_arrow"
-        android:paddingRight="@dimen/arrow_padding"/>
+        android:paddingRight="@dimen/arrow_padding"
+        android:background="@android:color/transparent"
+        android:onClick="onRightArrowClick"/>
 
 </LinearLayout>

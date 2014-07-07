@@ -16,14 +16,12 @@ import android.text.style.StyleSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import org.robolectric.shadows.ShadowView;
 
 import java.util.ArrayList;
 
 import static com.mapzen.support.TestHelper.getTestInstruction;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
-import static org.robolectric.Robolectric.shadowOf;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)

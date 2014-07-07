@@ -2,6 +2,7 @@ package com.mapzen.route;
 
 import android.app.NotificationManager;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v4.view.ViewPager;
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
@@ -61,7 +62,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -280,7 +280,7 @@ public class  RouteFragmentTest {
         Location testLocation = fragment.getRoute().getGeometry().get(2);
         fragment.onLocationChanged(testLocation);
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
-                new String[] { DatabaseHelper.COLUMN_INSTRUCTION_BEARING },
+                new String[]{DatabaseHelper.COLUMN_INSTRUCTION_BEARING},
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
         cursor.moveToNext();
@@ -561,9 +561,25 @@ public class  RouteFragmentTest {
         ArrayList<Instruction> instructions = route.getRouteInstructions();
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
-        int expectedColor = application.getResources().getColor(R.color.transparent_gray);
         fragment.turnAutoPageOff();
-        System.out.println(((ColorDrawable)fragment.getView().findViewById(R.id.routes).getBackground()).getColor());
+        int expectedColor = application.getResources().getColor(R.color.transparent_gray);
+        int actualColor = ((ColorDrawable) fragment.pager.getBackground()).getColor();
+        assertThat(actualColor).isEqualTo(expectedColor);
+    }
+
+    @Test
+    public void arrowButtons_ShouldPageThrough() {
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        fragment.setInstructions(instructions);
+        route.addSeenInstruction(instructions.get(0));
+        route.addSeenInstruction(instructions.get(1));
+        FragmentTestUtil.startFragment(fragment);
+        int firstInstruction = fragment.pager.getCurrentItem();
+        simulateOnRightArrowClick(fragment.pager);
+        assertThat(fragment.pager.getCurrentItem() - 1).isEqualTo(firstInstruction);
+        simulateOnLeftArrowClick(fragment.pager);
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(firstInstruction);
     }
 
     @Test
@@ -1368,5 +1384,13 @@ public class  RouteFragmentTest {
 
     private void simulatePaneCloseSlide() {
         fragment.getPanelSlideListener().onPanelSlide(fragment.getSlideLayout(), 1.0f);
+    }
+
+    public void simulateOnLeftArrowClick(ViewPager pager) {
+        pager.setCurrentItem(pager.getCurrentItem() - 1);
+    }
+
+    public void simulateOnRightArrowClick(ViewPager pager) {
+        pager.setCurrentItem(pager.getCurrentItem() + 1);
     }
 }
