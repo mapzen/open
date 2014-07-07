@@ -342,49 +342,6 @@ public class RoutePreviewFragmentTest {
                 doesNotHaveFragmentWithTag(RouteFragment.TAG);
     }
 
-//    @Test
-//    public void start_shouldShowExpandPaneWhenReversed() throws Exception {
-//        fragment.createRouteToDestination();
-//        Route testRoute = new Route(getFixture("around_the_block"));
-//        fragment.success(testRoute);
-//        fragment.reverse();
-//        RoutePreviewFragment spy = spy(fragment);
-//        simulateViewButtonClick(spy);
-//        verify(spy).expandInstructionsPane();
-//        }
-//
-//    @Test
-//    public void expandedPaneNotReversed_shouldShowDirectionListFragment() {
-//        fragment.createRouteToDestination();
-//        Route testRoute = new Route(getFixture("around_the_block"));
-//        fragment.success(testRoute);
-//        simulatePaneOpenSlide();
-//        assertThat(fragment.getChildFragmentManager()).
-//                hasFragmentWithTag(DirectionListFragment.TAG);
-//    }
-//
-//    @Test
-//    public void expandedPaneReversed_shouldShowDirectionListFragment() {
-//        fragment.createRouteToDestination();
-//        Route testRoute = new Route(getFixture("around_the_block"));
-//        fragment.success(testRoute);
-//        fragment.reverse();
-//        simulatePaneOpenSlide();
-//        assertThat(fragment.getChildFragmentManager()).
-//                hasFragmentWithTag(DirectionListFragment.TAG);
-//    }
-//
-//    @Test
-//    public void collapsedPane_shouldNotShowDirectionListFragment() {
-//        fragment.createRouteToDestination();
-//        Route testRoute = new Route(getFixture("around_the_block"));
-//        fragment.success(testRoute);
-//        //fragment.getSlideLayout().expandPane();
-//        simulatePaneCloseSlide();
-//        assertThat(activity.getSupportFragmentManager())
-//                .doesNotHaveFragmentWithTag(DirectionListFragment.TAG);
-//    }
-
     @Test
     public void start_shouldClearBubbles() throws Exception {
         fragment.createRouteToDestination();
