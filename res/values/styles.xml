@@ -6,8 +6,8 @@
         <item name="android:itemTextAppearance">@style/MapzenItemTextAppearance</item>
         <item name="android:actionOverflowButtonStyle">@style/MapzenOverflow</item>
         <item name="android:homeAsUpIndicator">@drawable/ic_back_arrow</item>
-        <item name="android:icon">@drawable/ic_mapzen_icon </item>
-     </style>
+        <item name="android:icon">@drawable/ic_mapzen_icon</item>
+    </style>
 
     <style name="ActionBar.Solid.Mapzen" parent="@android:style/Widget.Holo.Light.ActionBar.Solid">
         <item name="android:titleTextStyle">@style/MapzenTitleText</item>
