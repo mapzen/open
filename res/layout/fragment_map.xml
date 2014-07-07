@@ -20,7 +20,7 @@
             android:id="@+id/btn_my_position"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="130dp"
             android:layout_marginRight="10dp"
             android:background="@drawable/ic_locate" />
     </LinearLayout>
