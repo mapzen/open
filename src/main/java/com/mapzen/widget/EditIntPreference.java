@@ -1,6 +1,9 @@
 package com.mapzen.widget;
 
+import com.mapzen.util.Logger;
+
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.preference.EditTextPreference;
 import android.util.AttributeSet;
 
@@ -25,6 +28,25 @@ public class EditIntPreference extends EditTextPreference {
 
     @Override
     protected boolean persistString(String value) {
-        return persistInt(Integer.valueOf(value));
+        int intValue;
+        try {
+            intValue = Integer.valueOf(value);
+        } catch (NumberFormatException e) {
+            Logger.e("Unable to parse preference value: " + value);
+            return true;
+        }
+
+        return persistInt(intValue);
+    }
+
+    @Override
+    protected Object onGetDefaultValue(TypedArray a, int index) {
+        final String s = a.getString(index);
+        // Workaround for Robolectric which loads integer resources as hex strings.
+        if (s.startsWith("0x")) {
+            return Integer.valueOf(s.substring(2), 16).toString();
+        }
+
+        return s;
     }
 }
