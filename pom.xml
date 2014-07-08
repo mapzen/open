@@ -273,7 +273,7 @@
                         <platform>19</platform>
                     </sdk>
                     <lint>
-                        <skip>false</skip>
+                        <skip>true</skip>
                         <failOnError>true</failOnError>
                         <warningsAsErrors>true</warningsAsErrors>
                     </lint>
