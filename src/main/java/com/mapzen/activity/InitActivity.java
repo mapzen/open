@@ -1,5 +1,12 @@
 package com.mapzen.activity;
 
+import com.mapzen.MapzenApplication;
+import com.mapzen.R;
+import com.mapzen.android.lost.LocationClient;
+
+import org.scribe.model.Token;
+import org.scribe.model.Verifier;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -14,13 +21,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import javax.inject.Inject;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import com.mapzen.MapzenApplication;
-import com.mapzen.R;
-import org.scribe.model.Token;
-import org.scribe.model.Verifier;
 
 import static com.mapzen.core.OSMOauthFragment.OSM_VERIFIER_KEY;
 
@@ -33,14 +39,15 @@ public class InitActivity extends Activity {
     private Animation fadeIn, fadeInSlow, fadeOut;
     private Verifier verifier;
     private int clickCount;
-
+    @Inject LocationClient locationClient;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        app = (MapzenApplication) getApplication();
+        app.inject(this);
         setContentView(R.layout.init);
         View rootView = getWindow().getDecorView().getRootView();
-        app = (MapzenApplication) getApplication();
         clickCount = 0;
         ButterKnife.inject(this, rootView);
         getActionBar().hide();
@@ -49,6 +56,18 @@ public class InitActivity extends Activity {
         }
         loadAnimations();
         animateViewTransitions();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        locationClient.disconnect();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        locationClient.connect();
     }
 
     @Override

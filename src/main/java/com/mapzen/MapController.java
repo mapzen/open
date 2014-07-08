@@ -3,18 +3,25 @@ package com.mapzen;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.osrm.Instruction;
 
+import org.oscim.core.GeoPoint;
+import org.oscim.core.MapPosition;
+import org.oscim.map.Map;
+
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
-import org.oscim.core.GeoPoint;
-import org.oscim.core.MapPosition;
-import org.oscim.map.Map;
-
 import static com.mapzen.route.RouteFragment.ROUTE_ZOOM_LEVEL;
 
 public final class MapController {
+    public static final String KEY_STORED_MAPPOSITION = "stored_mapposition";
+    public static final String KEY_TILT = "tilt";
+    public static final String KEY_LATITUDE = "lat";
+    public static final String KEY_LONGITUDE = "lng";
+    public static final String KEY_MAP_SCALE = "scale";
+    public static final String KEY_BEARING = "rotation";
+
     public static final int DEFAULT_ZOOMLEVEL = 15;
     public static final String DEBUG_LOCATION = "fixed_debug_location";
     private static MapController mapController;
@@ -71,7 +78,9 @@ public final class MapController {
 
     public MapController centerOn(Location location) {
         GeoPoint point = new GeoPoint(location.getLatitude(), location.getLongitude());
-        map.animator().animateTo(point);
+        if (map != null) {
+            map.animator().animateTo(point);
+        }
         return this;
     }
 
@@ -89,30 +98,77 @@ public final class MapController {
 
     public void setZoomLevel(int zoomLevel) {
         mapPosition.setZoomLevel(zoomLevel);
-        map.setMapPosition(mapPosition);
+        if (map != null) {
+            map.setMapPosition(mapPosition);
+        }
     }
 
     public void setMapPerspectiveForInstruction(Instruction instruction) {
         Location location = instruction.getLocation();
-        map.setMapPosition(location.getLatitude(), location.getLongitude(),
-                Math.pow(2, ROUTE_ZOOM_LEVEL));
-        setRotation(instruction.getRotationBearing());
-        map.updateMap(true);
+        if (map != null) {
+            map.setMapPosition(location.getLatitude(), location.getLongitude(),
+                    Math.pow(2, ROUTE_ZOOM_LEVEL));
+            setRotation(instruction.getRotationBearing());
+            map.updateMap(true);
+        }
     }
 
     public void setRotation(float rotation) {
-        map.viewport().setRotation(rotation);
-        map.updateMap(true);
+        if (map != null) {
+            map.viewport().setRotation(rotation);
+            map.updateMap(true);
+        }
     }
 
     public void setPosition(Location location) {
-        map.setMapPosition(location.getLatitude(), location.getLongitude(),
-                Math.pow(2, ROUTE_ZOOM_LEVEL));
-        map.updateMap(true);
+        if (map != null) {
+            map.setMapPosition(location.getLatitude(), location.getLongitude(),
+                    Math.pow(2, ROUTE_ZOOM_LEVEL));
+            map.updateMap(true);
+        }
     }
 
     public double getZoomScale() {
         return mapPosition.scale;
+    }
+
+    public void saveLocation() {
+        if (map == null) {
+            return;
+        }
+        SharedPreferences.Editor editor =
+                activity.getSharedPreferences(KEY_STORED_MAPPOSITION, 0).edit();
+        MapPosition mapPosition = new MapPosition();
+        map.viewport().getMapPosition(mapPosition);
+        GeoPoint geoPoint = mapPosition.getGeoPoint();
+        editor.putFloat(KEY_TILT, mapPosition.getTilt());
+        editor.putInt(KEY_LATITUDE, geoPoint.latitudeE6);
+        editor.putInt(KEY_LONGITUDE, geoPoint.longitudeE6);
+        editor.putFloat(KEY_MAP_SCALE, (float) mapPosition.scale);
+
+        editor.putFloat(KEY_BEARING, mapPosition.getBearing());
+        editor.commit();
+    }
+
+    public void restoreFromSavedLocation() {
+        if (map == null) {
+            return;
+        }
+        SharedPreferences sharedPreferences =
+                activity.getSharedPreferences(KEY_STORED_MAPPOSITION, 0);
+        int latitudeE6 = sharedPreferences.getInt(KEY_LATITUDE, 0);
+        int longitudeE6 = sharedPreferences.getInt(KEY_LONGITUDE, 0);
+        float scale = sharedPreferences.getFloat(KEY_MAP_SCALE,
+                (float) Math.pow(2, DEFAULT_ZOOMLEVEL));
+        float tilt = sharedPreferences.getFloat(KEY_TILT, 0);
+        float bearing = sharedPreferences.getFloat(KEY_BEARING, 0);
+        MapPosition mapPosition = new MapPosition();
+        mapPosition.setPosition(latitudeE6 / 1E6, longitudeE6 / 1E6);
+        mapPosition.setTilt(tilt);
+        mapPosition.setScale(scale);
+        mapPosition.setBearing(bearing);
+        map.setMapPosition(mapPosition);
+        map.updateMap(true);
     }
 
     private boolean isFixedLocationEnabled() {

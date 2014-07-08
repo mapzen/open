@@ -23,6 +23,10 @@ import org.oscim.theme.ThemeLoader;
 import org.oscim.tiling.source.OkHttpEngine;
 import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
@@ -66,6 +70,7 @@ public class MapFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
+        getMapController().saveLocation();
         locationMarkerLayer.removeAllItems();
         poiMarkersLayer.removeAllItems();
     }
@@ -73,7 +78,20 @@ public class MapFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("findMe");
+        FindMeReceiver findMeReceiver = new FindMeReceiver();
+        app.registerReceiver(findMeReceiver, filter);
+
+        getMapController().restoreFromSavedLocation();
         poiMarkersLayer.repopulate();
+    }
+
+    private class FindMeReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            findMe();
+        }
     }
 
     @Override
@@ -185,6 +203,7 @@ public class MapFragment extends BaseFragment {
                 if (e == Map.POSITION_EVENT) {
                     followMe = false;
                 }
+
                 getMapController().setMapPosition(mapPosition);
             }
         });
@@ -236,8 +255,11 @@ public class MapFragment extends BaseFragment {
 
     private MapPosition getUserLocationPosition() {
         GeoPoint point = getUserLocationPoint();
-        return new MapPosition(point.getLatitude(), point.getLongitude(),
+        MapPosition mapPosition = new MapPosition(point.getLatitude(), point.getLongitude(),
                 getMapController().getZoomScale());
+        mapPosition.setBearing(getMapController().getMapPosition().getBearing());
+        mapPosition.setTilt(getMapController().getMapPosition().getTilt());
+        return mapPosition;
     }
 
     public void findMe() {
