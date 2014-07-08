@@ -4,6 +4,7 @@ import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestHelper;
+import com.mapzen.widget.EditIntPreference;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -117,49 +118,42 @@ public class SettingsFragmentTest {
     public void shouldHaveWalkingZoom() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_zoom_walking_key);
         assertThat(preference).hasTitle(R.string.settings_zoom_walking_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("19");
     }
 
     @Test
     public void shouldHaveBikingZoom() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_zoom_biking_key);
         assertThat(preference).hasTitle(R.string.settings_zoom_biking_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("18");
     }
 
     @Test
     public void shouldHaveDrivingZoom0to15Mph() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_zoom_driving_0to15_key);
         assertThat(preference).hasTitle(R.string.settings_zoom_driving_0_to_15_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("17");
     }
 
     @Test
     public void shouldHaveDrivingZoom15to25Mph() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_zoom_driving_15to25_key);
         assertThat(preference).hasTitle(R.string.settings_zoom_driving_15_to_25_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("16");
     }
 
     @Test
     public void shouldHaveDrivingZoom25to35Mph() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_zoom_driving_25to35_key);
         assertThat(preference).hasTitle(R.string.settings_zoom_driving_25_to_35_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("15");
     }
 
     @Test
     public void shouldHaveDrivingZoom35to50Mph() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_zoom_driving_35to50_key);
         assertThat(preference).hasTitle(R.string.settings_zoom_driving_35_to_50_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("14");
     }
 
     @Test
     public void shouldHaveDrivingZoomOver50Mph() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_zoom_driving_over50_key);
         assertThat(preference).hasTitle(R.string.settings_zoom_driving_over_50_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("13");
     }
 
     @Test
@@ -209,49 +203,42 @@ public class SettingsFragmentTest {
     public void shouldHaveWalkingTurnRadius() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_turn_walking_key);
         assertThat(preference).hasTitle(R.string.settings_turn_walking_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("10");
     }
 
     @Test
     public void shouldHaveBikingTurnRadius() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_turn_biking_key);
         assertThat(preference).hasTitle(R.string.settings_turn_biking_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("20");
     }
 
     @Test
     public void shouldHaveDrivingTurnRadius0to15Mph() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_turn_driving_0to15_key);
         assertThat(preference).hasTitle(R.string.settings_turn_driving_0_to_15_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("50");
     }
 
     @Test
     public void shouldHaveDrivingTurnRadius15to25Mph() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_turn_driving_15to25_key);
         assertThat(preference).hasTitle(R.string.settings_turn_driving_15_to_25_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("100");
     }
 
     @Test
     public void shouldHaveDrivingTurnRadius25to35Mph() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_turn_driving_25to35_key);
         assertThat(preference).hasTitle(R.string.settings_turn_driving_25_to_35_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("150");
     }
 
     @Test
     public void shouldHaveDrivingTurnRadius35to50Mph() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_turn_driving_35to50_key);
         assertThat(preference).hasTitle(R.string.settings_turn_driving_35_to_50_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("200");
     }
 
     @Test
     public void shouldHaveDrivingTurnRadiusOver50Mph() throws Exception {
         Preference preference = findPreferenceById(R.string.settings_turn_driving_over50_key);
         assertThat(preference).hasTitle(R.string.settings_turn_driving_over_50_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("300");
     }
 
     @Test
@@ -296,7 +283,6 @@ public class SettingsFragmentTest {
                 findPreferenceById(R.string.settings_number_of_locations_for_average_speed_key);
         assertThat(preference).
                 hasTitle(R.string.settings_number_of_locations_for_average_speed_title);
-        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("10");
     }
 
     @Test
@@ -309,6 +295,32 @@ public class SettingsFragmentTest {
         fragment.onStart();
         assertThat(findPreferenceById(
                 R.string.settings_number_of_locations_for_average_speed_key)).hasSummary("1");
+    }
+
+    @Test
+    public void shouldInitDefaultValues() throws Exception {
+        assertValue(R.string.settings_zoom_walking_key, 19);
+        assertValue(R.string.settings_zoom_biking_key, 18);
+        assertValue(R.string.settings_zoom_driving_0to15_key, 17);
+        assertValue(R.string.settings_zoom_driving_15to25_key, 16);
+        assertValue(R.string.settings_zoom_driving_25to35_key, 15);
+        assertValue(R.string.settings_zoom_driving_35to50_key, 14);
+        assertValue(R.string.settings_zoom_driving_over50_key, 13);
+
+        assertValue(R.string.settings_turn_walking_key, 10);
+        assertValue(R.string.settings_turn_biking_key, 20);
+        assertValue(R.string.settings_turn_driving_0to15_key, 50);
+        assertValue(R.string.settings_turn_driving_15to25_key, 100);
+        assertValue(R.string.settings_turn_driving_25to35_key, 150);
+        assertValue(R.string.settings_turn_driving_35to50_key, 200);
+        assertValue(R.string.settings_turn_driving_over50_key, 300);
+
+        assertValue(R.string.settings_number_of_locations_for_average_speed_key, 10);
+    }
+
+    private void assertValue(int id, int value) {
+        assertThat(((EditIntPreference) findPreferenceById(id)).getText())
+                .isEqualTo(String.valueOf(value));
     }
 
     private PreferenceCategory findCategoryByIndex(int index) {
