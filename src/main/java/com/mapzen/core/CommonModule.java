@@ -1,13 +1,16 @@
 package com.mapzen.core;
 
 import com.mapzen.MapzenApplication;
+import com.mapzen.android.lost.LocationClient;
 import com.mapzen.helpers.ZoomController;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
 import android.content.Context;
+
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
-import javax.inject.Singleton;
 
 @Module(library = true)
 public class CommonModule {
@@ -21,14 +24,22 @@ public class CommonModule {
         return new MapzenProgressDialogFragment();
     }
 
+    @Provides @Singleton LocationClient provideLocationClient() {
+        MapzenLocation.ConnectionCallbacks callbacks =
+                new MapzenLocation.ConnectionCallbacks(application);
+        LocationClient locationClient = new LocationClient(application, callbacks);
+        callbacks.setLocationClient(locationClient);
+        return locationClient;
+    }
+
     @Provides @Singleton ZoomController provideZoomController() {
         return new ZoomController();
     }
 
     /**
-    * Allow the application context to be injected but require that it be annotated with
-    * {@link ForApplication @Annotation} to explicitly differentiate it from an activity context.
-    */
+     * Allow the application context to be injected but require that it be annotated with
+     * {@link ForApplication @Annotation} to explicitly differentiate it from an activity context.
+     */
     @Provides @Singleton @ForApplication Context provideApplicationContext() {
         return application;
     }

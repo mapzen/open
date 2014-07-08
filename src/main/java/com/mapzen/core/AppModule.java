@@ -3,6 +3,7 @@ package com.mapzen.core;
 import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
+import com.mapzen.activity.InitActivity;
 import com.mapzen.fragment.ItemFragment;
 import com.mapzen.osrm.Router;
 import com.mapzen.route.RouteFragment;
@@ -26,6 +27,7 @@ import dagger.Provides;
 @Module(
         injects = {
                 BaseActivity.class,
+                InitActivity.class,
                 ItemFragment.class,
                 RouteFragment.class,
                 RoutePreviewFragment.class,

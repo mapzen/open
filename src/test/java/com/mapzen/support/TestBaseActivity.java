@@ -11,12 +11,15 @@ import android.os.Bundle;
 
 import java.util.concurrent.Executor;
 
+import javax.inject.Inject;
+
 public class TestBaseActivity extends BaseActivity {
     private ActionBar actionBar = new TestActionBar();
     private boolean backPressed = false;
     private boolean optionsMenuInvalidated = false;
     private String debugDataEndpoint;
     private Map map = new TestMap();
+    @Inject LocationClient locationClient;
 
     @Override
     public ActionBar getActionBar() {
@@ -54,18 +57,10 @@ public class TestBaseActivity extends BaseActivity {
         return map;
     }
 
-    public LocationClient.ConnectionCallbacks getConnectionCallback() {
-        return connectionCallback;
-    }
-
     @Override
     public void initDebugDataSubmitter() {
         super.initDebugDataSubmitter();
         debugDataSubmitter.setEndpoint(debugDataEndpoint);
-    }
-
-    public LocationClient getLocationClient() {
-        return locationClient;
     }
 
     public void setDebugDataEndpoint(String debugDataEndpoint) {

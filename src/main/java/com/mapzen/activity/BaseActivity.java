@@ -4,8 +4,6 @@ import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.android.lost.LocationClient;
-import com.mapzen.android.lost.LocationListener;
-import com.mapzen.android.lost.LocationRequest;
 import com.mapzen.core.DataUploadService;
 import com.mapzen.core.OSMOauthFragment;
 import com.mapzen.core.SettingsFragment;
@@ -40,7 +38,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -59,7 +56,6 @@ import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.util.Calendar;
@@ -70,7 +66,6 @@ import javax.inject.Inject;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.mapzen.MapController.getMapController;
-import static com.mapzen.android.lost.LocationClient.ConnectionCallbacks;
 import static com.mapzen.search.SavedSearch.getSavedSearch;
 
 public class BaseActivity extends MapActivity {
@@ -82,71 +77,20 @@ public class BaseActivity extends MapActivity {
             DEBUG_DATA_ENDPOINT = "http://on-the-road.dev.mapzen.com/upload";
     protected DatabaseHelper dbHelper;
     protected DebugDataSubmitter debugDataSubmitter;
-    protected LocationClient locationClient;
+    @Inject LocationClient locationClient;
     private Menu activityMenu;
     private AutoCompleteAdapter autoCompleteAdapter;
     private MapzenApplication app;
     private MapFragment mapFragment;
     private MapzenGPSPromptDialogFragment gpsPromptDialogFragment;
-    private boolean updateMapLocation = true;
     private Token requestToken = null;
     private Verifier verifier = null;
-    private LocationListener locationListener = new LocationListener() {
-        @Override
-        public void onLocationChanged(Location location) {
-            if (updateMapLocation) {
-                getMapController().setLocation(location);
-                mapFragment.findMe();
-            }
-            Intent toBroadcast = new Intent(COM_MAPZEN_UPDATES_LOCATION);
-            toBroadcast.putExtra("location", location);
-            sendBroadcast(toBroadcast);
-        }
-    };
-
-    protected ConnectionCallbacks connectionCallback = new ConnectionCallbacks() {
-        @Override
-        public void onConnected(Bundle bundle) {
-            getMapController().setZoomLevel(MapController.DEFAULT_ZOOMLEVEL);
-            final Location location = locationClient.getLastLocation();
-            Logger.d("Last known location: " + location);
-
-            if (location != null) {
-                getMapController().setLocation(location);
-                mapFragment.findMe();
-            } else {
-                Toast.makeText(BaseActivity.this, getString(R.string.waiting),
-                        Toast.LENGTH_LONG).show();
-            }
-
-            LocationRequest locationRequest = LocationRequest.create();
-            locationRequest.setInterval(LOCATION_INTERVAL);
-            locationClient.requestLocationUpdates(locationRequest, locationListener);
-        }
-
-        @Override
-        public void onDisconnected() {
-            Logger.d("LocationHelper disconnected.");
-        }
-    };
 
     protected boolean enableActionbar = true;
 
     protected Executor debugDataExecutor = Executors.newSingleThreadExecutor();
 
     MenuItem searchMenuItem;
-
-    public void deactivateMapLocationUpdates() {
-        updateMapLocation = false;
-    }
-
-    public void activateMapLocationUpdates() {
-        updateMapLocation = true;
-    }
-
-    public LocationListener getLocationListener() {
-        return locationListener;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -159,7 +103,6 @@ public class BaseActivity extends MapActivity {
         initMapFragment();
         gpsPromptDialogFragment = new MapzenGPSPromptDialogFragment();
         initMapController();
-        initLocationClient();
         initAlarm();
         initSavedSearches();
     }
@@ -272,10 +215,6 @@ public class BaseActivity extends MapActivity {
 
     public MapzenProgressDialogFragment getProgressDialogFragment() {
         return progressDialogFragment;
-    }
-
-    private void initLocationClient() {
-        locationClient = new LocationClient(this, connectionCallback);
     }
 
     private void initMapFragment() {

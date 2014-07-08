@@ -7,6 +7,7 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
 import com.mapzen.activity.BaseActivity;
+import com.mapzen.android.lost.LocationClient;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.helpers.DistanceFormatter;
@@ -19,8 +20,8 @@ import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.support.TestHelper;
 import com.mapzen.util.DatabaseHelper;
-import com.mapzen.util.RouteLocationIndicator;
 import com.mapzen.util.MapzenNotificationCreator;
+import com.mapzen.util.RouteLocationIndicator;
 import com.mapzen.widget.DistanceView;
 
 import org.json.JSONObject;
@@ -40,15 +41,16 @@ import org.oscim.map.TestViewport;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
+import org.robolectric.shadows.ShadowNotification;
+import org.robolectric.shadows.ShadowNotificationManager;
 import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowTextToSpeech;
 import org.robolectric.shadows.ShadowToast;
-import org.robolectric.shadows.ShadowNotificationManager;
-import org.robolectric.shadows.ShadowNotification;
 import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.tester.android.view.TestMenuItem;
 import org.robolectric.util.FragmentTestUtil;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -69,6 +71,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import static com.mapzen.MapController.KEY_STORED_MAPPOSITION;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.SimpleFeature.NAME;
@@ -98,7 +101,8 @@ import static org.robolectric.Robolectric.shadowOf_;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
-public class  RouteFragmentTest {
+public class RouteFragmentTest {
+    @Inject LocationClient locationClient;
     TestBaseActivity act;
     RouteFragment fragment;
     ShadowApplication app;
@@ -116,6 +120,10 @@ public class  RouteFragmentTest {
     @Before
     public void setUp() throws Exception {
         ((TestMapzenApplication) Robolectric.application).inject(this);
+        SharedPreferences.Editor editor = application.getSharedPreferences(KEY_STORED_MAPPOSITION,
+                Context.MODE_PRIVATE).edit();
+        editor.clear();
+        editor.commit();
         MockitoAnnotations.initMocks(this);
         RouteFragment.setRouter(router);
         menu = new TestMenu();
@@ -626,13 +634,8 @@ public class  RouteFragmentTest {
 
     @Test
     public void onResume_shouldDeactivateActivitiesMapUpdates() throws Exception {
-        act.getLocationListener().onLocationChanged(getTestLocation(11.0, 11.0));
         FragmentTestUtil.startFragment(fragment);
-        Location bogusLocation = getTestLocation(23.0, 63.0);
-        act.getLocationListener().onLocationChanged(bogusLocation);
-        GeoPoint point = act.getMapFragment().getMeMarker().geoPoint;
-        assertThat(Math.round(point.getLatitude())).isNotEqualTo(Math.round(23.0));
-        assertThat(Math.round(point.getLongitude())).isNotEqualTo(Math.round(63.0));
+        assertThat(((MapzenApplication) application).shouldUpdateMapLocation()).isFalse();
     }
 
     @Test
@@ -645,11 +648,8 @@ public class  RouteFragmentTest {
     public void onPause_shouldActivateActivitiesMapUpdates() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         fragment.onPause();
-        Location expectedLocation = getTestLocation(23.0, 63.0);
-        act.getLocationListener().onLocationChanged(expectedLocation);
-        GeoPoint point = act.getMapFragment().getMeMarker().geoPoint;
-        assertThat(Math.round(point.getLatitude())).isEqualTo(Math.round(23.0));
-        assertThat(Math.round(point.getLongitude())).isEqualTo(Math.round(63.0));
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(((MapzenApplication) application).shouldUpdateMapLocation()).isTrue();
     }
 
     @Test
@@ -1274,7 +1274,7 @@ public class  RouteFragmentTest {
         sNotification.getActions().get(0).actionIntent.send();
 
         ShadowApplication application = shadowOf(act.getApplication());
-        Intent broadcastIntent = application.getBroadcastIntents().get(0);
+        Intent broadcastIntent = application.getBroadcastIntents().get(1);
         String broadcastClassName = broadcastIntent.getComponent().getClassName();
         boolean shouldExit = broadcastIntent.getExtras()
                 .getBoolean(MapzenNotificationCreator.EXIT_NAVIGATION);

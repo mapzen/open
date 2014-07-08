@@ -6,6 +6,7 @@ import android.location.LocationManager;
 import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
+import com.mapzen.android.lost.LocationClient;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
 import com.mapzen.route.RoutePreviewFragment;
@@ -49,6 +50,7 @@ public class ItemFragmentTest {
     private ItemFragment itemFragment;
     private TestBaseActivity act;
     @Inject Router router;
+    @Inject LocationClient locationClient;
 
     @Before
     public void setUp() throws Exception {
@@ -121,7 +123,7 @@ public class ItemFragmentTest {
 
     @Test
     public void shouldDisplayGPSPromptOnRoute() throws Exception {
-        ShadowLocationManager manager = shadowOf(act.getLocationClient().getLocationManager());
+        ShadowLocationManager manager = shadowOf(locationClient.getLocationManager());
         manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
         itemFragment.startButton.performClick();
         assertThat(act.getSupportFragmentManager()).hasFragmentWithTag("gps_dialog");
@@ -129,7 +131,7 @@ public class ItemFragmentTest {
 
     @Test
     public void shouldNotDisplayGPSPromptOnRoute() throws Exception {
-        ShadowLocationManager manager = shadowOf(act.getLocationClient().getLocationManager());
+        ShadowLocationManager manager = shadowOf(locationClient.getLocationManager());
         manager.setProviderEnabled(LocationManager.GPS_PROVIDER, true);
         itemFragment.startButton.performClick();
         assertThat(act.getSupportFragmentManager()).doesNotHaveFragmentWithTag("gps_dialog");
@@ -137,7 +139,7 @@ public class ItemFragmentTest {
 
     @Test
      public void shouldDismissGPSPromptOnNegativeButton() throws Exception {
-        ShadowLocationManager manager = shadowOf(act.getLocationClient().getLocationManager());
+        ShadowLocationManager manager = shadowOf(locationClient.getLocationManager());
         manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
         itemFragment.startButton.performClick();
         AlertDialog gpsPrompt = ShadowAlertDialog.getLatestAlertDialog();
@@ -148,7 +150,7 @@ public class ItemFragmentTest {
 
     @Test
     public void shouldOpenGPSSettingsOnPositiveButtonClick() throws Exception {
-        ShadowLocationManager manager = shadowOf(act.getLocationClient().getLocationManager());
+        ShadowLocationManager manager = shadowOf(locationClient.getLocationManager());
         manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
         itemFragment.startButton.performClick();
         AlertDialog gpsPrompt = ShadowAlertDialog.getLatestAlertDialog();
@@ -159,7 +161,7 @@ public class ItemFragmentTest {
 
     @Test
     public void shouldDisplayGPSPromptTextCorrectly() throws Exception {
-        ShadowLocationManager manager = shadowOf(act.getLocationClient().getLocationManager());
+        ShadowLocationManager manager = shadowOf(locationClient.getLocationManager());
         manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
         itemFragment.startButton.performClick();
         AlertDialog gpsPrompt = ShadowAlertDialog.getLatestAlertDialog();
