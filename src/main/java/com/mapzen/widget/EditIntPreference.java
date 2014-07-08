@@ -3,6 +3,7 @@ package com.mapzen.widget;
 import com.mapzen.util.Logger;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.preference.EditTextPreference;
 import android.util.AttributeSet;
 
@@ -36,5 +37,16 @@ public class EditIntPreference extends EditTextPreference {
         }
 
         return persistInt(intValue);
+    }
+
+    @Override
+    protected Object onGetDefaultValue(TypedArray a, int index) {
+        final String s = a.getString(index);
+        // Workaround for Robolectric which loads integer resources as hex strings.
+        if (s.startsWith("0x")) {
+            return Integer.valueOf(s.substring(2), 16).toString();
+        }
+
+        return s;
     }
 }
