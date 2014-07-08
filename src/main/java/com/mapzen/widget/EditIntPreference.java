@@ -1,5 +1,7 @@
 package com.mapzen.widget;
 
+import com.mapzen.util.Logger;
+
 import android.content.Context;
 import android.preference.EditTextPreference;
 import android.util.AttributeSet;
@@ -25,6 +27,14 @@ public class EditIntPreference extends EditTextPreference {
 
     @Override
     protected boolean persistString(String value) {
-        return persistInt(Integer.valueOf(value));
+        int intValue;
+        try {
+            intValue = Integer.valueOf(value);
+        } catch (NumberFormatException e) {
+            Logger.e("Unable to parse preference value: " + value);
+            return true;
+        }
+
+        return persistInt(intValue);
     }
 }
