@@ -12,6 +12,7 @@ import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
 import com.mapzen.speakerbox.Speakerbox;
 import com.mapzen.util.DatabaseHelper;
+import com.mapzen.util.DisplayHelper;
 import com.mapzen.util.RouteLocationIndicator;
 import com.mapzen.util.Logger;
 import com.mapzen.widget.DebugView;
@@ -120,7 +121,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private Resources res;
     private DebugView debugView;
     private SlidingUpPanelLayout slideLayout;
-    private DirectionListFragment directionListFragmentragment = null;
+    private DirectionListFragment directionListFragment = null;
 
     public static void setRouter(Router router) {
         RouteFragment.router = router;
@@ -162,6 +163,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 return false;
             }
         });
+        ((RouteAdapter) pager.getAdapter()).setIconStyle(DisplayHelper.IconStyle.GRAY);
         initDebugView(rootView);
         initSlideLayout(rootView);
         return rootView;
@@ -681,6 +683,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             pagerPositionWhenPaused = pager.getCurrentItem();
         }
         autoPaging = false;
+        ((RouteAdapter) pager.getAdapter()).setIconStyle(DisplayHelper.IconStyle.GRAY);
         getView().findViewById(R.id.routes).setBackgroundColor(app
                 .getResources().getColor(R.color.transparent_gray));
         resume.setVisibility(View.VISIBLE);
@@ -689,6 +692,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private void turnAutoPageOn() {
         pager.setCurrentItem(pagerPositionWhenPaused);
         resume.setVisibility(View.GONE);
+        ((RouteAdapter)pager.getAdapter()).setIconStyle(DisplayHelper.IconStyle.STANDARD);
         getView().findViewById(R.id.routes).setBackgroundColor(act
                 .getBaseContext().getResources().getColor(R.color.transparent_white));
         autoPaging = true;
@@ -794,11 +798,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
                 if (slideOffset < .99) {
-                    if (directionListFragmentragment == null) {
+                    if (directionListFragment == null) {
                         showDirectionListFragmentInExpanded();
                     }
                 }
-                if (slideOffset > .99 && directionListFragmentragment != null) {
+                if (slideOffset > .99 && directionListFragment != null) {
                     hideDirectionListFragment();
                     getSlideLayout().collapsePane();
                 }
@@ -823,7 +827,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void showDirectionListFragmentInExpanded() {
-        directionListFragmentragment = DirectionListFragment.
+        directionListFragment = DirectionListFragment.
                 newInstance(route.getRouteInstructions(),
                         new DirectionListFragment.DirectionListener() {
                             @Override
@@ -832,7 +836,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                             }
                         });
         getChildFragmentManager().beginTransaction()
-                .replace(R.id.footer_wrapper, directionListFragmentragment
+                .replace(R.id.footer_wrapper, directionListFragment
                         , DirectionListFragment.TAG)
                 .disallowAddToBackStack()
                 .commit();
@@ -844,14 +848,14 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void hideDirectionListFragment() {
-        if (directionListFragmentragment != null) {
+        if (directionListFragment != null) {
             getChildFragmentManager()
                     .beginTransaction()
                     .disallowAddToBackStack()
-                    .remove(directionListFragmentragment)
+                    .remove(directionListFragment)
                     .commit();
         }
-        directionListFragmentragment = null;
+        directionListFragment = null;
     }
 
     private void addSlideLayoutTouchListener() {
