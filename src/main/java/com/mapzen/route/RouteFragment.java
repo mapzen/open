@@ -1,5 +1,7 @@
 package com.mapzen.route;
 
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
@@ -10,6 +12,7 @@ import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
 import com.mapzen.speakerbox.Speakerbox;
 import com.mapzen.util.DatabaseHelper;
+import com.mapzen.util.DisplayHelper;
 import com.mapzen.util.RouteLocationIndicator;
 import com.mapzen.util.Logger;
 import com.mapzen.widget.DebugView;
@@ -18,6 +21,7 @@ import com.mapzen.widget.DistanceView;
 
 import com.bugsense.trace.BugSenseHandler;
 
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.PathLayer;
@@ -40,7 +44,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -91,7 +94,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @InjectView(R.id.overflow_menu) ImageButton overflowMenu;
     @InjectView(R.id.routes) ViewPager pager;
-    @InjectView(R.id.resume_button) Button resume;
+    @InjectView(R.id.resume_button) ImageButton resume;
+    @InjectView(R.id.footer_wrapper) RelativeLayout footerWrapper;
+    @InjectView(R.id.footer) LinearLayout footer;
 
     private ArrayList<Instruction> instructions;
     private RouteAdapter adapter;
@@ -115,6 +120,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private SharedPreferences prefs;
     private Resources res;
     private DebugView debugView;
+    private SlidingUpPanelLayout slideLayout;
+    private DirectionListFragment directionListFragment = null;
 
     public static void setRouter(Router router) {
         RouteFragment.router = router;
@@ -137,7 +144,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         ButterKnife.inject(this, rootView);
         adapter = new RouteAdapter(act, instructions);
         TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
-        destinationName.setText(simpleFeature.getProperty(NAME));
+        destinationName.setText("To " + simpleFeature.getProperty(NAME));
         distanceLeftView = (DistanceView) rootView.findViewById(R.id.destination_distance);
         distanceLeftView.setRealTime(true);
         if (route != null) {
@@ -147,8 +154,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager.setOnPageChangeListener(this);
         adapter.notifyDataSetChanged();
         previousPosition = pager.getCurrentItem();
-        notificationCreator = new MapzenNotificationCreator(act);
         initSpeakerbox();
+        initNotificationCreator();
         pager.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -156,8 +163,16 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 return false;
             }
         });
+        ((RouteAdapter) pager.getAdapter()).setIconStyle(DisplayHelper.IconStyle.GRAY);
         initDebugView(rootView);
+        initSlideLayout(rootView);
         return rootView;
+    }
+
+    private void initNotificationCreator() {
+        notificationCreator = new MapzenNotificationCreator(act);
+        notificationCreator.createNewNotification(simpleFeature.getMarker().title,
+                instructions.get(0).getFullInstruction());
     }
 
     private void initSpeakerbox() {
@@ -166,8 +181,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         addIgnoredPhrases();
         checkIfVoiceNavigationIsEnabled();
         playFirstInstruction();
-        notificationCreator.createNewNotification(simpleFeature.getMarker().title,
-                instructions.get(0).getFullInstruction());
+
     }
 
     private void addRemixPatterns() {
@@ -202,6 +216,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @SuppressWarnings("unused")
     public void onClickResume() {
         turnAutoPageOn();
+        Instruction instruction = instructions.get(pager.getCurrentItem());
+        updateRemainingDistance(instruction, instruction.getLocation());
     }
 
     @OnClick(R.id.overflow_menu)
@@ -215,7 +231,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 if (item.getItemId() == R.id.route_menu_steps) {
-                    showDirectionListFragment();
+                    expandInstructionsPane();
                     return true;
                 }
                 return false;
@@ -248,6 +264,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         super.onPause();
         act.unregisterReceiver(locationReceiver);
         act.activateMapLocationUpdates();
+
     }
 
     @Override
@@ -379,7 +396,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         storeLocationInfo(location, correctedLocation);
         manageMap(correctedLocation, location);
 
-        Instruction closestInstruction;
+        Instruction closestInstruction = null;
         int closestDistance = 0;
         if (activeInstruction == null) {
             closestInstruction = route.getNextInstruction();
@@ -489,10 +506,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    private void showDirectionListFragment() {
+    public void showDirectionListFragment() {
         final Fragment fragment = DirectionListFragment.newInstance(instructions, this);
         act.getSupportFragmentManager().beginTransaction()
-                .add(R.id.full_list, fragment, DirectionListFragment.TAG)
+                .add(R.id.routes, fragment, DirectionListFragment.TAG)
                 .addToBackStack(null)
                 .commit();
     }
@@ -570,6 +587,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void onPageScrolled(int i, float v, int i2) {
         if (pager.getCurrentItem() != 0) {
             speakerbox.stop();
+        }
+
+        if (pager.getCurrentItem() == pagerPositionWhenPaused) {
+            resume.setVisibility(View.GONE);
+            getView().findViewById(R.id.routes).setBackgroundColor(act.getBaseContext()
+                    .getResources().getColor(R.color.transparent_white));
         }
     }
 
@@ -655,17 +678,23 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    private void turnAutoPageOff() {
+    public void turnAutoPageOff() {
         if (autoPaging) {
             pagerPositionWhenPaused = pager.getCurrentItem();
         }
         autoPaging = false;
+        ((RouteAdapter) pager.getAdapter()).setIconStyle(DisplayHelper.IconStyle.GRAY);
+        getView().findViewById(R.id.routes).setBackgroundColor(app
+                .getResources().getColor(R.color.transparent_gray));
         resume.setVisibility(View.VISIBLE);
     }
 
     private void turnAutoPageOn() {
         pager.setCurrentItem(pagerPositionWhenPaused);
         resume.setVisibility(View.GONE);
+        ((RouteAdapter)pager.getAdapter()).setIconStyle(DisplayHelper.IconStyle.STANDARD);
+        getView().findViewById(R.id.routes).setBackgroundColor(act
+                .getBaseContext().getResources().getColor(R.color.transparent_white));
         autoPaging = true;
     }
 
@@ -754,5 +783,110 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (act.isInDebugMode()) {
             debugView.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void initSlideLayout(View view) {
+        setSlideLayout((SlidingUpPanelLayout) view.findViewById(R.id.sliding_layout));
+        getSlideLayout().setDragView(view.findViewById(R.id.drag_area));
+        getSlideLayout().setSlidingEnabled(false);
+        addSlideLayoutTouchListener();
+        getSlideLayout().setPanelSlideListener(getPanelSlideListener());
+    }
+
+    public SlidingUpPanelLayout.PanelSlideListener getPanelSlideListener() {
+        return (new SlidingUpPanelLayout.PanelSlideListener() {
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
+                if (slideOffset < .99) {
+                    if (directionListFragment == null) {
+                        showDirectionListFragmentInExpanded();
+                    }
+                }
+                if (slideOffset > .99 && directionListFragment != null) {
+                    hideDirectionListFragment();
+                    getSlideLayout().collapsePane();
+                }
+                if (slideOffset == 1.0) {
+                    getSlideLayout().setSlidingEnabled(false);
+                }
+            }
+
+            @Override
+            public void onPanelExpanded(View panel) {
+            }
+
+            @Override
+            public void onPanelCollapsed(View panel) {
+                getSlideLayout().setSlidingEnabled(false);
+            }
+
+            @Override
+            public void onPanelAnchored(View panel) {
+            }
+        });
+    }
+
+    private void showDirectionListFragmentInExpanded() {
+        directionListFragment = DirectionListFragment.
+                newInstance(route.getRouteInstructions(),
+                        new DirectionListFragment.DirectionListener() {
+                            @Override
+                            public void onInstructionSelected(int index) {
+                                instructionSelectedAction(index);
+                            }
+                        });
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.footer_wrapper, directionListFragment
+                        , DirectionListFragment.TAG)
+                .disallowAddToBackStack()
+                .commit();
+    }
+
+    private void instructionSelectedAction(int index) {
+        turnAutoPageOff();
+        pager.setCurrentItem(index);
+    }
+
+    private void hideDirectionListFragment() {
+        if (directionListFragment != null) {
+            getChildFragmentManager()
+                    .beginTransaction()
+                    .disallowAddToBackStack()
+                    .remove(directionListFragment)
+                    .commit();
+        }
+        directionListFragment = null;
+    }
+
+    private void addSlideLayoutTouchListener() {
+        footerWrapper.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                getSlideLayout().setSlidingEnabled(true);
+                return false;
+            }
+        });
+    }
+
+    public void collapseSlideLayout() {
+        if (getSlideLayout().isExpanded()) {
+            getSlideLayout().collapsePane();
+        }
+    }
+
+    public void expandInstructionsPane() {
+        getSlideLayout().expandPane();
+    }
+
+    public boolean slideLayoutIsExpanded() {
+        return getSlideLayout().isExpanded();
+    }
+
+    public SlidingUpPanelLayout getSlideLayout() {
+        return slideLayout;
+    }
+
+    public void setSlideLayout(SlidingUpPanelLayout slideLayout) {
+        this.slideLayout = slideLayout;
     }
 }

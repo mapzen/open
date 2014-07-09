@@ -1,5 +1,6 @@
 package com.mapzen.activity;
 
+import android.support.v4.view.ViewPager;
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
@@ -10,6 +11,8 @@ import com.mapzen.core.DataUploadService;
 import com.mapzen.core.OSMOauthFragment;
 import com.mapzen.core.SettingsFragment;
 import com.mapzen.fragment.MapFragment;
+import com.mapzen.route.RouteFragment;
+import com.mapzen.route.RoutePreviewFragment;
 import com.mapzen.search.AutoCompleteAdapter;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.search.PagerResultsFragment;
@@ -393,12 +396,22 @@ public class BaseActivity extends MapActivity {
 
     @Override
     public void onBackPressed() {
-        SettingsFragment fragment = (SettingsFragment) getFragmentManager()
+        SettingsFragment settingsFragment = (SettingsFragment) getFragmentManager()
                 .findFragmentByTag(SettingsFragment.TAG);
-        if (fragment != null && fragment.isAdded()) {
+        RouteFragment routeFragment = (RouteFragment)
+                getSupportFragmentManager().findFragmentByTag(RouteFragment.TAG);
+        if (settingsFragment != null && settingsFragment.isAdded()) {
             getFragmentManager().beginTransaction()
-                    .detach(fragment)
+                    .detach(settingsFragment)
                     .commit();
+        }  else if (routeFragment != null && routeFragment.isAdded()) {
+            if (routeFragment.slideLayoutIsExpanded()) {
+                routeFragment.collapseSlideLayout();
+            } else {
+                ((RoutePreviewFragment) getSupportFragmentManager()
+                        .findFragmentByTag(RoutePreviewFragment.TAG)).showFragmentContents();
+                super.onBackPressed();
+            }
         } else {
             super.onBackPressed();
         }
@@ -490,7 +503,6 @@ public class BaseActivity extends MapActivity {
                 .replace(R.id.pager_results_container, pagerResultsFragment,
                         PagerResultsFragment.TAG)
                 .commit();
-
         return pagerResultsFragment.executeSearchOnMap(getSearchView(), query);
     }
 
@@ -575,5 +587,17 @@ public class BaseActivity extends MapActivity {
     private boolean wasForceLoggedIn() {
         SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
         return prefs.getBoolean("forced_login", false);
+    }
+
+    @SuppressWarnings("unused")
+    public void onLeftArrowClick(View view) {
+        ViewPager pager = (ViewPager) findViewById(R.id.routes);
+        pager.setCurrentItem(pager.getCurrentItem() - 1);
+    }
+
+    @SuppressWarnings("unused")
+    public void onRightArrowClick(View view) {
+        ViewPager pager = (ViewPager) findViewById(R.id.routes);
+        pager.setCurrentItem(pager.getCurrentItem() + 1);
     }
 }

@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +21,7 @@ public class RouteAdapter extends PagerAdapter {
     private List<Instruction> instructions = new ArrayList<Instruction>();
     private Context context;
     private Instruction currentInstruction;
+    private String iconStyle = DisplayHelper.IconStyle.STANDARD;
 
     public RouteAdapter(Context context, List<Instruction> instructions) {
         this.context = context;
@@ -42,6 +42,8 @@ public class RouteAdapter extends PagerAdapter {
         setFullInstructionAfterAction(view);
         setTurnIcon(view);
         setTurnIconAfterAction(view);
+        setDistance(view);
+        showLeftAndRightArrows(position, view);
         setTag(position, view);
         container.addView(view);
         return view;
@@ -50,16 +52,33 @@ public class RouteAdapter extends PagerAdapter {
     private void setBackgroundColor(int position, View view) {
         if (position == instructions.size() - 1) {
             view.setBackgroundColor(context.getResources().getColor(R.color.destination_green));
+        }  else {
+            view.setBackgroundColor(context.getResources().getColor(R.color.transparent_white));
+        }
+    }
+
+    private void showLeftAndRightArrows(int position, View view) {
+        if (position == 0) {
+            view.findViewById(R.id.left_arrow).setVisibility(View.INVISIBLE);
+        } else if (position == instructions.size() - 1) {
+            view.findViewById(R.id.right_arrow).setVisibility(View.INVISIBLE);
         } else {
-            view.setBackgroundColor(context.getResources().getColor(R.color.dark_gray));
+            view.findViewById(R.id.left_arrow).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.right_arrow).setVisibility(View.VISIBLE);
         }
     }
 
     private void setFullInstruction(View view) {
         final TextView fullInstruction = (TextView) view.findViewById(R.id.full_instruction);
         fullInstruction.setText(getFullInstructionWithBoldName(currentInstruction
-                .getFullInstruction()));
+                .getSimpleInstruction()));
     }
+
+    private void setDistance(View view) {
+        final TextView distance = (TextView) view.findViewById(R.id.distance_instruction);
+        distance.setText(currentInstruction.getFormattedDistance());
+    }
+
 
     private void setFullInstructionAfterAction(View view) {
         final TextView fullInstructionAfterAction =
@@ -72,14 +91,14 @@ public class RouteAdapter extends PagerAdapter {
     private void setTurnIcon(View view) {
         final ImageView turnIcon = (ImageView) view.findViewById(R.id.turn_icon);
         turnIcon.setImageResource(DisplayHelper.getRouteDrawable(context,
-                currentInstruction.getTurnInstruction(), DisplayHelper.IconStyle.WHITE));
+                currentInstruction.getTurnInstruction(), iconStyle));
     }
 
     private void setTurnIconAfterAction(View view) {
         final ImageView turnIconAfterAction =
                 (ImageView) view.findViewById(R.id.turn_icon_after_action);
         turnIconAfterAction.setImageResource(DisplayHelper.getRouteDrawable(context,
-                10, DisplayHelper.IconStyle.WHITE));
+                10, DisplayHelper.IconStyle.GRAY));
     }
 
     private void setTag(int position, View view) {
@@ -97,6 +116,11 @@ public class RouteAdapter extends PagerAdapter {
         return ssb;
     }
 
+    public void setIconStyle(String iconStyle) {
+        this.iconStyle = iconStyle;
+    }
+
+
     @Override
     public int getCount() {
         return instructions.size();
@@ -106,4 +130,6 @@ public class RouteAdapter extends PagerAdapter {
     public boolean isViewFromObject(View view, Object object) {
         return view == object;
     }
+
+
 }

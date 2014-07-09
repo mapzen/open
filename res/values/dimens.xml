@@ -5,8 +5,8 @@
     <dimen name="default_padding_vertical">8dp</dimen>
     <dimen name="default_padding_horizontal">16dp</dimen>
     <dimen name="narrow_padding_horizontal">8dp</dimen>
-    <dimen name="route_header_height">120dp</dimen>
-    <dimen name="route_footer_height">64dp</dimen>
+    <dimen name="route_header_height">84dp</dimen>
+    <dimen name="route_footer_height">60dp</dimen>
     <dimen name="divider_height">1dp</dimen>
     <dimen name="icon_width">48dp</dimen>
     <dimen name="icon_height">48dp</dimen>
@@ -19,7 +19,21 @@
     <dimen name="motto_bottom_margin">110dp</dimen>
     <dimen name="button_font_size">10pt</dimen>
     <dimen name="motto_font_size">16pt</dimen>
-
+    <dimen name="result_pager_height">75dp</dimen>
+    <dimen name="instruction_height">84dp</dimen>
+    <dimen name="arrow_padding">15dp</dimen>
+    <dimen name="turn_icon_height">40dp</dimen>
+    <dimen name="turn_icon_margin">12dp</dimen>
+    <dimen name="instruction_horizontal_padding">10dp</dimen>
+    <dimen name="turn_info_width">48dp</dimen>
+    <dimen name="route_preview_top_padding">15dp</dimen>
+    <dimen name="route_preview_border_margin">30dp</dimen>
+    <dimen name="location_divider_padding">15dp</dimen>
+    <dimen name="parallax_offset">110dp</dimen>
+    <dimen name="resume_padding">15dp</dimen>
+    <dimen name="drag_area_height">20dp</dimen>
+    <dimen name="debug_view_height">148dp</dimen>
+    <dimen name="routing_footer_left_padding">10dp</dimen>
     <!-- fonts -->
     <dimen name="big">32sp</dimen>
     <dimen name="medium">21sp</dimen>

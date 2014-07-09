@@ -75,7 +75,7 @@ public class DirectionListFragmentTest {
         TextView instruction = (TextView) view.findViewById(R.id.simple_instruction);
         DistanceView distance = (DistanceView) view.findViewById(R.id.distance);
 
-        assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_route_bl_1));
+        assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_route_1));
         assertThat(instruction).hasText("First Instruction");
         assertThat(distance).hasText("0.1 mi");
     }
@@ -87,7 +87,7 @@ public class DirectionListFragmentTest {
         TextView instruction = (TextView) view.findViewById(R.id.simple_instruction);
         DistanceView distance = (DistanceView) view.findViewById(R.id.distance);
 
-        assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_route_bl_2));
+        assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_route_2));
         assertThat(instruction).hasText("Second Instruction");
         assertThat(distance).hasText("2.3 mi");
     }
@@ -100,7 +100,7 @@ public class DirectionListFragmentTest {
         TextView instruction = (TextView) view.findViewById(R.id.simple_instruction);
         DistanceView distance = (DistanceView) view.findViewById(R.id.distance);
 
-        assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_route_bl_15));
+        assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_route_15));
         assertThat(instruction).hasText("Last Instruction");
         assertThat(distance).isEmpty();
     }

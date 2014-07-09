@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class ListResultsFragment extends ListFragment {
+public class   ListResultsFragment extends ListFragment {
     @InjectView(R.id.term) TextView termTextView;
     private ArrayList<SimpleFeature> features;
     private String currentSearchTerm;

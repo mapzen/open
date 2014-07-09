@@ -15,7 +15,7 @@
         android:paddingBottom="@dimen/default_padding_vertical"
         android:paddingLeft="@dimen/default_padding_horizontal"
         android:paddingRight="@dimen/default_padding_horizontal"
-        android:textColor="@android:color/white"
+        android:textColor="@color/brown"
         android:textSize="16sp" />
 
     <ListView

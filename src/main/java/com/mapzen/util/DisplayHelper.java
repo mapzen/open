@@ -13,26 +13,21 @@ public final class DisplayHelper {
      *
      * @param context         current context in which to display the icon.
      * @param turnInstruction the integer value representing this turn instruction.
-     * @param iconStyle       use {@link IconStyle#WHITE} or {@link IconStyle#BLACK}.
      * @return the resource ID of the turn icon to display.
      */
     public static int getRouteDrawable(Context context, int turnInstruction, String iconStyle) {
-        int drawableId = context.getResources().getIdentifier("ic_route_" + iconStyle + "_"
+        int drawableId = context.getResources().getIdentifier("ic_route"  + iconStyle
                 + turnInstruction, "drawable", context.getPackageName());
 
         if (drawableId == 0) {
-            if (IconStyle.WHITE.equals(iconStyle)) {
-                drawableId = R.drawable.ic_route_wh_10;
-            } else {
-                drawableId = R.drawable.ic_route_bl_10;
-            }
+                drawableId = R.drawable.ic_route_1;
         }
 
         return drawableId;
     }
 
     public static class IconStyle {
-        public static final String WHITE = "wh";
-        public static final String BLACK = "bl";
+        public static final String STANDARD = "_";
+        public static final String GRAY = "_gr_";
     }
 }

@@ -1,6 +1,8 @@
 package com.mapzen.route;
 
 import android.app.NotificationManager;
+import android.graphics.drawable.ColorDrawable;
+import android.support.v4.view.ViewPager;
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
@@ -60,7 +62,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -92,12 +93,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.shadowOf;
 import static org.robolectric.Robolectric.shadowOf_;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
-public class RouteFragmentTest {
+public class  RouteFragmentTest {
     TestBaseActivity act;
     RouteFragment fragment;
     ShadowApplication app;
@@ -278,7 +280,7 @@ public class RouteFragmentTest {
         Location testLocation = fragment.getRoute().getGeometry().get(2);
         fragment.onLocationChanged(testLocation);
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
-                new String[] { DatabaseHelper.COLUMN_INSTRUCTION_BEARING },
+                new String[]{DatabaseHelper.COLUMN_INSTRUCTION_BEARING},
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
         cursor.moveToNext();
@@ -441,7 +443,7 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         SimpleFeature simpleFeature = getTestSimpleFeature();
         TextView view = (TextView) fragment.getView().findViewById(R.id.destination_name);
-        assertThat(view.getText()).isEqualTo(simpleFeature.getProperty(NAME));
+        assertThat(view.getText()).isEqualTo("To " + simpleFeature.getProperty(NAME));
         assertThat(view).hasEllipsize(TextUtils.TruncateAt.END);
         assertThat(view).hasMaxLines(1);
     }
@@ -469,7 +471,7 @@ public class RouteFragmentTest {
     public void onCreateView_shouldNotShowResumeButton() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        Button resume = (Button) view.findViewById(R.id.resume_button);
+        ImageButton resume = (ImageButton) view.findViewById(R.id.resume_button);
         assertThat(resume).isNotVisible();
     }
 
@@ -477,7 +479,7 @@ public class RouteFragmentTest {
     public void onTouch_shouldDisplayResumeButton() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        Button resume = (Button) view.findViewById(R.id.resume_button);
+        ImageButton resume = (ImageButton) view.findViewById(R.id.resume_button);
         simulateUserPagerTouch();
         assertThat(resume).isVisible();
     }
@@ -495,7 +497,7 @@ public class RouteFragmentTest {
         fragment.pager.setCurrentItem(0);
         simulateUserPagerTouch();
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        Button resume = (Button) view.findViewById(R.id.resume_button);
+        ImageButton resume = (ImageButton) view.findViewById(R.id.resume_button);
         resume.performClick();
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(2);
     }
@@ -504,7 +506,7 @@ public class RouteFragmentTest {
     public void onClickResume_shouldHideResumeButton() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        Button resume = (Button) view.findViewById(R.id.resume_button);
+        ImageButton resume = (ImageButton) view.findViewById(R.id.resume_button);
         simulateUserPagerTouch();
         resume.performClick();
         assertThat(resume).isNotVisible();
@@ -522,7 +524,7 @@ public class RouteFragmentTest {
         simulateUserPagerTouch();
         fragment.pager.setCurrentItem(0);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        Button resume = (Button) view.findViewById(R.id.resume_button);
+        ImageButton resume = (ImageButton) view.findViewById(R.id.resume_button);
         resume.performClick();
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(2);
     }
@@ -538,9 +540,54 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void expandedPane_shouldShowDirectionListFragment() {
+        FragmentTestUtil.startFragment(fragment);
+        simulatePaneOpenSlide();
+        assertThat(fragment.getChildFragmentManager()).
+                hasFragmentWithTag(DirectionListFragment.TAG);
+    }
+
+    @Test
+    public void collapsedPane_shouldNotShowDirectionListFragment() {
+        FragmentTestUtil.startFragment(fragment);
+        simulatePaneCloseSlide();
+        assertThat(fragment.getChildFragmentManager())
+                .doesNotHaveFragmentWithTag(DirectionListFragment.TAG);
+    }
+
+    @Test
+    public void onAutoPageOff_pagerShouldBeGray() {
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.turnAutoPageOff();
+        int expectedColor = application.getResources().getColor(R.color.transparent_gray);
+        int actualColor = ((ColorDrawable) fragment.pager.getBackground()).getColor();
+        assertThat(actualColor).isEqualTo(expectedColor);
+    }
+
+    @Test
+    public void arrowButtons_ShouldPageThrough() {
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        fragment.setInstructions(instructions);
+        route.addSeenInstruction(instructions.get(0));
+        route.addSeenInstruction(instructions.get(1));
+        FragmentTestUtil.startFragment(fragment);
+        int firstInstruction = fragment.pager.getCurrentItem();
+        simulateOnRightArrowClick(fragment.pager);
+        assertThat(fragment.pager.getCurrentItem() - 1).isEqualTo(firstInstruction);
+        simulateOnLeftArrowClick(fragment.pager);
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(firstInstruction);
+    }
+
+    @Test
     public void shouldShowDirectionListFragment() throws Exception {
         FragmentTestUtil.startFragment(fragment);
-        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
+        RouteFragment spy = spy(fragment);
+        act.setContentView(R.layout.route_widget);
+        View view = spy.onCreateView(act.getLayoutInflater(), null, null);
         ImageButton overFlowMenu = (ImageButton) view.findViewById(R.id.overflow_menu);
         overFlowMenu.performClick();
         ShadowPopupMenu popupMenu = shadowOf(ShadowPopupMenu.getLatestPopupMenu());
@@ -548,7 +595,7 @@ public class RouteFragmentTest {
         TestMenuItem item = new TestMenuItem();
         item.setItemId(R.id.route_menu_steps);
         listener.onMenuItemClick(item);
-        assertThat(act.getSupportFragmentManager()).hasFragmentWithTag(DirectionListFragment.TAG);
+        verify(spy).expandInstructionsPane();
     }
 
     @Test
@@ -1329,5 +1376,21 @@ public class RouteFragmentTest {
                 MotionEvent.obtain(0L, 0L, MotionEvent.ACTION_DOWN, 12f, 34f, 0);
         View.OnTouchListener listener = shadowOf(fragment.pager).getOnTouchListener();
         listener.onTouch(null, motionEvent);
+    }
+
+    private void simulatePaneOpenSlide() {
+        fragment.getPanelSlideListener().onPanelSlide(fragment.getSlideLayout(), 0.95f);
+    }
+
+    private void simulatePaneCloseSlide() {
+        fragment.getPanelSlideListener().onPanelSlide(fragment.getSlideLayout(), 1.0f);
+    }
+
+    public void simulateOnLeftArrowClick(ViewPager pager) {
+        pager.setCurrentItem(pager.getCurrentItem() - 1);
+    }
+
+    public void simulateOnRightArrowClick(ViewPager pager) {
+        pager.setCurrentItem(pager.getCurrentItem() + 1);
     }
 }

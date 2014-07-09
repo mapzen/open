@@ -23,6 +23,7 @@ public class ItemFragment extends BaseFragment {
     TextView startButton;
     private SimpleFeature simpleFeature;
 
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.search_result_pager_item, container, false);

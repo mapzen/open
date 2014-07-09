@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="@dimen/default_padding_vertical"
-    android:paddingBottom="@dimen/default_padding_vertical"
     android:paddingLeft="@dimen/default_padding_horizontal"
     android:paddingRight="@dimen/default_padding_horizontal">
 

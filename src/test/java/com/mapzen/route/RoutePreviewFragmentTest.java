@@ -342,19 +342,6 @@ public class RoutePreviewFragmentTest {
     }
 
     @Test
-    public void start_shouldShowDirectionListFragmentWhenReversed() throws Exception {
-        fragment.createRouteToDestination();
-        Route testRoute = new Route(getFixture("around_the_block"));
-        fragment.success(testRoute);
-        fragment.reverse();
-        TextView startBtn = (TextView) fragment.getView().findViewById(R.id.start);
-        startBtn.performClick();
-        FragmentTestUtil.startFragment(fragment);
-        assertThat(activity.getSupportFragmentManager()).
-                hasFragmentWithTag(DirectionListFragment.TAG);
-    }
-
-    @Test
     public void start_shouldClearBubbles() throws Exception {
         fragment.createRouteToDestination();
         Route testRoute = new Route(getFixture("around_the_block"));
