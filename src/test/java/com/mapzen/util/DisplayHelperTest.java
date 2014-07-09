@@ -17,7 +17,7 @@ public class DisplayHelperTest {
     @Test
     public void shouldReturnGrayTurnIcon() throws Exception {
         assertThat(getRouteDrawable(new Activity(), 2, IconStyle.GRAY))
-                .isEqualTo(R.drawable.ic_route_2);
+                .isEqualTo(R.drawable.ic_route_gr_2);
     }
 
     @Test
