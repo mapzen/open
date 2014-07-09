@@ -1,6 +1,7 @@
 package com.mapzen.fragment;
 
 import com.mapzen.R;
+import com.mapzen.core.MapzenLocation;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.util.MapzenTheme;
@@ -41,6 +42,7 @@ import java.util.List;
 
 import static com.mapzen.MapController.DEFAULT_ZOOMLEVEL;
 import static com.mapzen.MapController.getMapController;
+import static com.mapzen.core.MapzenLocation.COM_MAPZEN_FIND_ME;
 import static org.oscim.layers.marker.ItemizedLayer.OnItemGestureListener;
 
 public class MapFragment extends BaseFragment {
@@ -79,7 +81,7 @@ public class MapFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         IntentFilter filter = new IntentFilter();
-        filter.addAction("findMe");
+        filter.addAction(COM_MAPZEN_FIND_ME);
         FindMeReceiver findMeReceiver = new FindMeReceiver();
         app.registerReceiver(findMeReceiver, filter);
 

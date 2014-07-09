@@ -17,6 +17,8 @@ import android.widget.Toast;
 import static com.mapzen.MapController.getMapController;
 
 public final class MapzenLocation {
+    public static final String KEY_LOCATION = "location";
+    public static final String COM_MAPZEN_FIND_ME = "com.mapzen.updates.find_me";
 
     public MapzenLocation() {
     }
@@ -31,11 +33,11 @@ public final class MapzenLocation {
         public void onLocationChanged(Location location) {
             if (application.shouldUpdateMapLocation()) {
                 getMapController().setLocation(location);
-                Intent findMe = new Intent("findMe");
+                Intent findMe = new Intent(COM_MAPZEN_FIND_ME);
                 application.sendBroadcast(findMe);
             }
             Intent toBroadcast = new Intent(BaseActivity.COM_MAPZEN_UPDATES_LOCATION);
-            toBroadcast.putExtra("location", location);
+            toBroadcast.putExtra(KEY_LOCATION, location);
             application.sendBroadcast(toBroadcast);
         }
     }
