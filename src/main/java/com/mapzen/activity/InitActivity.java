@@ -59,16 +59,17 @@ public class InitActivity extends Activity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        locationClient.connect();
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         locationClient.disconnect();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        locationClient.connect();
-    }
 
     @Override
     protected void onNewIntent(Intent intent) {
