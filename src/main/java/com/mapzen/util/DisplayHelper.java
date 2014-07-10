@@ -20,7 +20,11 @@ public final class DisplayHelper {
                 + turnInstruction, "drawable", context.getPackageName());
 
         if (drawableId == 0) {
+            if(iconStyle.equals(IconStyle.GRAY)) {
+                drawableId = R.drawable.ic_route_gr_1;
+            }  else {
                 drawableId = R.drawable.ic_route_1;
+            }
         }
 
         return drawableId;

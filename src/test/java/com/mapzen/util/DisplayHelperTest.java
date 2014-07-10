@@ -31,5 +31,11 @@ public class DisplayHelperTest {
         assertThat(getRouteDrawable(new Activity(), 99, IconStyle.STANDARD))
                 .isEqualTo(R.drawable.ic_route_1);
     }
+
+    @Test
+    public void shouldReturnGrayDefaultIconIfNoneFound() throws Exception {
+        assertThat(getRouteDrawable(new Activity(), 99, IconStyle.GRAY))
+                .isEqualTo(R.drawable.ic_route_gr_1);
+    }
 }
 

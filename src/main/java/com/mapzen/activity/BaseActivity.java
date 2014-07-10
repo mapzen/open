@@ -600,4 +600,9 @@ public class BaseActivity extends MapActivity {
         ViewPager pager = (ViewPager) findViewById(R.id.routes);
         pager.setCurrentItem(pager.getCurrentItem() + 1);
     }
-}
+
+  public void locateButtonAction(View view) {
+                mapFragment.setFollowMe(true);
+                mapFragment.findMe();
+    }
+    }
