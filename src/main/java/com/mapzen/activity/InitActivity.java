@@ -34,7 +34,6 @@ public class InitActivity extends Activity {
     private Verifier verifier;
     private int clickCount;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -153,7 +152,6 @@ public class InitActivity extends Activity {
             }
         }).execute();
     }
-
 
     public void setRequestToken(Token token) {
         requestToken = token;

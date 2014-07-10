@@ -38,4 +38,3 @@ public class DisplayHelperTest {
                 .isEqualTo(R.drawable.ic_route_gr_1);
     }
 }
-

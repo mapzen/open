@@ -12,4 +12,3 @@ public class TestViewport extends ViewController {
         return rotation;
     }
 }
-

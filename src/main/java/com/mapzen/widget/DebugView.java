@@ -110,4 +110,3 @@ public class DebugView extends RelativeLayout {
         }
     }
 }
-

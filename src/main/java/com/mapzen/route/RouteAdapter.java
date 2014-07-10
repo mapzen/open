@@ -79,7 +79,6 @@ public class RouteAdapter extends PagerAdapter {
         distance.setText(currentInstruction.getFormattedDistance());
     }
 
-
     private void setFullInstructionAfterAction(View view) {
         final TextView fullInstructionAfterAction =
                 (TextView) view.findViewById(R.id.full_instruction_after_action);
@@ -120,7 +119,6 @@ public class RouteAdapter extends PagerAdapter {
         this.iconStyle = iconStyle;
     }
 
-
     @Override
     public int getCount() {
         return instructions.size();
@@ -130,6 +128,5 @@ public class RouteAdapter extends PagerAdapter {
     public boolean isViewFromObject(View view, Object object) {
         return view == object;
     }
-
 
 }

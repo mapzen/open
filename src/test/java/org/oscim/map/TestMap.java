@@ -52,4 +52,3 @@ public class TestMap extends Map {
         return viewport;
     }
 }
-
