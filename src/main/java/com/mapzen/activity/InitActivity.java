@@ -70,7 +70,6 @@ public class InitActivity extends Activity {
         locationClient.disconnect();
     }
 
-
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -173,7 +172,6 @@ public class InitActivity extends Activity {
             }
         }).execute();
     }
-
 
     public void setRequestToken(Token token) {
         requestToken = token;
