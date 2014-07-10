@@ -1,7 +1,6 @@
 package com.mapzen.activity;
 
 import android.content.Intent;
-import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
 import com.mapzen.android.lost.LocationClient;

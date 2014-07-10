@@ -20,7 +20,7 @@ public final class MapzenLocation {
     public static final String KEY_LOCATION = "location";
     public static final String COM_MAPZEN_FIND_ME = "com.mapzen.updates.find_me";
 
-    public MapzenLocation() {
+    private MapzenLocation() {
     }
 
     public static class Listener implements LocationListener {

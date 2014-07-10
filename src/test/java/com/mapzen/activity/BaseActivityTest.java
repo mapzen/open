@@ -19,7 +19,6 @@ import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
-import org.fest.assertions.data.Offset;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -321,16 +320,6 @@ public class BaseActivityTest {
         initLastLocation();
         invokeOnConnected();
         assertThat(getMapController().getZoomLevel()).isEqualTo(MapController.DEFAULT_ZOOMLEVEL);
-    }
-
-    @Test
-    public void onConnect_shouldFindMe() throws Exception {
-        initLastLocation();
-        invokeOnConnected();
-        assertThat(activity.getMapFragment().getMap().getMapPosition().getLatitude())
-                .isEqualTo(1.0, Offset.offset(0.1));
-        assertThat(activity.getMapFragment().getMap().getMapPosition().getLongitude())
-                .isEqualTo(2.0, Offset.offset(0.1));
     }
 
     @Test

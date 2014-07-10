@@ -5,6 +5,7 @@ import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.support.TestHelper;
 
+import org.fest.assertions.data.Offset;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +19,6 @@ import org.oscim.map.TestViewport;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.preference.PreferenceManager;
@@ -175,8 +175,8 @@ public class MapControllerTest {
         expected.setLongitude(expectedLng);
         getMapController().setLocation(expected);
         MapPosition position = getMapController().getMapPosition();
-        assertThat(Math.round(position.getLatitude())).isEqualTo(expectedLat);
-        assertThat(Math.round(position.getLongitude())).isEqualTo(expectedLng);
+        assertThat(position.getLatitude()).isEqualTo(expectedLat, Offset.offset(0.0001));
+        assertThat(position.getLongitude()).isEqualTo(expectedLng, Offset.offset(0.0001));
     }
 
     @Test
@@ -313,9 +313,9 @@ public class MapControllerTest {
         editor.commit();
         getMapController().restoreFromSavedLocation();
         assertThat(Math.round(getMapController().getMap().getMapPosition().getLatitude()))
-                .isEqualTo(40l);
+                .isEqualTo(40L);
         assertThat(Math.round(getMapController().getMap().getMapPosition().getLongitude()))
-                .isEqualTo(20l);
+                .isEqualTo(20L);
     }
 
     @Test
