@@ -18,13 +18,21 @@ import org.oscim.map.TestViewport;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.mapzen.MapController.DEBUG_LOCATION;
+import static com.mapzen.MapController.KEY_BEARING;
+import static com.mapzen.MapController.KEY_LATITUDE;
+import static com.mapzen.MapController.KEY_LONGITUDE;
+import static com.mapzen.MapController.KEY_MAP_SCALE;
+import static com.mapzen.MapController.KEY_STORED_MAPPOSITION;
+import static com.mapzen.MapController.KEY_TILT;
 import static com.mapzen.MapController.geoPointToPair;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.MapController.locationToGeoPoint;
@@ -195,7 +203,7 @@ public class MapControllerTest {
     @Test
     public void setMapPosition_shouldStoreMapPosition() throws Exception {
         MapPosition expected = new MapPosition(34.0, 34.0, 3.0);
-        getMapController().setMapPosition(expected);
+        getMapController().storeMapPosition(expected);
         assertThat(getMapController().getMapPosition()).isEqualTo(expected);
     }
 
@@ -262,6 +270,83 @@ public class MapControllerTest {
     public void setZoomLevel_shouldUpdateMap() throws Exception {
         getMapController().setZoomLevel(10);
         assertThat(getMapController().getMap().getMapPosition().getZoomLevel()).isEqualTo(10);
+    }
+
+    @Test
+    public void saveLocation_shouldStoreCoordinates() {
+        getMapController().setPosition(getTestLocation(22.0, 44.0));
+        getMapController().saveLocation();
+        assertThat(getSavedMapPrefs().getInt(KEY_LATITUDE, 0)).isEqualTo((int) (22.0 * 1e6));
+        assertThat(getSavedMapPrefs().getInt(KEY_LONGITUDE, 0)).isEqualTo((int) (44.0 * 1e6));
+    }
+
+    @Test
+    public void saveLocation_shouldStoreScale() {
+        getMapController().setZoomLevel(8);
+        getMapController().saveLocation();
+        assertThat(getSavedMapPrefs().getFloat(KEY_MAP_SCALE, 0)).isEqualTo((float) Math.pow(2, 8));
+    }
+
+    @Test
+    public void saveLocation_shouldStoreTilt() {
+        MapPosition pos = getMapController().getMap().getMapPosition();
+        pos.setTilt(2f);
+        getMapController().getMap().setMapPosition(pos);
+        getMapController().saveLocation();
+        assertThat(getSavedMapPrefs().getFloat(KEY_TILT, 0)).isEqualTo(2f);
+    }
+
+    @Test
+    public void saveLocation_shouldStoreBearing() {
+        MapPosition pos = getMapController().getMap().getMapPosition();
+        pos.setBearing(2f);
+        getMapController().getMap().setMapPosition(pos);
+        getMapController().saveLocation();
+        assertThat(getSavedMapPrefs().getFloat(KEY_BEARING, 0)).isEqualTo(2f);
+    }
+
+    @Test
+    public void restoreFromSavedLocation_shouldRestoreCoorinates() {
+        SharedPreferences.Editor editor = getSavedMapPrefs().edit();
+        editor.putInt(KEY_LATITUDE, (int) (40.0 * 1e6));
+        editor.putInt(KEY_LONGITUDE, (int) (20.0 * 1e6));
+        editor.commit();
+        getMapController().restoreFromSavedLocation();
+        assertThat(Math.round(getMapController().getMap().getMapPosition().getLatitude()))
+                .isEqualTo(40l);
+        assertThat(Math.round(getMapController().getMap().getMapPosition().getLongitude()))
+                .isEqualTo(20l);
+    }
+
+    @Test
+    public void restoreFromSavedLocation_shouldRestoreScale() {
+        SharedPreferences.Editor editor = getSavedMapPrefs().edit();
+        editor.putFloat(KEY_MAP_SCALE, (float) Math.pow(2, 8));
+        editor.commit();
+        getMapController().restoreFromSavedLocation();
+        assertThat(getMapController().getMap().getMapPosition().getZoomLevel()).isEqualTo(8);
+    }
+
+    @Test
+    public void restoreFromSavedLocation_shouldRestoreTilt() {
+        SharedPreferences.Editor editor = getSavedMapPrefs().edit();
+        editor.putFloat(KEY_TILT, 2.3f);
+        editor.commit();
+        getMapController().restoreFromSavedLocation();
+        assertThat(getMapController().getMap().getMapPosition().getTilt()).isEqualTo(2.3f);
+    }
+
+    @Test
+    public void restoreFromSavedLocation_shouldRestoreBearing() {
+        SharedPreferences.Editor editor = getSavedMapPrefs().edit();
+        editor.putFloat(KEY_BEARING, 4.3f);
+        editor.commit();
+        getMapController().restoreFromSavedLocation();
+        assertThat(getMapController().getMap().getMapPosition().getBearing()).isEqualTo(4.3f);
+    }
+
+    private SharedPreferences getSavedMapPrefs() {
+        return activity.getSharedPreferences(KEY_STORED_MAPPOSITION, MODE_PRIVATE);
     }
 
     private void enableFixedLocation() {

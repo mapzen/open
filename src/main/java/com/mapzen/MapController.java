@@ -7,6 +7,7 @@ import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 import org.oscim.map.Map;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.preference.PreferenceManager;
@@ -88,7 +89,7 @@ public final class MapController {
         return mapPosition;
     }
 
-    public void setMapPosition(MapPosition mapPosition) {
+    public void storeMapPosition(MapPosition mapPosition) {
         this.mapPosition = mapPosition;
     }
 
@@ -136,10 +137,10 @@ public final class MapController {
         if (map == null) {
             return;
         }
-        SharedPreferences.Editor editor =
-                activity.getSharedPreferences(KEY_STORED_MAPPOSITION, 0).edit();
-        MapPosition mapPosition = new MapPosition();
-        map.viewport().getMapPosition(mapPosition);
+        SharedPreferences preferences = activity.getSharedPreferences(KEY_STORED_MAPPOSITION,
+                Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        MapPosition mapPosition = map.getMapPosition();
         GeoPoint geoPoint = mapPosition.getGeoPoint();
         editor.putFloat(KEY_TILT, mapPosition.getTilt());
         editor.putInt(KEY_LATITUDE, geoPoint.latitudeE6);
@@ -167,6 +168,7 @@ public final class MapController {
         mapPosition.setTilt(tilt);
         mapPosition.setScale(scale);
         mapPosition.setBearing(bearing);
+        storeMapPosition(mapPosition);
         map.setMapPosition(mapPosition);
         map.updateMap(true);
     }

@@ -1,7 +1,6 @@
 package com.mapzen.fragment;
 
 import com.mapzen.R;
-import com.mapzen.core.MapzenLocation;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.util.MapzenTheme;
@@ -206,7 +205,7 @@ public class MapFragment extends BaseFragment {
                     followMe = false;
                 }
 
-                getMapController().setMapPosition(mapPosition);
+                getMapController().storeMapPosition(mapPosition);
             }
         });
     }
