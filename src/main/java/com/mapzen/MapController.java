@@ -81,9 +81,7 @@ public final class MapController {
 
     public MapController centerOn(Location location) {
         GeoPoint point = new GeoPoint(location.getLatitude(), location.getLongitude());
-        if (map != null) {
-            map.animator().animateTo(point);
-        }
+        map.animator().animateTo(point);
         return this;
     }
 
@@ -108,27 +106,21 @@ public final class MapController {
 
     public void setMapPerspectiveForInstruction(Instruction instruction) {
         Location location = instruction.getLocation();
-        if (map != null) {
-            map.setMapPosition(location.getLatitude(), location.getLongitude(),
-                    Math.pow(2, ROUTE_ZOOM_LEVEL));
-            setRotation(instruction.getRotationBearing());
-            map.updateMap(true);
-        }
+        map.setMapPosition(location.getLatitude(), location.getLongitude(),
+                Math.pow(2, ROUTE_ZOOM_LEVEL));
+        setRotation(instruction.getRotationBearing());
+        map.updateMap(true);
     }
 
     public void setRotation(float rotation) {
-        if (map != null) {
-            map.viewport().setRotation(rotation);
-            map.updateMap(true);
-        }
+        map.viewport().setRotation(rotation);
+        map.updateMap(true);
     }
 
     public void setPosition(Location location) {
-        if (map != null) {
-            map.setMapPosition(location.getLatitude(), location.getLongitude(),
-                    Math.pow(2, ROUTE_ZOOM_LEVEL));
-            map.updateMap(true);
-        }
+        map.setMapPosition(location.getLatitude(), location.getLongitude(),
+                Math.pow(2, ROUTE_ZOOM_LEVEL));
+        map.updateMap(true);
     }
 
     public double getZoomScale() {
@@ -136,9 +128,6 @@ public final class MapController {
     }
 
     public void saveLocation() {
-        if (map == null) {
-            return;
-        }
         SharedPreferences.Editor editor = preferences.edit();
         MapPosition mapPosition = map.getMapPosition();
         GeoPoint geoPoint = mapPosition.getGeoPoint();
@@ -160,9 +149,6 @@ public final class MapController {
     }
 
     public void restoreFromSavedLocation() {
-        if (map == null) {
-            return;
-        }
         if (!hasStoredMapPosition()) {
             ((MapzenApplication) activity.getApplication()).activateMapLocationUpdates();
             return;
