@@ -39,20 +39,16 @@
             android:fontFamily="sans-serif-condensed"
             android:textSize="@dimen/small"
             android:textColor="@color/red"
+            android:layout_marginRight="@dimen/default_padding"
+            android:layout_marginTop="@dimen/default_padding"
             android:background="@android:color/transparent"/>
-
-        <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_right_arrow"/>
         </LinearLayout>
 
         <include layout="@layout/divider"
-                 android:layout_width="match_parent"
-                 android:layout_height="wrap_content"
-                 android:layout_marginRight="@dimen/location_divider_padding"
-                 android:layout_below="@id/view_all_layout"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/location_divider_padding"
+            android:layout_below="@id/view_all_layout"/>
 
     </RelativeLayout>
 
