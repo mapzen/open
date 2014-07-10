@@ -21,7 +21,6 @@ public class RouteAdapter extends PagerAdapter {
     private List<Instruction> instructions = new ArrayList<Instruction>();
     private Context context;
     private Instruction currentInstruction;
-    private String iconStyle = DisplayHelper.IconStyle.STANDARD;
     private int pausedPosition = 0;
 
     public RouteAdapter(Context context, List<Instruction> instructions) {
@@ -90,7 +89,7 @@ public class RouteAdapter extends PagerAdapter {
 
     private void setTurnIcon(View view) {
         final ImageView turnIcon = (ImageView) view.findViewById(R.id.turn_icon);
-        if(currentInstruction == instructions.get(pausedPosition)) {
+        if (currentInstruction == instructions.get(pausedPosition)) {
         turnIcon.setImageResource(DisplayHelper.getRouteDrawable(context,
                 currentInstruction.getTurnInstruction(), DisplayHelper.IconStyle.STANDARD));
         } else {
@@ -119,10 +118,6 @@ public class RouteAdapter extends PagerAdapter {
         final SpannableStringBuilder ssb = new SpannableStringBuilder(fullInstruction);
         ssb.setSpan(boldStyleSpan, startOfName, endOfName, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         return ssb;
-    }
-
-    public void setIconStyle(String iconStyle) {
-        this.iconStyle = iconStyle;
     }
 
     @Override

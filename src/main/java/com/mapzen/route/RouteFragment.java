@@ -12,7 +12,6 @@ import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
 import com.mapzen.speakerbox.Speakerbox;
 import com.mapzen.util.DatabaseHelper;
-import com.mapzen.util.DisplayHelper;
 import com.mapzen.util.RouteLocationIndicator;
 import com.mapzen.util.Logger;
 import com.mapzen.widget.DebugView;
@@ -680,7 +679,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void turnAutoPageOff() {
         if (autoPaging) {
             pagerPositionWhenPaused = pager.getCurrentItem();
-            ((RouteAdapter)pager.getAdapter()).setPausedPosition(pagerPositionWhenPaused);
+            ((RouteAdapter) pager.getAdapter()).setPausedPosition(pagerPositionWhenPaused);
         }
         autoPaging = false;
         getView().findViewById(R.id.routes).setBackgroundColor(app

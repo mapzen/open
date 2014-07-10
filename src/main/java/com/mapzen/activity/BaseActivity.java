@@ -399,7 +399,7 @@ public class BaseActivity extends MapActivity {
         if (settingsFragmentOnBack()) {
             return;
         }
-        if(routingFragmentOnBack()) {
+        if (routingFragmentOnBack()) {
             return;
         }
         super.onBackPressed();
