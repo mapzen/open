@@ -7,12 +7,12 @@ import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 import org.oscim.map.Map;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.mapzen.route.RouteFragment.ROUTE_ZOOM_LEVEL;
 
 public final class MapController {
@@ -30,6 +30,7 @@ public final class MapController {
     private Location location;
     private MapPosition mapPosition = new MapPosition(1.0, 1.0, Math.pow(2, DEFAULT_ZOOMLEVEL));
     private BaseActivity activity;
+    private SharedPreferences preferences;
 
     static {
         mapController = new MapController();
@@ -53,6 +54,7 @@ public final class MapController {
     public void setActivity(BaseActivity activity) {
         this.activity = activity;
         this.map = activity.getMap();
+        this.preferences = activity.getSharedPreferences(KEY_STORED_MAPPOSITION, MODE_PRIVATE);
     }
 
     public static MapController getMapController() {
@@ -137,8 +139,6 @@ public final class MapController {
         if (map == null) {
             return;
         }
-        SharedPreferences preferences = activity.getSharedPreferences(KEY_STORED_MAPPOSITION,
-                Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         MapPosition mapPosition = map.getMapPosition();
         GeoPoint geoPoint = mapPosition.getGeoPoint();
@@ -151,18 +151,30 @@ public final class MapController {
         editor.commit();
     }
 
+    private boolean hasStoredMapPosition() {
+        return preferences.contains(KEY_LATITUDE)
+                && preferences.contains(KEY_LONGITUDE)
+                && preferences.contains(KEY_MAP_SCALE)
+                && preferences.contains(KEY_BEARING)
+                && preferences.contains(KEY_TILT);
+    }
+
     public void restoreFromSavedLocation() {
         if (map == null) {
             return;
         }
-        SharedPreferences sharedPreferences =
-                activity.getSharedPreferences(KEY_STORED_MAPPOSITION, 0);
-        int latitudeE6 = sharedPreferences.getInt(KEY_LATITUDE, 0);
-        int longitudeE6 = sharedPreferences.getInt(KEY_LONGITUDE, 0);
-        float scale = sharedPreferences.getFloat(KEY_MAP_SCALE,
+        if (!hasStoredMapPosition()) {
+            ((MapzenApplication) activity.getApplication()).activateMapLocationUpdates();
+            return;
+        } else {
+            ((MapzenApplication) activity.getApplication()).deactivateMapLocationUpdates();
+        }
+        int latitudeE6 = preferences.getInt(KEY_LATITUDE, 0);
+        int longitudeE6 = preferences.getInt(KEY_LONGITUDE, 0);
+        float scale = preferences.getFloat(KEY_MAP_SCALE,
                 (float) Math.pow(2, DEFAULT_ZOOMLEVEL));
-        float tilt = sharedPreferences.getFloat(KEY_TILT, 0);
-        float bearing = sharedPreferences.getFloat(KEY_BEARING, 0);
+        float tilt = preferences.getFloat(KEY_TILT, 0);
+        float bearing = preferences.getFloat(KEY_BEARING, 0);
         MapPosition mapPosition = new MapPosition();
         mapPosition.setPosition(latitudeE6 / 1E6, longitudeE6 / 1E6);
         mapPosition.setTilt(tilt);

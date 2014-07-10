@@ -16,6 +16,7 @@ import org.oscim.map.Animator;
 import org.oscim.map.Map;
 import org.oscim.map.TestMap;
 import org.oscim.map.TestViewport;
+import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 
@@ -307,6 +308,7 @@ public class MapControllerTest {
 
     @Test
     public void restoreFromSavedLocation_shouldRestoreCoorinates() {
+        populateSavedMapPosition();
         SharedPreferences.Editor editor = getSavedMapPrefs().edit();
         editor.putInt(KEY_LATITUDE, (int) (40.0 * 1e6));
         editor.putInt(KEY_LONGITUDE, (int) (20.0 * 1e6));
@@ -320,6 +322,7 @@ public class MapControllerTest {
 
     @Test
     public void restoreFromSavedLocation_shouldRestoreScale() {
+        populateSavedMapPosition();
         SharedPreferences.Editor editor = getSavedMapPrefs().edit();
         editor.putFloat(KEY_MAP_SCALE, (float) Math.pow(2, 8));
         editor.commit();
@@ -329,6 +332,7 @@ public class MapControllerTest {
 
     @Test
     public void restoreFromSavedLocation_shouldRestoreTilt() {
+        populateSavedMapPosition();
         SharedPreferences.Editor editor = getSavedMapPrefs().edit();
         editor.putFloat(KEY_TILT, 2.3f);
         editor.commit();
@@ -338,6 +342,7 @@ public class MapControllerTest {
 
     @Test
     public void restoreFromSavedLocation_shouldRestoreBearing() {
+        populateSavedMapPosition();
         SharedPreferences.Editor editor = getSavedMapPrefs().edit();
         editor.putFloat(KEY_BEARING, 4.3f);
         editor.commit();
@@ -345,8 +350,34 @@ public class MapControllerTest {
         assertThat(getMapController().getMap().getMapPosition().getBearing()).isEqualTo(4.3f);
     }
 
+    @Test
+    public void restoreFromSavedLocation_shouldActivateMapLocationUpdates() {
+        getMapController().restoreFromSavedLocation();
+        MapzenApplication app = ((MapzenApplication) Robolectric.application);
+        assertThat(app.shouldUpdateMapLocation()).isTrue();
+    }
+
+    @Test
+    public void restoreFromSavedLocation_shouldNotActivateMapLocationUpdates() {
+        populateSavedMapPosition();
+        getMapController().restoreFromSavedLocation();
+        MapzenApplication app = ((MapzenApplication) Robolectric.application);
+        assertThat(app.shouldUpdateMapLocation()).isFalse();
+    }
+
     private SharedPreferences getSavedMapPrefs() {
         return activity.getSharedPreferences(KEY_STORED_MAPPOSITION, MODE_PRIVATE);
+    }
+
+    private void populateSavedMapPosition() {
+        SharedPreferences.Editor editor =
+                activity.getSharedPreferences(KEY_STORED_MAPPOSITION, MODE_PRIVATE).edit();
+        editor.putInt(KEY_LATITUDE, 0);
+        editor.putInt(KEY_LONGITUDE, 0);
+        editor.putFloat(KEY_MAP_SCALE, 0);
+        editor.putFloat(KEY_BEARING, 0);
+        editor.putFloat(KEY_TILT, 0);
+        editor.commit();
     }
 
     private void enableFixedLocation() {

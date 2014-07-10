@@ -23,7 +23,7 @@ import static android.provider.BaseColumns._ID;
 
 public class MapzenApplication extends Application {
     private ObjectGraph graph;
-    private boolean updateMapLocation = true;
+    private boolean updateMapLocation = false;
 
     protected List<Object> getModules() {
         return Arrays.asList(
@@ -109,6 +109,7 @@ public class MapzenApplication extends Application {
     public void activateMapLocationUpdates() {
         updateMapLocation = true;
     }
+
     public void setAccessToken(Token accessToken) {
         SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
