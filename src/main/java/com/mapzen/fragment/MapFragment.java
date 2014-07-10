@@ -30,7 +30,6 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +59,6 @@ public class MapFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
-     //   setupMyLocationBtn();
     }
 
     @Override
@@ -208,18 +206,6 @@ public class MapFragment extends BaseFragment {
         return locationMarkerLayer;
     }
 
-//    private void setupMyLocationBtn() {
-//        View view = getView();
-//        Button myPosition = (Button) view.findViewById(R.id.btn_my_position);
-//        myPosition.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                followMe = true;
-//                findMe();
-//            }
-//        });
-//    }
-
     public GeoPoint getUserLocationPoint() {
         Location userLocation = getMapController().getLocation();
         return new GeoPoint(userLocation.getLatitude(), userLocation.getLongitude());
@@ -303,7 +289,8 @@ public class MapFragment extends BaseFragment {
         }
     }
 
-    public void setFollowMe(Boolean follow) {
-        followMe = follow;
+    public void centerOnCurrentLocation() {
+        followMe = true;
+        findMe();
     }
 }

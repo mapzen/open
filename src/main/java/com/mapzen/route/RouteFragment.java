@@ -163,7 +163,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 return false;
             }
         });
-        ((RouteAdapter) pager.getAdapter()).setIconStyle(DisplayHelper.IconStyle.GRAY);
         initDebugView(rootView);
         initSlideLayout(rootView);
         return rootView;
@@ -681,9 +680,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void turnAutoPageOff() {
         if (autoPaging) {
             pagerPositionWhenPaused = pager.getCurrentItem();
+            ((RouteAdapter)pager.getAdapter()).setPausedPosition(pagerPositionWhenPaused);
         }
         autoPaging = false;
-        ((RouteAdapter) pager.getAdapter()).setIconStyle(DisplayHelper.IconStyle.GRAY);
         getView().findViewById(R.id.routes).setBackgroundColor(app
                 .getResources().getColor(R.color.transparent_gray));
         resume.setVisibility(View.VISIBLE);
@@ -692,7 +691,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private void turnAutoPageOn() {
         pager.setCurrentItem(pagerPositionWhenPaused);
         resume.setVisibility(View.GONE);
-        ((RouteAdapter) pager.getAdapter()).setIconStyle(DisplayHelper.IconStyle.STANDARD);
         getView().findViewById(R.id.routes).setBackgroundColor(act
                 .getBaseContext().getResources().getColor(R.color.transparent_white));
         autoPaging = true;

@@ -396,27 +396,46 @@ public class BaseActivity extends MapActivity {
 
     @Override
     public void onBackPressed() {
+        if (settingsFragmentOnBack()) {
+            return;
+        }
+        if(routingFragmentOnBack()) {
+            return;
+        }
+        super.onBackPressed();
+        clearNotifications();
+    }
+
+    private boolean settingsFragmentOnBack() {
         SettingsFragment settingsFragment = (SettingsFragment) getFragmentManager()
                 .findFragmentByTag(SettingsFragment.TAG);
-        RouteFragment routeFragment = (RouteFragment)
-                getSupportFragmentManager().findFragmentByTag(RouteFragment.TAG);
         if (settingsFragment != null && settingsFragment.isAdded()) {
             getFragmentManager().beginTransaction()
                     .detach(settingsFragment)
                     .commit();
-        }  else if (routeFragment != null && routeFragment.isAdded()) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean routingFragmentOnBack() {
+        RouteFragment routeFragment = (RouteFragment)
+                getSupportFragmentManager().findFragmentByTag(RouteFragment.TAG);
+        if (routeFragment != null && routeFragment.isAdded()) {
             if (routeFragment.slideLayoutIsExpanded()) {
                 routeFragment.collapseSlideLayout();
+                return true;
             } else {
                 ((RoutePreviewFragment) getSupportFragmentManager()
                         .findFragmentByTag(RoutePreviewFragment.TAG)).showFragmentContents();
+                clearNotifications();
                 super.onBackPressed();
+                return true;
             }
-        } else {
-            super.onBackPressed();
         }
-        clearNotifications();
+        return false;
     }
+
 
     private void handleGeoIntent(SearchView searchView, Uri data) {
         if (data.toString().contains("q=")) {
@@ -601,8 +620,7 @@ public class BaseActivity extends MapActivity {
         pager.setCurrentItem(pager.getCurrentItem() + 1);
     }
 
-  public void locateButtonAction(View view) {
-                mapFragment.setFollowMe(true);
-                mapFragment.findMe();
+    public void locateButtonAction(View view) {
+        mapFragment.centerOnCurrentLocation();
     }
-    }
+}

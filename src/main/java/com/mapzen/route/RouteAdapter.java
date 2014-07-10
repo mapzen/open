@@ -22,6 +22,7 @@ public class RouteAdapter extends PagerAdapter {
     private Context context;
     private Instruction currentInstruction;
     private String iconStyle = DisplayHelper.IconStyle.STANDARD;
+    private int pausedPosition = 0;
 
     public RouteAdapter(Context context, List<Instruction> instructions) {
         this.context = context;
@@ -89,8 +90,13 @@ public class RouteAdapter extends PagerAdapter {
 
     private void setTurnIcon(View view) {
         final ImageView turnIcon = (ImageView) view.findViewById(R.id.turn_icon);
+        if(currentInstruction == instructions.get(pausedPosition)) {
         turnIcon.setImageResource(DisplayHelper.getRouteDrawable(context,
-                currentInstruction.getTurnInstruction(), iconStyle));
+                currentInstruction.getTurnInstruction(), DisplayHelper.IconStyle.STANDARD));
+        } else {
+            turnIcon.setImageResource(DisplayHelper.getRouteDrawable(context,
+                    currentInstruction.getTurnInstruction(), DisplayHelper.IconStyle.GRAY));
+        }
     }
 
     private void setTurnIconAfterAction(View view) {
@@ -127,6 +133,10 @@ public class RouteAdapter extends PagerAdapter {
     @Override
     public boolean isViewFromObject(View view, Object object) {
         return view == object;
+    }
+
+    public void setPausedPosition(int pos) {
+        pausedPosition = pos;
     }
 
 }
