@@ -113,40 +113,22 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/location_divider"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/top_row"
-        android:paddingRight="@dimen/location_divider_padding"
-        android:orientation="vertical"
-        android:background="@color/transparent_white">
-
-        <View
-            android:layout_below="@id/top_row"
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:layout_marginRight="@dimen/location_divider_padding"
-            android:layout_marginLeft="@dimen/location_divider_padding"
-            android:background="@color/brown" />
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dp"
-            android:layout_marginRight="@dimen/location_divider_padding"
-            android:layout_marginLeft="@dimen/location_divider_padding"
-            android:layout_marginTop="2dp"
-            android:background="@color/brown" />
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/routing_options"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/location_divider"
+        android:layout_below="@id/top_row"
         android:gravity="center_horizontal"
+        android:orientation="vertical"
         android:background="@color/transparent_white"
         android:divider="@color/dark_gray">
 
+        <include layout="@layout/divider"
+            android:id="@+id/location_divider"
+            android:layout_below="@id/top_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/location_divider_padding"
+            android:layout_marginLeft="@dimen/location_divider_padding"/>
         <RadioGroup
             android:id="@+id/routing_mode"
             android:layout_width="wrap_content"

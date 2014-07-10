@@ -48,24 +48,12 @@
                 android:src="@drawable/ic_right_arrow"/>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/multi_result_divider"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/view_all_layout"
-            android:orientation="vertical">
+        <include layout="@layout/divider"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_marginRight="@dimen/location_divider_padding"
+                 android:layout_below="@id/view_all_layout"/>
 
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/divider_height"
-                android:background="@color/brown" />
-
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/divider_height"
-                android:layout_marginTop="2dp"
-                android:background="@color/brown" />
-        </LinearLayout>
     </RelativeLayout>
 
     <android.support.v4.view.ViewPager
