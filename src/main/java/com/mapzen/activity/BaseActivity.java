@@ -1,6 +1,5 @@
 package com.mapzen.activity;
 
-import android.support.v4.view.ViewPager;
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
@@ -606,18 +605,6 @@ public class BaseActivity extends MapActivity {
     private boolean wasForceLoggedIn() {
         SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
         return prefs.getBoolean("forced_login", false);
-    }
-
-    @SuppressWarnings("unused")
-    public void onLeftArrowClick(View view) {
-        ViewPager pager = (ViewPager) findViewById(R.id.routes);
-        pager.setCurrentItem(pager.getCurrentItem() - 1);
-    }
-
-    @SuppressWarnings("unused")
-    public void onRightArrowClick(View view) {
-        ViewPager pager = (ViewPager) findViewById(R.id.routes);
-        pager.setCurrentItem(pager.getCurrentItem() + 1);
     }
 
     public void locateButtonAction(View view) {

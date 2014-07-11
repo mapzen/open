@@ -27,7 +27,7 @@
         android:singleLine="true"
         android:textColor="@color/blue"
         android:fontFamily="sans-serif-condensed"
-        android:textSize="@dimen/big"/>
+        android:textSize="@dimen/big" />
 
     <TextView
         android:id="@+id/address"
@@ -43,6 +43,6 @@
         android:textSize="@dimen/small"
         android:textColor="@color/brown"
         android:gravity="bottom"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

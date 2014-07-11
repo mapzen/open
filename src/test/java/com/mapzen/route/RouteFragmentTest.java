@@ -1,7 +1,6 @@
 package com.mapzen.route;
 
 import android.app.NotificationManager;
-import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.ViewPager;
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
@@ -443,7 +442,8 @@ public class  RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         SimpleFeature simpleFeature = getTestSimpleFeature();
         TextView view = (TextView) fragment.getView().findViewById(R.id.destination_name);
-        assertThat(view.getText()).isEqualTo("To " + simpleFeature.getProperty(NAME));
+        assertThat(view.getText()).isEqualTo(act
+                .getString(R.string.routing_to_text) + simpleFeature.getProperty(NAME));
         assertThat(view).hasEllipsize(TextUtils.TruncateAt.END);
         assertThat(view).hasMaxLines(1);
     }
@@ -496,8 +496,7 @@ public class  RouteFragmentTest {
         simulateUserPagerTouch();
         fragment.pager.setCurrentItem(0);
         simulateUserPagerTouch();
-        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        ImageButton resume = (ImageButton) view.findViewById(R.id.resume_button);
+        ImageButton resume = (ImageButton) fragment.getView().findViewById(R.id.resume_button);
         resume.performClick();
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(2);
     }
@@ -523,8 +522,7 @@ public class  RouteFragmentTest {
         fragment.onLocationChanged(instructions.get(2).getLocation());
         simulateUserPagerTouch();
         fragment.pager.setCurrentItem(0);
-        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        ImageButton resume = (ImageButton) view.findViewById(R.id.resume_button);
+        ImageButton resume = (ImageButton) fragment.getView().findViewById(R.id.resume_button);
         resume.performClick();
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(2);
     }
@@ -553,18 +551,6 @@ public class  RouteFragmentTest {
         simulatePaneCloseSlide();
         assertThat(fragment.getChildFragmentManager())
                 .doesNotHaveFragmentWithTag(DirectionListFragment.TAG);
-    }
-
-    @Test
-    public void onAutoPageOff_pagerShouldBeGray() {
-        Route route = fragment.getRoute();
-        ArrayList<Instruction> instructions = route.getRouteInstructions();
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-        fragment.turnAutoPageOff();
-        int expectedColor = application.getResources().getColor(R.color.transparent_gray);
-        int actualColor = ((ColorDrawable) fragment.pager.getBackground()).getColor();
-        assertThat(actualColor).isEqualTo(expectedColor);
     }
 
     @Test

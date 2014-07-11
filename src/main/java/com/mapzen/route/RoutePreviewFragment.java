@@ -4,7 +4,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
@@ -28,7 +27,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -68,22 +66,13 @@ public class RoutePreviewFragment extends BaseFragment
     @InjectView(R.id.destination_preview) TextView destinationPreview;
     @InjectView(R.id.destination_preview_distance) DistanceView destinationPreviewDistance;
     @InjectView(R.id.route_reverse) ImageButton routeReverse;
-    @InjectView(R.id.by_car) RadioButton byCar;
-    @InjectView(R.id.by_foot) RadioButton byFoot;
-    @InjectView(R.id.by_bike) RadioButton byBike;
     @InjectView(R.id.start) TextView startBtn;
-    @InjectView(R.id.top_row) LinearLayout topRow;
-    @InjectView(R.id.routing_options) LinearLayout routingMode;
-    @InjectView(R.id.border) View border;
-    @InjectView(R.id.destination_container) RelativeLayout destinationContainer;
-    @InjectView(R.id.divider) View divider;
     @InjectView(R.id.starting_location_icon) ImageView startLocationIcon;
     @InjectView(R.id.destination_location_icon) ImageView destinationLocationIcon;
     @InjectView(R.id.start_location_layout) LinearLayout startLocationLayout;
     @InjectView(R.id.destination_layout) LinearLayout destinationLayout;
     @InjectView(R.id.to_text) TextView toTextView;
     @InjectView(R.id.from_text) TextView fromTextView;
-    @InjectView(R.id.location_divider) LinearLayout locationDivider;
     public static RoutePreviewFragment newInstance(BaseActivity act,
                                                    SimpleFeature destination) {
         final RoutePreviewFragment fragment = new RoutePreviewFragment();

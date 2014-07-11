@@ -1,6 +1,5 @@
 package com.mapzen.route;
 
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
@@ -35,7 +34,6 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -95,7 +93,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @InjectView(R.id.routes) ViewPager pager;
     @InjectView(R.id.resume_button) ImageButton resume;
     @InjectView(R.id.footer_wrapper) RelativeLayout footerWrapper;
-    @InjectView(R.id.footer) LinearLayout footer;
 
     private ArrayList<Instruction> instructions;
     private RouteAdapter adapter;
@@ -143,7 +140,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         ButterKnife.inject(this, rootView);
         adapter = new RouteAdapter(act, instructions);
         TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
-        destinationName.setText("To " + simpleFeature.getProperty(NAME));
+        destinationName.setText(getString(R.string.routing_to_text) + simpleFeature
+                .getProperty(NAME));
         distanceLeftView = (DistanceView) rootView.findViewById(R.id.destination_distance);
         distanceLeftView.setRealTime(true);
         if (route != null) {
@@ -213,10 +211,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @OnClick(R.id.resume_button)
     @SuppressWarnings("unused")
     public void onClickResume() {
-        turnAutoPageOn();
+        resumeAutoPaging();
         Instruction instruction = instructions.get(pager.getCurrentItem());
         updateRemainingDistance(instruction, instruction.getLocation());
     }
+
+
 
     @OnClick(R.id.overflow_menu)
     @SuppressWarnings("unused")
@@ -416,6 +416,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: "
                     + activeInstruction.toString());
             pager.setCurrentItem(instructionIndex);
+            ((RouteAdapter) pager.getAdapter()).setPausedPosition(pager.getCurrentItem());
             if (!route.getSeenInstructions().contains(activeInstruction)) {
                 route.addSeenInstruction(activeInstruction);
             }
@@ -480,6 +481,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
+    public void flipInstruction(int page) {
+        flipInstruction(instructions.get(page));
+    }
+
     private void updateRemainingDistance(Instruction instruction, Location location) {
         final View view = getViewForIndex(instructions.indexOf(instruction));
         if (view != null) {
@@ -502,14 +507,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
                     "turnPoint: " + instruction.toString());
         }
-    }
-
-    public void showDirectionListFragment() {
-        final Fragment fragment = DirectionListFragment.newInstance(instructions, this);
-        act.getSupportFragmentManager().beginTransaction()
-                .add(R.id.routes, fragment, DirectionListFragment.TAG)
-                .addToBackStack(null)
-                .commit();
     }
 
     private void changeDistance(int difference) {
@@ -589,8 +586,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
         if (pager.getCurrentItem() == pagerPositionWhenPaused) {
             resume.setVisibility(View.GONE);
-            getView().findViewById(R.id.routes).setBackgroundColor(act.getBaseContext()
-                    .getResources().getColor(R.color.transparent_white));
         }
     }
 
@@ -679,19 +674,15 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void turnAutoPageOff() {
         if (autoPaging) {
             pagerPositionWhenPaused = pager.getCurrentItem();
-            ((RouteAdapter) pager.getAdapter()).setPausedPosition(pagerPositionWhenPaused);
         }
         autoPaging = false;
-        getView().findViewById(R.id.routes).setBackgroundColor(app
-                .getResources().getColor(R.color.transparent_gray));
         resume.setVisibility(View.VISIBLE);
     }
 
-    private void turnAutoPageOn() {
-        pager.setCurrentItem(pagerPositionWhenPaused);
+    private void resumeAutoPaging() {
+        int currentItem = ((RouteAdapter) pager.getAdapter()).getPausedPosition();
+        pager.setCurrentItem(currentItem);
         resume.setVisibility(View.GONE);
-        getView().findViewById(R.id.routes).setBackgroundColor(act
-                .getBaseContext().getResources().getColor(R.color.transparent_white));
         autoPaging = true;
     }
 

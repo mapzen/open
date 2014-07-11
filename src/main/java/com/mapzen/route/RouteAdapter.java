@@ -52,8 +52,10 @@ public class RouteAdapter extends PagerAdapter {
     private void setBackgroundColor(int position, View view) {
         if (position == instructions.size() - 1) {
             view.setBackgroundColor(context.getResources().getColor(R.color.destination_green));
-        }  else {
+        }  else if (currentInstruction == instructions.get(pausedPosition)) {
             view.setBackgroundColor(context.getResources().getColor(R.color.transparent_white));
+        } else {
+            view.setBackgroundColor(context.getResources().getColor(R.color.transparent_gray));
         }
     }
 
@@ -132,6 +134,10 @@ public class RouteAdapter extends PagerAdapter {
 
     public void setPausedPosition(int pos) {
         pausedPosition = pos;
+    }
+
+    public int getPausedPosition() {
+        return pausedPosition;
     }
 
 }

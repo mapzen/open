@@ -22,38 +22,29 @@
             android:textSize="@dimen/small"
             android:textColor="@color/dark_gray" />
 
-            <LinearLayout
-                android:id="@+id/view_all_layout"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:orientation="horizontal"
-                android:layout_alignParentRight="true"
-                android:gravity="right">
-
-                <Button
-                    android:id="@+id/view_all"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="@string/view_all"
-                    android:fontFamily="sans-serif-condensed"
-                    android:textSize="@dimen/small"
-                    android:textColor="@color/red"
-                    android:layout_marginRight="@dimen/default_padding"
-                    android:layout_marginTop="@dimen/default_padding"
-                    android:background="@android:color/transparent"/>
-             </LinearLayout>
+        <Button
+            android:id="@+id/view_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="@string/view_all"
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="@dimen/small"
+            android:textColor="@color/red"
+            android:layout_marginRight="@dimen/default_padding"
+            android:layout_marginTop="@dimen/default_padding"
+            android:background="@android:color/transparent" />
 
         <include layout="@layout/divider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/location_divider_padding"
-            android:layout_below="@id/view_all_layout"/>
+            android:layout_below="@id/view_all" />
     </RelativeLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/results"
         android:layout_width="match_parent"
         android:layout_height="@dimen/result_pager_height"
-        android:layout_gravity="bottom"/>
+        android:layout_gravity="bottom" />
 </LinearLayout>

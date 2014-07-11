@@ -25,6 +25,7 @@
     <string name="upload_traces">Upload GPS Traces</string>
     <string name="from_text">From:</string>
     <string name="to_text">To:</string>
+    <string name="routing_to_text">To\u0020</string>
     <!--Settings-->
 
     <string name="settings">Settings</string>
