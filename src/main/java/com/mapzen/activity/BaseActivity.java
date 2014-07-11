@@ -194,6 +194,14 @@ public class BaseActivity extends MapActivity {
         return prefs.getBoolean(getString(R.string.settings_key_debug), false);
     }
 
+    public void toggleDebugMode() {
+        SharedPreferences prefs = getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(getString(R.string.settings_key_debug), !isInDebugMode());
+        editor.commit();
+        toggleMenus();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -373,6 +381,21 @@ public class BaseActivity extends MapActivity {
     public AutoCompleteTextView getQueryAutoCompleteTextView(SearchView searchView) {
         return (AutoCompleteTextView) searchView.findViewById(searchView.getContext()
                 .getResources().getIdentifier("android:id/search_src_text", null, null));
+    }
+
+    private void toggleMenus() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                toggleMenuItemVisibility(activityMenu.findItem(R.id.settings));
+                toggleMenuItemVisibility(activityMenu.findItem(R.id.phone_home));
+                toggleMenuItemVisibility(activityMenu.findItem(R.id.upload_traces));
+            }
+        });
+    }
+
+    private void toggleMenuItemVisibility(MenuItem item) {
+        item.setVisible(!item.isVisible());
     }
 
     private void toggleOSMLogin() {

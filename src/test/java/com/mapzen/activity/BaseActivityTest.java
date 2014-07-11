@@ -77,6 +77,34 @@ public class BaseActivityTest {
     }
 
     @Test
+    public void toggleDebugMode_shouldToggleSettings() {
+        Boolean visibility = menu.findItem(R.id.settings).isVisible();
+        activity.toggleDebugMode();
+        assertThat(menu.findItem(R.id.settings).isVisible()).isNotEqualTo(visibility);
+    }
+
+    @Test
+    public void toggleDebugMode_shouldToggleSubmitData() {
+        Boolean visibility = menu.findItem(R.id.phone_home).isVisible();
+        activity.toggleDebugMode();
+        assertThat(menu.findItem(R.id.phone_home).isVisible()).isNotEqualTo(visibility);
+    }
+
+    @Test
+    public void toggleDebugMode_shouldToggleUploadGPSTraces() {
+        Boolean visibility = menu.findItem(R.id.upload_traces).isVisible();
+        activity.toggleDebugMode();
+        assertThat(menu.findItem(R.id.upload_traces).isVisible()).isNotEqualTo(visibility);
+    }
+
+    @Test
+    public void toggleDebugMode_shouldFlipDebugMode() {
+        Boolean debugMode = activity.isInDebugMode();
+        activity.toggleDebugMode();
+        assertThat(activity.isInDebugMode()).isNotEqualTo(debugMode);
+    }
+
+    @Test
     public void shouldNotBeNull() throws Exception {
         assertThat(activity).isNotNull();
     }
