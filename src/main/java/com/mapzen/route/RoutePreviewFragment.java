@@ -330,20 +330,10 @@ public class RoutePreviewFragment extends BaseFragment
     }
 
     private void hideFragmentContents() {
-        topRow.setVisibility(View.INVISIBLE);
-        routingMode.setVisibility(View.INVISIBLE);
-        border.setVisibility(View.INVISIBLE);
-        destinationContainer.setVisibility(View.INVISIBLE);
-        divider.setVisibility(View.INVISIBLE);
-        locationDivider.setVisibility(View.INVISIBLE);
+        act.getSupportFragmentManager().beginTransaction().hide(this).commit();
     }
 
     public void showFragmentContents() {
-        topRow.setVisibility(View.VISIBLE);
-        routingMode.setVisibility(View.VISIBLE);
-        border.setVisibility(View.VISIBLE);
-        destinationContainer.setVisibility(View.VISIBLE);
-        divider.setVisibility(View.VISIBLE);
-        locationDivider.setVisibility(View.VISIBLE);
+        act.getSupportFragmentManager().beginTransaction().show(this).commit();
     }
 }
