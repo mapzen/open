@@ -128,6 +128,11 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
 
     @Override
     public boolean onQueryTextSubmit(String query) {
+        if (query.equals(app.getString(R.string.secret_phrase))) {
+            act.toggleDebugMode();
+            searchView.clearFocus();
+            return false;
+        }
         return act.executeSearchOnMap(query);
     }
 

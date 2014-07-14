@@ -109,6 +109,19 @@ public class AutoCompleteAdapterTest {
     }
 
     @Test
+    public void onQueryTestSubmit_shouldBeFalse() {
+        assertThat(adapter.onQueryTextSubmit(baseActivity.getString(R.string.secret_phrase)))
+                .isFalse();
+    }
+
+    @Test
+    public void onQueryTestSubmit_shouldToggleDebugMode() {
+        Boolean debugMode = baseActivity.isInDebugMode();
+        adapter.onQueryTextSubmit(baseActivity.getString(R.string.secret_phrase));
+        assertThat(baseActivity.isInDebugMode()).isNotEqualTo(debugMode);
+    }
+
+    @Test
     public void loadSavedSearches_shouldChangeCursor() throws Exception {
         getSavedSearch().store("saved query 1");
         getSavedSearch().store("saved query 2");

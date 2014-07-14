@@ -77,6 +77,34 @@ public class BaseActivityTest {
     }
 
     @Test
+    public void toggleDebugMode_shouldToggleSettings() {
+        Boolean visibility = menu.findItem(R.id.settings).isVisible();
+        activity.toggleDebugMode();
+        assertThat(menu.findItem(R.id.settings).isVisible()).isNotEqualTo(visibility);
+    }
+
+    @Test
+    public void toggleDebugMode_shouldToggleSubmitData() {
+        Boolean visibility = menu.findItem(R.id.phone_home).isVisible();
+        activity.toggleDebugMode();
+        assertThat(menu.findItem(R.id.phone_home).isVisible()).isNotEqualTo(visibility);
+    }
+
+    @Test
+    public void toggleDebugMode_shouldToggleUploadGPSTraces() {
+        Boolean visibility = menu.findItem(R.id.upload_traces).isVisible();
+        activity.toggleDebugMode();
+        assertThat(menu.findItem(R.id.upload_traces).isVisible()).isNotEqualTo(visibility);
+    }
+
+    @Test
+    public void toggleDebugMode_shouldFlipDebugMode() {
+        Boolean debugMode = activity.isInDebugMode();
+        activity.toggleDebugMode();
+        assertThat(activity.isInDebugMode()).isNotEqualTo(debugMode);
+    }
+
+    @Test
     public void shouldNotBeNull() throws Exception {
         assertThat(activity).isNotNull();
     }
@@ -518,43 +546,6 @@ public class BaseActivityTest {
         List<Intent> intents = Robolectric.getShadowApplication().getBroadcastIntents();
         assertThat(intents).hasSize(1);
         assertThat(intents.get(0)).hasAction(BaseActivity.COM_MAPZEN_UPDATE_VIEW);
-    }
-
-    @Test
-    public void hideOverflow_shouldHideOverflowMenuItems() throws Exception {
-        activity.hideOverflowMenu();
-        assertThat(menu.findItem(R.id.settings)).isNotVisible();
-        assertThat(menu.findItem(R.id.phone_home)).isNotVisible();
-        assertThat(menu.findItem(R.id.upload_traces)).isNotVisible();
-        assertThat(menu.findItem(R.id.login)).isNotVisible();
-        assertThat(menu.findItem(R.id.logout)).isNotVisible();
-    }
-
-    @Test
-    public void showOverflow_shouldShowSettingsAndPhoneHomeItems() throws Exception {
-        activity.hideOverflowMenu();
-        activity.showOverflowMenu();
-        assertThat(menu.findItem(R.id.settings)).isVisible();
-        assertThat(menu.findItem(R.id.phone_home)).isVisible();
-        assertThat(menu.findItem(R.id.upload_traces)).isVisible();
-    }
-
-    @Test
-    public void showOverflow_shouldShowLoginItemIfLoggedOut() throws Exception {
-        activity.setAccessToken(new Token("", ""));
-        activity.hideOverflowMenu();
-        activity.showOverflowMenu();
-        assertThat(menu.findItem(R.id.login)).isVisible();
-        assertThat(menu.findItem(R.id.logout)).isNotVisible();
-    }
-
-    @Test
-    public void showOverflow_shouldShowLogoutItemIfLoggedIn() throws Exception {
-        activity.setAccessToken(new Token("stuff", "fun"));
-        activity.hideOverflowMenu();
-        activity.showOverflowMenu();
-        assertThat(menu.findItem(R.id.logout)).isVisible();
-        assertThat(menu.findItem(R.id.login)).isNotVisible();
     }
 
     @Test

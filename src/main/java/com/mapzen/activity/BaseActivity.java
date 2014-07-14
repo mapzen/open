@@ -194,6 +194,14 @@ public class BaseActivity extends MapActivity {
         return prefs.getBoolean(getString(R.string.settings_key_debug), false);
     }
 
+    public void toggleDebugMode() {
+        SharedPreferences prefs = getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(getString(R.string.settings_key_debug), !isInDebugMode());
+        editor.commit();
+        toggleMenus();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -375,6 +383,21 @@ public class BaseActivity extends MapActivity {
                 .getResources().getIdentifier("android:id/search_src_text", null, null));
     }
 
+    private void toggleMenus() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                toggleMenuItemVisibility(activityMenu.findItem(R.id.settings));
+                toggleMenuItemVisibility(activityMenu.findItem(R.id.phone_home));
+                toggleMenuItemVisibility(activityMenu.findItem(R.id.upload_traces));
+            }
+        });
+    }
+
+    private void toggleMenuItemVisibility(MenuItem item) {
+        item.setVisible(!item.isVisible());
+    }
+
     private void toggleOSMLogin() {
         runOnUiThread(new Runnable() {
             @Override
@@ -554,21 +577,6 @@ public class BaseActivity extends MapActivity {
 
     public void updateView() {
         sendBroadcast(new Intent(COM_MAPZEN_UPDATE_VIEW));
-    }
-
-    public void hideOverflowMenu() {
-        activityMenu.findItem(R.id.settings).setVisible(false);
-        activityMenu.findItem(R.id.phone_home).setVisible(false);
-        activityMenu.findItem(R.id.upload_traces).setVisible(false);
-        activityMenu.findItem(R.id.login).setVisible(false);
-        activityMenu.findItem(R.id.logout).setVisible(false);
-    }
-
-    public void showOverflowMenu() {
-        activityMenu.findItem(R.id.settings).setVisible(true);
-        activityMenu.findItem(R.id.phone_home).setVisible(true);
-        activityMenu.findItem(R.id.upload_traces).setVisible(true);
-        toggleOSMLogin();
     }
 
     public interface ViewUpdater {

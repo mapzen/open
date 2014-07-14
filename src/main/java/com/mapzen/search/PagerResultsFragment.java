@@ -85,7 +85,6 @@ public class PagerResultsFragment extends BaseFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         if (act != null) {
-            act.hideOverflowMenu();
             initOnFocusChangeListener();
             initSearchCloseButton();
         }
@@ -121,12 +120,6 @@ public class PagerResultsFragment extends BaseFragment {
                 app.setCurrentSearchTerm("");
             }
         });
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        act.showOverflowMenu();
     }
 
     @Override

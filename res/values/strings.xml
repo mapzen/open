@@ -112,4 +112,6 @@
     <string name="destination_preview_distance">destination_preview_distance</string>
     <string name="reverse">reverse</string>
 
+    <string name="secret_phrase">yo!!!</string>
+
 </resources>
