@@ -1,7 +1,7 @@
 package com.mapzen.route;
 
 import android.app.NotificationManager;
-import android.support.v4.view.ViewPager;
+import android.view.ViewGroup;
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
@@ -563,9 +563,13 @@ public class  RouteFragmentTest {
         route.addSeenInstruction(instructions.get(1));
         FragmentTestUtil.startFragment(fragment);
         int firstInstruction = fragment.pager.getCurrentItem();
-        simulateOnRightArrowClick(fragment.pager);
+        ImageButton rightArrow = (ImageButton) getInstructionView(firstInstruction)
+                .findViewById(R.id.right_arrow);
+        rightArrow.performClick();
         assertThat(fragment.pager.getCurrentItem() - 1).isEqualTo(firstInstruction);
-        simulateOnLeftArrowClick(fragment.pager);
+        ImageButton leftArrow = (ImageButton) getInstructionView(firstInstruction)
+                .findViewById(R.id.left_arrow);
+        leftArrow.performClick();
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(firstInstruction);
     }
 
@@ -1373,11 +1377,12 @@ public class  RouteFragmentTest {
         fragment.getPanelSlideListener().onPanelSlide(fragment.getSlideLayout(), 1.0f);
     }
 
-    public void simulateOnLeftArrowClick(ViewPager pager) {
-        pager.setCurrentItem(pager.getCurrentItem() - 1);
-    }
-
-    public void simulateOnRightArrowClick(ViewPager pager) {
-        pager.setCurrentItem(pager.getCurrentItem() + 1);
+    private View getInstructionView(int position) {
+        ViewGroup group = new ViewGroup(act) {
+            @Override
+            protected void onLayout(boolean changed, int l, int t, int r, int b) {
+            }
+        };
+        return (View) fragment.pager.getAdapter().instantiateItem(group, position);
     }
 }

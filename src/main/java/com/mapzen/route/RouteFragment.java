@@ -118,6 +118,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private DebugView debugView;
     private SlidingUpPanelLayout slideLayout;
     private DirectionListFragment directionListFragment = null;
+    private RouteFragment fragment;
 
     public static void setRouter(Router router) {
         RouteFragment.router = router;
@@ -138,7 +139,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.route_widget, container, false);
         ButterKnife.inject(this, rootView);
-        adapter = new RouteAdapter(act, instructions);
+        fragment = this;
+        adapter = new RouteAdapter(act, instructions, fragment);
         TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
         destinationName.setText(getString(R.string.routing_to_text) + simpleFeature
                 .getProperty(NAME));
@@ -177,7 +179,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         addIgnoredPhrases();
         checkIfVoiceNavigationIsEnabled();
         playFirstInstruction();
-
     }
 
     private void addRemixPatterns() {
@@ -215,8 +216,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         Instruction instruction = instructions.get(pager.getCurrentItem());
         updateRemainingDistance(instruction, instruction.getLocation());
     }
-
-
 
     @OnClick(R.id.overflow_menu)
     @SuppressWarnings("unused")
@@ -262,7 +261,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         super.onPause();
         act.unregisterReceiver(locationReceiver);
         act.activateMapLocationUpdates();
-
     }
 
     @Override
@@ -713,7 +711,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        pager.setAdapter(new RouteAdapter(act, instructions));
+                        pager.setAdapter(new RouteAdapter(act, instructions, fragment));
                         playFirstInstruction();
                         notificationCreator.createNewNotification(simpleFeature.getMarker().title,
                                 instructions.get(0).getFullInstruction());
@@ -876,5 +874,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     public void setSlideLayout(SlidingUpPanelLayout slideLayout) {
         this.slideLayout = slideLayout;
+    }
+
+    public void pageToNext(int position) {
+        pager.setCurrentItem(position + 1);
+    }
+
+    public void pageToPrevious(int position) {
+        pager.setCurrentItem(position - 1);
     }
 }
