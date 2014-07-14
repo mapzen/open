@@ -132,10 +132,8 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     }
 
     private Highlighter initAutoCompleteHighlighter(SimpleFeature simpleFeature) {
-        final Highlighter highlighter = new Highlighter();
-        highlighter.setString(simpleFeature.getHint());
-        highlighter.setColor(app.getResources().getColor(R.color.red));
-
+        final Highlighter highlighter = new Highlighter(simpleFeature.getHint(),
+                app.getResources().getColor(R.color.red));
         final String query  = searchView.getQuery().toString().trim();
         final String[] terms = TextUtils.split(query, " ");
         for (String term : terms) {

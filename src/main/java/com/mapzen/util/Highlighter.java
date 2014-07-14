@@ -7,12 +7,14 @@ import android.text.style.ForegroundColorSpan;
 import java.util.ArrayList;
 
 public class Highlighter {
-    private String s;
-    private int color;
+    private final String s;
+    private final int color;
+
     private ArrayList<String> terms = new ArrayList<String>();
 
-    public void setString(String s) {
+    public Highlighter(String s, int color) {
         this.s = s;
+        this.color = color;
     }
 
     public Spanned highlight() {
@@ -37,10 +39,6 @@ public class Highlighter {
         }
 
         return builder;
-    }
-
-    public void setColor(int color) {
-        this.color = color;
     }
 
     public void addTerm(String term) {

@@ -2,7 +2,6 @@ package com.mapzen.util;
 
 import com.mapzen.support.MapzenTestRunner;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
@@ -16,40 +15,33 @@ import static org.fest.assertions.api.Assertions.assertThat;
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class HighlighterTest {
-    private Highlighter highlighter;
-
-    @Before
-    public void setUp() throws Exception {
-        highlighter = new Highlighter();
-    }
-
     @Test
     public void shouldNotBeNull() throws Exception {
+        Highlighter highlighter = new Highlighter(null, 0xff0000);
         assertThat(highlighter).isNotNull();
     }
 
     @Test
     public void nullInputString_shouldReturnNull() throws Exception {
-        highlighter.setString(null);
+        Highlighter highlighter = new Highlighter(null, 0xff0000);
         assertThat(highlighter.highlight()).isNull();
     }
 
     @Test
     public void emptyInputString_shouldReturnEmptyString() throws Exception {
-        highlighter.setString("");
+        Highlighter highlighter = new Highlighter("", 0xff0000);
         assertThat(highlighter.highlight().toString()).isEmpty();
     }
 
     @Test
     public void stringWithNoTermsToHighlight_shouldReturnSameString() throws Exception {
-        highlighter.setString("One Two Three");
+        Highlighter highlighter = new Highlighter("One Two Three", 0xff0000);
         assertThat(highlighter.highlight().toString()).isEqualTo("One Two Three");
     }
 
     @Test
     public void stringWithOneTermToHighlight_shouldHighlightTerm() throws Exception {
-        highlighter.setString("One Two Three");
-        highlighter.setColor(0xff0000);
+        Highlighter highlighter = new Highlighter("One Two Three", 0xff0000);
         highlighter.addTerm("One");
         Spanned spanned = highlighter.highlight();
         ForegroundColorSpan[] foregroundColorSpans = spanned.getSpans(0, spanned.length(),
@@ -60,8 +52,7 @@ public class HighlighterTest {
 
     @Test
     public void stringWithTwoTermsToHighlight_shouldHighlightBothTerms() throws Exception {
-        highlighter.setString("One Two Three");
-        highlighter.setColor(0xff0000);
+        Highlighter highlighter = new Highlighter("One Two Three", 0xff0000);
         highlighter.addTerm("One");
         highlighter.addTerm("Two");
         Spanned spanned = highlighter.highlight();
@@ -74,8 +65,7 @@ public class HighlighterTest {
 
     @Test
     public void stringWithMultipleCopiesOfSameTerm_shouldHighlightAllInstances() throws Exception {
-        highlighter.setString("One Two One Three");
-        highlighter.setColor(0xff0000);
+        Highlighter highlighter = new Highlighter("One Two One Three", 0xff0000);
         highlighter.addTerm("One");
         Spanned spanned = highlighter.highlight();
         ForegroundColorSpan[] foregroundColorSpans = spanned.getSpans(0, spanned.length(),
@@ -87,8 +77,7 @@ public class HighlighterTest {
 
     @Test
     public void multipleCopiesOfMultipleTerms_shouldHighlightAllInstances() throws Exception {
-        highlighter.setString("One Two Three One Two");
-        highlighter.setColor(0xff0000);
+        Highlighter highlighter = new Highlighter("One Two Three One Two", 0xff0000);
         highlighter.addTerm("One");
         highlighter.addTerm("Two");
         Spanned spanned = highlighter.highlight();
@@ -103,8 +92,7 @@ public class HighlighterTest {
 
     @Test
     public void shouldIgnoreCase() throws Exception {
-        highlighter.setString("One Two Three One Two");
-        highlighter.setColor(0xff0000);
+        Highlighter highlighter = new Highlighter("One Two Three One Two", 0xff0000);
         highlighter.addTerm("one");
         Spanned spanned = highlighter.highlight();
         ForegroundColorSpan[] foregroundColorSpans = spanned.getSpans(0, spanned.length(),
