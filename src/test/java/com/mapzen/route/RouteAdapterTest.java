@@ -34,7 +34,7 @@ public class RouteAdapterTest {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(0, 0));
-        routeAdapter = new RouteAdapter(application, instructions);
+        routeAdapter = new RouteAdapter(application, instructions, new RouteFragment());
         viewGroup = new TestViewGroup(application);
     }
 

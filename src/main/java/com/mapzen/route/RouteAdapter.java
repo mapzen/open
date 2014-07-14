@@ -22,10 +22,12 @@ public class RouteAdapter extends PagerAdapter {
     private Context context;
     private Instruction currentInstruction;
     private int pausedPosition = 0;
+    private RouteFragment fragment;
 
-    public RouteAdapter(Context context, List<Instruction> instructions) {
+    public RouteAdapter(Context context, List<Instruction> instructions, RouteFragment fragment) {
         this.context = context;
         this.instructions = instructions;
+        this.fragment = fragment;
     }
 
     @Override
@@ -44,6 +46,7 @@ public class RouteAdapter extends PagerAdapter {
         setTurnIconAfterAction(view);
         setDistance(view);
         showLeftAndRightArrows(position, view);
+        initArrowOnClickListeners(position, view);
         setTag(position, view);
         container.addView(view);
         return view;
@@ -68,6 +71,22 @@ public class RouteAdapter extends PagerAdapter {
             view.findViewById(R.id.left_arrow).setVisibility(View.VISIBLE);
             view.findViewById(R.id.right_arrow).setVisibility(View.VISIBLE);
         }
+    }
+
+    private void initArrowOnClickListeners(int position, View view) {
+        final int pos = position;
+        view.findViewById(R.id.left_arrow).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragment.pageToPrevious(pos);
+            }
+        });
+        view.findViewById(R.id.right_arrow).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragment.pageToNext(pos);
+            }
+        });
     }
 
     private void setFullInstruction(View view) {
