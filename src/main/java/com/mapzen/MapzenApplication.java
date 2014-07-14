@@ -23,6 +23,7 @@ import static android.provider.BaseColumns._ID;
 
 public class MapzenApplication extends Application {
     private ObjectGraph graph;
+    private boolean moveMapLocation = false;
 
     protected List<Object> getModules() {
         return Arrays.asList(
@@ -95,6 +96,18 @@ public class MapzenApplication extends Application {
 
     public void setOsmOauthService(OAuthService service) {
         this.osmOauthService = service;
+    }
+
+    public boolean shouldMoveMapToLocation() {
+        return moveMapLocation;
+    }
+
+    public void deactivateMoveMapToLocation() {
+        moveMapLocation = false;
+    }
+
+    public void activateMoveMapToLocation() {
+        moveMapLocation = true;
     }
 
     public void setAccessToken(Token accessToken) {

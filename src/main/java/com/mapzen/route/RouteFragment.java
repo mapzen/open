@@ -253,14 +253,14 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         setupZoomController();
         act.disableActionbar();
         act.hideActionBar();
-        act.deactivateMapLocationUpdates();
+        app.deactivateMoveMapToLocation();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         act.unregisterReceiver(locationReceiver);
-        act.activateMapLocationUpdates();
+        app.activateMoveMapToLocation();
     }
 
     @Override

@@ -3,7 +3,10 @@ package com.mapzen.activity;
 import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
+import com.mapzen.TestMapzenApplication;
 import com.mapzen.android.gson.Feature;
+import com.mapzen.android.lost.LocationClient;
+import com.mapzen.core.MapzenLocation;
 import com.mapzen.core.OSMOauthFragment;
 import com.mapzen.core.SettingsFragment;
 import com.mapzen.search.PagerResultsFragment;
@@ -16,7 +19,6 @@ import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
-import org.fest.assertions.data.Offset;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +26,7 @@ import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAlarmManager;
+import org.robolectric.shadows.ShadowLocationManager;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
 import org.scribe.model.Token;
@@ -48,11 +51,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 import static com.mapzen.MapController.getMapController;
-import static com.mapzen.android.lost.LocationClient.ConnectionCallbacks;
 import static com.mapzen.search.SavedSearch.getSavedSearch;
 import static com.mapzen.support.TestHelper.getTestFeature;
 import static com.mapzen.support.TestHelper.initBaseActivity;
@@ -68,9 +72,11 @@ import static org.robolectric.util.FragmentTestUtil.startFragment;
 public class BaseActivityTest {
     private BaseActivity activity;
     private TestMenu menu;
+    @Inject LocationClient locationClient;
 
     @Before
     public void setUp() throws Exception {
+        ((TestMapzenApplication) Robolectric.application).inject(this);
         menu = new TestMenu();
         activity = initBaseActivityWithMenu(menu);
         getSavedSearch().clear();
@@ -193,20 +199,20 @@ public class BaseActivityTest {
 
     @Test
     public void onCreate_shouldConnectLocationClient() throws Exception {
-        assertThat(activity.locationClient.isConnected()).isTrue();
+        assertThat(locationClient.isConnected()).isTrue();
     }
 
     @Test
     public void onPause_shouldDisconnectLocationClient() throws Exception {
         activity.onPause();
-        assertThat(activity.locationClient.isConnected()).isFalse();
+        assertThat(locationClient.isConnected()).isFalse();
     }
 
     @Test
     public void onResume_shouldReConnectLocationClient() throws Exception {
-        activity.locationClient.disconnect();
+        locationClient.disconnect();
         activity.onResume();
-        assertThat(activity.locationClient.isConnected()).isTrue();
+        assertThat(locationClient.isConnected()).isTrue();
     }
 
     @Test
@@ -320,25 +326,18 @@ public class BaseActivityTest {
         Location location = new Location("expected");
         Location newLocation = new Location("new expected");
         // TODO activity.getMapFragment().setUserLocation(location);
-        activity.getLocationListener().onLocationChanged(location);
-        activity.deactivateMapLocationUpdates();
-        activity.getLocationListener().onLocationChanged(newLocation);
-        // TODO assertThat(activity.getMapFragment().getUserLocation()).isNotEqualTo(newLocation);
-    }
 
-    @Test
-    public void onLocationChange_shouldUpdateMapController() throws Exception {
-        Location expected = new Location("expected");
-        activity.getLocationListener().onLocationChanged(expected);
-        Location actual = getMapController().getLocation();
-        assertThat(actual).isEqualTo(expected);
+        ShadowLocationManager manager = shadowOf(locationClient.getLocationManager());
+        manager.simulateLocation(location);
+        ((MapzenApplication) application).deactivateMoveMapToLocation();
+        manager.simulateLocation(location);
+        // TODO assertThat(activity.getMapFragment().getUserLocation()).isNotEqualTo(newLocation);
     }
 
     @Test
     public void onConnect_shouldUpdateMapController() throws Exception {
         Location expected = initLastLocation();
-        ConnectionCallbacks callbacks = ((TestBaseActivity) activity).getConnectionCallback();
-        callbacks.onConnected(new Bundle());
+        invokeOnConnected();
         Location actual = getMapController().getLocation();
         assertThat(actual).isEqualTo(expected);
     }
@@ -349,16 +348,6 @@ public class BaseActivityTest {
         initLastLocation();
         invokeOnConnected();
         assertThat(getMapController().getZoomLevel()).isEqualTo(MapController.DEFAULT_ZOOMLEVEL);
-    }
-
-    @Test
-    public void onConnect_shouldFindMe() throws Exception {
-        initLastLocation();
-        invokeOnConnected();
-        assertThat(activity.getMapFragment().getMap().getMapPosition().getLatitude())
-                .isEqualTo(1.0, Offset.offset(0.1));
-        assertThat(activity.getMapFragment().getMap().getMapPosition().getLongitude())
-                .isEqualTo(2.0, Offset.offset(0.1));
     }
 
     @Test
@@ -544,8 +533,7 @@ public class BaseActivityTest {
     public void updateView_shouldSendUpdateViewBroadcast() throws Exception {
         activity.updateView();
         List<Intent> intents = Robolectric.getShadowApplication().getBroadcastIntents();
-        assertThat(intents).hasSize(1);
-        assertThat(intents.get(0)).hasAction(BaseActivity.COM_MAPZEN_UPDATE_VIEW);
+        assertThat(intents).contains(new Intent(BaseActivity.COM_MAPZEN_UPDATE_VIEW));
     }
 
     @Test
@@ -574,7 +562,9 @@ public class BaseActivityTest {
     }
 
     private void invokeOnConnected() {
-        ConnectionCallbacks callbacks = ((TestBaseActivity) activity).getConnectionCallback();
-        callbacks.onConnected(new Bundle());
+        MapzenLocation.ConnectionCallbacks connectionCallbacks =
+                new MapzenLocation.ConnectionCallbacks((MapzenApplication) application);
+        connectionCallbacks.setLocationClient(locationClient);
+        connectionCallbacks.onConnected(new Bundle());
     }
 }

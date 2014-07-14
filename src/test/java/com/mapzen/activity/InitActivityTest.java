@@ -1,18 +1,22 @@
 package com.mapzen.activity;
 
 import android.content.Intent;
-import com.mapzen.MapzenApplication;
 import com.mapzen.R;
+import com.mapzen.TestMapzenApplication;
+import com.mapzen.android.lost.LocationClient;
 import com.mapzen.support.MapzenTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 import org.scribe.model.Token;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import android.net.Uri;
+
+import javax.inject.Inject;
 
 import static com.mapzen.support.TestHelper.initInitActivity;
 import static org.robolectric.Robolectric.shadowOf;
@@ -21,9 +25,11 @@ import static org.robolectric.Robolectric.shadowOf;
 @RunWith(MapzenTestRunner.class)
 public class InitActivityTest {
     private InitActivity activity;
-    private MapzenApplication app;
+    @Inject LocationClient locationClient;
+
     @Before
     public void setUp() throws Exception {
+        ((TestMapzenApplication) Robolectric.application).inject(this);
         activity = initInitActivity();
     }
 
@@ -103,5 +109,16 @@ public class InitActivityTest {
         activity.unableToLogInAction();
         boolean showedToast = ShadowToast.showedToast(activity.getString(R.string.login_error));
         assertThat(showedToast).isTrue();
+    }
+
+    @Test
+    public void onResume_shouldConnectLocationClient() {
+        assertThat(locationClient.isConnected()).isTrue();
+    }
+
+    @Test
+    public void onPause_shouldDisConnectLocationClient() {
+        activity.onPause();
+        assertThat(locationClient.isConnected()).isFalse();
     }
 }

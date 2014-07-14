@@ -1,5 +1,9 @@
 package com.mapzen.core;
 
+import com.mapzen.activity.BaseActivity;
+import com.mapzen.activity.BaseActivityTest;
+import com.mapzen.activity.InitActivity;
+import com.mapzen.activity.InitActivityTest;
 import com.mapzen.fragment.ItemFragment;
 import com.mapzen.fragment.ItemFragmentTest;
 import com.mapzen.fragment.MapFragment;
@@ -28,6 +32,10 @@ import static org.mockito.Mockito.doNothing;
 @Module(
         injects = {
                 TestBaseActivity.class,
+                BaseActivity.class,
+                BaseActivityTest.class,
+                InitActivity.class,
+                InitActivityTest.class,
                 RouteFragment.class,
                 RouteFragmentTest.class,
                 ItemFragment.class,
