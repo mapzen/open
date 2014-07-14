@@ -377,7 +377,8 @@ public class BaseActivity extends MapActivity {
         close.setImageDrawable(getResources().getDrawable(R.drawable.ic_cancel));
 
         // Set custom search hint icon.
-        final SpannableStringBuilder ssb = new SpannableStringBuilder("   ");
+        final SpannableStringBuilder ssb =
+                new SpannableStringBuilder(getString(R.string.search_hint_icon_spacer));
         final Drawable searchIcon = getResources().getDrawable(R.drawable.ic_search);
         int textSize = (int) (autoCompleteTextView.getTextSize() * 1.25);
         searchIcon.setBounds(0, 0, textSize, textSize);
