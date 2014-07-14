@@ -45,7 +45,7 @@ public class MapzenLocationTest {
 
     @Test
     public void onLocationChange_shouldNotUpdateMapController() {
-        application.deactivateMapLocationUpdates();
+        application.deactivateMoveMapToLocation();
         Location expected = getTestLocation(111.1f, 222.2f);
         listener.onLocationChanged(expected);
         Location actual = getMapController().getLocation();
@@ -73,7 +73,7 @@ public class MapzenLocationTest {
 
     @Test
     public void onLocationChange_shouldNotSendFindMeBroadcast() {
-        application.deactivateMapLocationUpdates();
+        application.deactivateMoveMapToLocation();
         Location expected = getTestLocation(111.1f, 222.2f);
         listener.onLocationChanged(expected);
         List<Intent> intents = Robolectric.getShadowApplication().getBroadcastIntents();

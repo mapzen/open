@@ -329,7 +329,7 @@ public class BaseActivityTest {
 
         ShadowLocationManager manager = shadowOf(locationClient.getLocationManager());
         manager.simulateLocation(location);
-        ((MapzenApplication) application).deactivateMapLocationUpdates();
+        ((MapzenApplication) application).deactivateMoveMapToLocation();
         manager.simulateLocation(location);
         // TODO assertThat(activity.getMapFragment().getUserLocation()).isNotEqualTo(newLocation);
     }

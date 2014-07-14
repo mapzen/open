@@ -150,10 +150,10 @@ public final class MapController {
 
     public void restoreFromSavedLocation() {
         if (!hasStoredMapPosition()) {
-            ((MapzenApplication) activity.getApplication()).activateMapLocationUpdates();
+            ((MapzenApplication) activity.getApplication()).activateMoveMapToLocation();
             return;
         } else {
-            ((MapzenApplication) activity.getApplication()).deactivateMapLocationUpdates();
+            ((MapzenApplication) activity.getApplication()).deactivateMoveMapToLocation();
         }
         int latitudeE6 = preferences.getInt(KEY_LATITUDE, 0);
         int longitudeE6 = preferences.getInt(KEY_LONGITUDE, 0);

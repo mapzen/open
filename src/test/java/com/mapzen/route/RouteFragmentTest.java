@@ -638,7 +638,7 @@ public class RouteFragmentTest {
     @Test
     public void onResume_shouldDeactivateActivitiesMapUpdates() throws Exception {
         FragmentTestUtil.startFragment(fragment);
-        assertThat(((MapzenApplication) application).shouldUpdateMapLocation()).isFalse();
+        assertThat(((MapzenApplication) application).shouldMoveMapToLocation()).isFalse();
     }
 
     @Test
@@ -652,7 +652,7 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         fragment.onPause();
         FragmentTestUtil.startFragment(fragment);
-        assertThat(((MapzenApplication) application).shouldUpdateMapLocation()).isTrue();
+        assertThat(((MapzenApplication) application).shouldMoveMapToLocation()).isTrue();
     }
 
     @Test

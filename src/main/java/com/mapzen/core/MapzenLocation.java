@@ -31,7 +31,7 @@ public final class MapzenLocation {
         }
 
         public void onLocationChanged(Location location) {
-            if (application.shouldUpdateMapLocation()) {
+            if (application.shouldMoveMapToLocation()) {
                 getMapController().setLocation(location);
                 Intent findMe = new Intent(COM_MAPZEN_FIND_ME);
                 application.sendBroadcast(findMe);

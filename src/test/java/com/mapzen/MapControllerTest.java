@@ -354,7 +354,7 @@ public class MapControllerTest {
     public void restoreFromSavedLocation_shouldActivateMapLocationUpdates() {
         getMapController().restoreFromSavedLocation();
         MapzenApplication app = ((MapzenApplication) Robolectric.application);
-        assertThat(app.shouldUpdateMapLocation()).isTrue();
+        assertThat(app.shouldMoveMapToLocation()).isTrue();
     }
 
     @Test
@@ -362,7 +362,7 @@ public class MapControllerTest {
         populateSavedMapPosition();
         getMapController().restoreFromSavedLocation();
         MapzenApplication app = ((MapzenApplication) Robolectric.application);
-        assertThat(app.shouldUpdateMapLocation()).isFalse();
+        assertThat(app.shouldMoveMapToLocation()).isFalse();
     }
 
     private SharedPreferences getSavedMapPrefs() {
