@@ -15,7 +15,7 @@
         android:layout_marginRight="@dimen/default_padding_horizontal"
         android:layout_marginTop="@dimen/default_padding"
         android:contentDescription="@string/motto"
-        android:src="@drawable/marker_default" />
+        android:src="@drawable/ic_search_results_search" />
 
     <TextView
         android:id="@+id/title"
