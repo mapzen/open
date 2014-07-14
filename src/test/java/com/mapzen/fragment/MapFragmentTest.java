@@ -18,17 +18,23 @@ import org.oscim.map.Map;
 import org.oscim.tiling.TileSource;
 import org.oscim.tiling.source.HttpEngine;
 import org.oscim.tiling.source.OkHttpEngine;
+import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 
+import android.content.BroadcastReceiver;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.util.List;
+
+import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
+import static com.mapzen.core.MapzenLocation.COM_MAPZEN_FIND_ME;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initBaseActivity;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.reflect.core.Reflection.field;
-import static org.robolectric.util.FragmentTestUtil.startFragment;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
@@ -41,10 +47,8 @@ public class MapFragmentTest {
     public void setUp() throws Exception {
         activity = initBaseActivity();
         listener = new TestPoiClickListener();
-        mapFragment = new MapFragment();
-        mapFragment.setAct(activity);
+        mapFragment = activity.getMapFragment();
         mapFragment.setOnPoiClickListener(listener);
-        startFragment(mapFragment);
     }
 
     @Test
@@ -115,6 +119,40 @@ public class MapFragmentTest {
         mapFragment.onPause();
         mapFragment.onResume();
         assertThat(poiMarkerLayer.size()).isEqualTo(2);
+    }
+
+    @Test
+    public void onResume_shouldLocationUpdatesReceivers() {
+        Intent expectedIntent = new Intent(COM_MAPZEN_UPDATES_LOCATION);
+        List<BroadcastReceiver> intents =
+                Robolectric.getShadowApplication().getReceiversForIntent(expectedIntent);
+        assertThat(intents).hasSize(1);
+    }
+
+    @Test
+    public void onPause_shouldUnregisterLocationUpdatesReceivers() {
+        mapFragment.onPause();
+        Intent expectedIntent = new Intent(COM_MAPZEN_UPDATES_LOCATION);
+        List<BroadcastReceiver> intents =
+                Robolectric.getShadowApplication().getReceiversForIntent(expectedIntent);
+        assertThat(intents).isEmpty();
+    }
+
+    @Test
+    public void onResume_shouldRegisterFindMeReceiver() {
+        Intent expectedIntent = new Intent(COM_MAPZEN_FIND_ME);
+        List<BroadcastReceiver> findMeReceivers =
+                Robolectric.getShadowApplication().getReceiversForIntent(expectedIntent);
+        assertThat(findMeReceivers).hasSize(1);
+    }
+
+    @Test
+    public void onPause_shouldUnregisterFindMeReceiver() {
+        mapFragment.onPause();
+        Intent expectedIntent = new Intent(COM_MAPZEN_FIND_ME);
+        List<BroadcastReceiver> findMeReceivers =
+                Robolectric.getShadowApplication().getReceiversForIntent(expectedIntent);
+        assertThat(findMeReceivers).isEmpty();
     }
 
     @Test

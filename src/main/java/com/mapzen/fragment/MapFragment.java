@@ -3,6 +3,7 @@ package com.mapzen.fragment;
 import com.mapzen.R;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.search.OnPoiClickListener;
+import com.mapzen.util.IntentReceiver;
 import com.mapzen.util.MapzenTheme;
 import com.mapzen.util.PoiLayer;
 
@@ -23,10 +24,8 @@ import org.oscim.theme.ThemeLoader;
 import org.oscim.tiling.source.OkHttpEngine;
 import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Bundle;
@@ -40,6 +39,7 @@ import java.util.List;
 
 import static com.mapzen.MapController.DEFAULT_ZOOMLEVEL;
 import static com.mapzen.MapController.getMapController;
+import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.core.MapzenLocation.COM_MAPZEN_FIND_ME;
 import static org.oscim.layers.marker.ItemizedLayer.OnItemGestureListener;
 
@@ -54,6 +54,8 @@ public class MapFragment extends BaseFragment {
     private boolean followMe = true;
     private boolean initialRelocateHappened = false;
     private OnPoiClickListener onPoiClickListener;
+    private FindMeReceiver findMeReceiver;
+    private LocationReceiver locationReceiver;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -62,35 +64,20 @@ public class MapFragment extends BaseFragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         getMapController().saveLocation();
         locationMarkerLayer.removeAllItems();
         poiMarkersLayer.removeAllItems();
+        unregisterLocationReceivers();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(COM_MAPZEN_FIND_ME);
-        FindMeReceiver findMeReceiver = new FindMeReceiver();
-        app.registerReceiver(findMeReceiver, filter);
-
         getMapController().restoreFromSavedLocation();
+        registerLocationReceivers();
         poiMarkersLayer.repopulate();
-    }
-
-    private class FindMeReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            findMe();
-        }
     }
 
     @Override
@@ -250,10 +237,7 @@ public class MapFragment extends BaseFragment {
     }
 
     public void findMe() {
-        if (locationMarkerLayer != null) {
-            locationMarkerLayer.removeAllItems();
-            locationMarkerLayer.addItem(getUserLocationMarker());
-        }
+        addLocationDot();
 
         if (followMe || !initialRelocateHappened) {
             // TODO find ways to accomplish this without two flags ;(
@@ -262,6 +246,13 @@ public class MapFragment extends BaseFragment {
         }
 
         updateMap();
+    }
+
+    private void addLocationDot() {
+        if (locationMarkerLayer != null) {
+            locationMarkerLayer.removeAllItems();
+            locationMarkerLayer.addItem(getUserLocationMarker());
+        }
     }
 
     public MarkerSymbol getHighlightMarkerSymbol() {
@@ -315,5 +306,41 @@ public class MapFragment extends BaseFragment {
     public void centerOnCurrentLocation() {
         followMe = true;
         findMe();
+    }
+
+    private void unregisterLocationReceivers() {
+        app.unregisterReceiver(locationReceiver);
+        app.unregisterReceiver(findMeReceiver);
+    }
+
+    private void registerLocationReceivers() {
+        findMeReceiver = new FindMeReceiver(COM_MAPZEN_FIND_ME);
+        app.registerReceiver(findMeReceiver, findMeReceiver.getIntentFilter());
+
+        locationReceiver = new LocationReceiver(COM_MAPZEN_UPDATES_LOCATION);
+        app.registerReceiver(locationReceiver, locationReceiver.getIntentFilter());
+    }
+
+
+    private final class FindMeReceiver extends IntentReceiver {
+        private FindMeReceiver(String action) {
+            super(action);
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            findMe();
+        }
+    }
+
+    private final class LocationReceiver extends IntentReceiver {
+        private LocationReceiver(String action) {
+            super(action);
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            addLocationDot();
+        }
     }
 }
