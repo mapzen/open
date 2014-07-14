@@ -10,44 +10,13 @@
         android:id="@+id/top_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white">
-
-        <LinearLayout
-            android:id="@+id/places"
-            android:layout_weight="3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/default_margin"
-            android:background="@color/dark_gray"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/starting_point"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:textColor="@android:color/black"
-                android:background="@android:color/white"
-                android:textSize="20sp"
-                android:padding="@dimen/default_padding"
-                android:layout_width="match_parent"
-                android:layout_marginBottom="1dp"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/destination"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:textColor="@android:color/black"
-                android:background="@android:color/white"
-                android:textSize="20sp"
-                android:padding="@dimen/default_padding"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+        android:gravity="center"
+        android:paddingLeft="@dimen/route_preview_top_padding"
+        android:paddingTop="@dimen/route_preview_top_padding"
+        android:background="@color/transparent_white">
 
         <ImageButton
             android:id="@+id/route_reverse"
-            android:layout_weight="1"
             android:layout_gravity="center_horizontal|center_vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,29 +24,115 @@
             android:contentDescription="@string/reverse"
             android:src="@drawable/ic_switch" />
 
+        <LinearLayout
+            android:id="@+id/places"
+            android:layout_weight="3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/default_margin"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/start_location_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/from_text"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="@dimen/small"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="@string/from_text"
+                    android:fontFamily="sans-serif-condensed" />
+                <ImageView
+                    android:id="@+id/starting_location_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_locate" />
+
+                <TextView
+                    android:id="@+id/starting_point"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/brown"
+                    android:textSize="@dimen/medium"
+                    android:padding="@dimen/default_padding"
+                    android:layout_width="match_parent"
+                    android:layout_marginBottom="1dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/border"
+                android:layout_width="wrap_content"
+                android:layout_marginRight="@dimen/route_preview_border_margin"
+                android:layout_height="1dp"
+                android:background="@color/transparent_gray" />
+
+            <LinearLayout
+                android:id="@+id/destination_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/to_text"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="@dimen/small"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="@string/to_text"
+                    android:fontFamily="sans-serif-condensed" />
+
+                <ImageView
+                    android:id="@+id/destination_location_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_locate"
+                    android:visibility="gone" />
+                <TextView
+                    android:id="@+id/destination"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:textColor="@color/brown"
+                    android:textSize="@dimen/medium"
+                    android:padding="@dimen/default_padding"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed"/>
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 
-    <View
-        android:id="@+id/border"
-        android:layout_below="@id/top_row"
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:background="@color/dark_gray" />
-
     <LinearLayout
+        android:id="@+id/routing_options"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/border"
-        android:background="@android:color/white"
+        android:layout_below="@id/top_row"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:background="@color/transparent_white"
         android:divider="@color/dark_gray">
 
+        <include layout="@layout/divider"
+            android:id="@+id/location_divider"
+            android:layout_below="@id/top_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/location_divider_padding"
+            android:layout_marginLeft="@dimen/location_divider_padding"/>
         <RadioGroup
             android:id="@+id/routing_mode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:orientation="horizontal">
-
             <RadioButton
                 android:id="@+id/by_car"
                 android:checked="true"
@@ -94,8 +149,7 @@
                 android:button="@drawable/radio_button_walk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-
-            </RadioGroup>
+        </RadioGroup>
     </LinearLayout>
 
     <RelativeLayout
@@ -114,7 +168,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginLeft="8dp"
+            android:layout_marginLeft="9dp"
             android:drawablePadding="-4dp"
             android:drawableTop="@drawable/ic_lets_go"
             android:textColor="@color/lets_go"
@@ -130,7 +184,7 @@
             android:maxLines="1"
             android:singleLine="true"
             android:textColor="@android:color/black"
-            android:textSize="20sp"
+            android:textSize="@dimen/medium"
             android:text="@string/destination_preview" />
 
         <com.mapzen.widget.DistanceView
@@ -138,9 +192,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/destination_preview"
-            android:textSize="16sp"
+            android:textSize="@dimen/small"
             android:text="@string/destination_preview_distance" />
-
     </RelativeLayout>
 
     <View

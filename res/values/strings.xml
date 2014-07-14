@@ -6,7 +6,7 @@
     <string name="results_title">Search Results</string>
     <string name="route_description">Turn Icon</string>
     <string name="route_resume_button">Resume</string>
-    <string name="view_all">View All</string>
+    <string name="view_all">VIEW ALL</string>
     <string name="no_route_found">No Route Found</string>
     <string name="current_location">Current Location</string>
     <string name="generic_server_error">Server Error</string>
@@ -23,6 +23,9 @@
     <string name="waiting">Waiting for location</string>
     <string name="recalculating">Recalculating</string>
     <string name="upload_traces">Upload GPS Traces</string>
+    <string name="from_text">From:</string>
+    <string name="to_text">To:</string>
+    <string name="routing_to_text">To\u0020</string>
     <!--Settings-->
 
     <string name="settings">Settings</string>

@@ -3,19 +3,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/pager_results_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@android:color/white" />
-
     <fragment
         android:id="@+id/map_fragment"
         class="com.mapzen.fragment.MapFragment"
         android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <FrameLayout
+        android:id="@+id/pager_results_container"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/pager_results_container" />
+        android:layout_alignParentBottom="true" />
+
+    <Button
+            android:id="@+id/locate_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:layout_above="@id/pager_results_container"
+            android:layout_alignParentRight="true"
+            android:onClick="locateButtonAction"
+            android:background="@drawable/ic_locate" />
 
     <FrameLayout
         android:id="@+id/routes_preview_container"
@@ -23,13 +31,13 @@
         android:layout_height="match_parent" />
 
     <FrameLayout
-        android:id="@+id/routes_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <FrameLayout
         android:id="@+id/full_list"
         android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <FrameLayout
+        android:id="@+id/routes_container"
+        android:layout_width="fill_parent"
         android:layout_height="match_parent" />
 
     <FrameLayout

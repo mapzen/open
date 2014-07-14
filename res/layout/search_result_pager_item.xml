@@ -2,20 +2,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/default_padding_vertical"
-    android:paddingBottom="@dimen/default_padding_vertical"
+    android:paddingTop="2dp"
     android:paddingLeft="@dimen/default_padding_horizontal"
-    android:paddingRight="@dimen/default_padding_horizontal">
+    android:background="@color/transparent_white">
 
     <TextView
         android:id="@+id/start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginLeft="8dp"
-        android:drawablePadding="-4dp"
-        android:drawableTop="@drawable/ic_lets_go"
+        android:drawableTop="@drawable/ic_car"
         android:textColor="@color/lets_go"
+        android:gravity="center_horizontal"
         android:text="@string/start" />
 
     <TextView
@@ -27,8 +25,9 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:singleLine="true"
-        android:textColor="@android:color/black"
-        android:textSize="20sp" />
+        android:textColor="@color/blue"
+        android:fontFamily="sans-serif-condensed"
+        android:textSize="@dimen/big" />
 
     <TextView
         android:id="@+id/address"
@@ -41,6 +40,9 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:singleLine="true"
-        android:textColor="@android:color/darker_gray" />
+        android:textSize="@dimen/small"
+        android:textColor="@color/brown"
+        android:gravity="bottom"
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

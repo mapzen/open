@@ -1,5 +1,9 @@
 package com.mapzen.route;
 
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
@@ -23,8 +27,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -64,14 +66,15 @@ public class RoutePreviewFragment extends BaseFragment
     @InjectView(R.id.destination_preview) TextView destinationPreview;
     @InjectView(R.id.destination_preview_distance) DistanceView destinationPreviewDistance;
     @InjectView(R.id.route_reverse) ImageButton routeReverse;
-    @InjectView(R.id.by_car) RadioButton byCar;
-    @InjectView(R.id.by_foot) RadioButton byFoot;
-    @InjectView(R.id.by_bike) RadioButton byBike;
     @InjectView(R.id.start) TextView startBtn;
-    @InjectView(R.id.routing_mode) RadioGroup routingMode;
-
+    @InjectView(R.id.starting_location_icon) ImageView startLocationIcon;
+    @InjectView(R.id.destination_location_icon) ImageView destinationLocationIcon;
+    @InjectView(R.id.start_location_layout) LinearLayout startLocationLayout;
+    @InjectView(R.id.destination_layout) LinearLayout destinationLayout;
+    @InjectView(R.id.to_text) TextView toTextView;
+    @InjectView(R.id.from_text) TextView fromTextView;
     public static RoutePreviewFragment newInstance(BaseActivity act,
-            SimpleFeature destination) {
+                                                   SimpleFeature destination) {
         final RoutePreviewFragment fragment = new RoutePreviewFragment();
         fragment.setAct(act);
         fragment.setMapFragment(act.getMapFragment());
@@ -99,7 +102,7 @@ public class RoutePreviewFragment extends BaseFragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.route_preview, container, false);
         ButterKnife.inject(this, view);
         setOriginAndDestination();
@@ -108,15 +111,23 @@ public class RoutePreviewFragment extends BaseFragment
     }
 
     private void setOriginAndDestination() {
+        toTextView.setVisibility(View.VISIBLE);
+        fromTextView.setVisibility(View.VISIBLE);
+
         if (!reverse) {
             startingPointTextView.setText(getString(R.string.current_location));
             destinationTextView.setText(destination.getProperty(NAME));
             destinationPreview.setText(destination.getProperty(NAME));
+            startLocationIcon.setVisibility(View.VISIBLE);
+            destinationLocationIcon.setVisibility(View.GONE);
             startBtn.setText(getString(R.string.start));
+
         } else {
             startingPointTextView.setText(destination.getProperty(NAME));
             destinationTextView.setText(getString(R.string.current_location));
             destinationPreview.setText(getString(R.string.current_location));
+            startLocationIcon.setVisibility(View.GONE);
+            destinationLocationIcon.setVisibility(View.VISIBLE);
             startBtn.setText(getString(R.string.view));
         }
         if (route != null) {
@@ -127,8 +138,21 @@ public class RoutePreviewFragment extends BaseFragment
     @SuppressWarnings("unused")
     @OnClick(R.id.route_reverse) public void reverse() {
         reverse = !reverse;
+        toTextView.setVisibility(View.GONE);
+        fromTextView.setVisibility(View.GONE);
+        animateDestinationReverse();
         setOriginAndDestination();
         createRouteToDestination();
+    }
+
+    private void animateDestinationReverse() {
+        Animation rotateAnimation = AnimationUtils.loadAnimation(act, R.anim.rotate180);
+        routeReverse.startAnimation(rotateAnimation);
+        Animation moveDown = AnimationUtils.loadAnimation(act, R.anim.move_down);
+        Animation moveUp = AnimationUtils.loadAnimation(act, R.anim.move_up);
+
+        startLocationLayout.startAnimation(moveDown);
+        destinationLayout.startAnimation(moveUp);
     }
 
     @SuppressWarnings("unused")
@@ -183,12 +207,12 @@ public class RoutePreviewFragment extends BaseFragment
 
     private double[] getDestinationPoint() {
         return reverse ? locationToPair(getMapController().getLocation()) :
-            geoPointToPair(destination.getGeoPoint());
+                geoPointToPair(destination.getGeoPoint());
     }
 
     private double[] getOriginPoint() {
         return !reverse ? locationToPair(getMapController().getLocation()) :
-            geoPointToPair(destination.getGeoPoint());
+                geoPointToPair(destination.getGeoPoint());
     }
 
     public void setDestination(SimpleFeature destination) {
@@ -273,10 +297,10 @@ public class RoutePreviewFragment extends BaseFragment
         final Fragment fragment = DirectionListFragment.
                 newInstance(route.getRouteInstructions(),
                         new DirectionListFragment.DirectionListener() {
-                    @Override
-                    public void onInstructionSelected(int index) {
-                    }
-                });
+                            @Override
+                            public void onInstructionSelected(int index) {
+                            }
+                        });
         act.getSupportFragmentManager().beginTransaction()
                 .add(R.id.full_list, fragment, DirectionListFragment.TAG)
                 .addToBackStack(null)
@@ -284,6 +308,7 @@ public class RoutePreviewFragment extends BaseFragment
     }
 
     private void startRouting() {
+        hideFragmentContents();
         RouteFragment routeFragment = RouteFragment.newInstance(act, destination);
         routeFragment.setRoute(route);
         act.getSupportFragmentManager().beginTransaction()
@@ -291,5 +316,13 @@ public class RoutePreviewFragment extends BaseFragment
                 .add(R.id.routes_container, routeFragment, RouteFragment.TAG)
                 .commit();
         getMapController().getMap().layers().remove(markers);
+    }
+
+    private void hideFragmentContents() {
+        act.getSupportFragmentManager().beginTransaction().hide(this).commit();
+    }
+
+    public void showFragmentContents() {
+        act.getSupportFragmentManager().beginTransaction().show(this).commit();
     }
 }

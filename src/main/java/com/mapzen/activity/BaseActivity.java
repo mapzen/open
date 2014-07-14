@@ -10,6 +10,8 @@ import com.mapzen.core.DataUploadService;
 import com.mapzen.core.OSMOauthFragment;
 import com.mapzen.core.SettingsFragment;
 import com.mapzen.fragment.MapFragment;
+import com.mapzen.route.RouteFragment;
+import com.mapzen.route.RoutePreviewFragment;
 import com.mapzen.search.AutoCompleteAdapter;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.search.PagerResultsFragment;
@@ -393,17 +395,46 @@ public class BaseActivity extends MapActivity {
 
     @Override
     public void onBackPressed() {
-        SettingsFragment fragment = (SettingsFragment) getFragmentManager()
-                .findFragmentByTag(SettingsFragment.TAG);
-        if (fragment != null && fragment.isAdded()) {
-            getFragmentManager().beginTransaction()
-                    .detach(fragment)
-                    .commit();
-        } else {
-            super.onBackPressed();
+        if (settingsFragmentOnBack()) {
+            return;
         }
+        if (routingFragmentOnBack()) {
+            return;
+        }
+        super.onBackPressed();
         clearNotifications();
     }
+
+    private boolean settingsFragmentOnBack() {
+        SettingsFragment settingsFragment = (SettingsFragment) getFragmentManager()
+                .findFragmentByTag(SettingsFragment.TAG);
+        if (settingsFragment != null && settingsFragment.isAdded()) {
+            getFragmentManager().beginTransaction()
+                    .detach(settingsFragment)
+                    .commit();
+            return true;
+        }
+        return false;
+    }
+
+    private boolean routingFragmentOnBack() {
+        RouteFragment routeFragment = (RouteFragment)
+                getSupportFragmentManager().findFragmentByTag(RouteFragment.TAG);
+        if (routeFragment != null && routeFragment.isAdded()) {
+            if (routeFragment.slideLayoutIsExpanded()) {
+                routeFragment.collapseSlideLayout();
+                return true;
+            } else {
+                ((RoutePreviewFragment) getSupportFragmentManager()
+                        .findFragmentByTag(RoutePreviewFragment.TAG)).showFragmentContents();
+                clearNotifications();
+                super.onBackPressed();
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private void handleGeoIntent(SearchView searchView, Uri data) {
         if (data.toString().contains("q=")) {
@@ -490,7 +521,6 @@ public class BaseActivity extends MapActivity {
                 .replace(R.id.pager_results_container, pagerResultsFragment,
                         PagerResultsFragment.TAG)
                 .commit();
-
         return pagerResultsFragment.executeSearchOnMap(getSearchView(), query);
     }
 
@@ -575,5 +605,9 @@ public class BaseActivity extends MapActivity {
     private boolean wasForceLoggedIn() {
         SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
         return prefs.getBoolean("forced_login", false);
+    }
+
+    public void locateButtonAction(View view) {
+        mapFragment.centerOnCurrentLocation();
     }
 }
