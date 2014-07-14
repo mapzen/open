@@ -548,6 +548,7 @@ public class  RouteFragmentTest {
     @Test
     public void collapsedPane_shouldNotShowDirectionListFragment() {
         FragmentTestUtil.startFragment(fragment);
+        simulatePaneOpenSlide();
         simulatePaneCloseSlide();
         assertThat(fragment.getChildFragmentManager())
                 .doesNotHaveFragmentWithTag(DirectionListFragment.TAG);
