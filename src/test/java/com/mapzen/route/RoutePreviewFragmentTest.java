@@ -1,16 +1,14 @@
 package com.mapzen.route;
 
+import android.widget.ImageButton;
 import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.MapFragment;
-import com.mapzen.helpers.DistanceFormatter;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
-import com.mapzen.widget.DistanceView;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -285,46 +283,11 @@ public class RoutePreviewFragmentTest {
     }
 
     @Test
-    public void success_shouldPopulateDestinationPreview() throws Exception {
-        fragment.createRouteToDestination();
-        Route testRoute = new Route(getFixture("around_the_block"));
-        fragment.success(testRoute);
-        TextView distanceToDestination =
-                (TextView) fragment.getView().findViewById(R.id.destination_preview);
-        assertThat(distanceToDestination).
-                containsText(destination.getProperty(NAME));
-    }
-
-    @Test
-    public void success_shouldPopulateDestinationPreviewDistance() throws Exception {
-        fragment.createRouteToDestination();
-        Route testRoute = new Route(getFixture("around_the_block"));
-        fragment.success(testRoute);
-        fragment.reverse();
-        DistanceView distanceToDestination =
-                (DistanceView) fragment.getView().findViewById(R.id.destination_preview_distance);
-        assertThat(distanceToDestination).
-                containsText(DistanceFormatter.format(testRoute.getTotalDistance()));
-    }
-
-    @Test
-    public void reverse_shouldPopulateDestinationPreviewWithCurrentLocation() throws Exception {
-        fragment.createRouteToDestination();
-        Route testRoute = new Route(getFixture("around_the_block"));
-        fragment.success(testRoute);
-        fragment.reverse();
-        TextView distanceToDestination =
-                (TextView) fragment.getView().findViewById(R.id.destination_preview);
-        assertThat(distanceToDestination).
-                containsText("Current Location");
-    }
-
-    @Test
     public void start_shouldStartRouting() throws Exception {
         fragment.createRouteToDestination();
         Route testRoute = new Route(getFixture("around_the_block"));
         fragment.success(testRoute);
-        TextView startBtn = (TextView) fragment.getView().findViewById(R.id.start);
+        ImageButton startBtn = (ImageButton) fragment.getView().findViewById(R.id.routing_circle);
         startBtn.performClick();
         assertThat(activity.getSupportFragmentManager()).hasFragmentWithTag(RouteFragment.TAG);
     }
@@ -335,7 +298,7 @@ public class RoutePreviewFragmentTest {
         Route testRoute = new Route(getFixture("around_the_block"));
         fragment.success(testRoute);
         fragment.reverse();
-        TextView startBtn = (TextView) fragment.getView().findViewById(R.id.start);
+        ImageButton startBtn = (ImageButton) fragment.getView().findViewById(R.id.routing_circle);
         startBtn.performClick();
         assertThat(activity.getSupportFragmentManager()).
                 doesNotHaveFragmentWithTag(RouteFragment.TAG);
@@ -346,30 +309,30 @@ public class RoutePreviewFragmentTest {
         fragment.createRouteToDestination();
         Route testRoute = new Route(getFixture("around_the_block"));
         fragment.success(testRoute);
-        TextView startBtn = (TextView) fragment.getView().findViewById(R.id.start);
+        ImageButton startBtn = (ImageButton) fragment.getView().findViewById(R.id.routing_circle);
         startBtn.performClick();
         assertThat(getMapController().getMap().layers().contains(markers)).isFalse();
     }
 
     @Test
-    public void reverse_shouldSetStartToView() throws Exception {
+    public void reverse_shouldSetCircleButtonToView() throws Exception {
         fragment.createRouteToDestination();
         Route testRoute = new Route(getFixture("around_the_block"));
         fragment.success(testRoute);
         fragment.reverse();
-        TextView startBtn = (TextView) fragment.getView().findViewById(R.id.start);
-        assertThat(startBtn).containsText("View");
+        ImageButton startBtn = (ImageButton) fragment.getView().findViewById(R.id.routing_circle);
+        assertThat(startBtn.getTag()).isEqualTo(activity.getString(R.string.view));
     }
 
     @Test
-    public void reverse_shouldToggleViewStart() throws Exception {
+    public void reverse_shouldToggleCircleButtonToStart() throws Exception {
         fragment.createRouteToDestination();
         Route testRoute = new Route(getFixture("around_the_block"));
         fragment.success(testRoute);
         fragment.reverse();
         fragment.reverse();
-        TextView startBtn = (TextView) fragment.getView().findViewById(R.id.start);
-        assertThat(startBtn).containsText("Start");
+        ImageButton startBtn = (ImageButton) fragment.getView().findViewById(R.id.routing_circle);
+        assertThat(startBtn.getTag()).isEqualTo(activity.getString(R.string.start));
     }
 
     @Test

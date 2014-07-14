@@ -10,7 +10,6 @@ import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
-import com.mapzen.widget.DistanceView;
 
 import org.oscim.android.canvas.AndroidGraphics;
 import org.oscim.core.BoundingBox;
@@ -63,16 +62,14 @@ public class RoutePreviewFragment extends BaseFragment
     @Inject Router router;
     @InjectView(R.id.starting_point) TextView startingPointTextView;
     @InjectView(R.id.destination) TextView destinationTextView;
-    @InjectView(R.id.destination_preview) TextView destinationPreview;
-    @InjectView(R.id.destination_preview_distance) DistanceView destinationPreviewDistance;
     @InjectView(R.id.route_reverse) ImageButton routeReverse;
-    @InjectView(R.id.start) TextView startBtn;
     @InjectView(R.id.starting_location_icon) ImageView startLocationIcon;
     @InjectView(R.id.destination_location_icon) ImageView destinationLocationIcon;
     @InjectView(R.id.start_location_layout) LinearLayout startLocationLayout;
     @InjectView(R.id.destination_layout) LinearLayout destinationLayout;
     @InjectView(R.id.to_text) TextView toTextView;
     @InjectView(R.id.from_text) TextView fromTextView;
+    @InjectView(R.id.routing_circle) ImageButton routingCircle;
     public static RoutePreviewFragment newInstance(BaseActivity act,
                                                    SimpleFeature destination) {
         final RoutePreviewFragment fragment = new RoutePreviewFragment();
@@ -117,21 +114,14 @@ public class RoutePreviewFragment extends BaseFragment
         if (!reverse) {
             startingPointTextView.setText(getString(R.string.current_location));
             destinationTextView.setText(destination.getProperty(NAME));
-            destinationPreview.setText(destination.getProperty(NAME));
             startLocationIcon.setVisibility(View.VISIBLE);
             destinationLocationIcon.setVisibility(View.GONE);
-            startBtn.setText(getString(R.string.start));
 
         } else {
             startingPointTextView.setText(destination.getProperty(NAME));
             destinationTextView.setText(getString(R.string.current_location));
-            destinationPreview.setText(getString(R.string.current_location));
             startLocationIcon.setVisibility(View.GONE);
             destinationLocationIcon.setVisibility(View.VISIBLE);
-            startBtn.setText(getString(R.string.view));
-        }
-        if (route != null) {
-            destinationPreviewDistance.setDistance(route.getTotalDistance());
         }
     }
 
@@ -143,6 +133,17 @@ public class RoutePreviewFragment extends BaseFragment
         animateDestinationReverse();
         setOriginAndDestination();
         createRouteToDestination();
+        setStartButtonImage();
+    }
+
+    private void setStartButtonImage() {
+        if (reverse) {
+            routingCircle.setImageResource(R.drawable.ic_preview_button);
+            routingCircle.setTag(getString(R.string.view));
+        } else {
+            routingCircle.setImageResource(R.drawable.ic_start_button);
+            routingCircle.setTag(getString(R.string.start));
+        }
     }
 
     private void animateDestinationReverse() {
@@ -177,8 +178,8 @@ public class RoutePreviewFragment extends BaseFragment
         }
     }
 
-    @SuppressWarnings("unused")
-    @OnClick(R.id.start) public void start() {
+    @OnClick(R.id.routing_circle)
+    public void start() {
         if (!reverse) {
             startRouting();
         } else {

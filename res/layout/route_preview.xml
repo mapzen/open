@@ -152,55 +152,14 @@
         </RadioGroup>
     </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/destination_container"
-        android:layout_width="match_parent"
+    <ImageButton
+        android:id="@+id/routing_circle"
+        android:src="@drawable/ic_start_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:paddingTop="@dimen/default_padding_vertical"
-        android:paddingBottom="@dimen/default_padding_vertical"
-        android:paddingLeft="@dimen/default_padding_horizontal"
-        android:paddingRight="@dimen/default_padding_horizontal"
-        android:background="@android:color/white">
-
-        <TextView
-            android:id="@+id/start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginLeft="9dp"
-            android:drawablePadding="-4dp"
-            android:drawableTop="@drawable/ic_lets_go"
-            android:textColor="@color/lets_go"
-            android:text="@string/start" />
-
-        <TextView
-            android:id="@+id/destination_preview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@id/start"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/medium"
-            android:text="@string/destination_preview" />
-
-        <com.mapzen.widget.DistanceView
-            android:id="@+id/destination_preview_distance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/destination_preview"
-            android:textSize="@dimen/small"
-            android:text="@string/destination_preview_distance" />
-    </RelativeLayout>
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/divider_height"
-        android:layout_above="@id/destination_container"
-        android:background="@color/dark_gray" />
-
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/transparent"
+        android:tag="@string/start"
+        android:paddingBottom="@dimen/circle_bottom_padding"/>
 </RelativeLayout>
