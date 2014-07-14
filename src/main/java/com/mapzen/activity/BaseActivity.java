@@ -39,6 +39,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -48,6 +49,9 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ImageSpan;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -372,10 +376,13 @@ public class BaseActivity extends MapActivity {
                 .getResources().getIdentifier("android:id/search_close_btn", null, null));
         close.setImageDrawable(getResources().getDrawable(R.drawable.ic_cancel));
 
-        // TODO: Set hint icon. Why doesn't this work?
-        final ImageView hint = (ImageView) searchView.findViewById(searchView.getContext()
-                .getResources().getIdentifier("android:id/search_mag_icon", null, null));
-        hint.setImageDrawable(getResources().getDrawable(R.drawable.ic_search_results_pin));
+        // Set custom search hint icon.
+        final SpannableStringBuilder ssb = new SpannableStringBuilder("   ");
+        final Drawable searchIcon = getResources().getDrawable(R.drawable.ic_search);
+        int textSize = (int) (autoCompleteTextView.getTextSize() * 1.25);
+        searchIcon.setBounds(0, 0, textSize, textSize);
+        ssb.setSpan(new ImageSpan(searchIcon), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        autoCompleteTextView.setHint(ssb);
     }
 
     public AutoCompleteTextView getQueryAutoCompleteTextView(SearchView searchView) {
