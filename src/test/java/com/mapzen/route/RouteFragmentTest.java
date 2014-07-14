@@ -427,8 +427,11 @@ public class RouteFragmentTest {
     @Test
     public void shouldUnRegisterReceiver() throws Exception {
         FragmentTestUtil.startFragment(fragment);
+        int numberOfReceivers =
+                app.getReceiversForIntent(new Intent(COM_MAPZEN_UPDATES_LOCATION)).size();
         fragment.onPause();
-        assertThat(app.hasReceiverForIntent(new Intent(COM_MAPZEN_UPDATES_LOCATION))).isFalse();
+        assertThat(app.getReceiversForIntent(
+                new Intent(COM_MAPZEN_UPDATES_LOCATION))).hasSize(numberOfReceivers - 1);
     }
 
     @Test
