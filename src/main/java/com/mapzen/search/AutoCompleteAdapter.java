@@ -7,6 +7,7 @@ import com.mapzen.android.gson.Feature;
 import com.mapzen.android.gson.Result;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.MapFragment;
+import com.mapzen.util.Highlighter;
 import com.mapzen.util.Logger;
 import com.mapzen.util.ParcelableUtil;
 
@@ -15,6 +16,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Typeface;
 import android.support.v4.app.FragmentManager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -121,9 +123,26 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
             final int blobIndex = cursor.getColumnIndex(PELIAS_BLOB);
             byte[] bytes = cursor.getBlob(blobIndex);
             SimpleFeature simpleFeature = ParcelableUtil.unmarshall(bytes, SimpleFeature.CREATOR);
+            tv.setTextColor(app.getResources().getColor(R.color.light_gray));
+
+            final Highlighter highlighter = initAutoCompleteHighlighter(simpleFeature);
             tv.setTag(simpleFeature);
-            tv.setText(simpleFeature.getHint());
+            tv.setText(highlighter.highlight());
         }
+    }
+
+    private Highlighter initAutoCompleteHighlighter(SimpleFeature simpleFeature) {
+        final Highlighter highlighter = new Highlighter();
+        highlighter.setString(simpleFeature.getHint());
+        highlighter.setColor(app.getResources().getColor(R.color.red));
+
+        final String query  = searchView.getQuery().toString().trim();
+        final String[] terms = TextUtils.split(query, " ");
+        for (String term : terms) {
+            highlighter.addTerm(term);
+        }
+
+        return highlighter;
     }
 
     @Override

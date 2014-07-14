@@ -24,6 +24,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -36,6 +38,7 @@ import static android.location.LocationManager.GPS_PROVIDER;
 import static com.mapzen.entity.SimpleFeature.ADMIN1_ABBR;
 import static com.mapzen.entity.SimpleFeature.ADMIN1_NAME;
 import static com.mapzen.entity.SimpleFeature.NAME;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.buildActivity;
 import static org.robolectric.Robolectric.shadowOf;
@@ -209,6 +212,13 @@ public final class TestHelper {
         act.getDb().insert(DatabaseHelper.TABLE_LOCATIONS, null,
                 DatabaseHelper.valuesForLocationCorrection(TestHelper.getTestLocation(0.0, 0.0),
                         getTestLocation(1.0, 1.0), getTestInstruction(0.0, 0.0), "random-id"));
+    }
+
+    public static void assertSpan(Spanned spanned, ForegroundColorSpan foregroundColorSpan,
+            int start, int end, int color) {
+        assertThat(spanned.getSpanStart(foregroundColorSpan)).isEqualTo(start);
+        assertThat(spanned.getSpanEnd(foregroundColorSpan)).isEqualTo(end);
+        assertThat(foregroundColorSpan.getForegroundColor()).isEqualTo(color);
     }
 
     public static class TestLocation extends Location {

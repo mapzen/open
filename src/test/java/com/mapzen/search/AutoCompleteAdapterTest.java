@@ -9,6 +9,7 @@ import com.mapzen.fragment.ItemFragment;
 import com.mapzen.support.DummyActivity;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestHelper;
+import com.mapzen.util.ParcelableUtil;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,12 +19,16 @@ import org.robolectric.tester.android.database.TestCursor;
 import org.robolectric.util.ActivityController;
 
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.support.v4.app.FragmentManager;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import static com.mapzen.search.SavedSearch.getSavedSearch;
+import static com.mapzen.support.TestHelper.assertSpan;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
@@ -167,6 +172,25 @@ public class AutoCompleteAdapterTest {
         adapter.bindView(view, application, cursor);
         view.performClick();
         assertThat(adapter.getSearchView().getQuery().toString()).isEqualTo("saved query");
+    }
+
+    @Test
+    public void bindView_shouldHighlightText() throws Exception {
+        adapter.getSearchView().setQuery("New York", false);
+        MatrixCursor cursor = (MatrixCursor) adapter.getCursor();
+        cursor.moveToFirst();
+        SimpleFeature simpleFeature = new SimpleFeature();
+        simpleFeature.setHint("New York, NY");
+        byte[] data = ParcelableUtil.marshall(simpleFeature);
+        cursor.addRow(new Object[]{0, data});
+        TextView textView = new TextView(application);
+        adapter.bindView(textView, application, cursor);
+        Spanned spanned = (Spanned) textView.getText();
+        ForegroundColorSpan[] foregroundColorSpans = spanned.getSpans(0, spanned.length(),
+                ForegroundColorSpan.class);
+        final int highlightColor = application.getResources().getColor(R.color.red);
+        assertSpan(spanned, foregroundColorSpans[0], 0, 3, highlightColor);
+        assertSpan(spanned, foregroundColorSpans[1], 4, 8, highlightColor);
     }
 
     @Test
