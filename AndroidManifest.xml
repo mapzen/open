@@ -59,7 +59,8 @@
         </activity>
         <activity
             android:name=".search.ListResultsActivity"
-            android:label="@string/results_title" />
+            android:label="@string/results_title"
+            android:theme="@style/Theme.Mapzen.SearchResults" />
         <service android:name="com.mapzen.core.DataUploadService"
             android:exported="false"
             android:enabled="true" >
