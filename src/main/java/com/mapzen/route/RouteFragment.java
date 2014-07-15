@@ -820,7 +820,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                             public void onInstructionSelected(int index) {
                                 instructionSelectedAction(index);
                             }
-                        });
+                        }, simpleFeature, false);
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.footer_wrapper, directionListFragment
                         , DirectionListFragment.TAG)

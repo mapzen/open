@@ -10,23 +10,36 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import com.mapzen.R;
+import com.mapzen.entity.SimpleFeature;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.util.DisplayHelper;
 import com.mapzen.widget.DistanceView;
 
 import java.util.List;
 
+import static com.mapzen.entity.SimpleFeature.NAME;
+
 public class DirectionListFragment extends ListFragment {
     public static final String TAG = DirectionListFragment.class.getSimpleName();
     private List<Instruction> instructions;
     private DirectionListener listener;
+    private SimpleFeature destination;
+    private boolean reverse;
 
+    @InjectView(R.id.starting_point_list) TextView startingPointTextView;
+    @InjectView(R.id.destination_list) TextView destinationTextView;
+    @InjectView(R.id.starting_location_icon_list) ImageView startLocationIcon;
+    @InjectView(R.id.destination_location_icon_list) ImageView destinationLocationIcon;
     public static DirectionListFragment newInstance(List<Instruction> instructions,
-            DirectionListener listener) {
+            DirectionListener listener,  SimpleFeature destination, boolean reverse) {
         final DirectionListFragment fragment = new DirectionListFragment();
         fragment.instructions = instructions;
         fragment.listener = listener;
+        fragment.destination = destination;
+        fragment.reverse = reverse;
         return fragment;
     }
 
@@ -34,8 +47,10 @@ public class DirectionListFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_direction_list, container, false);
+        ButterKnife.inject(this, view);
         final ListView listView = (ListView) view.findViewById(android.R.id.list);
-        listView.setAdapter(new DirectionListAdapter(getActivity(), instructions));
+        listView.setAdapter(new DirectionListAdapter(getActivity(), instructions, reverse));
+        setOriginAndDestination();
         return view;
     }
 
@@ -48,6 +63,21 @@ public class DirectionListFragment extends ListFragment {
         getActivity().onBackPressed();
     }
 
+    private void setOriginAndDestination() {
+        if (!reverse) {
+            startingPointTextView.setText(getString(R.string.current_location));
+            destinationTextView.setText(destination.getProperty(NAME));
+            startLocationIcon.setVisibility(View.VISIBLE);
+            destinationLocationIcon.setVisibility(View.GONE);
+
+        } else {
+            startingPointTextView.setText(destination.getProperty(NAME));
+            destinationTextView.setText(getString(R.string.current_location));
+            startLocationIcon.setVisibility(View.GONE);
+            destinationLocationIcon.setVisibility(View.VISIBLE);
+        }
+    }
+
     public interface DirectionListener {
         public void onInstructionSelected(int index);
     }
@@ -56,10 +86,13 @@ public class DirectionListFragment extends ListFragment {
         private static final int CURRENT_LOCATION_OFFSET = 1;
         private Context context;
         private List<Instruction> instructions;
+        private boolean reversed;
 
-        public DirectionListAdapter(Context context, List<Instruction> instructions) {
+        public DirectionListAdapter(Context context, List<Instruction> instructions,
+                                    boolean reversed) {
             this.context = context;
             this.instructions = instructions;
+            this.reversed = reversed;
         }
 
         @Override
@@ -80,24 +113,58 @@ public class DirectionListFragment extends ListFragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             final View view = View.inflate(context, R.layout.direction_list_item, null);
-            final ImageView icon = (ImageView) view.findViewById(R.id.icon);
-            final TextView simpleInstruction = (TextView)
-                    view.findViewById(R.id.simple_instruction);
-            final DistanceView distance = (DistanceView) view.findViewById(R.id.distance);
-
-            if (position == 0) {
-                icon.setImageResource(R.drawable.ic_locate_active);
-                simpleInstruction.setText(context.getResources()
-                        .getString(R.string.current_location));
+            if (reversed) {
+                setReversedDirectionListItem(position, view);
             } else {
-                final Instruction current = instructions.get(position - CURRENT_LOCATION_OFFSET);
-                icon.setImageResource(DisplayHelper.getRouteDrawable(context,
-                        current.getTurnInstruction(), DisplayHelper.IconStyle.STANDARD));
-                simpleInstruction.setText(current.getSimpleInstruction());
-                distance.setDistance(current.getDistance());
+                setDirectionListItem(position, view);
             }
-
             return view;
         }
+
+        private void setDirectionListItem(int position, View view) {
+            if (position == 0) {
+                setListItemToCurrentLocation(view);
+            } else {
+                setListItemToInstruction(view, position - CURRENT_LOCATION_OFFSET);
+            }
+        }
+
+        private void setReversedDirectionListItem(int position, View view) {
+            if (position == instructions.size()) {
+                setListItemToCurrentLocation(view);
+            } else {
+                setListItemToInstruction(view, position);
+            }
+        }
+
+        public void setListItemToCurrentLocation(View view) {
+            ImageView icon = (ImageView) view.findViewById(R.id.icon);
+            TextView simpleInstruction = (TextView)
+                    view.findViewById(R.id.simple_instruction);
+
+            icon.setImageResource(R.drawable.ic_locate_active);
+            simpleInstruction.setText(context.getResources()
+                    .getString(R.string.current_location));
+        }
+
+        public void setListItemToInstruction(View view, int position) {
+            ImageView icon = (ImageView) view.findViewById(R.id.icon);
+            TextView simpleInstruction = (TextView)
+                    view.findViewById(R.id.simple_instruction);
+            DistanceView distance = (DistanceView) view.findViewById(R.id.distance);
+            Instruction current = instructions.get(position);
+
+            icon.setImageResource(DisplayHelper.getRouteDrawable(context,
+                    current.getTurnInstruction(), DisplayHelper.IconStyle.GRAY));
+            simpleInstruction.setText(current.getSimpleInstruction());
+            distance.setDistance(current.getDistance());
+        }
+    }
+
+    public void flipOriginAndDestination() {
+        startingPointTextView.setText(getString(R.string.current_location));
+        destinationTextView.setText(destination.getProperty(NAME));
+        startLocationIcon.setVisibility(View.VISIBLE);
+        destinationLocationIcon.setVisibility(View.GONE);
     }
 }

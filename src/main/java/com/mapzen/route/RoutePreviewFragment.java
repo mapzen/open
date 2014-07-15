@@ -301,7 +301,7 @@ public class RoutePreviewFragment extends BaseFragment
                             @Override
                             public void onInstructionSelected(int index) {
                             }
-                        });
+                        }, destination, reverse);
         act.getSupportFragmentManager().beginTransaction()
                 .add(R.id.full_list, fragment, DirectionListFragment.TAG)
                 .addToBackStack(null)
