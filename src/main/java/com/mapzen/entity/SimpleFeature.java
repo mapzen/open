@@ -20,6 +20,7 @@ public class SimpleFeature implements Parcelable {
     public static final String ADMIN1_ABBR = "admin1_abbr";
     public static final String ADMIN0_ABBR = "admin0_abbr";
     public static final String ADMIN1_NAME = "admin1_name";
+    public static final String LOCAL_ADMIN = "local_admin";
     public static final Parcelable.Creator<SimpleFeature> CREATOR =
             new Parcelable.Creator<SimpleFeature>() {
                 @Override
@@ -46,6 +47,7 @@ public class SimpleFeature implements Parcelable {
         simpleFeature.setProperty(ADMIN1_ABBR, in.readString());
         simpleFeature.setProperty(ADMIN1_NAME, in.readString());
         simpleFeature.setProperty(ADMIN0_ABBR, in.readString());
+        simpleFeature.setProperty(LOCAL_ADMIN, in.readString());
         simpleFeature.setHint(in.readString());
         return simpleFeature;
     }
@@ -56,6 +58,7 @@ public class SimpleFeature implements Parcelable {
         simpleFeature.setProperty(ADMIN1_NAME, feature.getProperties().getAdmin1_name());
         simpleFeature.setProperty(ADMIN1_ABBR, feature.getProperties().getAdmin1_abbr());
         simpleFeature.setProperty(ADMIN0_ABBR, feature.getProperties().getAdmin0_abbr());
+        simpleFeature.setProperty(LOCAL_ADMIN, feature.getProperties().getLocal_admin_name());
         simpleFeature.setLon(feature.getGeometry().getCoordinates().get(0));
         simpleFeature.setLat(feature.getGeometry().getCoordinates().get(1));
         simpleFeature.setHint(feature.getProperties().getHint());
@@ -98,6 +101,7 @@ public class SimpleFeature implements Parcelable {
         out.writeString(getProperty(ADMIN1_ABBR));
         out.writeString(getProperty(ADMIN1_NAME));
         out.writeString(getProperty(ADMIN0_ABBR));
+        out.writeString(getProperty(LOCAL_ADMIN));
         out.writeString(getHint());
     }
 
@@ -170,8 +174,7 @@ public class SimpleFeature implements Parcelable {
             if (simpleFeature != null) {
                 title.setText(simpleFeature.getProperty(NAME));
                 address.setText(String.format(Locale.getDefault(), "%s, %s",
-                        simpleFeature.getProperty(ADMIN1_NAME),
-                        simpleFeature.getAbbr()));
+                        simpleFeature.getProperty(LOCAL_ADMIN), simpleFeature.getAbbr()));
             }
         }
     }

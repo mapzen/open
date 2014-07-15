@@ -37,6 +37,7 @@ import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
 import static com.mapzen.entity.SimpleFeature.ADMIN1_ABBR;
 import static com.mapzen.entity.SimpleFeature.ADMIN1_NAME;
+import static com.mapzen.entity.SimpleFeature.LOCAL_ADMIN;
 import static com.mapzen.entity.SimpleFeature.NAME;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
@@ -127,6 +128,7 @@ public final class TestHelper {
         simpleFeature.setProperty(NAME, "Test SimpleFeature");
         simpleFeature.setProperty(ADMIN1_NAME, "New York");
         simpleFeature.setProperty(ADMIN1_ABBR, "NY");
+        simpleFeature.setProperty(LOCAL_ADMIN, "Manhattan");
         simpleFeature.setHint("Test Hint");
         return simpleFeature;
     }

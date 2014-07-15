@@ -38,8 +38,7 @@ public class ListResultsFragment extends ListFragment {
         term.setText("\"" + currentSearchTerm + "\"");
         list.addHeaderView(header);
         list.setHeaderDividersEnabled(false);
-        setListAdapter(new PlaceArrayAdapter(getActivity(),
-                android.R.layout.simple_list_item_1, features));
+        setListAdapter(new PlaceArrayAdapter(getActivity(), features));
         return view;
     }
 
