@@ -1,5 +1,6 @@
 package com.mapzen.search;
 
+import com.mapzen.R;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.support.MapzenTestRunner;
 
@@ -11,6 +12,7 @@ import org.robolectric.tester.android.view.TestMenuItem;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -76,6 +78,6 @@ public class ListResultsActivityTest {
 
     @Test
     public void shouldDisplaySearchTermFromIntentExtra() throws Exception {
-        assertThat(fragment.termTextView).hasText("\"term\"");
+        assertThat((TextView) fragment.getListView().findViewById(R.id.term)).hasText("\"term\"");
     }
 }

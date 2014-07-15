@@ -1,5 +1,6 @@
 package com.mapzen.search;
 
+import com.mapzen.R;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.support.MapzenTestRunner;
 
@@ -8,6 +9,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
+
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -43,7 +46,7 @@ public class ListResultsFragmentTest {
 
     @Test
     public void shouldDisplayCurrentSearchTerm() throws Exception {
-        assertThat(fragment.termTextView).hasText("\"term\"");
+        assertThat((TextView) fragment.getListView().findViewById(R.id.term)).hasText("\"term\"");
     }
 
     @Test
