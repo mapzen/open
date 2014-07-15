@@ -176,16 +176,14 @@ public class RouteFragmentTest {
     @Test
     public void locateButtonShouldNotBeVisible() throws Exception {
         FragmentTestUtil.startFragment(fragment);
-        int visibility = act.findViewById(R.id.locate_button).getVisibility();
-        assertThat(visibility).isEqualTo(View.GONE);
+        assertThat(act.findViewById(R.id.locate_button)).isNotVisible();
     }
 
     @Test
     public void onDetach_locateButtonShouldBeVisible() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         fragment.onDetach();
-        int visibility = act.findViewById(R.id.locate_button).getVisibility();
-        assertThat(visibility).isEqualTo(View.VISIBLE);
+        assertThat(act.findViewById(R.id.locate_button)).isVisible();
     }
 
     @Test
