@@ -105,12 +105,20 @@ public class SimpleFeatureTest {
         assertThat(address.getText().toString()).contains(expectedLocality);
     }
 
+    @Test
     public void getAbbr_shouldReturnAdmin1() throws Exception {
        assertThat(simpleFeature.getAbbr()).isEqualTo(simpleFeature.getProperty(ADMIN1_ABBR));
     }
 
+    @Test
     public void getAbbr_shouldReturnAdmin0() throws Exception {
         simpleFeature.setProperty(ADMIN1_ABBR, null);
         assertThat(simpleFeature.getAbbr()).isEqualTo(simpleFeature.getProperty(ADMIN0_ABBR));
+    }
+
+    @Test
+    public void getSingleLine_shouldReturnNameLocalityAndAbbreviation() throws Exception {
+        assertThat(simpleFeature.getSingleLine()).isEqualTo(expectedTitle + ", " + expectedLocality
+                + ", " + simpleFeature.getAbbr());
     }
 }

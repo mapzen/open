@@ -158,6 +158,10 @@ public class SimpleFeature implements Parcelable {
         }
     }
 
+    public String getSingleLine() {
+        return getProperty(NAME) + ", " + getProperty(LOCAL_ADMIN) + ", " + getAbbr();
+    }
+
     public static class ViewHolder {
         private TextView title;
         private TextView address;

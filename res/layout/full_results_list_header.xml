@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:drawableLeft="@drawable/ic_search_sm"
-        android:drawablePadding="4dp"
+        android:drawablePadding="8dp"
         android:fontFamily="sans-serif-condensed"
         android:paddingTop="@dimen/default_padding_vertical"
         android:paddingBottom="@dimen/default_padding_vertical"

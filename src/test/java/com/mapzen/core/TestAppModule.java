@@ -4,6 +4,8 @@ import com.mapzen.activity.BaseActivity;
 import com.mapzen.activity.BaseActivityTest;
 import com.mapzen.activity.InitActivity;
 import com.mapzen.activity.InitActivityTest;
+import com.mapzen.adapters.PlaceArrayAdapter;
+import com.mapzen.adapters.PlaceArrayAdapterTest;
 import com.mapzen.fragment.ItemFragment;
 import com.mapzen.fragment.ItemFragmentTest;
 import com.mapzen.fragment.MapFragment;
@@ -12,6 +14,7 @@ import com.mapzen.route.RouteFragment;
 import com.mapzen.route.RouteFragmentTest;
 import com.mapzen.route.RoutePreviewFragment;
 import com.mapzen.route.RoutePreviewFragmentTest;
+import com.mapzen.search.AutoCompleteAdapter;
 import com.mapzen.support.TestBaseActivity;
 
 import org.mockito.Mockito;
@@ -20,6 +23,7 @@ import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 
 import android.content.Context;
+import android.graphics.Typeface;
 
 import javax.inject.Singleton;
 
@@ -43,7 +47,10 @@ import static org.mockito.Mockito.doNothing;
                 MapFragment.class,
                 RoutePreviewFragment.class,
                 RoutePreviewFragmentTest.class,
-                DataUploadService.class
+                DataUploadService.class,
+                PlaceArrayAdapter.class,
+                PlaceArrayAdapterTest.class,
+                AutoCompleteAdapter.class
         },
         complete = false
 )
@@ -68,8 +75,11 @@ public class TestAppModule {
         return Mockito.mock(PathLayer.class);
     }
 
-    @Provides @Singleton
-    ItemizedLayer<MarkerItem> provideItemizedLayer() {
+    @Provides @Singleton ItemizedLayer<MarkerItem> provideItemizedLayer() {
         return Mockito.mock(ItemizedLayer.class);
+    }
+
+    @Provides @Singleton Typeface provideTypeface() {
+        return Typeface.createFromAsset(context.getAssets(), "fonts/RobotoCondensed-Light.ttf");
     }
 }
