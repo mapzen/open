@@ -43,11 +43,9 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowNotification;
 import org.robolectric.shadows.ShadowNotificationManager;
-import org.robolectric.shadows.ShadowPopupMenu;
 import org.robolectric.shadows.ShadowTextToSpeech;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
-import org.robolectric.tester.android.view.TestMenuItem;
 import org.robolectric.util.FragmentTestUtil;
 
 import android.content.Context;
@@ -64,7 +62,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -174,6 +171,19 @@ public class RouteFragmentTest {
     public void shouldHaveRoutesViewPager() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         assertThat(fragment.pager).isNotNull();
+    }
+
+    @Test
+    public void locateButtonShouldNotBeVisible() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(act.findViewById(R.id.locate_button)).isNotVisible();
+    }
+
+    @Test
+    public void onDetach_locateButtonShouldBeVisible() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onDetach();
+        assertThat(act.findViewById(R.id.locate_button)).isVisible();
     }
 
     @Test
@@ -471,14 +481,6 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onCreateView_shouldHaveOverflowMenu() throws Exception {
-        FragmentTestUtil.startFragment(fragment);
-        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        ImageButton overFlowMenu = (ImageButton) view.findViewById(R.id.overflow_menu);
-        assertThat(overFlowMenu).isVisible();
-    }
-
-    @Test
     public void onCreateView_shouldNotShowResumeButton() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
@@ -539,16 +541,6 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void menuOnClick_shouldShowMenuOptions() throws Exception {
-        FragmentTestUtil.startFragment(fragment);
-        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        ImageButton overFlowMenu = (ImageButton) view.findViewById(R.id.overflow_menu);
-        overFlowMenu.performClick();
-        ShadowPopupMenu popupMenu = shadowOf(ShadowPopupMenu.getLatestPopupMenu());
-        assertThat(popupMenu.isShowing()).isTrue();
-    }
-
-    @Test
     public void expandedPane_shouldShowDirectionListFragment() {
         FragmentTestUtil.startFragment(fragment);
         simulatePaneOpenSlide();
@@ -582,22 +574,6 @@ public class RouteFragmentTest {
                 .findViewById(R.id.left_arrow);
         leftArrow.performClick();
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(firstInstruction);
-    }
-
-    @Test
-    public void shouldShowDirectionListFragment() throws Exception {
-        FragmentTestUtil.startFragment(fragment);
-        RouteFragment spy = spy(fragment);
-        act.setContentView(R.layout.route_widget);
-        View view = spy.onCreateView(act.getLayoutInflater(), null, null);
-        ImageButton overFlowMenu = (ImageButton) view.findViewById(R.id.overflow_menu);
-        overFlowMenu.performClick();
-        ShadowPopupMenu popupMenu = shadowOf(ShadowPopupMenu.getLatestPopupMenu());
-        PopupMenu.OnMenuItemClickListener listener = popupMenu.getOnMenuItemClickListener();
-        TestMenuItem item = new TestMenuItem();
-        item.setItemId(R.id.route_menu_steps);
-        listener.onMenuItemClick(item);
-        verify(spy).expandInstructionsPane();
     }
 
     @Test

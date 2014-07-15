@@ -36,14 +36,11 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -89,11 +86,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Inject PathLayer path;
     @Inject ZoomController zoomController;
 
-    @InjectView(R.id.overflow_menu) ImageButton overflowMenu;
     @InjectView(R.id.routes) ViewPager pager;
     @InjectView(R.id.resume_button) ImageButton resume;
     @InjectView(R.id.footer_wrapper) RelativeLayout footerWrapper;
-
     private ArrayList<Instruction> instructions;
     private RouteAdapter adapter;
     private Route route;
@@ -164,6 +159,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         });
         initDebugView(rootView);
         initSlideLayout(rootView);
+        hideLocateButton();
         return rootView;
     }
 
@@ -217,25 +213,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         updateRemainingDistance(instruction, instruction.getLocation());
     }
 
-    @OnClick(R.id.overflow_menu)
-    @SuppressWarnings("unused")
-    public void onClickOverFlowMenu() {
-        PopupMenu popup = new PopupMenu(getActivity(), overflowMenu);
-        MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.route_options_menu, popup.getMenu());
-        popup.show();
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                if (item.getItemId() == R.id.route_menu_steps) {
-                    expandInstructionsPane();
-                    return true;
-                }
-                return false;
-            }
-        });
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -271,6 +248,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.updateView();
         mapFragment.showLocationMarker();
         mapFragment.getMap().layers().remove(routeLocationIndicator);
+        showLocateButton();
     }
 
     public RouteLocationIndicator getRouteLocationIndicator() {
@@ -882,5 +860,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     public void pageToPrevious(int position) {
         pager.setCurrentItem(position - 1);
+    }
+
+    private void showLocateButton() {
+        act.findViewById(R.id.locate_button).setVisibility(View.VISIBLE);
+    }
+    private void hideLocateButton() {
+        act.findViewById(R.id.locate_button).setVisibility(View.GONE);
     }
 }
