@@ -10,6 +10,8 @@ machine:
 dependencies:
   pre:
     - echo y | android update sdk --all --no-ui --force --filter "build-tools-19.0.3,platform-tools,android-19"
+    - sed -i /gen-external/d project.properties
+    - sed -i s/reference.2/reference.1/g project.properties
     - ./install-dependencies.sh
 
 test:
