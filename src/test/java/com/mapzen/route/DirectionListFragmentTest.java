@@ -1,6 +1,9 @@
 package com.mapzen.route;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import com.mapzen.R;
+import com.mapzen.entity.SimpleFeature;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.widget.DistanceView;
@@ -27,21 +30,28 @@ import static org.robolectric.util.FragmentTestUtil.startFragment;
 @RunWith(MapzenTestRunner.class)
 public class DirectionListFragmentTest {
     private static final double METERS_IN_MILE = 1609.34;
-
+    private static final String TEST_LOCATION = "Dalvik";
     private DirectionListFragment fragment;
     private ListView listView;
     private TestListener listener;
     private Resources res;
+    private ArrayList<Instruction> instructions;
+    private SimpleFeature simpleFeature;
+    @InjectView(R.id.starting_point_list) TextView startingPointTextView;
+    @InjectView(R.id.destination_list) TextView destinationTextView;
 
     @Before
     public void setUp() throws Exception {
-        final ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions = new ArrayList<Instruction>();
         instructions.add(new TestInstruction("First Instruction", 1, 0.1));
         instructions.add(new TestInstruction("Second Instruction", 2, 2.345));
         instructions.add(new TestInstruction("Last Instruction", 15, 0));
+        simpleFeature = new SimpleFeature();
+        simpleFeature.setProperty(SimpleFeature.NAME, TEST_LOCATION);
         listener = new TestListener();
-        fragment = DirectionListFragment.newInstance(instructions, listener);
+        fragment = DirectionListFragment.newInstance(instructions, listener, simpleFeature, false);
         startFragment(fragment);
+        ButterKnife.inject(this, fragment.getView());
         listView = (ListView) fragment.getView().findViewById(android.R.id.list);
         res = application.getResources();
     }
@@ -54,6 +64,32 @@ public class DirectionListFragmentTest {
     @Test
     public void shouldHaveListView() throws Exception {
         assertThat(listView).isNotNull();
+    }
+
+    @Test
+    public void destinationTextViewShouldBeDestination() {
+        String destinationPointText = destinationTextView.getText().toString();
+        assertThat(destinationPointText).isEqualTo(TEST_LOCATION);
+    }
+
+    @Test
+    public void startingTextShouldBeCurrentLocation() {
+        String startingPointText = startingPointTextView.getText().toString();
+        assertThat(startingPointText).isEqualTo(fragment.getString(R.string.current_location));
+    }
+
+    @Test
+    public void onReverse_destinationTextViewShouldBeCurrentLocation() throws Exception {
+        setFragmentToBeReversed();
+        String destinationPointText = destinationTextView.getText().toString();
+        assertThat(destinationPointText).isEqualTo(fragment.getString(R.string.current_location));
+    }
+
+    @Test
+    public void onReverse_startingTextShouldBeTestLocation() throws Exception {
+        setFragmentToBeReversed();
+        String startingPointText = startingPointTextView.getText().toString();
+        assertThat(startingPointText).isEqualTo(TEST_LOCATION);
     }
 
     @Test
@@ -75,7 +111,7 @@ public class DirectionListFragmentTest {
         TextView instruction = (TextView) view.findViewById(R.id.simple_instruction);
         DistanceView distance = (DistanceView) view.findViewById(R.id.distance);
 
-        assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_route_1));
+        assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_route_gr_1));
         assertThat(instruction).hasText("First Instruction");
         assertThat(distance).hasText("0.1 mi");
     }
@@ -87,7 +123,7 @@ public class DirectionListFragmentTest {
         TextView instruction = (TextView) view.findViewById(R.id.simple_instruction);
         DistanceView distance = (DistanceView) view.findViewById(R.id.distance);
 
-        assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_route_2));
+        assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_route_gr_2));
         assertThat(instruction).hasText("Second Instruction");
         assertThat(distance).hasText("2.3 mi");
     }
@@ -100,7 +136,7 @@ public class DirectionListFragmentTest {
         TextView instruction = (TextView) view.findViewById(R.id.simple_instruction);
         DistanceView distance = (DistanceView) view.findViewById(R.id.distance);
 
-        assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_route_15));
+        assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_route_gr_15));
         assertThat(instruction).hasText("Last Instruction");
         assertThat(distance).isEmpty();
     }
@@ -142,5 +178,11 @@ public class DirectionListFragmentTest {
         public void onInstructionSelected(int index) {
             this.index = index;
         }
+    }
+
+    public void setFragmentToBeReversed() throws Exception {
+        fragment = DirectionListFragment.newInstance(instructions, listener, simpleFeature, true);
+        startFragment(fragment);
+        ButterKnife.inject(this, fragment.getView());
     }
 }
