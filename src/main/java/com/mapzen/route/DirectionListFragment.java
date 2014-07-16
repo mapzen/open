@@ -63,17 +63,6 @@ public class DirectionListFragment extends ListFragment {
         getActivity().onBackPressed();
     }
 
-    private void setOriginAndDestination() {
-        if (!reverse) {
-            setOriginAndDestinationNotReversed();
-        } else {
-            startingPointTextView.setText(destination.getProperty(NAME));
-            destinationTextView.setText(getString(R.string.current_location));
-            startLocationIcon.setVisibility(View.GONE);
-            destinationLocationIcon.setVisibility(View.VISIBLE);
-        }
-    }
-
     public interface DirectionListener {
         public void onInstructionSelected(int index);
     }
@@ -157,10 +146,17 @@ public class DirectionListFragment extends ListFragment {
         }
     }
 
-    private void setOriginAndDestinationNotReversed() {
-        startingPointTextView.setText(getString(R.string.current_location));
-        destinationTextView.setText(destination.getProperty(NAME));
-        startLocationIcon.setVisibility(View.VISIBLE);
-        destinationLocationIcon.setVisibility(View.GONE);
+    private void setOriginAndDestination() {
+        if (reverse) {
+            startingPointTextView.setText(destination.getProperty(NAME));
+            destinationTextView.setText(getString(R.string.current_location));
+            startLocationIcon.setVisibility(View.GONE);
+            destinationLocationIcon.setVisibility(View.VISIBLE);
+        } else {
+            startingPointTextView.setText(getString(R.string.current_location));
+            destinationTextView.setText(destination.getProperty(NAME));
+            startLocationIcon.setVisibility(View.VISIBLE);
+            destinationLocationIcon.setVisibility(View.GONE);
+        }
     }
 }
