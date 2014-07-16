@@ -11,6 +11,9 @@
 
     <style name="Theme.Mapzen.SearchResults" parent="Theme.Mapzen">
         <item name="android:actionBarStyle">@style/ActionBar.Solid.Mapzen.SearchResults</item>
+        <item name="android:windowActionBarOverlay">false</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:colorBackground">@android:color/white</item>
     </style>
 
     <style name="ActionBar.Solid.Mapzen" parent="@android:style/Widget.Holo.Light.ActionBar.Solid">

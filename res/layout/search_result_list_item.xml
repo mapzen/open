@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
+    android:layout_height="wrap_content"
     android:drawableLeft="@drawable/ic_search_results_search"
     android:drawablePadding="4dp"
     android:padding="@dimen/default_padding_list_item"
