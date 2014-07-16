@@ -1,8 +1,5 @@
 package com.mapzen.fragment;
 
-import android.app.AlertDialog;
-import android.content.Intent;
-import android.location.LocationManager;
 import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
@@ -26,12 +23,15 @@ import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowLocationManager;
 import org.robolectric.shadows.ShadowToast;
 
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.location.Location;
+import android.location.LocationManager;
 import android.text.TextUtils;
 
-import static android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS;
 import javax.inject.Inject;
 
+import static android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS;
 import static com.mapzen.support.TestHelper.getFixture;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initBaseActivity;
@@ -83,7 +83,7 @@ public class ItemFragmentTest {
 
     @Test
     public void shouldHaveAddress() throws Exception {
-        assertThat(itemFragment.address).hasText("New York, NY");
+        assertThat(itemFragment.address).hasText("Manhattan, NY");
         assertThat(itemFragment.title).hasEllipsize(TextUtils.TruncateAt.END);
         assertThat(itemFragment.title).hasMaxLines(1);
     }

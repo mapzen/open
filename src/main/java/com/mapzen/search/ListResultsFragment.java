@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +17,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-
 public class ListResultsFragment extends ListFragment {
-    @InjectView(R.id.term) TextView termTextView;
     private ArrayList<SimpleFeature> features;
     private String currentSearchTerm;
 
@@ -36,10 +33,13 @@ public class ListResultsFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.full_results_list, container, false);
-        ButterKnife.inject(this, view);
-        termTextView.setText("\"" + currentSearchTerm + "\"");
-        setListAdapter(new PlaceArrayAdapter(getActivity(),
-                android.R.layout.simple_list_item_1, features));
+        final View header = View.inflate(getActivity(), R.layout.full_results_list_header, null);
+        final TextView term = (TextView) header.findViewById(R.id.term);
+        final ListView list = (ListView) view.findViewById(android.R.id.list);
+        term.setText(Html.fromHtml("&ldquo;" + currentSearchTerm + "&rdquo;"));
+        list.addHeaderView(header);
+        list.setHeaderDividersEnabled(false);
+        setListAdapter(new PlaceArrayAdapter(getActivity(), features));
         return view;
     }
 

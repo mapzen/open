@@ -35,6 +35,7 @@
     <dimen name="debug_view_height">148dp</dimen>
     <dimen name="routing_footer_left_padding">10dp</dimen>
     <dimen name="circle_bottom_padding">15dp</dimen>
+    <dimen name="default_padding_list_item">12dp</dimen>
 
     <!-- fonts -->
     <dimen name="big">32sp</dimen>

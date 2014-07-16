@@ -1,43 +1,38 @@
 package com.mapzen.adapters;
 
+import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.entity.SimpleFeature;
 
 import android.content.Context;
-import android.view.LayoutInflater;
+import android.graphics.Typeface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
 
 public class PlaceArrayAdapter extends ArrayAdapter<SimpleFeature> {
-    private ArrayList<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
+    private final List<SimpleFeature> features;
+    @Inject Typeface typeface;
 
-    public PlaceArrayAdapter(Context context, int textViewResourceId,
-            ArrayList<SimpleFeature> objects) {
-        super(context, textViewResourceId, objects);
-        simpleFeatures = objects;
+    public PlaceArrayAdapter(Context context, List<SimpleFeature> features) {
+        super(context, 0, features);
+        this.features = features;
+        ((MapzenApplication) context.getApplicationContext()).inject(this);
     }
 
     @Override
-    public View getView(final int position, final View convertView, ViewGroup parent) {
-        View v = convertView;
-        final SimpleFeature simpleFeature = simpleFeatures.get(position);
-        SimpleFeature.ViewHolder holder;
-        if (v == null) {
-            LayoutInflater vi =
-                    (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.search_result_list_item, null);
-            holder = new SimpleFeature.ViewHolder();
-            holder.setTitle((TextView) v.findViewById(R.id.title));
-            holder.setAddress((TextView) v.findViewById(R.id.address));
-            v.setTag(holder);
-        } else {
-            holder = (SimpleFeature.ViewHolder) v.getTag();
+    public View getView(int position, View convertView, ViewGroup parent) {
+        if (convertView == null) {
+            convertView = View.inflate(getContext(), R.layout.search_result_list_item, null);
+            ((TextView) convertView).setTypeface(typeface);
         }
-        holder.setFromFeature(simpleFeature);
-        return v;
+
+        ((TextView) convertView).setText(features.get(position).getSingleLine());
+        return convertView;
     }
 }

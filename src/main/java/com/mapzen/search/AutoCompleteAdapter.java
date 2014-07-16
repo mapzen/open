@@ -26,6 +26,8 @@ import android.widget.CursorAdapter;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import javax.inject.Inject;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 
@@ -40,6 +42,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     private BaseActivity act;
     private MapzenApplication app;
     private FragmentManager fragmentManager;
+    @Inject Typeface typeface;
 
     public AutoCompleteAdapter(Context context, BaseActivity act, String[] columns,
             FragmentManager fragmentManager) {
@@ -47,6 +50,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         this.act = act;
         this.app = (MapzenApplication) act.getApplication();
         this.fragmentManager = fragmentManager;
+        app.inject(this);
     }
 
     public void setSearchView(SearchView view) {
@@ -66,8 +70,6 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         LayoutInflater inflater = LayoutInflater.from(c);
         final TextView textView =
                 (TextView) inflater.inflate(R.layout.search_dropdown_item, parent, false);
-        final Typeface typeface = Typeface.createFromAsset(c.getAssets(),
-                "fonts/RobotoCondensed-Light.ttf");
         textView.setTypeface(typeface);
         assert textView != null;
         textView.setOnClickListener(new View.OnClickListener() {

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import static com.mapzen.entity.SimpleFeature.ADMIN0_ABBR;
 import static com.mapzen.entity.SimpleFeature.ADMIN1_ABBR;
 import static com.mapzen.entity.SimpleFeature.ADMIN1_NAME;
+import static com.mapzen.entity.SimpleFeature.LOCAL_ADMIN;
 import static com.mapzen.entity.SimpleFeature.NAME;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -28,6 +29,7 @@ public class SimpleFeatureTest {
     String expectedAdmin1Abbr = "expected admin1 abbr";
     String expectedAdmin0Abbr = "expected admin0 abbr";
     String expectedAdmin1Name = "expected name";
+    String expectedLocality = "expected locality";
 
     @Before
     public void setUp() throws Exception {
@@ -39,6 +41,7 @@ public class SimpleFeatureTest {
         simpleFeature.setProperty(ADMIN1_ABBR, expectedAdmin1Abbr);
         simpleFeature.setProperty(ADMIN1_NAME, expectedAdmin1Name);
         simpleFeature.setProperty(ADMIN0_ABBR, expectedAdmin0Abbr);
+        simpleFeature.setProperty(LOCAL_ADMIN, expectedLocality);
     }
 
     @Test
@@ -85,7 +88,7 @@ public class SimpleFeatureTest {
         holder.setAddress(address);
         holder.setFromFeature(simpleFeature);
         assertThat(address.getText().toString()).contains(expectedAdmin1Abbr);
-        assertThat(address.getText().toString()).contains(expectedAdmin1Name);
+        assertThat(address.getText().toString()).contains(expectedLocality);
     }
 
     @Test
@@ -99,15 +102,23 @@ public class SimpleFeatureTest {
         holder.setFromFeature(simpleFeature);
         assertThat(address.getText().toString()).doesNotContain("null");
         assertThat(address.getText().toString()).contains(expectedAdmin0Abbr);
-        assertThat(address.getText().toString()).contains(expectedAdmin1Name);
+        assertThat(address.getText().toString()).contains(expectedLocality);
     }
 
+    @Test
     public void getAbbr_shouldReturnAdmin1() throws Exception {
        assertThat(simpleFeature.getAbbr()).isEqualTo(simpleFeature.getProperty(ADMIN1_ABBR));
     }
 
+    @Test
     public void getAbbr_shouldReturnAdmin0() throws Exception {
         simpleFeature.setProperty(ADMIN1_ABBR, null);
         assertThat(simpleFeature.getAbbr()).isEqualTo(simpleFeature.getProperty(ADMIN0_ABBR));
+    }
+
+    @Test
+    public void getSingleLine_shouldReturnNameLocalityAndAbbreviation() throws Exception {
+        assertThat(simpleFeature.getSingleLine()).isEqualTo(expectedTitle + ", " + expectedLocality
+                + ", " + simpleFeature.getAbbr());
     }
 }

@@ -9,15 +9,31 @@
         <item name="android:textCursorDrawable">@drawable/cursor</item>
     </style>
 
+    <style name="Theme.Mapzen.SearchResults" parent="Theme.Mapzen">
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Mapzen.SearchResults</item>
+        <item name="android:windowActionBarOverlay">false</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:colorBackground">@android:color/white</item>
+    </style>
+
     <style name="ActionBar.Solid.Mapzen" parent="@android:style/Widget.Holo.Light.ActionBar.Solid">
         <item name="android:titleTextStyle">@style/MapzenTitleText</item>
         <item name="android:background">@color/transparent_white</item>
         <item name="android:icon">@drawable/ic_mapzen_icon</item>
     </style>
 
+    <style name="ActionBar.Solid.Mapzen.SearchResults" parent="ActionBar.Solid.Mapzen">
+        <item name="android:titleTextStyle">@style/SearchResultsTitleText</item>
+    </style>
+
     <style name="MapzenTitleText" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
         <item name="android:textColor">@color/red</item>
         <item name="android:textSize">@dimen/medium</item>
+    </style>
+
+    <style name="SearchResultsTitleText" parent="MapzenTitleText">
+        <item name="android:textColor">@color/dark_gray</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
     </style>
 
     <style name="MapzenSearchText" parent="@android:style/TextAppearance.Holo.Widget.EditText">
