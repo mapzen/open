@@ -98,7 +98,7 @@
                     android:padding="@dimen/default_padding"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-condensed"/>
+                    android:fontFamily="sans-serif-condensed" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -109,7 +109,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/location_divider_padding"
-        android:layout_marginLeft="@dimen/location_divider_padding"/>
+        android:layout_marginLeft="@dimen/location_divider_padding" />
 
     <ListView
         android:id="@android:id/list"

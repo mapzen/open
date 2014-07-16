@@ -65,11 +65,7 @@ public class DirectionListFragment extends ListFragment {
 
     private void setOriginAndDestination() {
         if (!reverse) {
-            startingPointTextView.setText(getString(R.string.current_location));
-            destinationTextView.setText(destination.getProperty(NAME));
-            startLocationIcon.setVisibility(View.VISIBLE);
-            destinationLocationIcon.setVisibility(View.GONE);
-
+            setOriginAndDestinationNotReversed();
         } else {
             startingPointTextView.setText(destination.getProperty(NAME));
             destinationTextView.setText(getString(R.string.current_location));
@@ -161,7 +157,7 @@ public class DirectionListFragment extends ListFragment {
         }
     }
 
-    public void flipOriginAndDestination() {
+    private void setOriginAndDestinationNotReversed() {
         startingPointTextView.setText(getString(R.string.current_location));
         destinationTextView.setText(destination.getProperty(NAME));
         startLocationIcon.setVisibility(View.VISIBLE);
