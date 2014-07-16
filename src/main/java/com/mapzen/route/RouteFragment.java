@@ -81,6 +81,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         ViewPager.OnPageChangeListener, Router.Callback {
     public static final String TAG = RouteFragment.class.getSimpleName();
     public static final int ROUTE_ZOOM_LEVEL = 17;
+    public static final double MIN_CHANGE_FOR_SHOW_RESUME = .00000001;
     public static final String ROUTE_TAG = "route";
 
     @Inject PathLayer path;
@@ -99,6 +100,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private int previousPosition;
     private String routeId;
     private int pagerPositionWhenPaused = 0;
+    private double currentXCor;
 
     Speakerbox speakerbox;
     private MapzenNotificationCreator notificationCreator;
@@ -148,6 +150,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager.setOnPageChangeListener(this);
         adapter.notifyDataSetChanged();
         previousPosition = pager.getCurrentItem();
+        currentXCor = mapFragment.getMap().getMapPosition().getX();
         initSpeakerbox();
         initNotificationCreator();
         pager.setOnTouchListener(new View.OnTouchListener() {
@@ -160,7 +163,28 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         initDebugView(rootView);
         initSlideLayout(rootView);
         hideLocateButton();
+        setMapOnTouchListener();
         return rootView;
+    }
+
+    private void setMapOnTouchListener() {
+        act.findViewById(R.id.map).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                boolean oneFinger = event.getPointerCount() < 2;
+                boolean enoughChange = Math.abs(mapFragment.getMap().getMapPosition()
+                        .getX() - currentXCor) > MIN_CHANGE_FOR_SHOW_RESUME;
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    if (oneFinger && enoughChange) {
+                        turnAutoPageOff();
+                    } else if (autoPaging) {
+                        currentXCor = mapFragment.getMap().getMapPosition().getX();
+                        resume.setVisibility(View.GONE);
+                    }
+                }
+                return false;
+            }
+        });
     }
 
     private void initNotificationCreator() {
@@ -659,6 +683,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         int currentItem = ((RouteAdapter) pager.getAdapter()).getPausedPosition();
         pager.setCurrentItem(currentItem);
         resume.setVisibility(View.GONE);
+        act.getMapFragment().centerOnCurrentLocation();
+        currentXCor = mapFragment.getMap().getMapPosition().getX();
         autoPaging = true;
     }
 
