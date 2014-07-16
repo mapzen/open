@@ -10,6 +10,8 @@ import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 
+import android.text.Html;
+import android.text.Spanned;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -46,7 +48,8 @@ public class ListResultsFragmentTest {
 
     @Test
     public void shouldDisplayCurrentSearchTerm() throws Exception {
-        assertThat((TextView) fragment.getListView().findViewById(R.id.term)).hasText("\"term\"");
+        Spanned expected = Html.fromHtml("&ldquo;term&rdquo;");
+        assertThat((TextView) fragment.getListView().findViewById(R.id.term)).hasText(expected);
     }
 
     @Test

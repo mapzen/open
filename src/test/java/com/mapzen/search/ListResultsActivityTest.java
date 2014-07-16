@@ -12,6 +12,8 @@ import org.robolectric.tester.android.view.TestMenuItem;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.text.Html;
+import android.text.Spanned;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -78,6 +80,7 @@ public class ListResultsActivityTest {
 
     @Test
     public void shouldDisplaySearchTermFromIntentExtra() throws Exception {
-        assertThat((TextView) fragment.getListView().findViewById(R.id.term)).hasText("\"term\"");
+        Spanned expected = Html.fromHtml("&ldquo;term&rdquo;");
+        assertThat((TextView) fragment.getListView().findViewById(R.id.term)).hasText(expected);
     }
 }
