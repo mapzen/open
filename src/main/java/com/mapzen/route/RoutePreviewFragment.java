@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
+import com.mapzen.core.MapzenLocation;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
 import com.mapzen.osrm.Route;
