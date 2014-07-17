@@ -41,6 +41,7 @@ import org.oscim.map.TestViewport;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
+import org.robolectric.shadows.ShadowMotionEvent;
 import org.robolectric.shadows.ShadowNotification;
 import org.robolectric.shadows.ShadowNotificationManager;
 import org.robolectric.shadows.ShadowTextToSpeech;
@@ -237,6 +238,19 @@ public class RouteFragmentTest {
         assertThat(cursor.getString(1)).isNotNull();
     }
 
+//    @Test
+//    public void onMapSwipe_ShouldDisplayResumeButton() throws Exception {
+//        initTestFragment();
+//        FragmentTestUtil.startFragment(fragment);
+//        ShadowMotionEvent e = new ShadowMotionEvent();
+//        e.setAction(MotionEvent.ACTION_MOVE);
+//        e.setPointerIndex(1);
+//        e.setLocation(44, 500);
+//       shadowOf( ragment).getView().dispatchTouchEvent(e);
+//        asserT
+//
+//    }
+
     @Test
     public void onLocationChange_shouldStoreInstructionPointsRecordInDatabase() throws Exception {
         initTestFragment();
@@ -284,9 +298,9 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         fragment.onPause();
         Cursor cursor = db.query(TABLE_ROUTE_GEOMETRY,
-                new String[] { COLUMN_ROUTE_ID },
+                new String[]{COLUMN_ROUTE_ID},
                 COLUMN_ROUTE_ID + " = ?",
-                new String[] { String.valueOf(fragment.getRouteId()) }, null, null, null);
+                new String[]{String.valueOf(fragment.getRouteId())}, null, null, null);
         assertThat(cursor).hasCount(0);
     }
 
@@ -761,7 +775,7 @@ public class RouteFragmentTest {
         instructions.add(instruction);
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
-        getMapController().setMapPerspectiveForInstruction(instruction);
+        getMapController().setMapPerspectiveForInstruction(instruction, 0.0f);
         TestMap map = (TestMap) act.getMapFragment().getMap();
         assertThat(((TestViewport) map.viewport()).getRotation()).isEqualTo(
                 instruction.getRotationBearing());

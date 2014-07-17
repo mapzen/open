@@ -24,6 +24,7 @@ public final class MapController {
     public static final String KEY_BEARING = "rotation";
 
     public static final int DEFAULT_ZOOMLEVEL = 15;
+    public static final float DEFAULT_ROUTING_TILT = (float) 65.0;
     public static final String DEBUG_LOCATION = "fixed_debug_location";
     private static MapController mapController;
     private Map map;
@@ -104,12 +105,13 @@ public final class MapController {
         }
     }
 
-    public void setMapPerspectiveForInstruction(Instruction instruction) {
+    public void setMapPerspectiveForInstruction(Instruction instruction, float tilt) {
         Location location = instruction.getLocation();
         map.setMapPosition(location.getLatitude(), location.getLongitude(),
                 Math.pow(2, ROUTE_ZOOM_LEVEL));
         setRotation(instruction.getRotationBearing());
         map.updateMap(true);
+        setTiltToRoutingDefault(tilt);
     }
 
     public void setRotation(float rotation) {
@@ -171,6 +173,17 @@ public final class MapController {
         map.updateMap(true);
     }
 
+    public void setTiltToRoutingDefault(float tilt) {
+        if(tilt == (float) -1.0){
+            map.viewport().setTilt(DEFAULT_ROUTING_TILT);
+            map.updateMap(true);
+        } else {
+            map.viewport().setTilt(tilt);
+            map.updateMap(true);
+        }
+
+    }
+
     private boolean isFixedLocationEnabled() {
         String fixedLocationLey =
                 activity.getString(R.string.settings_key_enable_fixed_location);
@@ -187,6 +200,7 @@ public final class MapController {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         String latLng = prefs.getString(activity.getString(R.string.settings_fixed_location_key),
                 activity.getString(R.string.settings_fixed_location_default_value));
+
         String[] latLngValues = latLng.split(",");
         if (!isFixedLocationValid(latLngValues)) {
             Toast.makeText(activity, activity.getString(R.string.toast_fixed_location_is_malformed),

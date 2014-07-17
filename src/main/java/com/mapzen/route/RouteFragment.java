@@ -101,6 +101,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private String routeId;
     private int pagerPositionWhenPaused = 0;
     private double currentXCor;
+    private float tilt = (float) -1.0;
 
     Speakerbox speakerbox;
     private MapzenNotificationCreator notificationCreator;
@@ -175,6 +176,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 boolean enoughChange = Math.abs(mapFragment.getMap().getMapPosition()
                         .getX() - currentXCor) > MIN_CHANGE_FOR_SHOW_RESUME;
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    tilt = getMapFragment().getMap().getMapPosition().getTilt();
+
                     if (oneFinger && enoughChange) {
                         turnAutoPageOff();
                     } else if (autoPaging) {
@@ -521,7 +524,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             this.route = route;
             this.instructions = route.getRouteInstructions();
             storeRouteInDatabase(route.getRawRoute());
-            getMapController().setMapPerspectiveForInstruction(instructions.get(0));
+            getMapController().setMapPerspectiveForInstruction(instructions.get(0), tilt);
         } else {
             return false;
         }
@@ -598,7 +601,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
         previousPosition = i;
         if (!autoPaging) {
-            getMapController().setMapPerspectiveForInstruction(instructions.get(i));
+            getMapController().setMapPerspectiveForInstruction(instructions.get(i), tilt);
+     //       getMapController().setTiltToRoutingDefault();
         }
         speakerbox.stop();
         speakerbox.play(instructions.get(i).getFullInstruction());
@@ -682,8 +686,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private void resumeAutoPaging() {
         int currentItem = ((RouteAdapter) pager.getAdapter()).getPausedPosition();
         pager.setCurrentItem(currentItem);
+        getMapController().setMapPerspectiveForInstruction(instructions.get(pagerPositionWhenPaused), tilt);
         resume.setVisibility(View.GONE);
-        act.getMapFragment().centerOnCurrentLocation();
         currentXCor = mapFragment.getMap().getMapPosition().getX();
         autoPaging = true;
     }
