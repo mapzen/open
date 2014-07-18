@@ -2,7 +2,6 @@ package com.mapzen.route;
 
 import android.app.NotificationManager;
 import android.view.ViewGroup;
-import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
@@ -41,7 +40,6 @@ import org.oscim.map.TestViewport;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
-import org.robolectric.shadows.ShadowMotionEvent;
 import org.robolectric.shadows.ShadowNotification;
 import org.robolectric.shadows.ShadowNotificationManager;
 import org.robolectric.shadows.ShadowTextToSpeech;
@@ -100,7 +98,8 @@ import static org.robolectric.Robolectric.shadowOf_;
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class RouteFragmentTest {
-    @Inject LocationClient locationClient;
+    @Inject
+    LocationClient locationClient;
     TestBaseActivity act;
     RouteFragment fragment;
     ShadowApplication app;
@@ -113,7 +112,8 @@ public class RouteFragmentTest {
     @SuppressWarnings("unused")
     ArgumentCaptor<Router.Callback> callback;
 
-    @Inject PathLayer path;
+    @Inject
+    PathLayer path;
 
     @Before
     public void setUp() throws Exception {
@@ -238,20 +238,24 @@ public class RouteFragmentTest {
         assertThat(cursor.getString(1)).isNotNull();
     }
 
-//    @Test
-//    public void onMapSwipe_ShouldDisplayResumeButton() throws Exception {
-//        initTestFragment();
-//        FragmentTestUtil.startFragment(fragment);
-//        ShadowMotionEvent e = new ShadowMotionEvent();
-//        e.setAction(MotionEvent.ACTION_MOVE);
-//        e.setPointerIndex(1);
-//        e.setLocation(44, 500);
-//       shadowOf( ragment).getView().dispatchTouchEvent(e);
-//        asserT
-//
-//    }
+    @Test
+    public void onMapSwipe_ShouldDisplayResumeButton() throws Exception {
+        initTestFragment();
+        FragmentTestUtil.startFragment(fragment);
+        simulateUserDrag();
+        assertThat(fragment.getView().findViewById(R.id.resume_button)).isVisible();
+    }
 
     @Test
+    public void onMapTwoFingerScroll_ShouldNotDisplayResumeButton() throws Exception {
+        initTestFragment();
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(fragment.getView().findViewById(R.id.resume_button)).isNotVisible();
+        simulateTwoFingerDrag();
+        assertThat(fragment.getView().findViewById(R.id.resume_button)).isNotVisible();
+    }
+
+        @Test
     public void onLocationChange_shouldStoreInstructionPointsRecordInDatabase() throws Exception {
         initTestFragment();
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
@@ -289,7 +293,7 @@ public class RouteFragmentTest {
         Cursor cursor = db.query(TABLE_ROUTE_GEOMETRY,
                 new String[] { COLUMN_ROUTE_ID },
                 COLUMN_ROUTE_ID + " = ?",
-                new String[] { String.valueOf(fragment.getRouteId()) }, null, null, null);
+                new String[]{String.valueOf(fragment.getRouteId())}, null, null, null);
         assertThat(cursor).hasCount(fragment.getRoute().getGeometry().size());
     }
 
@@ -298,7 +302,7 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         fragment.onPause();
         Cursor cursor = db.query(TABLE_ROUTE_GEOMETRY,
-                new String[]{COLUMN_ROUTE_ID},
+                new String[] { COLUMN_ROUTE_ID },
                 COLUMN_ROUTE_ID + " = ?",
                 new String[]{String.valueOf(fragment.getRouteId())}, null, null, null);
         assertThat(cursor).hasCount(0);
@@ -311,7 +315,7 @@ public class RouteFragmentTest {
         Location testLocation = fragment.getRoute().getGeometry().get(2);
         fragment.onLocationChanged(testLocation);
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
-                new String[]{DatabaseHelper.COLUMN_INSTRUCTION_BEARING},
+                new String[] { DatabaseHelper.COLUMN_INSTRUCTION_BEARING },
                 null, null, null, null, null);
         assertThat(cursor).hasCount(1);
         cursor.moveToNext();
@@ -361,7 +365,7 @@ public class RouteFragmentTest {
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
                 new String[] { COLUMN_ROUTE_ID },
                 COLUMN_ROUTE_ID + " = ?",
-                new String[] { String.valueOf(fragment.getRouteId()) }, null, null, null);
+                new String[]{String.valueOf(fragment.getRouteId())}, null, null, null);
         assertThat(cursor).hasCount(1);
     }
 
@@ -725,7 +729,7 @@ public class RouteFragmentTest {
         fragment.onResume();
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
-        for (Instruction instruction: instructions) {
+        for (Instruction instruction : instructions) {
             route.addSeenInstruction(instruction);
         }
         fragment.onLocationChanged(instructions.get(0).getLocation());
@@ -775,7 +779,7 @@ public class RouteFragmentTest {
         instructions.add(instruction);
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
-        getMapController().setMapPerspectiveForInstruction(instruction, 0.0f);
+        getMapController().setMapPerspectiveForInstruction(instruction);
         TestMap map = (TestMap) act.getMapFragment().getMap();
         assertThat(((TestViewport) map.viewport()).getRotation()).isEqualTo(
                 instruction.getRotationBearing());
@@ -1301,7 +1305,7 @@ public class RouteFragmentTest {
     private void assertZoomLevel(int expected, float milesPerHour, Location location) {
         location.setSpeed(ZoomController.milesPerHourToMetersPerSecond(milesPerHour));
         fragment.onLocationChanged(location);
-        assertThat(MapController.getMapController().getZoomLevel()).isEqualTo(expected);
+        assertThat(getMapController().getZoomLevel()).isEqualTo(expected);
     }
 
     private void assertAdvanceRadius(int expected, float milesPerHour, Location location) {
@@ -1360,6 +1364,22 @@ public class RouteFragmentTest {
                 MotionEvent.obtain(0L, 0L, MotionEvent.ACTION_DOWN, 12f, 34f, 0);
         View.OnTouchListener listener = shadowOf(fragment.pager).getOnTouchListener();
         listener.onTouch(null, motionEvent);
+    }
+
+    private void simulateUserDrag() {
+        MotionEvent e =
+                MotionEvent.obtain(0L, 0L, MotionEvent.ACTION_MOVE, 120f, 100f, 0);
+        View.OnTouchListener listener = fragment.getMapOnTouchListener();
+        fragment.setCurrentXCor(3.0f);
+        listener.onTouch(null, e);
+    }
+
+    private void simulateTwoFingerDrag() {
+        MotionEvent e = mock(MotionEvent.class);
+        Mockito.when(e.getPointerCount()).thenReturn(2);
+        Mockito.when(e.getAction()).thenReturn(MotionEvent.ACTION_MOVE);
+        View.OnTouchListener listener = fragment.getMapOnTouchListener();
+        listener.onTouch(null, e);
     }
 
     private void simulatePaneOpenSlide() {

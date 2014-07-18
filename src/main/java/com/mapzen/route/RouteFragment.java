@@ -81,6 +81,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         ViewPager.OnPageChangeListener, Router.Callback {
     public static final String TAG = RouteFragment.class.getSimpleName();
     public static final int ROUTE_ZOOM_LEVEL = 17;
+    public static final float DEFAULT_ROUTING_TILT = 45.0f;
     public static final double MIN_CHANGE_FOR_SHOW_RESUME = .00000001;
     public static final String ROUTE_TAG = "route";
 
@@ -101,7 +102,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private String routeId;
     private int pagerPositionWhenPaused = 0;
     private double currentXCor;
-    private float tilt = (float) -1.0;
 
     Speakerbox speakerbox;
     private MapzenNotificationCreator notificationCreator;
@@ -115,6 +115,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private Resources res;
     private DebugView debugView;
     private SlidingUpPanelLayout slideLayout;
+    private MapOnTouchListener mapOnTouchListener;
     private DirectionListFragment directionListFragment = null;
     private RouteFragment fragment;
 
@@ -169,25 +170,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void setMapOnTouchListener() {
-        act.findViewById(R.id.map).setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                boolean oneFinger = event.getPointerCount() < 2;
-                boolean enoughChange = Math.abs(mapFragment.getMap().getMapPosition()
-                        .getX() - currentXCor) > MIN_CHANGE_FOR_SHOW_RESUME;
-                if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                    tilt = getMapFragment().getMap().getMapPosition().getTilt();
-
-                    if (oneFinger && enoughChange) {
-                        turnAutoPageOff();
-                    } else if (autoPaging) {
-                        currentXCor = mapFragment.getMap().getMapPosition().getX();
-                        resume.setVisibility(View.GONE);
-                    }
-                }
-                return false;
-            }
-        });
+        mapOnTouchListener = new MapOnTouchListener();
+        act.findViewById(R.id.map).setOnTouchListener(mapOnTouchListener);
     }
 
     private void initNotificationCreator() {
@@ -248,6 +232,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
         mapFragment.getMap().layers().add(routeLocationIndicator);
         mapFragment.hideLocationMarker();
+        mapFragment.getMap().viewport().setTilt(DEFAULT_ROUTING_TILT);
     }
 
     @Override
@@ -524,7 +509,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             this.route = route;
             this.instructions = route.getRouteInstructions();
             storeRouteInDatabase(route.getRawRoute());
-            getMapController().setMapPerspectiveForInstruction(instructions.get(0), tilt);
+            getMapController().setMapPerspectiveForInstruction(instructions.get(0));
         } else {
             return false;
         }
@@ -601,8 +586,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
         previousPosition = i;
         if (!autoPaging) {
-            getMapController().setMapPerspectiveForInstruction(instructions.get(i), tilt);
-     //       getMapController().setTiltToRoutingDefault();
+            getMapController().setMapPerspectiveForInstruction(instructions.get(i));
         }
         speakerbox.stop();
         speakerbox.play(instructions.get(i).getFullInstruction());
@@ -686,7 +670,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private void resumeAutoPaging() {
         int currentItem = ((RouteAdapter) pager.getAdapter()).getPausedPosition();
         pager.setCurrentItem(currentItem);
-        getMapController().setMapPerspectiveForInstruction(instructions.get(pagerPositionWhenPaused), tilt);
+        getMapController()
+                .setMapPerspectiveForInstruction(instructions.get(pagerPositionWhenPaused));
         resume.setVisibility(View.GONE);
         currentXCor = mapFragment.getMap().getMapPosition().getX();
         autoPaging = true;
@@ -897,5 +882,31 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
     private void hideLocateButton() {
         act.findViewById(R.id.locate_button).setVisibility(View.GONE);
+    }
+
+    public class MapOnTouchListener implements View.OnTouchListener  {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            boolean oneFinger = event.getPointerCount() < 2;
+            boolean enoughChange = Math.abs(mapFragment.getMap().getMapPosition()
+                    .getX() - currentXCor) > MIN_CHANGE_FOR_SHOW_RESUME;
+            if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                if (oneFinger && enoughChange) {
+                    turnAutoPageOff();
+                } else if (autoPaging) {
+                    currentXCor = mapFragment.getMap().getMapPosition().getX();
+                    resume.setVisibility(View.GONE);
+                }
+            }
+            return false;
+        }
+    }
+
+    public MapOnTouchListener getMapOnTouchListener() {
+        return mapOnTouchListener;
+    }
+
+    public void setCurrentXCor(float x) {
+        currentXCor = x;
     }
 }

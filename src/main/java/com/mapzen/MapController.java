@@ -24,7 +24,7 @@ public final class MapController {
     public static final String KEY_BEARING = "rotation";
 
     public static final int DEFAULT_ZOOMLEVEL = 15;
-    public static final float DEFAULT_ROUTING_TILT = (float) 65.0;
+    public static final int DEFAULT_ROUTING_ZOOMLEVEL = 15;
     public static final String DEBUG_LOCATION = "fixed_debug_location";
     private static MapController mapController;
     private Map map;
@@ -105,13 +105,14 @@ public final class MapController {
         }
     }
 
-    public void setMapPerspectiveForInstruction(Instruction instruction, float tilt) {
-        Location location = instruction.getLocation();
-        map.setMapPosition(location.getLatitude(), location.getLongitude(),
-                Math.pow(2, ROUTE_ZOOM_LEVEL));
+    public void setMapPerspectiveForInstruction(Instruction instruction) {
+        MapPosition position = getMapPosition();
+        Location loc = instruction.getLocation();
+        position.setPosition(loc.getLatitude(), loc.getLongitude());
+        mapPosition.setScale(Math.pow(2, DEFAULT_ROUTING_ZOOMLEVEL));
+        map.setMapPosition(position);
         setRotation(instruction.getRotationBearing());
         map.updateMap(true);
-        setTiltToRoutingDefault(tilt);
     }
 
     public void setRotation(float rotation) {
@@ -137,7 +138,6 @@ public final class MapController {
         editor.putInt(KEY_LATITUDE, geoPoint.latitudeE6);
         editor.putInt(KEY_LONGITUDE, geoPoint.longitudeE6);
         editor.putFloat(KEY_MAP_SCALE, (float) mapPosition.scale);
-
         editor.putFloat(KEY_BEARING, mapPosition.getBearing());
         editor.commit();
     }
@@ -171,17 +171,6 @@ public final class MapController {
         storeMapPosition(mapPosition);
         map.setMapPosition(mapPosition);
         map.updateMap(true);
-    }
-
-    public void setTiltToRoutingDefault(float tilt) {
-        if(tilt == (float) -1.0){
-            map.viewport().setTilt(DEFAULT_ROUTING_TILT);
-            map.updateMap(true);
-        } else {
-            map.viewport().setTilt(tilt);
-            map.updateMap(true);
-        }
-
     }
 
     private boolean isFixedLocationEnabled() {

@@ -219,7 +219,7 @@ public class MapControllerTest {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction instruction = getTestInstruction(40.0, 100.0);
         instructions.add(instruction);
-        getMapController().setMapPerspectiveForInstruction(instruction, 0.0f);
+        getMapController().setMapPerspectiveForInstruction(instruction);
         Map map = getMapController().getMap();
         assertThat(Math.round(map.getMapPosition().getLatitude())).isEqualTo(40);
         assertThat(Math.round(map.getMapPosition().getLongitude())).isEqualTo(100);
