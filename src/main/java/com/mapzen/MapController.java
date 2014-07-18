@@ -3,6 +3,7 @@ package com.mapzen;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.osrm.Instruction;
 
+import com.mapzen.route.RouteFragment;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 import org.oscim.map.Map;
@@ -24,7 +25,6 @@ public final class MapController {
     public static final String KEY_BEARING = "rotation";
 
     public static final int DEFAULT_ZOOMLEVEL = 15;
-    public static final int DEFAULT_ROUTING_ZOOMLEVEL = 17;
     public static final String DEBUG_LOCATION = "fixed_debug_location";
     private static MapController mapController;
     private Map map;
@@ -109,7 +109,7 @@ public final class MapController {
         MapPosition position = getMapPosition();
         Location loc = instruction.getLocation();
         position.setPosition(loc.getLatitude(), loc.getLongitude());
-        mapPosition.setScale(Math.pow(2, DEFAULT_ROUTING_ZOOMLEVEL));
+        mapPosition.setScale(Math.pow(2, RouteFragment.ROUTE_ZOOM_LEVEL));
         map.setMapPosition(position);
         setRotation(instruction.getRotationBearing());
         map.updateMap(true);

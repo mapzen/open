@@ -898,7 +898,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     resume.setVisibility(View.GONE);
                 }
             }
-            return false;
+            return true;
         }
     }
 
