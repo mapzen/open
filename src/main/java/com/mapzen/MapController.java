@@ -24,7 +24,7 @@ public final class MapController {
     public static final String KEY_BEARING = "rotation";
 
     public static final int DEFAULT_ZOOMLEVEL = 15;
-    public static final int DEFAULT_ROUTING_ZOOMLEVEL = 15;
+    public static final int DEFAULT_ROUTING_ZOOMLEVEL = 17;
     public static final String DEBUG_LOCATION = "fixed_debug_location";
     private static MapController mapController;
     private Map map;
