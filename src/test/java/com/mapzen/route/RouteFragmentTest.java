@@ -293,7 +293,7 @@ public class RouteFragmentTest {
         Cursor cursor = db.query(TABLE_ROUTE_GEOMETRY,
                 new String[] { COLUMN_ROUTE_ID },
                 COLUMN_ROUTE_ID + " = ?",
-                new String[]{String.valueOf(fragment.getRouteId())}, null, null, null);
+                new String[] { String.valueOf(fragment.getRouteId()) }, null, null, null);
         assertThat(cursor).hasCount(fragment.getRoute().getGeometry().size());
     }
 
@@ -304,7 +304,7 @@ public class RouteFragmentTest {
         Cursor cursor = db.query(TABLE_ROUTE_GEOMETRY,
                 new String[] { COLUMN_ROUTE_ID },
                 COLUMN_ROUTE_ID + " = ?",
-                new String[]{String.valueOf(fragment.getRouteId())}, null, null, null);
+                new String[] { String.valueOf(fragment.getRouteId()) }, null, null, null);
         assertThat(cursor).hasCount(0);
     }
 
@@ -365,7 +365,7 @@ public class RouteFragmentTest {
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
                 new String[] { COLUMN_ROUTE_ID },
                 COLUMN_ROUTE_ID + " = ?",
-                new String[]{String.valueOf(fragment.getRouteId())}, null, null, null);
+                new String[] { String.valueOf(fragment.getRouteId()) }, null, null, null);
         assertThat(cursor).hasCount(1);
     }
 
