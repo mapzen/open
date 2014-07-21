@@ -316,8 +316,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
             getMapController().setZoomLevel(zoomController.getZoom());
             getMapController().setRotation((float) route.getCurrentRotationBearing());
-            getMapController().setLocation(location).centerOnQuarterAbove(location);
-
+            getMapController().setLocation(location).alignToBottomQuarterOfMap(location);
             Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChange: Corrected: "
                     + location.toString());
         } else {
