@@ -312,11 +312,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (location != null) {
             zoomController.setAverageSpeed(getAverageSpeed());
             zoomController.setCurrentSpeed(originalLocation.getSpeed());
-            getMapController().setZoomLevel(zoomController.getZoom());
-            getMapController().setLocation(location).centerOnQuarterAbove(location);
-            getMapController().setRotation((float) route.getCurrentRotationBearing());
             routeLocationIndicator.setPosition(location.getLatitude(), location.getLongitude());
             routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
+            getMapController().setZoomLevel(zoomController.getZoom());
+            getMapController().setRotation((float) route.getCurrentRotationBearing());
+            getMapController().setLocation(location).centerOnQuarterAbove(location);
+
             Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChange: Corrected: "
                     + location.toString());
         } else {
@@ -897,7 +898,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     resume.setVisibility(View.GONE);
                 }
             }
-            return true;
+            return false;
         }
     }
 

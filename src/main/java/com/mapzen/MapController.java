@@ -5,6 +5,7 @@ import android.view.View;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.osrm.Instruction;
 
+import com.mapzen.route.RouteFragment;
 import com.mapzen.util.Logger;
 import org.oscim.core.BoundingBox;
 import org.oscim.core.GeoPoint;
@@ -91,12 +92,9 @@ public final class MapController {
     }
 
     public MapController centerOnQuarterAbove(Location location) {
-        centerOn(location);
-        MapPosition position = new MapPosition(location.getLatitude(), location.getLongitude(), Math.pow(2, ROUTE_ZOOM_LEVEL));
+        MapPosition position = getMapPosition();
         BoundingBox box = map.viewport().getBBox();
         double latitudeOffset =  ((box.getMaxLatitude() - box.getMinLatitude())/4);
-
-
         position.setPosition(location.getLatitude() + latitudeOffset, location.getLongitude());
         position.setBearing(location.getBearing());
         map.setMapPosition(position);
@@ -125,13 +123,13 @@ public final class MapController {
     public void setMapPerspectiveForInstruction(Instruction instruction) {
         MapPosition position = getMapPosition();
         Location loc = instruction.getLocation();
+
         position.setPosition(loc.getLatitude(), loc.getLongitude());
         mapPosition.setScale(Math.pow(2, ROUTE_ZOOM_LEVEL));
         map.setMapPosition(position);
         setRotation(instruction.getRotationBearing());
         map.updateMap(true);
-        //centerOnQuarterAbove(loc);
-
+        centerOnQuarterAbove(loc);
     }
 
     public void setRotation(float rotation) {
