@@ -8,13 +8,16 @@
     <color name="button_dark_blue">#345557</color>
     <color name="sign_up_text">#3b3b3b</color>
 
-    <!-- new colors -->
-    <color name="dark_gray">#727272</color>
+    <!-- new colors --> 
     <color name="red">#d4645c</color>
+    <color name="dark_red">#993434</color>
     <color name="blue">#6ea0a4</color>
+    <color name="dark_blue">#385d5c</color>
     <color name="yellow">#e6ead2</color>
-    <color name="brown">#563630</color>
+    <color name="dark_yellow">#d3c756</color>
     <color name="light_gray">#898989</color>
+    <color name="dark_gray">#444444</color>
+    <color name="brown">#563630</color>
     <color name="transparent_white">#CCFFFFFF</color>
     <color name="transparent_gray">#CCCECECE</color>
 </resources>

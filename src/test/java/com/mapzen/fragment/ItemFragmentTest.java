@@ -92,7 +92,7 @@ public class ItemFragmentTest {
     public void shouldHaveStartButton() throws Exception {
         assertThat(itemFragment.startButton).hasText("Start");
         assertThat(shadowOf(itemFragment.startButton.getCompoundDrawables()[1])
-                .getCreatedFromResId()).isEqualTo(R.drawable.ic_car);
+                .getCreatedFromResId()).isEqualTo(R.drawable.ic_car_start);
     }
 
     @Test
