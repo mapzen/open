@@ -1,10 +1,15 @@
 package com.mapzen;
 
+import android.location.LocationManager;
+import android.view.View;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.osrm.Instruction;
 
+import com.mapzen.util.Logger;
+import org.oscim.core.BoundingBox;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
+import org.oscim.core.MercatorProjection;
 import org.oscim.map.Map;
 
 import android.content.SharedPreferences;
@@ -85,6 +90,19 @@ public final class MapController {
         return this;
     }
 
+    public MapController centerOnQuarterAbove(Location location) {
+        centerOn(location);
+        MapPosition position = new MapPosition(location.getLatitude(), location.getLongitude(), Math.pow(2, ROUTE_ZOOM_LEVEL));
+        BoundingBox box = map.viewport().getBBox();
+        double latitudeOffset =  ((box.getMaxLatitude() - box.getMinLatitude())/4);
+
+
+        position.setPosition(location.getLatitude() + latitudeOffset, location.getLongitude());
+        position.setBearing(location.getBearing());
+        map.setMapPosition(position);
+        return this;
+    }
+
     public MapPosition getMapPosition() {
         return mapPosition;
     }
@@ -112,6 +130,8 @@ public final class MapController {
         map.setMapPosition(position);
         setRotation(instruction.getRotationBearing());
         map.updateMap(true);
+        //centerOnQuarterAbove(loc);
+
     }
 
     public void setRotation(float rotation) {

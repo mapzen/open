@@ -313,7 +313,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             zoomController.setAverageSpeed(getAverageSpeed());
             zoomController.setCurrentSpeed(originalLocation.getSpeed());
             getMapController().setZoomLevel(zoomController.getZoom());
-            getMapController().setLocation(location).centerOn(location);
+            getMapController().setLocation(location).centerOnQuarterAbove(location);
             getMapController().setRotation((float) route.getCurrentRotationBearing());
             routeLocationIndicator.setPosition(location.getLatitude(), location.getLongitude());
             routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
