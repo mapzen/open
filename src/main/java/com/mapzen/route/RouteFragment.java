@@ -80,7 +80,8 @@ import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
         ViewPager.OnPageChangeListener, Router.Callback {
     public static final String TAG = RouteFragment.class.getSimpleName();
-    public static final int ROUTE_ZOOM_LEVEL = 17;
+    public static final float DEFAULT_ROUTING_TILT = 45.0f;
+    public static final double MIN_CHANGE_FOR_SHOW_RESUME = .00000001;
     public static final String ROUTE_TAG = "route";
 
     @Inject PathLayer path;
@@ -99,6 +100,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private int previousPosition;
     private String routeId;
     private int pagerPositionWhenPaused = 0;
+    private double currentXCor;
 
     Speakerbox speakerbox;
     private MapzenNotificationCreator notificationCreator;
@@ -112,6 +114,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private Resources res;
     private DebugView debugView;
     private SlidingUpPanelLayout slideLayout;
+    private MapOnTouchListener mapOnTouchListener;
     private DirectionListFragment directionListFragment = null;
     private RouteFragment fragment;
 
@@ -148,6 +151,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager.setOnPageChangeListener(this);
         adapter.notifyDataSetChanged();
         previousPosition = pager.getCurrentItem();
+        currentXCor = mapFragment.getMap().getMapPosition().getX();
         initSpeakerbox();
         initNotificationCreator();
         pager.setOnTouchListener(new View.OnTouchListener() {
@@ -160,7 +164,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         initDebugView(rootView);
         initSlideLayout(rootView);
         hideLocateButton();
+        setMapOnTouchListener();
         return rootView;
+    }
+
+    private void setMapOnTouchListener() {
+        mapOnTouchListener = new MapOnTouchListener();
+        act.findViewById(R.id.map).setOnTouchListener(mapOnTouchListener);
     }
 
     private void initNotificationCreator() {
@@ -221,6 +231,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
         mapFragment.getMap().layers().add(routeLocationIndicator);
         mapFragment.hideLocationMarker();
+        mapFragment.getMap().viewport().setTilt(DEFAULT_ROUTING_TILT);
     }
 
     @Override
@@ -658,7 +669,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private void resumeAutoPaging() {
         int currentItem = ((RouteAdapter) pager.getAdapter()).getPausedPosition();
         pager.setCurrentItem(currentItem);
+        getMapController()
+                .setMapPerspectiveForInstruction(instructions.get(pagerPositionWhenPaused));
         resume.setVisibility(View.GONE);
+        currentXCor = mapFragment.getMap().getMapPosition().getX();
         autoPaging = true;
     }
 
@@ -867,5 +881,27 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
     private void hideLocateButton() {
         act.findViewById(R.id.locate_button).setVisibility(View.GONE);
+    }
+
+    public class MapOnTouchListener implements View.OnTouchListener  {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            boolean oneFinger = event.getPointerCount() < 2;
+            boolean enoughChange = Math.abs(mapFragment.getMap().getMapPosition()
+                    .getX() - currentXCor) > MIN_CHANGE_FOR_SHOW_RESUME;
+            if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                if (oneFinger && enoughChange) {
+                    turnAutoPageOff();
+                } else if (autoPaging) {
+                    currentXCor = mapFragment.getMap().getMapPosition().getX();
+                    resume.setVisibility(View.GONE);
+                }
+            }
+            return true;
+        }
+    }
+
+    public void setCurrentXCor(float x) {
+        currentXCor = x;
     }
 }
