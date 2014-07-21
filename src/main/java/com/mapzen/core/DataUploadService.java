@@ -231,7 +231,7 @@ public class DataUploadService extends Service {
     private Element getRootElement(Document document) {
         Element rootElement = document.createElement("gpx");
         rootElement.setAttribute("version", "1.0");
-        rootElement.setAttribute("creator", "mapzen - start where you are http://mazpen.com");
+        rootElement.setAttribute("creator", "mapzen - start where you are http://mapzen.com");
         rootElement.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
         rootElement.setAttribute("xmlns:schemaLocation",
                 "http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd");
