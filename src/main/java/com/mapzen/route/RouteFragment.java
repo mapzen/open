@@ -80,7 +80,6 @@ import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
         ViewPager.OnPageChangeListener, Router.Callback {
     public static final String TAG = RouteFragment.class.getSimpleName();
-    public static final int ROUTE_ZOOM_LEVEL = 17;
     public static final float DEFAULT_ROUTING_TILT = 45.0f;
     public static final double MIN_CHANGE_FOR_SHOW_RESUME = .00000001;
     public static final String ROUTE_TAG = "route";
@@ -900,10 +899,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             }
             return true;
         }
-    }
-
-    public MapOnTouchListener getMapOnTouchListener() {
-        return mapOnTouchListener;
     }
 
     public void setCurrentXCor(float x) {

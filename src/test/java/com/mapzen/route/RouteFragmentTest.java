@@ -44,6 +44,7 @@ import org.robolectric.shadows.ShadowNotification;
 import org.robolectric.shadows.ShadowNotificationManager;
 import org.robolectric.shadows.ShadowTextToSpeech;
 import org.robolectric.shadows.ShadowToast;
+import org.robolectric.shadows.ShadowView;
 import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.util.FragmentTestUtil;
 
@@ -1369,17 +1370,17 @@ public class RouteFragmentTest {
     private void simulateUserDrag() {
         MotionEvent e =
                 MotionEvent.obtain(0L, 0L, MotionEvent.ACTION_MOVE, 120f, 100f, 0);
-        View.OnTouchListener listener = fragment.getMapOnTouchListener();
+        ShadowView view = shadowOf(act.findViewById(R.id.map));
         fragment.setCurrentXCor(3.0f);
-        listener.onTouch(null, e);
+        view.getOnTouchListener().onTouch(null, e);
     }
 
     private void simulateTwoFingerDrag() {
         MotionEvent e = mock(MotionEvent.class);
         Mockito.when(e.getPointerCount()).thenReturn(2);
         Mockito.when(e.getAction()).thenReturn(MotionEvent.ACTION_MOVE);
-        View.OnTouchListener listener = fragment.getMapOnTouchListener();
-        listener.onTouch(null, e);
+        ShadowView view = shadowOf(act.findViewById(R.id.map));
+        view.getOnTouchListener().onTouch(null, e);
     }
 
     private void simulatePaneOpenSlide() {
