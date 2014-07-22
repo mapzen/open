@@ -399,6 +399,16 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onBack_shouldActAsResumeButton() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        simulateUserPagerTouch();
+        ImageButton resume = (ImageButton) fragment.getView().findViewById(R.id.resume_button);
+        assertThat(resume).isVisible();
+        fragment.onBackAction();
+        assertThat(resume).isNotVisible();
+    }
+
+    @Test
     public void onCreate_shouldShowRouteLocationIndicator() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         assertThat(fragment.getMapFragment().getMap().layers().

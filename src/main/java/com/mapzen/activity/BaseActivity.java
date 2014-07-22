@@ -391,16 +391,14 @@ public class BaseActivity extends MapActivity {
         RouteFragment routeFragment = (RouteFragment)
                 getSupportFragmentManager().findFragmentByTag(RouteFragment.TAG);
         if (routeFragment != null && routeFragment.isAdded()) {
-            if (routeFragment.slideLayoutIsExpanded()) {
-                routeFragment.collapseSlideLayout();
-                return true;
-            } else {
+            boolean shouldClose = routeFragment.onBackAction();
+            if (shouldClose) {
                 ((RoutePreviewFragment) getSupportFragmentManager()
                         .findFragmentByTag(RoutePreviewFragment.TAG)).showFragmentContents();
                 clearNotifications();
                 super.onBackPressed();
-                return true;
             }
+            return true;
         }
         return false;
     }

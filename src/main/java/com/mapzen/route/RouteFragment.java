@@ -904,4 +904,16 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void setCurrentXCor(float x) {
         currentXCor = x;
     }
+
+    public boolean onBackAction() {
+        if(slideLayoutIsExpanded()) {
+            collapseSlideLayout();
+            return false;
+        } else if (resume.getVisibility() == View.VISIBLE) {
+            resume.callOnClick();
+            return false;
+        } else {
+            return true;
+        }
+    }
 }
