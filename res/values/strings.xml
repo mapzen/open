@@ -53,6 +53,13 @@
     <string name="settings_fixed_location_key">edittext_fixed_location</string>
     <string name="settings_fixed_location_summary">Set fixed debug location</string>
     <string name="settings_fixed_location_title">Debug location</string>
+    <string name="settings_mock_gpx_key">checkbox_mock_gpx</string>
+    <string name="settings_mock_gpx_title">GPX trace mode</string>
+    <string name="settings_mock_gpx_summary">Replay mock locations via GPX trace file</string>
+    <string name="settings_mock_gpx_filename_default_value">lost.gpx</string>
+    <string name="settings_mock_gpx_filename_key">edittext_mock_gpx</string>
+    <string name="settings_mock_gpx_filename_summary">Copy file to root folder of external media (SD card)</string>
+    <string name="settings_mock_gpx_filename_title">GPX file</string>
 
     <!--Zoom Settings-->
 
