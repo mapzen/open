@@ -906,7 +906,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public boolean onBackAction() {
-        if(slideLayoutIsExpanded()) {
+        if (slideLayoutIsExpanded()) {
             collapseSlideLayout();
             return false;
         } else if (resume.getVisibility() == View.VISIBLE) {

@@ -42,7 +42,7 @@ public class RouteLocationIndicator extends Layer {
     private static final String FRAGMENT_SHADER = ""
             + "precision mediump float;"
             + "void main() {"
-            + "  gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);"
+            + "  gl_FragColor = vec4(0.828125, 0.390625, 0.359375, 1.0);"
             + "}";
 
     public RouteLocationIndicator(Map map) {
