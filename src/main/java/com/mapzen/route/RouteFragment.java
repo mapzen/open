@@ -1,8 +1,8 @@
 package com.mapzen.route;
 
-import android.widget.RelativeLayout;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
+import com.mapzen.android.lost.LocationClient;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
 import com.mapzen.helpers.ZoomController;
@@ -11,15 +11,15 @@ import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
 import com.mapzen.speakerbox.Speakerbox;
 import com.mapzen.util.DatabaseHelper;
-import com.mapzen.util.RouteLocationIndicator;
 import com.mapzen.util.Logger;
-import com.mapzen.widget.DebugView;
 import com.mapzen.util.MapzenNotificationCreator;
+import com.mapzen.util.RouteLocationIndicator;
+import com.mapzen.widget.DebugView;
 import com.mapzen.widget.DistanceView;
 
 import com.bugsense.trace.BugSenseHandler;
-
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.PathLayer;
@@ -41,6 +41,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,6 +67,7 @@ import static com.mapzen.entity.SimpleFeature.NAME;
 import static com.mapzen.helpers.ZoomController.DrivingSpeed;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
+import static com.mapzen.util.DatabaseHelper.COLUMN_MSG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_POSITION;
 import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
 import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
@@ -74,7 +76,6 @@ import static com.mapzen.util.DatabaseHelper.COLUMN_TABLE_ID;
 import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
-import static com.mapzen.util.DatabaseHelper.COLUMN_MSG;
 import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
@@ -86,6 +87,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @Inject PathLayer path;
     @Inject ZoomController zoomController;
+    @Inject LocationClient locationClient;
 
     @InjectView(R.id.routes) ViewPager pager;
     @InjectView(R.id.resume_button) ImageButton resume;
@@ -165,6 +167,20 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         initSlideLayout(rootView);
         hideLocateButton();
         setMapOnTouchListener();
+
+        res = act.getResources();
+        prefs = getDefaultSharedPreferences(act);
+
+        if (prefs.getBoolean(getString(R.string.settings_mock_gpx_key), false)) {
+            final String key = getString(R.string.settings_mock_gpx_filename_key);
+            final String defaultFile = getString(R.string.settings_mock_gpx_filename_default_value);
+            final String file = prefs.getString(key, defaultFile);
+            locationClient.setMockMode(true);
+            locationClient.setMockTrace(file);
+        } else {
+            locationClient.setMockMode(false);
+        }
+
         return rootView;
     }
 
@@ -327,9 +343,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private ZoomController setupZoomController() {
-        res = act.getResources();
-        prefs = getDefaultSharedPreferences(act);
-
         initZoomLevel(DrivingSpeed.MPH_0_TO_15, R.string.settings_zoom_driving_0to15_key,
                 R.integer.zoom_driving_0to15);
         initZoomLevel(DrivingSpeed.MPH_15_TO_25, R.string.settings_zoom_driving_15to25_key,
