@@ -32,7 +32,7 @@
         android:text="@string/osm_attribution"
         android:textSize="@dimen/tiny"
         android:layout_above="@id/pager_results_container"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true" />
 
     <FrameLayout
         android:id="@+id/routes_preview_container"
