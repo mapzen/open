@@ -198,6 +198,9 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         };
     }
 
+    public void resetCursor() {
+        swapCursor(new MatrixCursor(app.getColumns()));
+    }
     public void loadSavedSearches() {
         changeCursor(getSavedSearch().getCursor());
     }
