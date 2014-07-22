@@ -25,6 +25,15 @@
         android:onClick="locateButtonAction"
         android:background="@drawable/ic_locate" />
 
+    <TextView
+        android:id="@+id/attribution"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/osm_attribution"
+        android:textSize="@dimen/tiny"
+        android:layout_above="@id/pager_results_container"
+        android:layout_alignParentRight="true" />
+
     <FrameLayout
         android:id="@+id/routes_preview_container"
         android:layout_width="match_parent"
