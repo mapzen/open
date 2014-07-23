@@ -3,6 +3,7 @@ package com.mapzen;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.osrm.Instruction;
 
+import org.oscim.core.BoundingBox;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 import org.oscim.map.Map;
@@ -85,6 +86,15 @@ public final class MapController {
         return this;
     }
 
+    public MapController alignToBottomQuarterOfMap(Location location) {
+        MapPosition position = getMapPosition();
+        BoundingBox box = map.viewport().getBBox();
+        double latitudeOffset =  ((box.getMaxLatitude() - box.getMinLatitude()) / 4);
+        position.setPosition(location.getLatitude() + latitudeOffset, location.getLongitude());
+        map.setMapPosition(position);
+        return this;
+    }
+
     public MapPosition getMapPosition() {
         return mapPosition;
     }
@@ -112,6 +122,7 @@ public final class MapController {
         map.setMapPosition(position);
         setRotation(instruction.getRotationBearing());
         map.updateMap(true);
+        alignToBottomQuarterOfMap(loc);
     }
 
     public void setRotation(float rotation) {

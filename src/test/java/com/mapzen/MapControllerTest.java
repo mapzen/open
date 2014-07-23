@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.oscim.core.BoundingBox;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 import org.oscim.map.Animator;
@@ -221,6 +222,10 @@ public class MapControllerTest {
         instructions.add(instruction);
         getMapController().setMapPerspectiveForInstruction(instruction);
         Map map = getMapController().getMap();
+        BoundingBox box = map.viewport().getBBox();
+        double latitudeOffset =  ((box.getMaxLatitude() - box.getMinLatitude()) / 4);
+        int approximateOffset = ((int) ((map.getMapPosition().getLatitude() - 40) * 1000000));
+        assertThat(approximateOffset).isEqualTo((int) (1000000 * latitudeOffset));
         assertThat(Math.round(map.getMapPosition().getLatitude())).isEqualTo(40);
         assertThat(Math.round(map.getMapPosition().getLongitude())).isEqualTo(100);
     }

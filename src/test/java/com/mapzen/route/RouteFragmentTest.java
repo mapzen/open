@@ -32,9 +32,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.oscim.core.BoundingBox;
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.PathLayer;
-import org.oscim.map.Animator;
+import org.oscim.map.Map;
 import org.oscim.map.TestMap;
 import org.oscim.map.TestViewport;
 import org.robolectric.Robolectric;
@@ -189,15 +190,17 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onLocationChange_shouldCenterMapOnLocation() throws Exception {
-        Animator animator = mock(Animator.class);
-        ((TestMap) fragment.getMapFragment().getMap()).setAnimator(animator);
+    public void onLocationChange_shouldMoveMapToLocation() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         ArrayList<Location> geometry = fragment.getRoute().getGeometry();
         Location testLocation = fragment.getRoute().snapToRoute(geometry.get(2));
         fragment.onLocationChanged(testLocation);
-        GeoPoint expected = new GeoPoint(testLocation.getLatitude(), testLocation.getLongitude());
-        verify(animator).animateTo(expected);
+        Map map = getMapController().getMap();
+        BoundingBox box = map.viewport().getBBox();
+        double latitudeOffset =  ((box.getMaxLatitude() - box.getMinLatitude()) / 4);
+        Double expectedLatitude = testLocation.getLatitude() + latitudeOffset;
+        GeoPoint expected = new GeoPoint(expectedLatitude, testLocation.getLongitude());
+        assertThat(map.getMapPosition().getGeoPoint()).isEqualTo(expected);
     }
 
     @Test
