@@ -255,6 +255,7 @@ public class BaseActivity extends MapActivity {
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
+                resetSearchView();
                 final PagerResultsFragment pagerResultsFragment = getPagerResultsFragment();
                 if (pagerResultsFragment != null && pagerResultsFragment.isAdded()) {
                     getSupportFragmentManager().beginTransaction().remove(pagerResultsFragment)
@@ -289,6 +290,16 @@ public class BaseActivity extends MapActivity {
         toggleOSMLogin();
 
         return true;
+    }
+
+    private void resetSearchView() {
+        final SearchView searchView = (SearchView) searchMenuItem.getActionView();
+        searchView.setQuery("", false);
+        searchView.clearFocus();
+        searchView.setIconified(true);
+        app.setCurrentSearchTerm("");
+        autoCompleteAdapter.resetCursor();
+        autoCompleteAdapter.loadSavedSearches();
     }
 
     /**
