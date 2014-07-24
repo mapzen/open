@@ -218,9 +218,17 @@ public class MapControllerTest {
     public void setMapPerspectiveForInstruction_shouldSetMapPosition() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction instruction = getTestInstruction(40.0, 100.0);
-        instructions.add(instruction);
-        getMapController().setMapPerspectiveForInstruction(instruction);
         Map map = getMapController().getMap();
+        map.setMapPosition(new MapPosition(instruction.getLocation().getLatitude(),
+                instruction.getLocation().getLongitude(),
+                getMapController().ROUTE_ZOOM_LEVEL));
+        double originalX =  map.getMapPosition().getX();
+                instructions.add(instruction);
+
+        getMapController().setMapPerspectiveForInstruction(instruction);
+        double newX = map.getMapPosition().getX();
+        assertThat(originalX - newX).isGreaterThan(0);
+        assertThat(originalX - newX).isLessThan(0.00001);
         assertThat(Math.round(map.getMapPosition().getLatitude())).isEqualTo(40);
         assertThat(Math.round(map.getMapPosition().getLongitude())).isEqualTo(100);
     }

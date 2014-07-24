@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
+import org.oscim.map.ViewController;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -105,12 +106,20 @@ public final class MapController {
     }
 
     public void setMapPerspectiveForInstruction(Instruction instruction) {
-        MapPosition position = getMapPosition();
         Location loc = instruction.getLocation();
-        position.setPosition(loc.getLatitude(), loc.getLongitude());
-        mapPosition.setScale(Math.pow(2, ROUTE_ZOOM_LEVEL));
+        ViewController v = map.viewport();
+        Float tilt = map.getMapPosition().getTilt();
+        MapPosition position = new MapPosition(loc.getLatitude(), loc.getLongitude(),
+                Math.pow(2, ROUTE_ZOOM_LEVEL));
+        v.setMapPosition(position);
+        float[] ext = new float[8];
+        v.getMapExtents(ext, 0);
+        position.setBearing(instruction.getRotationBearing());
+        v.setMapPosition(position);
+        v.moveMap(0, ext[1] / 2);
+        v.getMapPosition(position);
+        position.setTilt(tilt);
         map.setMapPosition(position);
-        setRotation(instruction.getRotationBearing());
         map.updateMap(true);
     }
 
