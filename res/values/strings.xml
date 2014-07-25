@@ -60,6 +60,9 @@
     <string name="settings_mock_gpx_filename_key">edittext_mock_gpx</string>
     <string name="settings_mock_gpx_filename_summary">Copy file to root folder of external media (SD card)</string>
     <string name="settings_mock_gpx_filename_title">GPX file</string>
+    <string name="settings_location_update_interval_key">settings_location_update_interval</string>
+    <string name="settings_location_update_interval_title">Location update interval</string>
+    <string name="settings_location_update_interval_summary">ms between location updates (restart required)</string>
 
     <!--Zoom Settings-->
 

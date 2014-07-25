@@ -12,6 +12,7 @@ import com.mapzen.util.Logger;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import static com.mapzen.MapController.getMapController;
@@ -19,6 +20,7 @@ import static com.mapzen.MapController.getMapController;
 public final class MapzenLocation {
     public static final String KEY_LOCATION = "location";
     public static final String COM_MAPZEN_FIND_ME = "com.mapzen.updates.find_me";
+    public static final int DEFAULT_LOCATION_INTERVAL = 1000;
 
     private MapzenLocation() {
     }
@@ -70,15 +72,20 @@ public final class MapzenLocation {
             }
 
             LocationRequest locationRequest = LocationRequest.create();
-            locationRequest.setInterval(BaseActivity.LOCATION_INTERVAL);
+            locationRequest.setInterval(getLocationUpdateIntervalPreference());
             locationClient.requestLocationUpdates(locationRequest,
                     new MapzenLocation.Listener(application));
         }
 
-        @Override
-        public void onDisconnected() {
-            Logger.d("LocationHelper disconnected.");
+        private int getLocationUpdateIntervalPreference() {
+            return PreferenceManager.getDefaultSharedPreferences(application)
+                    .getInt(application.getString(R.string.settings_location_update_interval_key),
+                            DEFAULT_LOCATION_INTERVAL);
         }
 
+        @Override
+        public void onDisconnected() {
+            Logger.d("LocationClient disconnected.");
+        }
     }
 }

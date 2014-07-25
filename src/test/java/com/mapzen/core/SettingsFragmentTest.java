@@ -58,7 +58,7 @@ public class SettingsFragmentTest {
     public void shouldHaveDebugCategory() throws Exception {
         PreferenceCategory category = findCategoryByIndex(0);
         assertThat(category).hasTitle(R.string.settings_debug_title);
-        assertThat(category).hasPreferenceCount(7);
+        assertThat(category).hasPreferenceCount(8);
     }
 
     @Test
@@ -121,6 +121,14 @@ public class SettingsFragmentTest {
         assertThat(preference).hasSummary(R.string.settings_mock_gpx_filename_summary);
         assertThat(shadowOf(preference).getDefaultValue())
                 .isEqualTo(activity.getString(R.string.settings_mock_gpx_filename_default_value));
+    }
+
+    @Test
+    public void shouldHaveLocationUpdateIntervalPreference() throws Exception {
+        Preference preference = findPreferenceById(R.string.settings_location_update_interval_key);
+        assertThat(preference).hasTitle(R.string.settings_location_update_interval_title);
+        assertThat(preference).hasSummary(R.string.settings_location_update_interval_summary);
+        assertThat(shadowOf(preference).getDefaultValue()).isEqualTo("1000");
     }
 
     @Test
