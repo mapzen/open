@@ -276,6 +276,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         mapFragment.showLocationMarker();
         mapFragment.getMap().layers().remove(routeLocationIndicator);
         showLocateButton();
+        locationClient.setMockMode(false);
     }
 
     public RouteLocationIndicator getRouteLocationIndicator() {

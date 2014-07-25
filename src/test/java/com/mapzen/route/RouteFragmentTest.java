@@ -40,6 +40,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowEnvironment;
+import org.robolectric.shadows.ShadowLocationManager;
 import org.robolectric.shadows.ShadowNotification;
 import org.robolectric.shadows.ShadowNotificationManager;
 import org.robolectric.shadows.ShadowTextToSpeech;
@@ -56,6 +57,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
@@ -1357,6 +1359,19 @@ public class RouteFragmentTest {
         Location location = intents.get(1).getExtras().getParcelable("location");
         assertThat(location).hasLatitude(0.0);
         assertThat(location).hasLongitude(0.1);
+    }
+
+    @Test
+    public void onDetach_shouldDisableMockMode() throws Exception {
+        loadTestGpxTrace();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
+        prefs.edit().putBoolean(act.getString(R.string.settings_mock_gpx_key), true).commit();
+        initTestFragment();
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onDetach();
+        ShadowLocationManager shadowLocationManager = Robolectric.shadowOf((LocationManager)
+                application.getSystemService(Context.LOCATION_SERVICE));
+        assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).hasSize(2);
     }
 
     private void loadTestGpxTrace() throws IOException {
