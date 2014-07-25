@@ -107,20 +107,22 @@ public final class MapController {
 
     public void setMapPerspectiveForInstruction(Instruction instruction) {
         Location loc = instruction.getLocation();
-        ViewController v = map.viewport();
         Float tilt = map.getMapPosition().getTilt();
-        MapPosition position = new MapPosition(loc.getLatitude(), loc.getLongitude(),
-                Math.pow(2, ROUTE_ZOOM_LEVEL));
-        v.setMapPosition(position);
-        float[] ext = new float[8];
-        v.getMapExtents(ext, 0);
-        position.setBearing(instruction.getRotationBearing());
-        v.setMapPosition(position);
-        v.moveMap(0, ext[1] / 2);
-        v.getMapPosition(position);
-        position.setTilt(tilt);
-        map.setMapPosition(position);
-        map.updateMap(true);
+        ViewController viewport = map.viewport();
+          synchronized (viewport) {
+            MapPosition position = new MapPosition(loc.getLatitude(), loc.getLongitude(),
+                    Math.pow(2, ROUTE_ZOOM_LEVEL));
+            viewport.setMapPosition(position);
+            float[] ext = new float[8];
+            viewport.getMapExtents(ext, 0);
+            position.setBearing(instruction.getRotationBearing());
+            viewport.setMapPosition(position);
+            viewport.moveMap(0, ext[1] / 2);
+            viewport.getMapPosition(position);
+            position.setTilt(tilt);
+            map.setMapPosition(position);
+            map.updateMap(true);
+         }
     }
 
     public void setRotation(float rotation) {
