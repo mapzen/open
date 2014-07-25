@@ -4,7 +4,6 @@ import com.mapzen.R;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.util.IntentReceiver;
-import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenTheme;
 import com.mapzen.util.PoiLayer;
 
