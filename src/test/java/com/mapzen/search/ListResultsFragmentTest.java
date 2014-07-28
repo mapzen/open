@@ -55,7 +55,8 @@ public class ListResultsFragmentTest {
     @Test
     public void onListItemClick_shouldSetResult() throws Exception {
         final int expected = 2;
-        fragment.onListItemClick(fragment.getListView(), null, expected, 0);
+        final int index = 3;
+        fragment.onListItemClick(fragment.getListView(), null, index, 0);
         assertThat(Robolectric.shadowOf(fragment.getActivity()).getResultIntent()
                 .getIntExtra(ListResultsActivity.EXTRA_INDEX, 0)).isEqualTo(expected);
     }

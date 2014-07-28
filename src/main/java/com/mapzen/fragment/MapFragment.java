@@ -271,6 +271,10 @@ public class MapFragment extends BaseFragment {
         }
     }
 
+    public void repopulatePoiLayer() {
+        poiMarkersLayer.repopulate();
+    }
+
     public void setOnPoiClickListener(OnPoiClickListener onPoiClickListener) {
         this.onPoiClickListener = onPoiClickListener;
     }
@@ -320,7 +324,6 @@ public class MapFragment extends BaseFragment {
         locationReceiver = new LocationReceiver(COM_MAPZEN_UPDATES_LOCATION);
         app.registerReceiver(locationReceiver, locationReceiver.getIntentFilter());
     }
-
 
     private final class FindMeReceiver extends IntentReceiver {
         private FindMeReceiver(String action) {

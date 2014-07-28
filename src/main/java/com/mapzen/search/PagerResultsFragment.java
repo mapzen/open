@@ -172,6 +172,7 @@ public class PagerResultsFragment extends BaseFragment {
         String indicatorText = String.format(Locale.getDefault(), PAGINATE_TEMPLATE, i + 1,
                 currentCollection.size());
         indicator.setText(indicatorText);
+        mapFragment.repopulatePoiLayer();
         mapFragment.centerOn(simpleFeature, zoom);
     }
 
@@ -275,7 +276,7 @@ public class PagerResultsFragment extends BaseFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK && data != null) {
             final int index = data.getIntExtra(ListResultsActivity.EXTRA_INDEX, 0);
-            pager.setCurrentItem(index);
+            pager.setCurrentItem(index, true);
         }
     }
 

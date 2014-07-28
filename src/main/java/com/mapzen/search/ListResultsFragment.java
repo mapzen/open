@@ -46,7 +46,7 @@ public class ListResultsFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         final Intent resultIntent = new Intent();
-        resultIntent.putExtra(ListResultsActivity.EXTRA_INDEX, position);
+        resultIntent.putExtra(ListResultsActivity.EXTRA_INDEX, position - 1);
         getActivity().setResult(Activity.RESULT_OK, resultIntent);
         getActivity().finish();
     }
