@@ -5,6 +5,7 @@ import com.mapzen.activity.BaseActivity;
 import com.mapzen.android.lost.LocationClient;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
+import com.mapzen.helpers.DistanceFormatter;
 import com.mapzen.helpers.ZoomController;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
@@ -486,6 +487,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (view != null) {
             TextView fullAfter = (TextView) view.findViewById(R.id.full_instruction_after_action);
             fullAfter.setText(instruction.getFullInstructionAfterAction(location));
+
+            TextView instructionDistance = (TextView) view.findViewById(R.id.distance_instruction);
+            instructionDistance.setText(DistanceFormatter.format(instruction
+                    .getRemainingDistance(location), true));
         }
     }
 

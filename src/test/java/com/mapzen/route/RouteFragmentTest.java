@@ -764,9 +764,16 @@ public class RouteFragmentTest {
         fragment.onLocationChanged(midPoint);
 
         View view = fragment.pager.findViewWithTag("Instruction_0");
-        TextView textView = (TextView) view.findViewById(R.id.full_instruction_after_action);
-        assertThat(textView).containsText(DistanceFormatter.format(instructions.get(0)
-                .getRemainingDistance(midPoint)));
+        String expectedDistance = DistanceFormatter.format(instructions.get(0)
+                .getRemainingDistance(midPoint));
+
+        // Distance appended to instruction text
+        TextView instructionText = (TextView) view.findViewById(R.id.full_instruction_after_action);
+        assertThat(instructionText).containsText(expectedDistance);
+
+        // Separate distance view below turn icon
+        TextView distanceText = (TextView) view.findViewById(R.id.distance_instruction);
+        assertThat(distanceText).hasText(expectedDistance);
     }
 
     @Test
