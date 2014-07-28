@@ -7,28 +7,18 @@
           android:showAsAction="collapseActionView|ifRoom"
           android:actionViewClass="android.widget.SearchView" />
 
-    <item android:id="@+id/settings"
-          android:title="@string/settings"
-          android:visible="false"
-          android:showAsAction="never" />
+    <group android:id="@+id/overflow_menu">
 
-    <item android:id="@+id/phone_home"
-          android:title="@string/submit_data"
-          android:visible="false"
-          android:showAsAction="never" />
+    <item
+        android:id="@+id/login"
+        android:title="@string/osm_login"
+        android:showAsAction="never" />
 
-    <item android:id="@+id/upload_traces"
-          android:title="@string/upload_traces"
-          android:visible="false"
-          android:showAsAction="never" />
-
-    <item android:id="@+id/login"
-          android:title="@string/osm_login"
-          android:showAsAction="never" />
-
-    <item android:id="@+id/logout"
-          android:title="@string/osm_logout"
-          android:visible="false"
-          android:showAsAction="never" />
+    <item
+        android:id="@+id/logout"
+        android:title="@string/osm_logout"
+        android:visible="false"
+        android:showAsAction="never" />
+   </group>
 
 </menu>
