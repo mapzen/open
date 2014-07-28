@@ -329,8 +329,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (location != null) {
             zoomController.setAverageSpeed(getAverageSpeed());
             zoomController.setCurrentSpeed(originalLocation.getSpeed());
-            getMapController().setLocation(location)
-                    .setMapPerspectiveForInstruction(instructions.get(pager.getCurrentItem()));
+            getMapController().setZoomLevel(zoomController.getZoom());
+            getMapController().quarterOn(location, route.getCurrentRotationBearing());
             routeLocationIndicator.setPosition(location.getLatitude(), location.getLongitude());
             routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
             Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChange: Corrected: "
