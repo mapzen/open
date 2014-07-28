@@ -24,7 +24,6 @@ import com.mapzen.widget.DistanceView;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -100,7 +99,6 @@ import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Robolectric.application;
@@ -200,7 +198,6 @@ public class RouteFragmentTest {
         assertThat(act.findViewById(R.id.locate_button)).isVisible();
     }
 
-    @Ignore
     @Test
     public void onLocationChange_shouldCenterMapOnLocation() throws Exception {
         Animator animator = mock(Animator.class);
@@ -213,7 +210,6 @@ public class RouteFragmentTest {
         verify(animator).animateTo(expected);
     }
 
-    @Ignore
     @Test
     public void onLocationChange_shouldStoreOriginalLocationRecordInDatabase() throws Exception {
         initTestFragment();
@@ -235,7 +231,6 @@ public class RouteFragmentTest {
         assertThat(cursor.getString(1)).isEqualTo(String.valueOf(expected.getLongitude()));
     }
 
-    @Ignore
     @Test
     public void onLocationChange_shouldStoreCorrectedLocationRecordInDatabase() throws Exception {
         initTestFragment();
@@ -271,7 +266,6 @@ public class RouteFragmentTest {
         assertThat(fragment.getView().findViewById(R.id.resume_button)).isNotVisible();
     }
 
-    @Ignore
     @Test
     public void onLocationChange_shouldStoreInstructionPointsRecordInDatabase() throws Exception {
         initTestFragment();
@@ -325,7 +319,6 @@ public class RouteFragmentTest {
         assertThat(cursor).hasCount(0);
     }
 
-    @Ignore
     @Test
     public void onLocationChange_shouldStoreInstructionBearingRecordInDatabase() throws Exception {
         initTestFragment();
@@ -341,7 +334,6 @@ public class RouteFragmentTest {
                 fragment.getRoute().getRouteInstructions().get(0).getBearing());
     }
 
-    @Ignore
     @Test
     public void onLocationChange_shouldStoreSpeedInDatabase() throws Exception {
         initTestFragment();
@@ -375,7 +367,6 @@ public class RouteFragmentTest {
         assertThat(cursor).hasCount(0);
     }
 
-    @Ignore
     @Test
     public void onLocationChange_shouldStoreAssociatedRoute() throws Exception {
         initTestFragment();
@@ -545,7 +536,6 @@ public class RouteFragmentTest {
         assertThat(resume).isVisible();
     }
 
-    @Ignore
     @Test
     public void onTouch_shouldStoreCurrentItemWhenPagerWasFirstTouched() throws Exception {
         Route route = fragment.getRoute();
@@ -573,7 +563,6 @@ public class RouteFragmentTest {
         assertThat(resume).isNotVisible();
     }
 
-    @Ignore
     @Test
     public void onClickResume_shouldStartAtPagerLocation() throws Exception {
         Route route = fragment.getRoute();
@@ -688,7 +677,6 @@ public class RouteFragmentTest {
         assertThat(act.getDb().inTransaction()).isFalse();
     }
 
-    @Ignore
     @Test
     public void onLocationChange_shouldAdvance() throws Exception {
         Route route = fragment.getRoute();
@@ -714,7 +702,6 @@ public class RouteFragmentTest {
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
     }
 
-    @Ignore
     @Test
     public void onLocationChange_shouldAdvanceWhenUserHasResumed() throws Exception {
         Route route = fragment.getRoute();
@@ -739,7 +726,6 @@ public class RouteFragmentTest {
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
     }
 
-    @Ignore
     @Test
     public void onLocationChange_shouldFlipToPostInstructionLanguage() throws Exception {
         fragment.setRoute(new Route(MOCK_ROUTE_JSON));
@@ -772,7 +758,6 @@ public class RouteFragmentTest {
         fragment.onLocationChanged(instructions.get(2).getLocation());
     }
 
-    @Ignore
     @Test
     public void onLocationChange_shouldUpdateDistanceIfAlreadyFlipped() throws Exception {
         setAdvanceRadiusPreference(R.string.settings_turn_driving_0to15_key, 0);
@@ -827,7 +812,6 @@ public class RouteFragmentTest {
         assertThat(fragment.getAdvanceRadius()).isEqualTo(ZoomController.DEFAULT_TURN_RADIUS);
     }
 
-    @Ignore
     @Test
     public void getAdvanceRadius_shouldBeConfigurable() {
         setAdvanceRadiusPreference(R.string.settings_turn_driving_0to15_key, 100);
@@ -847,7 +831,6 @@ public class RouteFragmentTest {
         assertAdvanceRadius(500, 50, location);
     }
 
-    @Ignore
     @Test
     public void onLocationChanged_finalInstructionShouldNotAdvance() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
@@ -1123,24 +1106,12 @@ public class RouteFragmentTest {
         assertThat(router.getRouteUrl().toString()).doesNotContain("100.0,200.0");
     }
 
-    @Ignore
     @Test
     public void createRouteTo_shouldRequestNewRoute() throws Exception {
         Location testLocation = getTestLocation(100.0, 100.0);
         FragmentTestUtil.startFragment(fragment);
         fragment.createRouteTo(testLocation);
         verify(router).fetch();
-    }
-
-    @Ignore
-    @Test
-    public void onLocationChange_shouldNotReRouteWhenSnapToIsNull() throws Exception {
-        Location testLocation = getTestLocation(40.662046, -73.987089);
-        RouteFragment spyFragment = spy(fragment);
-        spyFragment.setRoute(new Route(MOCK_AROUND_THE_BLOCK));
-        FragmentTestUtil.startFragment(spyFragment);
-        spyFragment.onLocationChanged(testLocation);
-        verify(spyFragment, never()).createRouteTo(testLocation);
     }
 
     @Test
@@ -1206,7 +1177,6 @@ public class RouteFragmentTest {
                 .isInstanceOf(IllegalStateException.class);
     }
 
-    @Ignore
     @Test
     public void addCoordinatesToDatabase_shouldSendExceptionToBugSense() throws Exception {
         initTestFragment();
@@ -1219,7 +1189,6 @@ public class RouteFragmentTest {
                 .isInstanceOf(IllegalStateException.class);
     }
 
-    @Ignore
     @Test
     public void shouldInitDynamicZoomUsingDefaultValues() throws Exception {
         Resources res = act.getResources();
@@ -1234,7 +1203,6 @@ public class RouteFragmentTest {
         assertZoomLevel(res.getInteger(R.integer.zoom_driving_over50), 50, location);
     }
 
-    @Ignore
     @Test
     public void shouldUpdateDynamicZoomWithNewValues() throws Exception {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
@@ -1328,7 +1296,6 @@ public class RouteFragmentTest {
         assertThat(fragment.getAverageSpeed()).isEqualTo(0);
     }
 
-    @Ignore
     @Test
     public void getAverageSpeed_shouldReturnAverageOfLastNLocationUpdates() throws Exception {
         initTestFragment();
