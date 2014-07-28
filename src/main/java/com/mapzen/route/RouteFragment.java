@@ -481,10 +481,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    public void flipInstruction(int page) {
-        flipInstruction(instructions.get(page));
-    }
-
     private void updateRemainingDistance(Instruction instruction, Location location) {
         final View view = getViewForIndex(instructions.indexOf(instruction));
         if (view != null) {
