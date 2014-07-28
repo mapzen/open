@@ -70,7 +70,6 @@ import static com.mapzen.search.SavedSearch.getSavedSearch;
 
 public class BaseActivity extends MapActivity {
     @Inject MapzenProgressDialogFragment progressDialogFragment;
-    public static final int LOCATION_INTERVAL = 1000;
     public static final String COM_MAPZEN_UPDATE_VIEW = "com.mapzen.updates.view";
     public static final String COM_MAPZEN_UPDATES_LOCATION = "com.mapzen.updates.location";
     public static final String

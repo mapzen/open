@@ -1,7 +1,5 @@
 package com.mapzen.route;
 
-import android.app.NotificationManager;
-import android.view.ViewGroup;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
@@ -41,6 +39,8 @@ import org.oscim.map.TestViewport;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
+import org.robolectric.shadows.ShadowEnvironment;
+import org.robolectric.shadows.ShadowLocationManager;
 import org.robolectric.shadows.ShadowNotification;
 import org.robolectric.shadows.ShadowNotificationManager;
 import org.robolectric.shadows.ShadowTextToSpeech;
@@ -49,6 +49,7 @@ import org.robolectric.shadows.ShadowView;
 import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.util.FragmentTestUtil;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -56,16 +57,25 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.location.LocationManager;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -94,6 +104,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Robolectric.application;
+import static org.robolectric.Robolectric.getShadowApplication;
 import static org.robolectric.Robolectric.shadowOf;
 import static org.robolectric.Robolectric.shadowOf_;
 
@@ -1333,6 +1344,46 @@ public class RouteFragmentTest {
             fragment.onLocationChanged(locationBuilder.build());
         }
         assertThat(fragment.getAverageSpeed()).isEqualTo(expectedSpeed);
+    }
+
+    @Test
+    public void shouldUseGpxTraceWhenMockModeEnabled() throws Exception {
+        loadTestGpxTrace();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
+        prefs.edit().putBoolean(act.getString(R.string.settings_mock_gpx_key), true).commit();
+        initTestFragment();
+        FragmentTestUtil.startFragment(fragment);
+        Thread.sleep(100);
+        Robolectric.runUiThreadTasks();
+        List<Intent> intents = getShadowApplication().getBroadcastIntents();
+        Location location = intents.get(1).getExtras().getParcelable("location");
+        assertThat(location).hasLatitude(0.0);
+        assertThat(location).hasLongitude(0.1);
+    }
+
+    @Test
+    public void onDetach_shouldDisableMockMode() throws Exception {
+        loadTestGpxTrace();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
+        prefs.edit().putBoolean(act.getString(R.string.settings_mock_gpx_key), true).commit();
+        initTestFragment();
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onDetach();
+        ShadowLocationManager shadowLocationManager = Robolectric.shadowOf((LocationManager)
+                application.getSystemService(Context.LOCATION_SERVICE));
+        assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).hasSize(2);
+    }
+
+    private void loadTestGpxTrace() throws IOException {
+        byte[] encoded = Files.readAllBytes(Paths.get("src/test/resources/lost.gpx"));
+        String contents = new String(encoded, "UTF-8");
+
+        ShadowEnvironment.setExternalStorageState(Environment.MEDIA_MOUNTED);
+        File directory = Environment.getExternalStorageDirectory();
+        File file = new File(directory, "lost.gpx");
+        FileWriter fileWriter = new FileWriter(file, false);
+        fileWriter.write(contents);
+        fileWriter.close();
     }
 
     private void assertZoomLevel(int expected, float milesPerHour, Location location) {

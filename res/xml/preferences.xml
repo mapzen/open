@@ -33,6 +33,24 @@
             android:summary="@string/settings_mapsource_summary"
             android:title="@string/settings_mapsource" />
 
+        <CheckBoxPreference
+            android:key="@string/settings_mock_gpx_key"
+            android:summary="@string/settings_mock_gpx_summary"
+            android:title="@string/settings_mock_gpx_title" />
+
+        <EditTextPreference
+            android:defaultValue="@string/settings_mock_gpx_filename_default_value"
+            android:key="@string/settings_mock_gpx_filename_key"
+            android:summary="@string/settings_mock_gpx_filename_summary"
+            android:title="@string/settings_mock_gpx_filename_title" />
+
+        <com.mapzen.widget.EditIntPreference
+            android:defaultValue="1000"
+            android:inputType="number"
+            android:key="@string/settings_location_update_interval_key"
+            android:summary="@string/settings_location_update_interval_summary"
+            android:title="@string/settings_location_update_interval_title" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_zoom_title">
