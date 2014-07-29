@@ -20,6 +20,7 @@ import org.w3c.dom.Element;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.location.Location;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -33,6 +34,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import static com.mapzen.support.TestHelper.getTestInstruction;
 import static com.mapzen.support.TestHelper.getTestLocation;
@@ -101,9 +105,9 @@ public class DataUploadServiceTest {
         String expectedRouteId = "route-1";
         makeRouteReady(expectedRouteId);
         service.onStartCommand(null, 0, 0);
-        Cursor cursor = app.getDb().query(TABLE_ROUTES, new String[] {COLUMN_UPLOADED},
+        Cursor cursor = app.getDb().query(TABLE_ROUTES, new String[] { COLUMN_UPLOADED },
                 COLUMN_TABLE_ID + " = ? AND " + COLUMN_UPLOADED + " = 1",
-                new String[] {expectedRouteId}, null, null, null);
+                new String[] { expectedRouteId }, null, null, null);
         assertThat(cursor).hasCount(0);
     }
 
@@ -116,9 +120,9 @@ public class DataUploadServiceTest {
         makeRouteReady(expectedRouteId);
         app.setAccessToken(token);
         service.onStartCommand(null, 0, 0);
-        Cursor cursor = app.getDb().query(TABLE_ROUTES, new String[] {COLUMN_UPLOADED},
+        Cursor cursor = app.getDb().query(TABLE_ROUTES, new String[] { COLUMN_UPLOADED },
                 COLUMN_TABLE_ID + " = ? AND " + COLUMN_UPLOADED + " = 1",
-                new String[] {expectedRouteId}, null, null, null);
+                new String[] { expectedRouteId }, null, null, null);
         assertThat(cursor).hasCount(1);
     }
 
@@ -163,6 +167,26 @@ public class DataUploadServiceTest {
         verify(spy, never()).submitCompressedFile(any(ByteArrayOutputStream.class),
                 eq(expectedRouteId),
                 eq(expectedRouteDescription));
+    }
+
+    @Test
+    public void shouldHaveSpeedElement() throws Exception {
+        String expectedSpeed = "40.0";
+        String fakeRouteId = makeFakeRouteInDb();
+        Location loc = getTestLocation(100, 200);
+        loc.setBearing(4.0f);
+        loc.setSpeed(Float.valueOf(expectedSpeed));
+        loc.setAccuracy(12f);
+        loc.setAltitude(12f);
+        loc.setTime(System.currentTimeMillis());
+        ContentValues insertValues = valuesForLocationCorrection(loc, loc, getTestInstruction(0, 0),
+                fakeRouteId);
+        app.getDb().insert(TABLE_LOCATIONS, null, insertValues);
+
+        String actual = getTextForXpath(fakeRouteId,
+                "//trk/trkseg/speed[position()=last()]/text()");
+
+        assertThat(actual).isEqualTo(expectedSpeed);
     }
 
     @Test
@@ -229,5 +253,37 @@ public class DataUploadServiceTest {
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.transform(source, result);
         return result.getWriter().toString();
+    }
+
+    private String makeFakeRouteInDb() throws Exception {
+        String fakeRouteId = "fake-route-id" + String.valueOf(Math.random());
+        ContentValues insertValues = new ContentValues();
+        insertValues.put(COLUMN_TABLE_ID, fakeRouteId);
+        insertValues.put(COLUMN_RAW, "does not matter");
+        insertValues.put(COLUMN_MSG, "does not matter");
+        insertValues.put(COLUMN_READY_FOR_UPLOAD, 1);
+        app.getDb().insert(TABLE_ROUTES, null, insertValues);
+        for (int i = 0; i < 12; i++) {
+            Location loc = getTestLocation(i * 10, i * 25);
+            loc.setBearing(4.0f);
+            loc.setSpeed(4.0f);
+            loc.setAccuracy(12f);
+            loc.setAltitude(12f);
+            loc.setTime(System.currentTimeMillis());
+            insertValues = valuesForLocationCorrection(loc, loc, getTestInstruction(0, 0),
+                    fakeRouteId);
+            app.getDb().insert(TABLE_LOCATIONS, null, insertValues);
+        }
+        return fakeRouteId;
+    }
+
+    private String getTextForXpath(String fakeRouteId, String xpath)
+            throws XPathExpressionException {
+        DOMSource domSource = service.getDocument(fakeRouteId);
+        Document document = domSource.getNode().getOwnerDocument();
+        XPathFactory xpf = XPathFactory.newInstance();
+        XPath xp = xpf.newXPath();
+        return xp.evaluate(xpath,
+                document.getDocumentElement());
     }
 }
