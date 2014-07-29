@@ -794,6 +794,18 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onLocationChanged_finalInstructionShouldHaveZeroDistanceLeft() throws Exception {
+        loadMockRoute();
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        fragment.pager.setCurrentItem(instructions.size());
+        Instruction finalInstruction = instructions.get(instructions.size() - 1);
+        fragment.onLocationChanged(getTestLocation(finalInstruction.getLocation().getLatitude(),
+                finalInstruction.getLocation().getLongitude()));
+        assertThat(fragment.distanceToDestination).hasText("0 ft");
+    }
+
+    @Test
     public void onLocationChange_shouldNotFlipToPostInstructionLanguage() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         fragment.onResume();
@@ -1355,6 +1367,15 @@ public class RouteFragmentTest {
         fragment.createRouteTo(getTestLocation(100.0, 100.0));
         verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(MOCK_AROUND_THE_BLOCK));
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onResume();
+    }
+
+    private void loadMockRoute() {
+        setAdvanceRadiusPreference(R.string.settings_turn_driving_0to15_key, 0);
+        fragment.createRouteTo(getTestLocation(100.0, 100.0));
+        verify(router).setCallback(callback.capture());
+        callback.getValue().success(new Route(MOCK_ROUTE_JSON));
         FragmentTestUtil.startFragment(fragment);
         fragment.onResume();
     }
