@@ -24,6 +24,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COLUMN_ACC = "acc";
     public static final String COLUMN_TIME = "time";
     public static final String COLUMN_SPEED = "speed";
+    public static final String COLUMN_BEARING = "bearing";
     public static final String COLUMN_DUMP = "dump";
     public static final String DB_NAME = "locations.db";
     public static final String TABLE_LOCATIONS = "locations";
@@ -55,6 +56,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + COLUMN_TIME + " numeric not null,"
             + COLUMN_ROUTE_ID + " text not null,"
             + COLUMN_SPEED + " numeric not null,"
+            + COLUMN_BEARING + " numeric not null,"
             + COLUMN_DUMP + " text not null)";
 
     private final String createRoutesSql = "create table " + TABLE_ROUTES + " ("
@@ -119,6 +121,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_ACC, location.getAccuracy());
         values.put(COLUMN_TIME, System.currentTimeMillis());
         values.put(COLUMN_SPEED, location.getSpeed());
+        values.put(COLUMN_BEARING, location.getBearing());
         values.put(COLUMN_CORRECTED_LAT, correctedLocation.getLatitude());
         values.put(COLUMN_CORRECTED_LNG, correctedLocation.getLongitude());
         values.put(COLUMN_INSTRUCTION_LAT, instruction.getLocation().getLatitude());

@@ -49,6 +49,7 @@ import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_MSG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_READY_FOR_UPLOAD;
 import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
+import static com.mapzen.util.DatabaseHelper.COLUMN_SPEED;
 import static com.mapzen.util.DatabaseHelper.COLUMN_TABLE_ID;
 import static com.mapzen.util.DatabaseHelper.COLUMN_TIME;
 import static com.mapzen.util.DatabaseHelper.COLUMN_UPLOADED;
@@ -165,7 +166,7 @@ public class DataUploadService extends Service {
         try {
             DateTimeFormatter isoDateParser = ISODateTimeFormat.dateTimeNoMillis();
             Cursor cursor = app.getDb().query(TABLE_LOCATIONS,
-                    new String[] { COLUMN_LAT, COLUMN_LNG, COLUMN_ALT, COLUMN_TIME },
+                    new String[] { COLUMN_LAT, COLUMN_LNG, COLUMN_ALT, COLUMN_TIME, COLUMN_SPEED },
                     COLUMN_ROUTE_ID + " = ?",
                     new String[] { routeId }, null, null, null);
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
@@ -213,9 +214,11 @@ public class DataUploadService extends Service {
         int lonIndex = cursor.getColumnIndex(COLUMN_LNG);
         int altIndex = cursor.getColumnIndex(COLUMN_ALT);
         int timeIndex = cursor.getColumnIndex(COLUMN_TIME);
+        int speedIndex = cursor.getColumnIndex(COLUMN_SPEED);
         Element trkptElement = document.createElement("trkpt");
         Element elevationElement = document.createElement("ele");
         Element timeElement = document.createElement("time");
+        Element speedElement = document.createElement("speed");
         trkptElement.setAttribute("lat", cursor.getString(latIndex));
         trkptElement.setAttribute("lon", cursor.getString(lonIndex));
         elevationElement.setTextContent(cursor.getString(altIndex));
@@ -223,9 +226,12 @@ public class DataUploadService extends Service {
         DateTime date = new DateTime(cursor.getLong(timeIndex));
         timeElement.setTextContent(date.toString(isoDateParser));
 
+        speedElement.setTextContent(String.valueOf(cursor.getDouble(speedIndex)));
+
         trkptElement.appendChild(elevationElement);
         trkptElement.appendChild(timeElement);
         trksegElement.appendChild(trkptElement);
+        trksegElement.appendChild(speedElement);
     }
 
     private Element getRootElement(Document document) {
