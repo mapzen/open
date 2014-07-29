@@ -441,7 +441,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             }
         }
 
-        updateDistanceToDestination(instructionIndex, correctedLocation);
+        if (pager.getCurrentItem() == pager.getAdapter().getCount() - 1) {
+            distanceToDestination.setText("0 ft");
+        } else {
+            updateDistanceToDestination(pager.getCurrentItem(), correctedLocation);
+        }
 
         debugView.setCurrentLocation(location);
         debugView.setSnapLocation(correctedLocation);
