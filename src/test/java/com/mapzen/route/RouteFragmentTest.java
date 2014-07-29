@@ -337,6 +337,22 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onLocationChange_shouldStoreBearingInDatabase() throws Exception {
+        initTestFragment();
+        FragmentTestUtil.startFragment(fragment);
+        Location testLocation = fragment.getRoute().getGeometry().get(2);
+        float expectedBearing = 44.0f;
+        testLocation.setBearing(expectedBearing);
+        fragment.onLocationChanged(testLocation);
+        Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
+                new String[] { DatabaseHelper.COLUMN_BEARING },
+                null, null, null, null, null);
+        assertThat(cursor).hasCount(1);
+        cursor.moveToNext();
+        assertThat(cursor.getFloat(0)).isEqualTo(expectedBearing);
+    }
+
+    @Test
     public void onLocationChange_shouldNotStoreDatabaseRecord() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(99.0, 89.0));
