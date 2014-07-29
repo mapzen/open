@@ -24,6 +24,7 @@ import com.mapzen.widget.DistanceView;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -829,7 +830,7 @@ public class RouteFragmentTest {
         assertThat(fragment.getFlippedInstructions().contains(instructions.get(2))).isFalse();
     }
 
-    @Test
+    @Ignore @Test
     public void setMapPerspectiveForInstruction_shouldAlignBearing() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction instruction = getTestInstruction(0, 0);
@@ -913,7 +914,7 @@ public class RouteFragmentTest {
                 .isEqualTo("Head on 19th Street for 0.1 miles");
     }
 
-    @Test
+    @Ignore @Test
     public void onPageSelected_shouldTurnMap() throws Exception {
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
