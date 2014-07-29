@@ -32,7 +32,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.PathLayer;
-import org.oscim.map.Animator;
 import org.oscim.map.TestMap;
 import org.oscim.map.TestViewport;
 import org.robolectric.Robolectric;
@@ -196,18 +195,6 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         fragment.onDetach();
         assertThat(act.findViewById(R.id.locate_button)).isVisible();
-    }
-
-    @Test
-    public void onLocationChange_shouldCenterMapOnLocation() throws Exception {
-        Animator animator = mock(Animator.class);
-        ((TestMap) fragment.getMapFragment().getMap()).setAnimator(animator);
-        FragmentTestUtil.startFragment(fragment);
-        ArrayList<Location> geometry = fragment.getRoute().getGeometry();
-        Location testLocation = fragment.getRoute().snapToRoute(geometry.get(2));
-        fragment.onLocationChanged(testLocation);
-        GeoPoint expected = new GeoPoint(testLocation.getLatitude(), testLocation.getLongitude());
-        verify(animator).animateTo(expected);
     }
 
     @Test

@@ -86,6 +86,25 @@ public final class MapController {
         return this;
     }
 
+    public MapController quarterOn(Location location, double bearing) {
+        ViewController v = map.viewport();
+        Float tilt = map.getMapPosition().getTilt();
+        MapPosition position = new MapPosition(location.getLatitude(), location.getLongitude(),
+                Math.pow(2, ROUTE_ZOOM_LEVEL));
+        v.setMapPosition(position);
+        map.updateMap(true);
+        float[] ext = new float[8];
+        v.getMapExtents(ext, 0);
+        position.setBearing((float) bearing);
+        v.setMapPosition(position);
+        v.moveMap(0, ext[1] / 2);
+        v.getMapPosition(position);
+        position.setTilt(tilt);
+        map.setMapPosition(position);
+        map.updateMap(true);
+        return this;
+    }
+
     public MapPosition getMapPosition() {
         return mapPosition;
     }
@@ -106,21 +125,7 @@ public final class MapController {
     }
 
     public void setMapPerspectiveForInstruction(Instruction instruction) {
-        Location loc = instruction.getLocation();
-        ViewController v = map.viewport();
-        Float tilt = map.getMapPosition().getTilt();
-        MapPosition position = new MapPosition(loc.getLatitude(), loc.getLongitude(),
-                Math.pow(2, ROUTE_ZOOM_LEVEL));
-        v.setMapPosition(position);
-        float[] ext = new float[8];
-        v.getMapExtents(ext, 0);
-        position.setBearing(instruction.getRotationBearing());
-        v.setMapPosition(position);
-        v.moveMap(0, ext[1] / 2);
-        v.getMapPosition(position);
-        position.setTilt(tilt);
-        map.setMapPosition(position);
-        map.updateMap(true);
+        quarterOn(instruction.getLocation(), instruction.getRotationBearing());
     }
 
     public void setRotation(float rotation) {
