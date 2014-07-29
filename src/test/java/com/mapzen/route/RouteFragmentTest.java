@@ -32,7 +32,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.oscim.core.GeoPoint;
 import org.oscim.layers.PathLayer;
-import org.oscim.map.TestMap;
 import org.oscim.map.TestViewport;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
