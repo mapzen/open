@@ -808,11 +808,25 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onLocationChanged_finalInstructionShouldHaveZeroDistanceLeft() throws Exception {
+    public void penultimateInstruction_shouldSyncInstructionAndOverallDistance() throws Exception {
         loadMockRoute();
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
-        fragment.pager.setCurrentItem(instructions.size());
+        fragment.pager.setCurrentItem(instructions.size() - 2);
+        Instruction oneBeforeLast = instructions.get(instructions.size() - 2);
+        Location location = getTestLocation(oneBeforeLast.getLocation().getLatitude(),
+                oneBeforeLast.getLocation().getLongitude());
+        fragment.onLocationChanged(location);
+        String expected = DistanceFormatter.format(oneBeforeLast.getRemainingDistance(location));
+        assertThat(fragment.distanceToDestination).hasText(expected);
+    }
+
+    @Test
+    public void ultimateInstruction_shouldHaveZeroDistanceToDestination() throws Exception {
+        loadMockRoute();
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        fragment.pager.setCurrentItem(instructions.size() - 1);
         Instruction finalInstruction = instructions.get(instructions.size() - 1);
         fragment.onLocationChanged(getTestLocation(finalInstruction.getLocation().getLatitude(),
                 finalInstruction.getLocation().getLongitude()));
