@@ -242,13 +242,15 @@ public class BaseActivity extends MapActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         activityMenu = menu;
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.options_menu, menu);
+        int menuLayout = isInDebugMode() ? R.menu.debug_option_group : R.menu.options_menu;
+        inflater.inflate(menuLayout, menu);
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchMenuItem = menu.findItem(R.id.search);
         searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
+                hideOptionsMenu();
                 return true;
             }
 
@@ -260,6 +262,7 @@ public class BaseActivity extends MapActivity {
                     getSupportFragmentManager().beginTransaction().remove(pagerResultsFragment)
                             .commit();
                 }
+                showOptionsMenu();
                 return true;
             }
         });
@@ -287,8 +290,15 @@ public class BaseActivity extends MapActivity {
             }
         }
         toggleOSMLogin();
-
         return true;
+    }
+
+    public void hideOptionsMenu() {
+        activityMenu.setGroupVisible(R.id.overflow_menu, false);
+    }
+
+    public void showOptionsMenu() {
+        activityMenu.setGroupVisible(R.id.overflow_menu, true);
     }
 
     private void resetSearchView() {
@@ -344,15 +354,11 @@ public class BaseActivity extends MapActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                toggleMenuItemVisibility(activityMenu.findItem(R.id.settings));
-                toggleMenuItemVisibility(activityMenu.findItem(R.id.phone_home));
-                toggleMenuItemVisibility(activityMenu.findItem(R.id.upload_traces));
+                MenuInflater inflater = getMenuInflater();
+                activityMenu.clear();
+                inflater.inflate(R.menu.debug_option_group, activityMenu);
             }
         });
-    }
-
-    private void toggleMenuItemVisibility(MenuItem item) {
-        item.setVisible(!item.isVisible());
     }
 
     private void toggleOSMLogin() {
@@ -572,5 +578,9 @@ public class BaseActivity extends MapActivity {
 
     public void locateButtonAction(View view) {
         mapFragment.centerOnCurrentLocation();
+    }
+
+    public Menu getActivityMenu() {
+        return activityMenu;
     }
 }

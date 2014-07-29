@@ -63,6 +63,8 @@ import static com.mapzen.support.TestHelper.initBaseActivity;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.shadowOf;
 import static org.robolectric.util.FragmentTestUtil.startFragment;
@@ -84,23 +86,23 @@ public class BaseActivityTest {
 
     @Test
     public void toggleDebugMode_shouldToggleSettings() {
-        Boolean visibility = menu.findItem(R.id.settings).isVisible();
+        assertThat(menu.findItem(R.id.settings)).isNull();
         activity.toggleDebugMode();
-        assertThat(menu.findItem(R.id.settings).isVisible()).isNotEqualTo(visibility);
+        assertThat(menu.findItem(R.id.settings).isVisible()).isTrue();
     }
 
     @Test
     public void toggleDebugMode_shouldToggleSubmitData() {
-        Boolean visibility = menu.findItem(R.id.phone_home).isVisible();
+        assertThat(menu.findItem(R.id.phone_home)).isNull();
         activity.toggleDebugMode();
-        assertThat(menu.findItem(R.id.phone_home).isVisible()).isNotEqualTo(visibility);
+        assertThat(menu.findItem(R.id.phone_home).isVisible()).isTrue();
     }
 
     @Test
     public void toggleDebugMode_shouldToggleUploadGPSTraces() {
-        Boolean visibility = menu.findItem(R.id.upload_traces).isVisible();
+        assertThat(menu.findItem(R.id.upload_traces)).isNull();
         activity.toggleDebugMode();
-        assertThat(menu.findItem(R.id.upload_traces).isVisible()).isNotEqualTo(visibility);
+        assertThat(menu.findItem(R.id.upload_traces).isVisible()).isTrue();
     }
 
     @Test
@@ -230,6 +232,7 @@ public class BaseActivityTest {
 
     @Test
     public void onOptionsItemSelected_shouldLaunchSettingsFragment() throws Exception {
+        activity.toggleDebugMode();
         MenuItem menuItem = menu.findItem(R.id.settings);
         activity.onOptionsItemSelected(menuItem);
         assertThat(activity.getFragmentManager()).hasFragmentWithTag(SettingsFragment.TAG);
@@ -237,6 +240,7 @@ public class BaseActivityTest {
 
     @Test
     public void onOptionsItemSelected_shouldLaunchDataUploadService() throws Exception {
+        activity.toggleDebugMode();
         MenuItem menuItem = menu.findItem(R.id.upload_traces);
         activity.onOptionsItemSelected(menuItem);
         Intent serviceIntent = Robolectric.getShadowApplication().peekNextStartedService();
@@ -247,6 +251,7 @@ public class BaseActivityTest {
     @Test
     public void onOptionsItemSelected_shouldHideActionBar() throws Exception {
         activity.showActionBar();
+        activity.toggleDebugMode();
         MenuItem menuItem = menu.findItem(R.id.settings);
         activity.onOptionsItemSelected(menuItem);
         assertThat(activity.getActionBar()).isNotShowing();
@@ -254,6 +259,7 @@ public class BaseActivityTest {
 
     @Test
     public void shouldShowActionBarWhenGettingBackFromSettings() throws Exception {
+        activity.toggleDebugMode();
         MenuItem menuItem = menu.findItem(R.id.settings);
         activity.onOptionsItemSelected(menuItem);
         activity.onBackPressed();
@@ -262,6 +268,7 @@ public class BaseActivityTest {
 
     @Test
     public void onBackPressed_shouldStayInBaseActivityWhenSettingsIsActive() throws Exception {
+        activity.toggleDebugMode();
         MenuItem menuItem = menu.findItem(R.id.settings);
         activity.onOptionsItemSelected(menuItem);
         activity.onBackPressed();
@@ -378,6 +385,16 @@ public class BaseActivityTest {
     }
 
     @Test
+    public void openingSearchView_shouldHideOverflow() throws Exception {
+        Menu spy = spy(activity.getActivityMenu());
+        activity.toggleDebugMode();
+        activity.onCreateOptionsMenu(spy);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.onActionViewExpanded();
+        verify(spy).setGroupVisible(R.id.overflow_menu, false);
+    }
+
+    @Test
     public void showActionbar_shouldShowActionbar() throws Exception {
         activity.hideActionBar();
         activity.showActionBar();
@@ -402,6 +419,7 @@ public class BaseActivityTest {
         server.play();
 
         testBaseActivity.setDebugDataEndpoint(server.getUrl("/upload.php").toString());
+        activity.toggleDebugMode();
         MenuItem menuItem = menu.findItem(R.id.phone_home);
         testBaseActivity.onOptionsItemSelected(menuItem);
 
@@ -418,6 +436,7 @@ public class BaseActivityTest {
         server.enqueue(response);
         server.play();
 
+        activity.toggleDebugMode();
         testBaseActivity.setDebugDataEndpoint(server.getUrl("/upload.php").toString());
         MenuItem menuItem = menu.findItem(R.id.phone_home);
         testBaseActivity.onOptionsItemSelected(menuItem);
@@ -434,6 +453,7 @@ public class BaseActivityTest {
         server.enqueue(response);
         server.play();
 
+        activity.toggleDebugMode();
         byte[] expected = Files.toByteArray(new File(testBaseActivity.getDb().getPath()));
         testBaseActivity.setDebugDataEndpoint(server.getUrl("/upload.php").toString());
         MenuItem menuItem = menu.findItem(R.id.phone_home);
