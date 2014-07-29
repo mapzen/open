@@ -825,7 +825,6 @@ public class RouteFragmentTest {
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
         getMapController().setMapPerspectiveForInstruction(instruction);
-        TestMap map = (TestMap) act.getMapFragment().getMap();
         assertThat(act.getMap().getMapPosition().getBearing()).isEqualTo(
                 instruction.getRotationBearing());
     }
@@ -914,7 +913,6 @@ public class RouteFragmentTest {
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
         fragment.onPageSelected(2);
         Instruction i = instructions.get(2);
-        TestViewport viewport = (TestViewport) act.getMap().viewport();
         assertThat(act.getMap().getMapPosition().getBearing()).isEqualTo(i.getRotationBearing());
     }
 
