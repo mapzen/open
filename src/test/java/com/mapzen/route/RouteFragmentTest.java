@@ -746,34 +746,51 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onLocationChange_shouldUpdateDistanceIfAlreadyFlipped() throws Exception {
-        setAdvanceRadiusPreference(R.string.settings_turn_driving_0to15_key, 0);
-        fragment.createRouteTo(getTestLocation(100.0, 100.0));
-        verify(router).setCallback(callback.capture());
-        callback.getValue().success(new Route(MOCK_AROUND_THE_BLOCK));
-        FragmentTestUtil.startFragment(fragment);
-        fragment.onResume();
+    public void onLocationChange_shouldUpdateDistanceAppendedToInstruction() throws Exception {
+        loadMockAroundTheBlock();
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
-
-        // Flip first instruction
         fragment.onLocationChanged(instructions.get(0).getLocation());
-
-        // Midpoint between first and second instruction (pre-calculated)
         Location midPoint = getTestLocation(40.660278, -73.988611);
         fragment.onLocationChanged(midPoint);
 
         View view = fragment.pager.findViewWithTag("Instruction_0");
-        String expectedDistance = DistanceFormatter.format(instructions.get(0)
+        String expectedInstructionDistance = DistanceFormatter.format(instructions.get(0)
                 .getRemainingDistance(midPoint));
-
-        // Distance appended to instruction text
         TextView instructionText = (TextView) view.findViewById(R.id.full_instruction_after_action);
-        assertThat(instructionText).containsText(expectedDistance);
+        assertThat(instructionText).containsText(expectedInstructionDistance);
+    }
 
-        // Separate distance view below turn icon
+    @Test
+    public void onLocationChanged_shouldUpdateDistanceBelowTurnIcon() throws Exception {
+        loadMockAroundTheBlock();
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        fragment.onLocationChanged(instructions.get(0).getLocation());
+        Location midPoint = getTestLocation(40.660278, -73.988611);
+        fragment.onLocationChanged(midPoint);
+
+        View view = fragment.pager.findViewWithTag("Instruction_0");
+        String expectedInstructionDistance = DistanceFormatter.format(instructions.get(0)
+                .getRemainingDistance(midPoint));
         TextView distanceText = (TextView) view.findViewById(R.id.distance_instruction);
-        assertThat(distanceText).hasText(expectedDistance);
+        assertThat(distanceText).hasText(expectedInstructionDistance);
+    }
+
+    @Test
+    public void onLocationChanged_shouldUpdateDistanceToDestination() throws Exception {
+        loadMockAroundTheBlock();
+        Route route = fragment.getRoute();
+        ArrayList<Instruction> instructions = route.getRouteInstructions();
+        fragment.onLocationChanged(instructions.get(0).getLocation());
+        Location midPoint = getTestLocation(40.660278, -73.988611);
+        fragment.onLocationChanged(midPoint);
+
+        int expectedDistanceToDestination = route.getTotalDistance()
+                - instructions.get(0).getDistance()
+                + instructions.get(0).getRemainingDistance(midPoint);
+        assertThat(fragment.distanceToDestination.getText())
+                .isEqualTo(DistanceFormatter.format(expectedDistanceToDestination));
     }
 
     @Test
@@ -1333,6 +1350,15 @@ public class RouteFragmentTest {
         ShadowLocationManager shadowLocationManager = Robolectric.shadowOf((LocationManager)
                 application.getSystemService(Context.LOCATION_SERVICE));
         assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).hasSize(2);
+    }
+
+    private void loadMockAroundTheBlock() {
+        setAdvanceRadiusPreference(R.string.settings_turn_driving_0to15_key, 0);
+        fragment.createRouteTo(getTestLocation(100.0, 100.0));
+        verify(router).setCallback(callback.capture());
+        callback.getValue().success(new Route(MOCK_AROUND_THE_BLOCK));
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onResume();
     }
 
     private void loadTestGpxTrace() throws IOException {
