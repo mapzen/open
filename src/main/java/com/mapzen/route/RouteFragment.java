@@ -5,6 +5,7 @@ import com.mapzen.activity.BaseActivity;
 import com.mapzen.android.lost.LocationClient;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
+import com.mapzen.helpers.DistanceFormatter;
 import com.mapzen.helpers.ZoomController;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
@@ -92,14 +93,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @InjectView(R.id.routes) ViewPager pager;
     @InjectView(R.id.resume_button) ImageButton resume;
     @InjectView(R.id.footer_wrapper) RelativeLayout footerWrapper;
+    @InjectView(R.id.destination_distance) DistanceView distanceToDestination;
     private ArrayList<Instruction> instructions;
     private RouteAdapter adapter;
     private Route route;
     private LocationReceiver locationReceiver;
     private RouteLocationIndicator routeLocationIndicator;
     private SimpleFeature simpleFeature;
-    private DistanceView distanceLeftView;
-    private int previousPosition;
     private String routeId;
     private int pagerPositionWhenPaused = 0;
     private double currentXCor;
@@ -144,15 +144,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
         destinationName.setText(getString(R.string.routing_to_text) + simpleFeature
                 .getProperty(NAME));
-        distanceLeftView = (DistanceView) rootView.findViewById(R.id.destination_distance);
-        distanceLeftView.setRealTime(true);
         if (route != null) {
-            distanceLeftView.setDistance(route.getTotalDistance());
+            distanceToDestination.setDistance(route.getTotalDistance());
         }
         pager.setAdapter(adapter);
         pager.setOnPageChangeListener(this);
         adapter.notifyDataSetChanged();
-        previousPosition = pager.getCurrentItem();
         currentXCor = mapFragment.getMap().getMapPosition().getX();
         initSpeakerbox();
         initNotificationCreator();
@@ -443,6 +440,15 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             }
         }
 
+        if (pager.getCurrentItem() == pager.getAdapter().getCount() - 1) {
+            distanceToDestination.setText("0 ft");
+        } else if (pager.getCurrentItem() == pager.getAdapter().getCount() - 2) {
+            distanceToDestination.setDistance(instructions.get(pager.getCurrentItem())
+                    .getRemainingDistance(correctedLocation));
+        } else {
+            updateDistanceToDestination(pager.getCurrentItem(), correctedLocation);
+        }
+
         debugView.setCurrentLocation(location);
         debugView.setSnapLocation(correctedLocation);
         if (activeInstruction != null) {
@@ -481,15 +487,15 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    public void flipInstruction(int page) {
-        flipInstruction(instructions.get(page));
-    }
-
     private void updateRemainingDistance(Instruction instruction, Location location) {
         final View view = getViewForIndex(instructions.indexOf(instruction));
         if (view != null) {
             TextView fullAfter = (TextView) view.findViewById(R.id.full_instruction_after_action);
             fullAfter.setText(instruction.getFullInstructionAfterAction(location));
+
+            TextView instructionDistance = (TextView) view.findViewById(R.id.distance_instruction);
+            instructionDistance.setText(DistanceFormatter.format(instruction
+                    .getRemainingDistance(location), true));
         }
     }
 
@@ -509,11 +515,17 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    private void changeDistance(int difference) {
-        if (!distanceLeftView.getText().toString().isEmpty()) {
-            int newDistance = distanceLeftView.getDistance() + difference;
-            distanceLeftView.setDistance(newDistance);
+    /**
+     * Updates overall distance to destination when continuing on the current instruction.
+     */
+    private void updateDistanceToDestination(int currentPosition, Location location) {
+        int distance = route.getTotalDistance();
+        for (Instruction instruction : route.getSeenInstructions()) {
+            distance -= instruction.getDistance();
         }
+
+        distance += instructions.get(currentPosition).getRemainingDistance(location);
+        distanceToDestination.setDistance(distance);
     }
 
     public boolean setRoute(Route route) {
@@ -591,12 +603,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @Override
     public void onPageSelected(int i) {
-        if (previousPosition > i) {
-            changeDistance(instructions.get(i + 1).getDistance());
-        } else if (previousPosition < i) {
-            changeDistance(-instructions.get(previousPosition).getDistance());
-        }
-        previousPosition = i;
         if (!autoPaging) {
             getMapController().setMapPerspectiveForInstruction(instructions.get(i));
         }
@@ -863,10 +869,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (getSlideLayout().isExpanded()) {
             getSlideLayout().collapsePane();
         }
-    }
-
-    public void expandInstructionsPane() {
-        getSlideLayout().expandPane();
     }
 
     public boolean slideLayoutIsExpanded() {
