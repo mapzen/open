@@ -105,20 +105,39 @@ public final class TestHelper {
         return location;
     }
 
-    public static Instruction getTestInstruction(double lat, double lng) throws Exception {
-        String raw = "        [\n" +
-                "            \"10\",\n" + // turn instruction
-                "            \"19th Street\",\n" + // way
-                "            160,\n" + // length in meters
-                "            0,\n" + // position?
-                "            0,\n" + // time in seconds
-                "            \"160m\",\n" + // length with unit
-                "            \"SE\",\n" + //earth direction
-                "            128\n" + // azimuth
-                "        ]\n";
-        Instruction instruction = new Instruction(new JSONArray(raw));
+    public static Instruction getTestInstruction(double lat, double lng) {
+        final Instruction instruction = getTestInstruction();
         instruction.setLocation(getTestLocation(lat, lng));
         return instruction;
+    }
+
+    public static Instruction getTestInstruction() {
+        return getTestInstruction("19th Street", 160);
+    }
+
+    public static Instruction getTestInstruction(String name) {
+        return getTestInstruction(name, 160);
+    }
+
+    public static Instruction getTestInstruction(int distanceInMeters) {
+        return getTestInstruction("19th Street", distanceInMeters);
+    }
+
+    /**
+     * For output format see <a href=https://github.com/Project-OSRM/osrm-backend/wiki/Output-json>
+     * https://github.com/Project-OSRM/osrm-backend/wiki/Output-json</a>.
+     */
+    public static Instruction getTestInstruction(String name, int distanceInMeters) {
+        final JSONArray jsonArray = new JSONArray();
+        jsonArray.put(10)                    // instruction
+                .put(name)                   // street name
+                .put(distanceInMeters)       // distance in meters
+                .put(0)                      // position
+                .put(0)                      // time in seconds
+                .put(distanceInMeters + "m") // length with unit
+                .put("SE")                   // bearing
+                .put(128);                   // azimuth
+        return new Instruction(jsonArray);
     }
 
     public static SimpleFeature getTestSimpleFeature() {

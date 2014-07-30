@@ -10,11 +10,11 @@ import com.mapzen.helpers.ZoomController;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
-import com.mapzen.speakerbox.Speakerbox;
 import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenNotificationCreator;
 import com.mapzen.util.RouteLocationIndicator;
+import com.mapzen.util.VoiceNavigationController;
 import com.mapzen.widget.DebugView;
 import com.mapzen.widget.DistanceView;
 
@@ -104,7 +104,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private int pagerPositionWhenPaused = 0;
     private double currentXCor;
 
-    Speakerbox speakerbox;
+    VoiceNavigationController voiceNavigationController;
     private MapzenNotificationCreator notificationCreator;
 
     private Set<Instruction> flippedInstructions = new HashSet<Instruction>();
@@ -193,38 +193,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void initSpeakerbox() {
-        speakerbox = new Speakerbox(getActivity());
-        addRemixPatterns();
-        addIgnoredPhrases();
-        checkIfVoiceNavigationIsEnabled();
+        voiceNavigationController = new VoiceNavigationController(getActivity());
         playFirstInstruction();
-    }
-
-    private void addRemixPatterns() {
-        speakerbox.remix(" mi", " miles");
-        speakerbox.remix(" 1 miles", " 1 mile");
-        speakerbox.remix(" ft", " feet");
-    }
-
-    private void addIgnoredPhrases() {
-        speakerbox.dontPlayIfContains("Continue on  for");
-    }
-
-    private void checkIfVoiceNavigationIsEnabled() {
-        final boolean voiceNavigationEnabled =
-                getDefaultSharedPreferences(act)
-                        .getBoolean(getString(R.string.settings_voice_navigation_key), true);
-
-        if (voiceNavigationEnabled) {
-            speakerbox.unmute();
-        } else {
-            speakerbox.mute();
-        }
     }
 
     private void playFirstInstruction() {
         if (instructions != null && instructions.size() > 0) {
-            speakerbox.play(instructions.get(0).getFullInstruction());
+            voiceNavigationController.playInstruction(instructions.get(0));
         }
     }
 
@@ -384,7 +359,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (correctedLocation == null) {
             if (route.isLost()) {
                 createRouteTo(location);
-                speakerbox.play(act.getString(R.string.recalculating));
+                voiceNavigationController.recalculating();
             }
             return;
         }
@@ -470,11 +445,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         final int index = instructions.indexOf(instruction);
         flippedInstructions.add(instruction);
         if (pager.getCurrentItem() == index) {
-            speakerbox.play(instruction.getFullInstructionAfterAction());
+            voiceNavigationController.playFlippedInstruction(instruction);
         }
 
-        View view = getViewForIndex(index);
-
+        final View view = getViewForIndex(index);
         if (view != null) {
             TextView fullBefore = (TextView) view.findViewById(R.id.full_instruction);
             TextView fullAfter = (TextView) view.findViewById(R.id.full_instruction_after_action);
@@ -592,10 +566,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @Override
     public void onPageScrolled(int i, float v, int i2) {
-        if (pager.getCurrentItem() != 0) {
-            speakerbox.stop();
-        }
-
         if (pager.getCurrentItem() == pagerPositionWhenPaused) {
             resume.setVisibility(View.GONE);
         }
@@ -606,8 +576,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (!autoPaging) {
             getMapController().setMapPerspectiveForInstruction(instructions.get(i));
         }
-        speakerbox.stop();
-        speakerbox.play(instructions.get(i).getFullInstruction());
+
+        voiceNavigationController.playInstruction(instructions.get(i));
         notificationCreator.createNewNotification(simpleFeature.getMarker().title,
                 instructions.get(i).getFullInstruction());
     }
@@ -683,9 +653,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
         autoPaging = false;
         resume.setVisibility(View.VISIBLE);
+        voiceNavigationController.mute();
     }
 
-    private void resumeAutoPaging() {
+    public void resumeAutoPaging() {
         int currentItem = ((RouteAdapter) pager.getAdapter()).getPausedPosition();
         pager.setCurrentItem(currentItem);
         getMapController()
@@ -693,6 +664,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         resume.setVisibility(View.GONE);
         currentXCor = mapFragment.getMap().getMapPosition().getX();
         autoPaging = true;
+        voiceNavigationController.unmute();
     }
 
     private class LocationReceiver extends BroadcastReceiver {

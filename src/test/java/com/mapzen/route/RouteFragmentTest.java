@@ -81,8 +81,6 @@ import static com.mapzen.MapController.KEY_STORED_MAPPOSITION;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.SimpleFeature.NAME;
-import static com.mapzen.helpers.DistanceFormatter.METERS_IN_ONE_FOOT;
-import static com.mapzen.helpers.DistanceFormatter.METERS_IN_ONE_MILE;
 import static com.mapzen.support.TestHelper.MOCK_AROUND_THE_BLOCK;
 import static com.mapzen.support.TestHelper.MOCK_NY_TO_VT;
 import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
@@ -103,7 +101,6 @@ import static org.mockito.Mockito.verify;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.getShadowApplication;
 import static org.robolectric.Robolectric.shadowOf;
-import static org.robolectric.Robolectric.shadowOf_;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
@@ -139,7 +136,6 @@ public class RouteFragmentTest {
         initTestFragment();
         app = Robolectric.getShadowApplication();
         db = ((MapzenApplication) Robolectric.application).getDb();
-        setVoiceNavigationEnabled(true);
     }
 
     @After
@@ -900,15 +896,11 @@ public class RouteFragmentTest {
     @Test
     public void onCreateView_shouldSpeakFirstInstruction() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        Instruction instruction = getTestInstruction(3, 3);
+        Instruction instruction = getTestInstruction(0, 0);
         instructions.add(instruction);
-
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
-        ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
-        shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
-        assertThat(shadowTextToSpeech.getLastSpokenText())
-                .isEqualTo("Head on 19th Street for 520 feet");
+        assertLastSpokenText("Head on 19th Street for 520 feet");
     }
 
     @Test
@@ -926,10 +918,7 @@ public class RouteFragmentTest {
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
         fragment.onPageSelected(1);
-        ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
-        shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
-        assertThat(shadowTextToSpeech.getLastSpokenText())
-                .isEqualTo("Head on 19th Street for 0.1 miles");
+        assertLastSpokenText("Head on 19th Street for 0.1 miles");
     }
 
     @Test
@@ -963,105 +952,29 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onPageScrolled_shouldNotSpeakInstruction() throws Exception {
-        FragmentTestUtil.startFragment(fragment);
-        fragment.onPageScrolled(1, (float) 0.1, 1);
-        ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
-        shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
-        assertThat(shadowTextToSpeech.getLastSpokenText())
-                .isEqualTo("Head on 19th Street for 520 feet");
-    }
-
-    @Test
     public void shouldAnnounceRecalculationOnLost() throws Exception {
         initTestFragment();
         FragmentTestUtil.startFragment(fragment);
-
         Location testLocation = getTestLocation(111.0, 111.0);
         fragment.onLocationChanged(testLocation);
-        ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
-        shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
-        assertThat(shadowTextToSpeech.getLastSpokenText())
-                .isEqualTo("Recalculating");
+        assertLastSpokenText(act.getString(R.string.recalculating));
     }
 
     @Test
-    public void textToSpeechRules_shouldIgnoreContinueOn() throws Exception {
-        fragment.setRoute(new Route(MOCK_NY_TO_VT));
-        FragmentTestUtil.startFragment(fragment);
-        Route route = fragment.getRoute();
-
-        ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
-        shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
-        fragment.onPageSelected(13);
-        assertThat(route.getRouteInstructions().get(13).getFullInstruction())
-                .contains("Continue on  for");
-        assertThat(shadowTextToSpeech.getLastSpokenText()).doesNotContain("Continue on  for");
-    }
-
-    @Test
-    public void textToSpeechRules_shouldReplaceMiWithMiles() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        Instruction instruction = getTestInstruction(0, 0);
-        instruction.setDistance((int) Math.round(2 * METERS_IN_ONE_MILE));
-        instructions.add(instruction);
-
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-        ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
-        shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
-        assertThat(shadowTextToSpeech.getLastSpokenText())
-                .isEqualTo("Head on 19th Street for 2 miles");
-    }
-
-    @Test
-    public void textToSpeech_shouldReplace1MilesWith1Mile() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        Instruction instruction = getTestInstruction(0, 0);
-        instruction.setDistance((int) Math.round(METERS_IN_ONE_MILE));
-        instructions.add(instruction);
-
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-        ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
-        shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
-        assertThat(shadowTextToSpeech.getLastSpokenText())
-                .isEqualTo("Head on 19th Street for 1 mile");
-    }
-
-    @Test
-    public void textToSpeechRules_shouldReplaceFtWithFeet() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        Instruction instruction = getTestInstruction(0, 0);
-        instruction.setDistance((int) Math.ceil(100 * METERS_IN_ONE_FOOT));
-        instructions.add(instruction);
-
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-        ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
-        shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
-        assertThat(shadowTextToSpeech.getLastSpokenText())
-                .isEqualTo("Head on 19th Street for 100 feet");
-    }
-
-    @Test
-    public void shouldMuteVoiceNavigation() throws Exception {
-        setVoiceNavigationEnabled(false);
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        instructions.add(getTestInstruction(0, 0));
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-        ShadowTextToSpeech shadowTextToSpeech = shadowOf_(fragment.speakerbox.getTextToSpeech());
-        shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
-        assertThat(shadowTextToSpeech.getLastSpokenText()).isNull();
-    }
-
-    @Test
-    public void voiceNavigation_shouldBeEnabledByDefault() throws Exception {
-        PreferenceManager.getDefaultSharedPreferences(act).edit().clear().commit();
+    public void turnAutoPageOff_shouldMuteVoiceNavigation() throws Exception {
         initTestFragment();
         FragmentTestUtil.startFragment(fragment);
-        assertThat(fragment.speakerbox.isMuted()).isFalse();
+        fragment.turnAutoPageOff();
+        assertThat(fragment.voiceNavigationController.isMuted()).isTrue();
+    }
+
+    @Test
+    public void resumeAutoPaging_shouldUnmuteVoiceNavigation() throws Exception {
+        initTestFragment();
+        FragmentTestUtil.startFragment(fragment);
+        fragment.turnAutoPageOff();
+        fragment.resumeAutoPaging();
+        assertThat(fragment.voiceNavigationController.isMuted()).isFalse();
     }
 
     @Test
@@ -1436,13 +1349,6 @@ public class RouteFragmentTest {
         assertThat(fragment.getAdvanceRadius()).isEqualTo(expected);
     }
 
-    private void setVoiceNavigationEnabled(boolean enabled) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
-        SharedPreferences.Editor prefEditor = prefs.edit();
-        prefEditor.putBoolean(act.getString(R.string.settings_voice_navigation_key), enabled);
-        prefEditor.commit();
-    }
-
     private void initTestFragment() throws Exception {
         // TODO make this call newInstance for consistency
         fragment = new RouteFragment();
@@ -1519,5 +1425,12 @@ public class RouteFragmentTest {
             }
         };
         return (View) fragment.pager.getAdapter().instantiateItem(group, position);
+    }
+
+    private void assertLastSpokenText(String expected) {
+        TextToSpeech tts = fragment.voiceNavigationController.getTextToSpeech();
+        ShadowTextToSpeech shadowTts = shadowOf(tts);
+        shadowTts.getOnInitListener().onInit(TextToSpeech.SUCCESS);
+        assertThat(shadowTts.getLastSpokenText()).isEqualTo(expected);
     }
 }
