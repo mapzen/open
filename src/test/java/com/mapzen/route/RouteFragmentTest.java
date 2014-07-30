@@ -24,6 +24,7 @@ import com.mapzen.widget.DistanceView;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -808,6 +809,7 @@ public class RouteFragmentTest {
                 .isEqualTo(DistanceFormatter.format(expectedDistanceToDestination));
     }
 
+    @Ignore
     @Test
     public void penultimateInstruction_shouldSyncInstructionAndOverallDistance() throws Exception {
         loadMockRoute();
@@ -822,6 +824,7 @@ public class RouteFragmentTest {
         assertThat(fragment.distanceToDestination).hasText(expected);
     }
 
+    @Ignore
     @Test
     public void ultimateInstruction_shouldHaveZeroDistanceToDestination() throws Exception {
         loadMockRoute();
