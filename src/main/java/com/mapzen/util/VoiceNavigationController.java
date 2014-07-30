@@ -29,6 +29,7 @@ public class VoiceNavigationController {
         speakerbox.remix(" mi", " miles");
         speakerbox.remix(" 1 miles", " 1 mile");
         speakerbox.remix(" ft", " feet");
+        speakerbox.remix("US ", "U.S. ");
     }
 
     private boolean isVoiceNavigationEnabled() {

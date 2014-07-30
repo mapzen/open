@@ -4,6 +4,7 @@ import com.mapzen.R;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.support.MapzenTestRunner;
 
+import org.json.JSONArray;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +17,6 @@ import android.speech.tts.TextToSpeech;
 
 import static com.mapzen.helpers.DistanceFormatter.METERS_IN_ONE_FOOT;
 import static com.mapzen.helpers.DistanceFormatter.METERS_IN_ONE_MILE;
-import static com.mapzen.support.TestHelper.getTestInstruction;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.shadowOf;
@@ -41,7 +41,7 @@ public class VoiceNavigationControllerTest {
 
     @Test
     public void shouldPlay() throws Exception {
-        controller.playInstruction(getTestInstruction(0, 0));
+        controller.playInstruction(getTestInstruction());
         assertThat(shadowTextToSpeech.getLastSpokenText()).isNotNull();
     }
 
@@ -51,13 +51,13 @@ public class VoiceNavigationControllerTest {
                 .putBoolean(application.getString(R.string.settings_voice_navigation_key), false)
                 .commit();
         controller = new VoiceNavigationController(new Activity());
-        controller.playInstruction(getTestInstruction(0, 0));
+        controller.playInstruction(getTestInstruction());
         assertThat(shadowTextToSpeech.getLastSpokenText()).isNull();
     }
 
     @Test
     public void shouldReplaceMiWithMiles() throws Exception {
-        Instruction instruction = getTestInstruction(0, 0);
+        Instruction instruction = getTestInstruction();
         instruction.setDistance((int) Math.round(2 * METERS_IN_ONE_MILE));
         controller.playInstruction(instruction);
         assertThat(shadowTextToSpeech.getLastSpokenText())
@@ -66,7 +66,7 @@ public class VoiceNavigationControllerTest {
 
     @Test
     public void shouldReplace1MilesWith1Mile() throws Exception {
-        Instruction instruction = getTestInstruction(0, 0);
+        Instruction instruction = getTestInstruction();
         instruction.setDistance((int) Math.round(METERS_IN_ONE_MILE));
         controller.playInstruction(instruction);
         assertThat(shadowTextToSpeech.getLastSpokenText())
@@ -75,10 +75,28 @@ public class VoiceNavigationControllerTest {
 
     @Test
     public void shouldReplaceFtWithFeet() throws Exception {
-        Instruction instruction = getTestInstruction(0, 0);
+        Instruction instruction = getTestInstruction();
         instruction.setDistance((int) Math.ceil(100 * METERS_IN_ONE_FOOT));
         controller.playInstruction(instruction);
         assertThat(shadowTextToSpeech.getLastSpokenText())
                 .isEqualTo("Head on 19th Street for 100 feet");
+    }
+
+    @Test
+    public void shouldReplaceUnitedStatesWithUS() throws Exception {
+        Instruction instruction = getTestInstructionWithName("US 101");
+        controller.playInstruction(instruction);
+        assertThat(shadowTextToSpeech.getLastSpokenText()).contains("U.S.");
+        assertThat(shadowTextToSpeech.getLastSpokenText()).doesNotContain("US");
+    }
+
+    public static Instruction getTestInstruction() throws Exception {
+        return getTestInstructionWithName("19th Street");
+    }
+
+    public static Instruction getTestInstructionWithName(String name) {
+        final JSONArray jsonArray = new JSONArray();
+        jsonArray.put(10).put(name).put(100).put(0).put(0).put("160m").put("SE").put(128);
+        return new Instruction(jsonArray);
     }
 }
