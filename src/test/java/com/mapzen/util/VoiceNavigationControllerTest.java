@@ -1,10 +1,8 @@
 package com.mapzen.util;
 
 import com.mapzen.R;
-import com.mapzen.osrm.Instruction;
 import com.mapzen.support.MapzenTestRunner;
 
-import org.json.JSONArray;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +15,7 @@ import android.speech.tts.TextToSpeech;
 
 import static com.mapzen.helpers.DistanceFormatter.METERS_IN_ONE_FOOT;
 import static com.mapzen.helpers.DistanceFormatter.METERS_IN_ONE_MILE;
+import static com.mapzen.support.TestHelper.getTestInstruction;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.shadowOf;
@@ -57,46 +56,44 @@ public class VoiceNavigationControllerTest {
 
     @Test
     public void shouldReplaceMiWithMiles() throws Exception {
-        Instruction instruction = getTestInstruction();
-        instruction.setDistance((int) Math.round(2 * METERS_IN_ONE_MILE));
-        controller.playInstruction(instruction);
+        int distanceInMeters = (int) Math.round(2 * METERS_IN_ONE_MILE);
+        controller.playInstruction(getTestInstruction(distanceInMeters));
         assertThat(shadowTextToSpeech.getLastSpokenText())
                 .isEqualTo("Head on 19th Street for 2 miles");
     }
 
     @Test
     public void shouldReplace1MilesWith1Mile() throws Exception {
-        Instruction instruction = getTestInstruction();
-        instruction.setDistance((int) Math.round(METERS_IN_ONE_MILE));
-        controller.playInstruction(instruction);
+        int distanceInMeters = (int) Math.round(METERS_IN_ONE_MILE);
+        controller.playInstruction(getTestInstruction(distanceInMeters));
         assertThat(shadowTextToSpeech.getLastSpokenText())
                 .isEqualTo("Head on 19th Street for 1 mile");
     }
 
     @Test
     public void shouldReplaceFtWithFeet() throws Exception {
-        Instruction instruction = getTestInstruction();
-        instruction.setDistance((int) Math.ceil(100 * METERS_IN_ONE_FOOT));
-        controller.playInstruction(instruction);
+        int distanceInMeters = (int) Math.ceil(100 * METERS_IN_ONE_FOOT);
+        controller.playInstruction(getTestInstruction(distanceInMeters));
         assertThat(shadowTextToSpeech.getLastSpokenText())
                 .isEqualTo("Head on 19th Street for 100 feet");
     }
 
     @Test
     public void shouldReplaceUnitedStatesWithUS() throws Exception {
-        Instruction instruction = getTestInstructionWithName("US 101");
-        controller.playInstruction(instruction);
+        controller.playInstruction(getTestInstruction("US 101"));
         assertThat(shadowTextToSpeech.getLastSpokenText()).contains("U.S.");
         assertThat(shadowTextToSpeech.getLastSpokenText()).doesNotContain("US");
     }
 
-    public static Instruction getTestInstruction() throws Exception {
-        return getTestInstructionWithName("19th Street");
-    }
+    @Test
+    public void shouldIgnorePunctuation() throws Exception {
+        controller.playInstruction(getTestInstruction(";"));
+        assertThat(shadowTextToSpeech.getLastSpokenText()).doesNotContain(";");
 
-    public static Instruction getTestInstructionWithName(String name) {
-        final JSONArray jsonArray = new JSONArray();
-        jsonArray.put(10).put(name).put(100).put(0).put(0).put("160m").put("SE").put(128);
-        return new Instruction(jsonArray);
+        controller.playInstruction(getTestInstruction(":"));
+        assertThat(shadowTextToSpeech.getLastSpokenText()).doesNotContain(":");
+
+        controller.playInstruction(getTestInstruction(","));
+        assertThat(shadowTextToSpeech.getLastSpokenText()).doesNotContain(",");
     }
 }
