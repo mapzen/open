@@ -145,6 +145,7 @@ public class InitActivity extends Activity {
         String authenticationUrl = app.getOsmOauthService().getAuthorizationUrl(url);
         Intent oauthIntent = new Intent(Intent.ACTION_VIEW);
         oauthIntent.setData(Uri.parse(authenticationUrl));
+        oauthIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(oauthIntent);
     }
 
