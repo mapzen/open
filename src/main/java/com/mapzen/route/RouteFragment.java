@@ -64,6 +64,7 @@ import static com.mapzen.MapController.getMapController;
 import static com.mapzen.MapController.locationToGeoPoint;
 import static com.mapzen.MapController.locationToPair;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
+import static com.mapzen.core.MapzenLocation.Util.getDistancePointFromBearing;
 import static com.mapzen.entity.SimpleFeature.NAME;
 import static com.mapzen.helpers.ZoomController.DrivingSpeed;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
@@ -267,6 +268,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.showProgressDialog();
         router.clearLocations()
                 .setLocation(locationToPair(location))
+                // To allow routing to see which direction you are travelling
+                .setLocation(locationToPair(getDistancePointFromBearing(location, 15,
+                        (int) Math.floor(location.getBearing()))))
                 .setLocation(geoPointToPair(simpleFeature.getGeoPoint()))
                 .setCallback(this)
                 .fetch();

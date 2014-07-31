@@ -11,6 +11,7 @@ import com.mapzen.util.Logger;
 
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
@@ -23,6 +24,38 @@ public final class MapzenLocation {
     public static final int DEFAULT_LOCATION_INTERVAL = 1000;
 
     private MapzenLocation() {
+    }
+
+    public static class Util {
+
+        public static final double EARTH_RADIUS = 6371.0;
+        public static final double KM = 1000.0;
+
+        public static Location getDistancePointFromBearing(Location originalLocation,
+                int distanceMeters, int bearing) {
+            double orgLat = originalLocation.getLatitude();
+            double orgLng = originalLocation.getLongitude();
+            double dist = distanceMeters / KM / EARTH_RADIUS;
+            double brng = Math.toRadians(bearing);
+            double lat1 = Math.toRadians(orgLat);
+            double lon1 = Math.toRadians(orgLng);
+
+            double lat2 = Math.asin(
+                    Math.sin(lat1) * Math.cos(dist)
+                            + Math.cos(lat1) * Math.sin(dist) * Math.cos(brng));
+            double a = Math.atan2(
+                    Math.sin(brng) * Math.sin(dist) * Math.cos(lat1),
+                    Math.cos(dist) - Math.sin(lat1) * Math.sin(lat2));
+            double lon2 = lon1 + a;
+
+            lon2 = (lon2 + 3 * Math.PI) % (2 * Math.PI) - Math.PI;
+
+            Location location = new Location(LocationManager.GPS_PROVIDER);
+            location.setLatitude(Math.toDegrees(lat2));
+            location.setLongitude(Math.toDegrees(lon2));
+
+            return location;
+        }
     }
 
     public static class Listener implements LocationListener {

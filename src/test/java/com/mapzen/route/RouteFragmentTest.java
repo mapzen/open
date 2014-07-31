@@ -24,7 +24,6 @@ import com.mapzen.widget.DistanceView;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -805,7 +804,6 @@ public class RouteFragmentTest {
                 .isEqualTo(DistanceFormatter.format(expectedDistanceToDestination));
     }
 
-    @Ignore
     @Test
     public void penultimateInstruction_shouldSyncInstructionAndOverallDistance() throws Exception {
         loadMockRoute();
@@ -813,23 +811,21 @@ public class RouteFragmentTest {
         ArrayList<Instruction> instructions = route.getRouteInstructions();
         fragment.pager.setCurrentItem(instructions.size() - 2);
         Instruction oneBeforeLast = instructions.get(instructions.size() - 2);
-        Location location = getTestLocation(oneBeforeLast.getLocation().getLatitude(),
-                oneBeforeLast.getLocation().getLongitude());
+        ArrayList<Location> geometry = route.getGeometry();
+        Location location = geometry.get(geometry.size() - 1);
         fragment.onLocationChanged(location);
         String expected = DistanceFormatter.format(oneBeforeLast.getRemainingDistance(location));
         assertThat(fragment.distanceToDestination).hasText(expected);
     }
 
-    @Ignore
     @Test
     public void ultimateInstruction_shouldHaveZeroDistanceToDestination() throws Exception {
         loadMockRoute();
         Route route = fragment.getRoute();
+        ArrayList<Location> geometry = route.getGeometry();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
         fragment.pager.setCurrentItem(instructions.size() - 1);
-        Instruction finalInstruction = instructions.get(instructions.size() - 1);
-        fragment.onLocationChanged(getTestLocation(finalInstruction.getLocation().getLatitude(),
-                finalInstruction.getLocation().getLongitude()));
+        fragment.onLocationChanged(geometry.get(geometry.size() - 1));
         assertThat(fragment.distanceToDestination).hasText("0 ft");
     }
 
