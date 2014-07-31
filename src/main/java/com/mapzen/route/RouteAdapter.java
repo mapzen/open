@@ -23,7 +23,7 @@ public class RouteAdapter extends PagerAdapter {
     private Context context;
     private Instruction currentInstruction;
     private RouteFragment fragment;
-    final static String TAG_BASE = "Instruction_";
+    public static final String TAG_BASE = "Instruction_";
 
     public RouteAdapter(Context context, List<Instruction> instructions, RouteFragment fragment) {
         this.context = context;
