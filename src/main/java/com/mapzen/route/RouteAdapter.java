@@ -23,6 +23,7 @@ public class RouteAdapter extends PagerAdapter {
     private Context context;
     private Instruction currentInstruction;
     private RouteFragment fragment;
+    final static String TAG_BASE = "Instruction_";
 
     public RouteAdapter(Context context, List<Instruction> instructions, RouteFragment fragment) {
         this.context = context;
@@ -121,7 +122,7 @@ public class RouteAdapter extends PagerAdapter {
     }
 
     private void setTag(int position, View view) {
-        view.setTag("Instruction_" + String.valueOf(position));
+        view.setTag(TAG_BASE + String.valueOf(position));
     }
 
     private SpannableStringBuilder getFullInstructionWithBoldName(String fullInstruction) {

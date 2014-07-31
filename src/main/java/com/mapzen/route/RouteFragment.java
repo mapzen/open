@@ -485,7 +485,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
 
     private View getViewForIndex(int index) {
-        return pager.findViewWithTag("Instruction_" + String.valueOf(index));
+        return pager.findViewWithTag(RouteAdapter.TAG_BASE + String.valueOf(index));
     }
 
     private void logForDebugging(Location location, Location correctedLocation) {
