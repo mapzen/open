@@ -758,23 +758,6 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onLocationChange_shouldUpdateDistanceAppendedToInstruction() throws Exception {
-        loadMockAroundTheBlock();
-        Route route = fragment.getRoute();
-        ArrayList<Instruction> instructions = route.getRouteInstructions();
-        fragment.getRoute().addSeenInstruction(instructions.get(0));
-        fragment.getFlippedInstructions().add(instructions.get(0));
-        Location midPoint = getTestLocation(40.660278, -73.988611);
-        fragment.onLocationChanged(midPoint);
-
-        View view = fragment.pager.findViewWithTag("Instruction_0");
-        String expectedInstructionDistance = DistanceFormatter.format(instructions.get(0)
-                .getRemainingDistance(midPoint));
-        TextView instructionText = (TextView) view.findViewById(R.id.full_instruction_after_action);
-        assertThat(instructionText).containsText(expectedInstructionDistance);
-    }
-
-    @Test
     public void onLocationChanged_shouldUpdateDistanceBelowTurnIcon() throws Exception {
         loadMockAroundTheBlock();
         Route route = fragment.getRoute();
@@ -1308,7 +1291,7 @@ public class RouteFragmentTest {
         prefs.edit().putBoolean(act.getString(R.string.settings_mock_gpx_key), true).commit();
         initTestFragment();
         FragmentTestUtil.startFragment(fragment);
-        Thread.sleep(100);
+        Thread.sleep(200);
         Robolectric.runUiThreadTasks();
         List<Intent> intents = getShadowApplication().getBroadcastIntents();
         Location location = intents.get(1).getExtras().getParcelable("location");

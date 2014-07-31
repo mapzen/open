@@ -44,10 +44,29 @@ public class RouteAdapterTest {
     }
 
     @Test
-    public void firstInstruction_shouldHaveTransparentWhiteBackground() throws Exception {
+    public void defaultInstruction_shouldHaveTransparentGrayBackground() throws Exception {
         View view = (View) routeAdapter.instantiateItem(viewGroup, 0);
         ColorDrawable background = (ColorDrawable) view.getBackground();
+        int expectedColor = application.getResources().getColor(R.color.transparent_gray);
+        assertThat(background.getColor()).isEqualTo(expectedColor);
+    }
+
+    @Test
+    public void activeInstruction_shouldHaveTransparentWhiteBackground() throws Exception {
+        View view = (View) routeAdapter.instantiateItem(viewGroup, 0);
+        routeAdapter.setBackgroundColorActive(view);
+        ColorDrawable background = (ColorDrawable) view.getBackground();
         int expectedColor = application.getResources().getColor(R.color.transparent_white);
+        assertThat(background.getColor()).isEqualTo(expectedColor);
+    }
+
+    @Test
+    public void inactiveInstruction_shouldHaveTransparentGrayBackground() throws Exception {
+        View view = (View) routeAdapter.instantiateItem(viewGroup, 0);
+        routeAdapter.setBackgroundColorActive(view);
+        routeAdapter.setBackgroundColorInactive(view);
+        ColorDrawable background = (ColorDrawable) view.getBackground();
+        int expectedColor = application.getResources().getColor(R.color.transparent_gray);
         assertThat(background.getColor()).isEqualTo(expectedColor);
     }
 
