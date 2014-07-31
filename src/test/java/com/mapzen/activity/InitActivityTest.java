@@ -60,6 +60,14 @@ public class InitActivityTest {
     }
 
     @Test
+    public void shouldNotStoreLoginPageInHistory() {
+        Token testToken = new Token("Bogus_key", "Bogus_verfier");
+        activity.openLoginPage(testToken);
+        assertThat(shadowOf(activity).getNextStartedActivity().getFlags()
+                & Intent.FLAG_ACTIVITY_NO_HISTORY).isEqualTo(Intent.FLAG_ACTIVITY_NO_HISTORY);
+    }
+
+    @Test
     public void shouldStartBaseActivityOnTokenReturn() {
         Uri.Builder oauthTokenBuilder = new Uri.Builder();
         oauthTokenBuilder.appendQueryParameter(activity.getOSMVerifierKey(), "Bogus verifier");
