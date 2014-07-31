@@ -77,12 +77,14 @@ public class RouteAdapter extends PagerAdapter {
         view.findViewById(R.id.left_arrow).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                fragment.turnAutoPageOff();
                 fragment.pageToPrevious(pos);
             }
         });
         view.findViewById(R.id.right_arrow).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                fragment.turnAutoPageOff();
                 fragment.pageToNext(pos);
             }
         });

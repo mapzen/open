@@ -465,7 +465,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             ImageView turnIconAfter = (ImageView) view.findViewById(R.id.turn_icon_after_action);
             turnIconAfter.setVisibility(View.VISIBLE);
             setCurrentPagerItemStyling(index);
-
         }
     }
 
@@ -481,8 +480,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void flipInstruction(int page) {
         flipInstruction(instructions.get(page));
     }
-
-
 
     private View getViewForIndex(int index) {
         return pager.findViewWithTag(RouteAdapter.TAG_BASE + String.valueOf(index));
@@ -590,7 +587,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         } else {
             setCurrentPagerItemStyling(i);
         }
-
         voiceNavigationController.playInstruction(instructions.get(i));
         notificationCreator.createNewNotification(simpleFeature.getMarker().title,
                 instructions.get(i).getFullInstruction());
