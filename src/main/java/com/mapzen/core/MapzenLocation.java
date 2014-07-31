@@ -27,11 +27,15 @@ public final class MapzenLocation {
     }
 
     public static class Util {
+
+        public static final double EARTH_RADIUS = 6371.0;
+        public static final double KM = 1000.0;
+
         public static Location getDistancePointFromBearing(Location originalLocation,
                 int distanceMeters, int bearing) {
             double orgLat = originalLocation.getLatitude();
             double orgLng = originalLocation.getLongitude();
-            double dist = distanceMeters / 1000.0 / 6371.0;
+            double dist = distanceMeters / KM / EARTH_RADIUS;
             double brng = Math.toRadians(bearing);
             double lat1 = Math.toRadians(orgLat);
             double lon1 = Math.toRadians(orgLng);
