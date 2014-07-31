@@ -268,6 +268,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.showProgressDialog();
         router.clearLocations()
                 .setLocation(locationToPair(location))
+                // To allow routing to see which direction you are travelling
                 .setLocation(locationToPair(getDistancePointFromBearing(location, 15,
                         (int) Math.floor(location.getBearing()))))
                 .setLocation(geoPointToPair(simpleFeature.getGeoPoint()))
