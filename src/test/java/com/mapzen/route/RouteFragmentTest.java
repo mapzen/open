@@ -80,6 +80,7 @@ import static com.mapzen.MapController.KEY_STORED_MAPPOSITION;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.entity.SimpleFeature.NAME;
+import static com.mapzen.support.TestHelper.MOCK_ACE_HOTEL;
 import static com.mapzen.support.TestHelper.MOCK_AROUND_THE_BLOCK;
 import static com.mapzen.support.TestHelper.MOCK_NY_TO_VT;
 import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
@@ -805,6 +806,28 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onLocationChanged_shouldNotAdvanceWhenDistanceEqualsTurnRadius() throws Exception {
+        loadAceHotelMockRoute();
+        fragment.getRoute().addSeenInstruction(fragment.getRoute().getRouteInstructions().get(0));
+        fragment.getRoute().addSeenInstruction(fragment.getRoute().getRouteInstructions().get(1));
+        fragment.pager.setCurrentItem(1);
+        fragment.onLocationChanged(getTestLocation(40.743016, -73.987105)); // 50 meters away
+        assertThat(fragment.pager).hasCurrentItem(1);
+    }
+
+    @Test
+    public void onLocationChanged_shouldNotFlipWhenDistanceEqualsTurnRadius() throws Exception {
+        loadAceHotelMockRoute();
+        fragment.getRoute().addSeenInstruction(fragment.getRoute().getRouteInstructions().get(0));
+        fragment.getRoute().addSeenInstruction(fragment.getRoute().getRouteInstructions().get(1));
+        fragment.getRoute().addSeenInstruction(fragment.getRoute().getRouteInstructions().get(2));
+        fragment.pager.setCurrentItem(2);
+        fragment.onLocationChanged(getTestLocation(40.743016, -73.987105)); // 50 meters away
+        assertThat(fragment.getFlippedInstructions())
+                .doesNotContain(fragment.getRoute().getRouteInstructions().get(2));
+    }
+
+    @Test
     public void penultimateInstruction_shouldSyncInstructionAndOverallDistance() throws Exception {
         loadMockRoute();
         Route route = fragment.getRoute();
@@ -1308,6 +1331,15 @@ public class RouteFragmentTest {
         fragment.createRouteTo(getTestLocation(100.0, 100.0));
         verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(MOCK_AROUND_THE_BLOCK));
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onResume();
+    }
+
+    private void loadAceHotelMockRoute() {
+        setAdvanceRadiusPreference(R.string.settings_turn_driving_0to15_key, 50);
+        fragment.createRouteTo(getTestLocation(100.0, 100.0));
+        verify(router).setCallback(callback.capture());
+        callback.getValue().success(new Route(MOCK_ACE_HOTEL));
         FragmentTestUtil.startFragment(fragment);
         fragment.onResume();
     }

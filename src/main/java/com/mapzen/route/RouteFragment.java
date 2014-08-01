@@ -388,7 +388,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 (int) Math.floor(correctedLocation.distanceTo(activeInstruction.getLocation()));
 
         final int instructionIndex = instructions.indexOf(activeInstruction);
-        if (closestDistance <= getAdvanceRadius()) {
+        if (closestDistance < getAdvanceRadius()) {
             Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: "
                     + activeInstruction.toString());
             pager.setCurrentItem(instructionIndex);
@@ -412,7 +412,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             l.setLatitude(instruction.getLocation().getLatitude());
             l.setLongitude(instruction.getLocation().getLongitude());
             final int distance = (int) Math.floor(l.distanceTo(correctedLocation));
-            if (distance >= getAdvanceRadius()) {
+            if (distance > getAdvanceRadius()) {
                 Logger.logToDatabase(act, ROUTE_TAG, "post language: " +
                         instruction.toString());
                 flipInstructionToAfter(instruction, correctedLocation);
