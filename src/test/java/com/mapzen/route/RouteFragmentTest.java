@@ -762,7 +762,8 @@ public class RouteFragmentTest {
         loadMockAroundTheBlock();
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
-        fragment.onLocationChanged(instructions.get(0).getLocation());
+        fragment.getRoute().addSeenInstruction(instructions.get(0));
+        fragment.getFlippedInstructions().add(instructions.get(0));
         Location midPoint = getTestLocation(40.660278, -73.988611);
         fragment.onLocationChanged(midPoint);
 
@@ -778,7 +779,8 @@ public class RouteFragmentTest {
         loadMockAroundTheBlock();
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
-        fragment.onLocationChanged(instructions.get(0).getLocation());
+        fragment.getRoute().addSeenInstruction(instructions.get(0));
+        fragment.getFlippedInstructions().add(instructions.get(0));
         Location midPoint = getTestLocation(40.660278, -73.988611);
         fragment.onLocationChanged(midPoint);
 
@@ -794,7 +796,8 @@ public class RouteFragmentTest {
         loadMockAroundTheBlock();
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
-        fragment.onLocationChanged(instructions.get(0).getLocation());
+        fragment.getRoute().addSeenInstruction(instructions.get(0));
+        fragment.getFlippedInstructions().add(instructions.get(0));
         Location midPoint = getTestLocation(40.660278, -73.988611);
         fragment.onLocationChanged(midPoint);
 
