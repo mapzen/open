@@ -40,13 +40,17 @@ import javax.xml.xpath.XPathFactory;
 
 import static com.mapzen.support.TestHelper.getTestInstruction;
 import static com.mapzen.support.TestHelper.getTestLocation;
+import static com.mapzen.util.DatabaseHelper.COLUMN_GROUP_ID;
 import static com.mapzen.util.DatabaseHelper.COLUMN_MSG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
 import static com.mapzen.util.DatabaseHelper.COLUMN_READY_FOR_UPLOAD;
+import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
 import static com.mapzen.util.DatabaseHelper.COLUMN_TABLE_ID;
 import static com.mapzen.util.DatabaseHelper.COLUMN_UPLOADED;
+import static com.mapzen.util.DatabaseHelper.TABLE_GROUPS;
 import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
+import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GROUP;
 import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -93,21 +97,21 @@ public class DataUploadServiceTest {
 
     @Test
     public void onStartCommand_shouldAttemptToGenerateGPXforReadyRoute() throws Exception {
-        String expectedRouteId = "route-1";
-        makeRouteReady(expectedRouteId);
+        String expectedGroupId = "route-1";
+        makeGroupReady(expectedGroupId);
         DataUploadService spy = spy(service);
         spy.onStartCommand(null, 0, 0);
-        verify(spy).generateGpxXmlFor(expectedRouteId, "does not matter");
+        verify(spy).generateGpxXmlFor(expectedGroupId, "does not matter");
     }
 
     @Test
     public void onStartCommand_shouldNotMarkUploaded() throws Exception {
-        String expectedRouteId = "route-1";
-        makeRouteReady(expectedRouteId);
+        String expectedGroupId = "route-1";
+        makeGroupReady(expectedGroupId);
         service.onStartCommand(null, 0, 0);
-        Cursor cursor = app.getDb().query(TABLE_ROUTES, new String[] { COLUMN_UPLOADED },
+        Cursor cursor = app.getDb().query(TABLE_GROUPS, new String[] { COLUMN_UPLOADED },
                 COLUMN_TABLE_ID + " = ? AND " + COLUMN_UPLOADED + " = 1",
-                new String[] { expectedRouteId }, null, null, null);
+                new String[] { expectedGroupId }, null, null, null);
         assertThat(cursor).hasCount(0);
     }
 
@@ -116,63 +120,65 @@ public class DataUploadServiceTest {
         Token token = new Token("stuff", "fun");
         OAuthService mockService = mock(OAuthService.class);
         ((MapzenApplication) Robolectric.application).setOsmOauthService(mockService);
-        String expectedRouteId = "route-1";
-        makeRouteReady(expectedRouteId);
+        String expectedGroupId = "route-1";
+        makeGroupReady(expectedGroupId);
         app.setAccessToken(token);
         service.onStartCommand(null, 0, 0);
-        Cursor cursor = app.getDb().query(TABLE_ROUTES, new String[] { COLUMN_UPLOADED },
+        Cursor cursor = app.getDb().query(TABLE_GROUPS, new String[] { COLUMN_UPLOADED },
                 COLUMN_TABLE_ID + " = ? AND " + COLUMN_UPLOADED + " = 1",
-                new String[] { expectedRouteId }, null, null, null);
+                new String[] { expectedGroupId }, null, null, null);
         assertThat(cursor).hasCount(1);
     }
 
     @Test
     public void onStartCommand_shouldCreateButNotUploadXML() throws Exception {
-        String expectedRouteId = "route-1";
-        makeRouteReady(expectedRouteId);
+        String expectedGroupId = "route-1";
+        makeGroupReady(expectedGroupId);
         DataUploadService spy = spy(service);
         spy.onStartCommand(null, 0, 0);
-        verify(spy).generateGpxXmlFor(expectedRouteId, "does not matter");
+        verify(spy).generateGpxXmlFor(expectedGroupId, "does not matter");
     }
 
     @Test
-    public void shouldGenerateGPX_shouldSubmit() {
+    public void shouldGenerateGPX_shouldSubmit() throws Exception {
         Token token = new Token("stuff", "fun");
         app.setAccessToken(token);
 
-        String expectedRouteId = "test_route";
+        String expectedGroupId = "test_route";
         String expectedRouteDescription = "does not matter";
-        fillLocationsTable(expectedRouteId, 10);
+        fillLocationsTable(expectedGroupId, 10);
         DataUploadService spy = spy(service);
         spy.onStartCommand(null, 0, 0);
-        verify(spy).generateGpxXmlFor(expectedRouteId, expectedRouteDescription);
-        verify(spy).getDocument(expectedRouteId);
+        verify(spy).generateGpxXmlFor(expectedGroupId, expectedRouteDescription);
+        verify(spy).getDocument(expectedGroupId);
         verify(spy).submitCompressedFile(any(ByteArrayOutputStream.class),
-                eq(expectedRouteId),
+                eq(expectedGroupId),
                 eq(expectedRouteDescription));
     }
 
     @Test
-    public void shouldGenerateGPX_shouldNotSubmit() {
+    public void shouldGenerateGPX_shouldNotSubmit() throws Exception {
         Token token = new Token("stuff", "fun");
         app.setAccessToken(token);
 
-        String expectedRouteId = "test_route";
+        String expectedGroupId = "test_route";
         String expectedRouteDescription = "does not matter";
-        fillLocationsTable(expectedRouteId, 4);
+        fillLocationsTable(expectedGroupId, 4);
         DataUploadService spy = spy(service);
         spy.onStartCommand(null, 0, 0);
-        verify(spy).generateGpxXmlFor(expectedRouteId, expectedRouteDescription);
-        verify(spy).getDocument(expectedRouteId);
+        verify(spy).generateGpxXmlFor(expectedGroupId, expectedRouteDescription);
+        verify(spy).getDocument(expectedGroupId);
         verify(spy, never()).submitCompressedFile(any(ByteArrayOutputStream.class),
-                eq(expectedRouteId),
+                eq(expectedGroupId),
                 eq(expectedRouteDescription));
     }
 
     @Test
     public void shouldHaveSpeedElement() throws Exception {
         String expectedSpeed = "40.0";
-        String fakeRouteId = makeFakeRouteInDb();
+        String groupId = "test-group-id";
+        String routeId = "test-route-id";
+        fillLocationsTable(groupId, routeId, 10);
         Location loc = getTestLocation(100, 200);
         loc.setBearing(4.0f);
         loc.setSpeed(Float.valueOf(expectedSpeed));
@@ -180,10 +186,10 @@ public class DataUploadServiceTest {
         loc.setAltitude(12f);
         loc.setTime(System.currentTimeMillis());
         ContentValues insertValues = valuesForLocationCorrection(loc, loc, getTestInstruction(0, 0),
-                fakeRouteId);
+            routeId);
         app.getDb().insert(TABLE_LOCATIONS, null, insertValues);
 
-        String actual = getTextForXpath(fakeRouteId,
+        String actual = getTextForXpath(groupId,
                 "//trk/trkseg/speed[position()=last()]/text()");
 
         assertThat(actual).isEqualTo(expectedSpeed);
@@ -205,26 +211,44 @@ public class DataUploadServiceTest {
         assertThat(service.hasWritePermission(fakePermission)).isTrue();
     }
 
-    private void makeRouteReady(String routeId) {
+    private void makeGroupReady(String groupId) throws Exception {
         ContentValues insertValues = new ContentValues();
-        insertValues.put(COLUMN_TABLE_ID, routeId);
-        insertValues.put(COLUMN_RAW, "does not matter");
+        insertValues.put(COLUMN_TABLE_ID, groupId);
         insertValues.put(COLUMN_MSG, "does not matter");
         insertValues.put(COLUMN_READY_FOR_UPLOAD, 1);
-        app.getDb().insert(TABLE_ROUTES, null, insertValues);
+        long result = app.getDb().insert(TABLE_GROUPS, null, insertValues);
+        if (result < 0) {
+            throw new Exception("database insert failed");
+        }
     }
 
-    private void fillLocationsTable(String routeId, double numPoints) {
-        makeRouteReady(routeId);
+    private void fillLocationsTable(String groupId, double numPoints) throws Exception {
+        fillLocationsTable(groupId, "test-route-id", numPoints);
+    }
+
+    private void fillLocationsTable(String groupId, String routeId, double numPoints)
+            throws Exception {
+        makeGroupReady(groupId);
+
+        ContentValues routeValues = new ContentValues();
+        routeValues.put(COLUMN_TABLE_ID, routeId);
+        routeValues.put(COLUMN_RAW, "does not matter");
+        long routeResults = app.getDb().insert(TABLE_ROUTES, null, routeValues);
+
+        ContentValues routeGroupValues = new ContentValues();
+        routeGroupValues.put(COLUMN_ROUTE_ID, routeId);
+        routeGroupValues.put(COLUMN_GROUP_ID, groupId);
+        long routeGroupResults = app.getDb().insert(TABLE_ROUTE_GROUP, null, routeGroupValues);
+
+        if (routeResults < 0 || routeGroupResults < 0) {
+            throw new Exception("database insertion failed");
+        }
+
         ContentValues cv;
         for (int i = 0; i < numPoints; i++) {
-            try {
-                cv = valuesForLocationCorrection(getTestLocation(i, i),
-                        getTestLocation(i, i), getTestInstruction(i, i), routeId);
-                app.getDb().insert(TABLE_LOCATIONS, null, cv);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            cv = valuesForLocationCorrection(getTestLocation(i, i),
+                    getTestLocation(i, i), getTestInstruction(i, i), routeId);
+            app.getDb().insert(TABLE_LOCATIONS, null, cv);
         }
     }
 
@@ -253,28 +277,6 @@ public class DataUploadServiceTest {
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.transform(source, result);
         return result.getWriter().toString();
-    }
-
-    private String makeFakeRouteInDb() throws Exception {
-        String fakeRouteId = "fake-route-id" + String.valueOf(Math.random());
-        ContentValues insertValues = new ContentValues();
-        insertValues.put(COLUMN_TABLE_ID, fakeRouteId);
-        insertValues.put(COLUMN_RAW, "does not matter");
-        insertValues.put(COLUMN_MSG, "does not matter");
-        insertValues.put(COLUMN_READY_FOR_UPLOAD, 1);
-        app.getDb().insert(TABLE_ROUTES, null, insertValues);
-        for (int i = 0; i < 12; i++) {
-            Location loc = getTestLocation(i * 10, i * 25);
-            loc.setBearing(4.0f);
-            loc.setSpeed(4.0f);
-            loc.setAccuracy(12f);
-            loc.setAltitude(12f);
-            loc.setTime(System.currentTimeMillis());
-            insertValues = valuesForLocationCorrection(loc, loc, getTestInstruction(0, 0),
-                    fakeRouteId);
-            app.getDb().insert(TABLE_LOCATIONS, null, insertValues);
-        }
-        return fakeRouteId;
     }
 
     private String getTextForXpath(String fakeRouteId, String xpath)

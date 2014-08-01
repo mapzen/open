@@ -30,6 +30,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.zip.GZIPOutputStream;
 
@@ -44,6 +45,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import static com.mapzen.util.DatabaseHelper.COLUMN_ALT;
+import static com.mapzen.util.DatabaseHelper.COLUMN_GROUP_ID;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_MSG;
@@ -53,8 +55,9 @@ import static com.mapzen.util.DatabaseHelper.COLUMN_SPEED;
 import static com.mapzen.util.DatabaseHelper.COLUMN_TABLE_ID;
 import static com.mapzen.util.DatabaseHelper.COLUMN_TIME;
 import static com.mapzen.util.DatabaseHelper.COLUMN_UPLOADED;
+import static com.mapzen.util.DatabaseHelper.TABLE_GROUPS;
 import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
-import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
+import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GROUP;
 import static javax.xml.transform.OutputKeys.ENCODING;
 import static javax.xml.transform.OutputKeys.INDENT;
 import static javax.xml.transform.OutputKeys.METHOD;
@@ -89,14 +92,14 @@ public class DataUploadService extends Service {
                 Cursor cursor = null;
                 try {
                     cursor = app.getDb().query(
-                            TABLE_ROUTES,
+                            TABLE_GROUPS,
                             new String[] { COLUMN_TABLE_ID, COLUMN_MSG },
                             COLUMN_UPLOADED + " is null AND " + COLUMN_READY_FOR_UPLOAD + " == ?",
                             new String[] { "1" }, null, null, null);
                     while (cursor.moveToNext()) {
-                        int routeIdIndex = cursor.getColumnIndex(COLUMN_TABLE_ID);
+                        int groupIdIndex = cursor.getColumnIndex(COLUMN_TABLE_ID);
                         int routeDescription = cursor.getColumnIndex(COLUMN_MSG);
-                        generateGpxXmlFor(cursor.getString(routeIdIndex),
+                        generateGpxXmlFor(cursor.getString(groupIdIndex),
                                 cursor.getString(routeDescription));
                     }
                 } catch (SQLiteDatabaseLockedException exception) {
@@ -121,18 +124,18 @@ public class DataUploadService extends Service {
         Logger.d("DataUploadService: constructor");
     }
 
-    public void generateGpxXmlFor(String routeId, String description) {
+    public void generateGpxXmlFor(String groupId, String description) {
         if (app.getAccessToken() == null) {
             Logger.d("DataUploadService: user not logged into OSM");
             return;
         }
-        Logger.d("DataUpload: generating for " + routeId);
+        Logger.d("DataUpload: generating for " + groupId);
         ByteArrayOutputStream output = null;
         try {
-            DOMSource domSource = getDocument(routeId);
+            DOMSource domSource = getDocument(groupId);
             if (domSource == null) {
                 Logger.d("There are not enough tracking points");
-                setRouteAsUploaded(routeId);
+                setGroupAsUploaded(groupId);
                 return;
             }
             TransformerFactory factory = TransformerFactory.newInstance();
@@ -145,7 +148,7 @@ public class DataUploadService extends Service {
             Logger.e("Transforming failed: " + e.getMessage());
         }
         Logger.d("DataUpload gonna write " + description);
-        submitCompressedFile(output, routeId, description);
+        submitCompressedFile(output, groupId, description);
     }
 
     public void submitCompressedFile(ByteArrayOutputStream output,
@@ -161,14 +164,22 @@ public class DataUploadService extends Service {
         }
     }
 
-    public DOMSource getDocument(String routeId) {
+    public DOMSource getDocument(String groupId) {
         DOMSource domSource = null;
         try {
             DateTimeFormatter isoDateParser = ISODateTimeFormat.dateTimeNoMillis();
-            Cursor cursor = app.getDb().query(TABLE_LOCATIONS,
-                    new String[] { COLUMN_LAT, COLUMN_LNG, COLUMN_ALT, COLUMN_TIME, COLUMN_SPEED },
-                    COLUMN_ROUTE_ID + " = ?",
-                    new String[] { routeId }, null, null, null);
+            String selectStatement = String.format(Locale.getDefault(),
+                    "SELECT %s, %s, %s, %s, %s ", COLUMN_LAT, COLUMN_LNG, COLUMN_ALT, COLUMN_TIME,
+                    COLUMN_SPEED);
+            Cursor cursor = app.getDb().rawQuery(selectStatement
+                    + "from " + TABLE_ROUTE_GROUP
+                    + " inner join " + TABLE_LOCATIONS + " on "
+                    + TABLE_ROUTE_GROUP + "." + COLUMN_ROUTE_ID
+                    + " = "
+                    + TABLE_LOCATIONS + "." + COLUMN_ROUTE_ID
+                    + " WHERE " + COLUMN_GROUP_ID + " = ? "
+                    + "ORDER BY " + TABLE_LOCATIONS + "." + COLUMN_TIME
+                    + " ASC", new String[] { groupId });
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
                     .newInstance();
             DocumentBuilder documentBuilder = documentBuilderFactory
@@ -275,7 +286,7 @@ public class DataUploadService extends Service {
 
         Logger.d("DataUpload Response:" + response.getBody());
         if (response.isSuccessful()) {
-            setRouteAsUploaded(routeId);
+            setGroupAsUploaded(routeId);
             Logger.d("DataUpload: done uploading: " + routeId);
         }
     }
@@ -314,11 +325,11 @@ public class DataUploadService extends Service {
         return null;
     }
 
-    private void setRouteAsUploaded(String routeId) {
+    private void setGroupAsUploaded(String groupId) {
         ContentValues cv = new ContentValues();
         cv.put(DatabaseHelper.COLUMN_UPLOADED, 1);
-        app.getDb().update(TABLE_ROUTES, cv, COLUMN_TABLE_ID + " = ?",
-                new String[]{routeId});
+        app.getDb().update(TABLE_GROUPS, cv, COLUMN_TABLE_ID + " = ?",
+                new String[] { groupId });
     }
 
     private byte[] compressGPX(String gpxString) throws IOException {
