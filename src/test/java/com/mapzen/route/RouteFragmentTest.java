@@ -90,8 +90,13 @@ import static com.mapzen.support.TestHelper.getTestLocation;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static com.mapzen.support.TestHelper.initMapFragment;
+import static com.mapzen.util.DatabaseHelper.COLUMN_READY_FOR_UPLOAD;
 import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
+import static com.mapzen.util.DatabaseHelper.COLUMN_TABLE_ID;
+import static com.mapzen.util.DatabaseHelper.TABLE_GROUPS;
+import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
+import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GROUP;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.atLeastOnce;
@@ -467,6 +472,33 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onCreate_shouldCreateGroupInDatabase() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        Cursor cursor = db.query(TABLE_GROUPS,
+                new String[] { COLUMN_TABLE_ID }, null, null, null, null, null);
+        assertThat(cursor).hasCount(1);
+    }
+
+    @Test
+    public void onCreate_shouldCreateGroupThatIsNotReadyForUploadInDatabase() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        Cursor cursor = db.query(TABLE_GROUPS,
+                new String[] { COLUMN_TABLE_ID },
+                COLUMN_READY_FOR_UPLOAD + " is null", null, null, null, null);
+        assertThat(cursor).hasCount(1);
+    }
+
+    @Test
+    public void onDetach_shouldMarkGroupAsReadyForUpload() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onDetach();
+        Cursor cursor = db.query(TABLE_GROUPS,
+                new String[] { COLUMN_TABLE_ID },
+                COLUMN_READY_FOR_UPLOAD + " is not null", null, null, null, null);
+        assertThat(cursor).hasCount(1);
+    }
+
+    @Test
     public void shouldRegisterReceiver() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         assertThat(app.hasReceiverForIntent(new Intent(COM_MAPZEN_UPDATES_LOCATION))).isTrue();
@@ -673,7 +705,7 @@ public class RouteFragmentTest {
     public void onPause_shouldEndDbTransaction() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         fragment.onPause();
-        assertThat(act.getDb().inTransaction()).isFalse();
+        assertThat(db.inTransaction()).isFalse();
     }
 
     @Test
@@ -1158,8 +1190,28 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void storeRouteInDatabase_shouldCreateRoute() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        fragment.storeRouteInDatabase(new JSONObject());
+        Cursor cursor = db.query(TABLE_ROUTES, new String[] { COLUMN_TABLE_ID },
+                COLUMN_TABLE_ID + " = ?",
+                new String[] { fragment.getRouteId() } , null, null, null);
+        assertThat(cursor).hasCount(1);
+    }
+
+    @Test
+    public void storeRouteInDatabase_shouldCreateRouteGroupEntry() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        fragment.storeRouteInDatabase(new JSONObject());
+        Cursor cursor = db.query(TABLE_ROUTE_GROUP, null,
+                COLUMN_ROUTE_ID + " = ?",
+                new String[] { fragment.getRouteId() } , null, null, null);
+        assertThat(cursor).hasCount(1);
+    }
+
+    @Test
     public void storeRouteInDatabase_shouldSendExceptionToBugSense() throws Exception {
-        act.getDb().close();
+        db.close();
         fragment.storeRouteInDatabase(new JSONObject());
         assertThat(ShadowBugSenseHandler.getLastHandledException())
                 .isInstanceOf(IllegalStateException.class);
@@ -1171,7 +1223,7 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         fragment.createRouteTo(getTestLocation(100.0, 100.0));
         verify(router).setCallback(callback.capture());
-        act.getDb().close();
+        db.close();
         callback.getValue().success(new Route(MOCK_ROUTE_JSON));
         assertThat(ShadowBugSenseHandler.getLastHandledException())
                 .isInstanceOf(IllegalStateException.class);
