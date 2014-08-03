@@ -70,6 +70,7 @@ import static com.mapzen.entity.SimpleFeature.NAME;
 import static com.mapzen.helpers.ZoomController.DrivingSpeed;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
+import static com.mapzen.util.DatabaseHelper.COLUMN_MSG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_POSITION;
 import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
 import static com.mapzen.util.DatabaseHelper.COLUMN_GROUP_ID;
@@ -228,6 +229,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         groupId = UUID.randomUUID().toString();
         ContentValues groupValue = new ContentValues();
         groupValue.put(COLUMN_TABLE_ID, groupId);
+        groupValue.put(COLUMN_MSG, getGPXDescription());
         insertIntoDb(TABLE_GROUPS, null, groupValue);
     }
 
