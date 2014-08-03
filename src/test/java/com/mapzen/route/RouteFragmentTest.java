@@ -89,6 +89,7 @@ import static com.mapzen.support.TestHelper.getTestLocation;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static com.mapzen.support.TestHelper.initMapFragment;
+import static com.mapzen.util.DatabaseHelper.COLUMN_MSG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_READY_FOR_UPLOAD;
 import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
 import static com.mapzen.util.DatabaseHelper.COLUMN_TABLE_ID;
@@ -475,6 +476,17 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         Cursor cursor = db.query(TABLE_GROUPS,
                 new String[] { COLUMN_TABLE_ID }, null, null, null, null, null);
+        assertThat(cursor).hasCount(1);
+    }
+
+    @Test
+    public void onCreate_shouldCreateGroupInDatabaseWithDescription() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        String expected = fragment.getGPXDescription();
+        Cursor cursor = db.query(TABLE_GROUPS,
+                new String[] { COLUMN_TABLE_ID },
+                COLUMN_MSG + " = ?",
+                new String[] { expected }, null, null, null);
         assertThat(cursor).hasCount(1);
     }
 
@@ -1179,7 +1191,7 @@ public class RouteFragmentTest {
         fragment.storeRouteInDatabase(new JSONObject());
         Cursor cursor = db.query(TABLE_ROUTE_GROUP, null,
                 COLUMN_ROUTE_ID + " = ?",
-                new String[] { fragment.getRouteId() } , null, null, null);
+                new String[] { fragment.getRouteId() }, null, null, null);
         assertThat(cursor).hasCount(1);
     }
 
