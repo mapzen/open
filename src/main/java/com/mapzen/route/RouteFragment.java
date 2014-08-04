@@ -419,9 +419,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             }
         }
 
+        final Instruction currentInstruction = instructions.get(pager.getCurrentItem());
         if (pager.getCurrentItem() == pager.getAdapter().getCount() - 1) {
             distanceToDestination.setText("0 ft");
-        } else if (pager.getCurrentItem() == pager.getAdapter().getCount() - 2) {
+        } else if (pager.getCurrentItem() == pager.getAdapter().getCount() - 2 &&
+                flippedInstructions.contains(currentInstruction)) {
             distanceToDestination.setDistance(instructions.get(pager.getCurrentItem())
                     .getRemainingDistance(correctedLocation));
         } else {
@@ -497,12 +499,17 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
      * Updates overall distance to destination when continuing on the current instruction.
      */
     private void updateDistanceToDestination(int currentPosition, Location location) {
-        int distance = route.getTotalDistance();
-        for (Instruction instruction : route.getSeenInstructions()) {
-            distance -= instruction.getDistance();
+        int distance = 0;
+        for (Instruction instruction : instructions) {
+            if (!flippedInstructions.contains(instruction)) {
+                distance += instruction.getDistance();
+            }
         }
 
-        distance += instructions.get(currentPosition).getRemainingDistance(location);
+        if (flippedInstructions.contains(instructions.get(currentPosition))) {
+            distance += instructions.get(currentPosition).getRemainingDistance(location);
+        }
+
         distanceToDestination.setDistance(distance);
     }
 

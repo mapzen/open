@@ -831,12 +831,31 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void distanceToDestination_shouldEqualRouteDistanceAtStart() throws Exception {
+        loadAceHotelMockRoute();
+        fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(0).getLocation());
+        int expected = fragment.getRoute().getTotalDistance();
+        assertThat(fragment.distanceToDestination).hasText(DistanceFormatter.format(expected));
+    }
+
+    @Test
+    public void distanceToDestination_shouldSubtractFirstInstructionAtFirstTurn() throws Exception {
+        loadAceHotelMockRoute();
+        fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(0).getLocation());
+        fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(1).getLocation());
+        int expected = fragment.getRoute().getTotalDistance()
+                - fragment.getRoute().getRouteInstructions().get(0).getDistance();
+        assertThat(fragment.distanceToDestination).hasText(DistanceFormatter.format(expected));
+    }
+
+    @Test
     public void penultimateInstruction_shouldSyncInstructionAndOverallDistance() throws Exception {
         loadMockRoute();
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
         fragment.pager.setCurrentItem(instructions.size() - 2);
         Instruction oneBeforeLast = instructions.get(instructions.size() - 2);
+        fragment.getFlippedInstructions().add(oneBeforeLast);
         ArrayList<Location> geometry = route.getGeometry();
         Location location = geometry.get(geometry.size() - 1);
         fragment.onLocationChanged(location);
