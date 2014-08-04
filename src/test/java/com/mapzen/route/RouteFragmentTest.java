@@ -1291,7 +1291,7 @@ public class RouteFragmentTest {
         prefs.edit().putBoolean(act.getString(R.string.settings_mock_gpx_key), true).commit();
         initTestFragment();
         FragmentTestUtil.startFragment(fragment);
-        Thread.sleep(200);
+        Thread.sleep(300);
         Robolectric.runUiThreadTasks();
         List<Intent> intents = getShadowApplication().getBroadcastIntents();
         Location location = intents.get(1).getExtras().getParcelable("location");

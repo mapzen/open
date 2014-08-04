@@ -390,7 +390,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         final int instructionIndex = instructions.indexOf(activeInstruction);
         if (closestDistance < getAdvanceRadius()) {
             pagerPositionWhenPaused = instructionIndex;
-            if (closestDistance <= getAdvanceRadius()) {
                 Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: "
                         + activeInstruction.toString());
                 pager.setCurrentItem(instructionIndex);
@@ -437,7 +436,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             debugView.setAverageSpeed(getAverageSpeed());
             logForDebugging(location, correctedLocation);
         }
-    }
 
     private void flipInstructionToAfter(Instruction instruction, Location location) {
         if (flippedInstructions.contains(instruction)) {
