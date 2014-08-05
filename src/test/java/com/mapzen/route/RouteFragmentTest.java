@@ -105,22 +105,20 @@ import static org.robolectric.Robolectric.shadowOf;
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class RouteFragmentTest {
-    @Inject
-    LocationClient locationClient;
-    TestBaseActivity act;
-    RouteFragment fragment;
-    ShadowApplication app;
-    TestMenu menu;
-    ArrayList<Instruction> testInstructions;
-    Router router = spy(Router.getRouter());
-    SQLiteDatabase db;
+    @Inject LocationClient locationClient;
+    @Inject Router router;
+    @Inject PathLayer path;
+
+    private TestBaseActivity act;
+    private RouteFragment fragment;
+    private ShadowApplication app;
+    private TestMenu menu;
+    private ArrayList<Instruction> testInstructions;
+    private SQLiteDatabase db;
 
     @Captor
     @SuppressWarnings("unused")
     ArgumentCaptor<Router.Callback> callback;
-
-    @Inject
-    PathLayer path;
 
     @Before
     public void setUp() throws Exception {
@@ -130,7 +128,6 @@ public class RouteFragmentTest {
         editor.clear();
         editor.commit();
         MockitoAnnotations.initMocks(this);
-        RouteFragment.setRouter(router);
         menu = new TestMenu();
         act = initBaseActivityWithMenu(menu);
         initTestFragment();

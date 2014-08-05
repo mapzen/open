@@ -90,11 +90,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Inject PathLayer path;
     @Inject ZoomController zoomController;
     @Inject LocationClient locationClient;
+    @Inject Router router;
 
     @InjectView(R.id.routes) ViewPager pager;
     @InjectView(R.id.resume_button) ImageButton resume;
     @InjectView(R.id.footer_wrapper) RelativeLayout footerWrapper;
     @InjectView(R.id.destination_distance) DistanceView distanceToDestination;
+
     private ArrayList<Instruction> instructions;
     private RouteAdapter adapter;
     private Route route;
@@ -112,7 +114,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private boolean isRouting = false;
     private boolean autoPaging = true;
 
-    private static Router router = Router.getRouter();
     private SharedPreferences prefs;
     private Resources res;
     private DebugView debugView;
@@ -120,10 +121,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private MapOnTouchListener mapOnTouchListener;
     private DirectionListFragment directionListFragment = null;
     private RouteFragment fragment;
-
-    public static void setRouter(Router router) {
-        RouteFragment.router = router;
-    }
 
     public static RouteFragment newInstance(BaseActivity act, SimpleFeature simpleFeature) {
         final RouteFragment fragment = new RouteFragment();
