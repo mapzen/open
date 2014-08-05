@@ -11,6 +11,7 @@ import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
 import com.mapzen.util.DatabaseHelper;
+import com.mapzen.util.DisplayHelper;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenNotificationCreator;
 import com.mapzen.util.RouteLocationIndicator;
@@ -175,7 +176,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         } else {
             locationClient.setMockMode(false);
         }
-
         return rootView;
     }
 
@@ -204,9 +204,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @OnClick(R.id.resume_button)
     @SuppressWarnings("unused")
     public void onClickResume() {
-        resumeAutoPaging();
         Instruction instruction = instructions.get(pager.getCurrentItem());
         updateRemainingDistance(instruction, instruction.getLocation());
+        resumeAutoPaging();
     }
 
     @Override
@@ -386,10 +386,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
         final int instructionIndex = instructions.indexOf(activeInstruction);
         if (closestDistance < getAdvanceRadius()) {
+            pagerPositionWhenPaused = instructionIndex;
             Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: "
                     + activeInstruction.toString());
             pager.setCurrentItem(instructionIndex);
-            ((RouteAdapter) pager.getAdapter()).setPausedPosition(pager.getCurrentItem());
             if (!route.getSeenInstructions().contains(activeInstruction)) {
                 route.addSeenInstruction(activeInstruction);
             }
@@ -461,15 +461,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             turnIconBefore.setVisibility(View.GONE);
             ImageView turnIconAfter = (ImageView) view.findViewById(R.id.turn_icon_after_action);
             turnIconAfter.setVisibility(View.VISIBLE);
+            setCurrentPagerItemStyling(index);
         }
     }
 
     private void updateRemainingDistance(Instruction instruction, Location location) {
         final View view = getViewForIndex(instructions.indexOf(instruction));
         if (view != null) {
-            TextView fullAfter = (TextView) view.findViewById(R.id.full_instruction_after_action);
-            fullAfter.setText(instruction.getFullInstructionAfterAction(location));
-
             TextView instructionDistance = (TextView) view.findViewById(R.id.distance_instruction);
             instructionDistance.setText(DistanceFormatter.format(instruction
                     .getRemainingDistance(location), true));
@@ -477,7 +475,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private View getViewForIndex(int index) {
-        return pager.findViewWithTag("Instruction_" + String.valueOf(index));
+        return pager.findViewWithTag(RouteAdapter.TAG_BASE + String.valueOf(index));
     }
 
     private void logForDebugging(Location location, Location correctedLocation) {
@@ -575,7 +573,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onPageScrolled(int i, float v, int i2) {
         if (pager.getCurrentItem() == pagerPositionWhenPaused) {
-            resume.setVisibility(View.GONE);
+            onClickResume();
+            setCurrentPagerItemStyling(pagerPositionWhenPaused);
         }
     }
 
@@ -583,8 +582,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void onPageSelected(int i) {
         if (!autoPaging) {
             getMapController().setMapPerspectiveForInstruction(instructions.get(i));
+        } else {
+            setCurrentPagerItemStyling(i);
         }
-
         voiceNavigationController.playInstruction(instructions.get(i));
         notificationCreator.createNewNotification(simpleFeature.getMarker().title,
                 instructions.get(i).getFullInstruction());
@@ -664,9 +664,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         voiceNavigationController.mute();
     }
 
+
     public void resumeAutoPaging() {
-        int currentItem = ((RouteAdapter) pager.getAdapter()).getPausedPosition();
-        pager.setCurrentItem(currentItem);
+        pager.setCurrentItem(pagerPositionWhenPaused);
+        setCurrentPagerItemStyling(pagerPositionWhenPaused);
         getMapController()
                 .setMapPerspectiveForInstruction(instructions.get(pagerPositionWhenPaused));
         resume.setVisibility(View.GONE);
@@ -706,6 +707,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                         playFirstInstruction();
                         notificationCreator.createNewNotification(simpleFeature.getMarker().title,
                                 instructions.get(0).getFullInstruction());
+                        setCurrentPagerItemStyling(0);
                     }
                 });
             }
@@ -713,6 +715,32 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         } else {
             Toast.makeText(act,
                     act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void setCurrentPagerItemStyling(int page) {
+        if (page == instructions.size() - 1) {
+            adapter.setBackgroundColorComplete(pager.findViewWithTag("Instruction_" + page));
+        } else {
+            adapter.setBackgroundColorActive(pager.findViewWithTag("Instruction_" + page));
+        }
+
+        adapter.setTurnIcon(pager.findViewWithTag("Instruction_" + page),
+                DisplayHelper.getRouteDrawable(pager.getContext(),
+                        instructions.get(page).getTurnInstruction(),
+                        DisplayHelper.IconStyle.STANDARD));
+        resetPagerItemStyling(page);
+    }
+
+    private void resetPagerItemStyling(int page) {
+        if (page > 0) {
+           page--;
+           adapter.setTurnIcon(pager.findViewWithTag("Instruction_" + page),
+                   DisplayHelper.getRouteDrawable(pager.getContext(),
+                           instructions.get(page).getTurnInstruction(),
+                           DisplayHelper.IconStyle.GRAY));
+
+           adapter.setBackgroundColorInactive(pager.findViewWithTag("Instruction_" + page));
         }
     }
 

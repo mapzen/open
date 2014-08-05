@@ -26,6 +26,14 @@
             android:layout_height="@dimen/turn_icon_height"
             android:layout_marginTop="@dimen/turn_icon_margin" />
 
+        <ImageView
+            android:id="@+id/turn_icon_after_action"
+            android:contentDescription="@string/route_description"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/turn_icon_height"
+            android:layout_marginTop="@dimen/turn_icon_margin"
+            android:visibility="gone" />
+
         <TextView
             android:id="@+id/distance_instruction"
             android:layout_width="match_parent"
@@ -34,14 +42,6 @@
             android:textStyle="bold"
             android:textColor="@color/brown" />
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/turn_icon_after_action"
-        android:contentDescription="@string/route_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_margin="@dimen/default_margin" />
 
     <TextView
         android:id="@+id/full_instruction"
@@ -59,12 +59,17 @@
 
     <TextView
         android:id="@+id/full_instruction_after_action"
-        android:layout_height="wrap_content"
-        android:layout_width="0dip"
+        android:layout_width="wrap_content"
         android:layout_weight="1"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:maxLines="2"
+        android:fontFamily="sans-serif-regular"
+        android:textAlignment="center"
         android:textColor="@color/brown"
         android:textSize="@dimen/big"
-        android:layout_margin="@dimen/default_margin"
+        android:paddingLeft="@dimen/instruction_horizontal_padding"
+        android:layout_height="wrap_content"
         android:visibility="gone" />
 
     <ImageButton

@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +22,8 @@ public class RouteAdapter extends PagerAdapter {
     private List<Instruction> instructions = new ArrayList<Instruction>();
     private Context context;
     private Instruction currentInstruction;
-    private int pausedPosition = 0;
     private RouteFragment fragment;
+    public static final String TAG_BASE = "Instruction_";
 
     public RouteAdapter(Context context, List<Instruction> instructions, RouteFragment fragment) {
         this.context = context;
@@ -55,8 +56,6 @@ public class RouteAdapter extends PagerAdapter {
     private void setBackgroundColor(int position, View view) {
         if (position == instructions.size() - 1) {
             view.setBackgroundColor(context.getResources().getColor(R.color.destination_green));
-        }  else if (currentInstruction == instructions.get(pausedPosition)) {
-            view.setBackgroundColor(context.getResources().getColor(R.color.transparent_white));
         } else {
             view.setBackgroundColor(context.getResources().getColor(R.color.transparent_gray));
         }
@@ -78,12 +77,14 @@ public class RouteAdapter extends PagerAdapter {
         view.findViewById(R.id.left_arrow).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                fragment.turnAutoPageOff();
                 fragment.pageToPrevious(pos);
             }
         });
         view.findViewById(R.id.right_arrow).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                fragment.turnAutoPageOff();
                 fragment.pageToNext(pos);
             }
         });
@@ -105,18 +106,14 @@ public class RouteAdapter extends PagerAdapter {
                 (TextView) view.findViewById(R.id.full_instruction_after_action);
         fullInstructionAfterAction.setText(
                 getFullInstructionWithBoldName(
-                        currentInstruction.getFullInstructionAfterAction()));
+                        currentInstruction.getSimpleInstructionAfterAction()));
     }
 
     private void setTurnIcon(View view) {
         final ImageView turnIcon = (ImageView) view.findViewById(R.id.turn_icon);
-        if (currentInstruction == instructions.get(pausedPosition)) {
-        turnIcon.setImageResource(DisplayHelper.getRouteDrawable(context,
-                currentInstruction.getTurnInstruction(), DisplayHelper.IconStyle.STANDARD));
-        } else {
             turnIcon.setImageResource(DisplayHelper.getRouteDrawable(context,
                     currentInstruction.getTurnInstruction(), DisplayHelper.IconStyle.GRAY));
-        }
+
     }
 
     private void setTurnIconAfterAction(View view) {
@@ -127,7 +124,7 @@ public class RouteAdapter extends PagerAdapter {
     }
 
     private void setTag(int position, View view) {
-        view.setTag("Instruction_" + String.valueOf(position));
+        view.setTag(TAG_BASE + String.valueOf(position));
     }
 
     private SpannableStringBuilder getFullInstructionWithBoldName(String fullInstruction) {
@@ -151,12 +148,37 @@ public class RouteAdapter extends PagerAdapter {
         return view == object;
     }
 
-    public void setPausedPosition(int pos) {
-        pausedPosition = pos;
+    public void setTurnIcon(View view, int resId) {
+        if (view != null) {
+            ImageView turnIcon = (ImageView) view.findViewById(R.id.turn_icon);
+            turnIcon.setImageResource(resId);
+            setTurnIconAfterAction(view, resId);
+        }
     }
 
-    public int getPausedPosition() {
-        return pausedPosition;
+    public void setTurnIconAfterAction(View view, int resId) {
+        if (view != null) {
+            ImageView turnIconAfterAction = (ImageView) view
+                    .findViewById(R.id.turn_icon_after_action);
+            turnIconAfterAction.setImageResource(resId);
+        }
     }
 
+    public void setBackgroundColorActive(View view) {
+        if (view != null) {
+            view.setBackgroundColor(context.getResources().getColor(R.color.transparent_white));
+        }
+    }
+
+    public void setBackgroundColorInactive(View view) {
+        if (view != null) {
+            view.setBackgroundColor(context.getResources().getColor(R.color.transparent_gray));
+        }
+    }
+
+    public void setBackgroundColorComplete(View view) {
+        if (view != null) {
+            view.setBackgroundColor(context.getResources().getColor(R.color.destination_green));
+        }
+    }
 }

@@ -299,6 +299,7 @@ public class BaseActivity extends MapActivity {
 
     public void showOptionsMenu() {
         activityMenu.setGroupVisible(R.id.overflow_menu, true);
+        toggleOSMLogin();
     }
 
     private void resetSearchView() {
