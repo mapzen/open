@@ -175,4 +175,10 @@ public class RouteAdapter extends PagerAdapter {
             view.setBackgroundColor(context.getResources().getColor(R.color.transparent_gray));
         }
     }
+
+    public void setBackgroundColorComplete(View view) {
+        if (view != null) {
+            view.setBackgroundColor(context.getResources().getColor(R.color.destination_green));
+        }
+    }
 }

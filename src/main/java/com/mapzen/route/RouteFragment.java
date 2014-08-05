@@ -390,52 +390,52 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         final int instructionIndex = instructions.indexOf(activeInstruction);
         if (closestDistance < getAdvanceRadius()) {
             pagerPositionWhenPaused = instructionIndex;
-                Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: "
-                        + activeInstruction.toString());
-                pager.setCurrentItem(instructionIndex);
-                if (!route.getSeenInstructions().contains(activeInstruction)) {
-                    route.addSeenInstruction(activeInstruction);
-                }
+            Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: "
+                    + activeInstruction.toString());
+            pager.setCurrentItem(instructionIndex);
+            if (!route.getSeenInstructions().contains(activeInstruction)) {
+                route.addSeenInstruction(activeInstruction);
             }
-
-            if (recordedDistance < closestDistance) {
-                activeInstruction = null;
-                recordedDistance = 100000;
-            } else {
-                recordedDistance = closestDistance;
-            }
-
-            final Iterator it = route.getSeenInstructions().iterator();
-            while (it.hasNext()) {
-                Instruction instruction = (Instruction) it.next();
-                final Location l = new Location("temp");
-                l.setLatitude(instruction.getLocation().getLatitude());
-                l.setLongitude(instruction.getLocation().getLongitude());
-                final int distance = (int) Math.floor(l.distanceTo(correctedLocation));
-                if (distance > getAdvanceRadius()) {
-                    Logger.logToDatabase(act, ROUTE_TAG, "post language: " +
-                            instruction.toString());
-                    flipInstructionToAfter(instruction, correctedLocation);
-                }
-            }
-
-            if (pager.getCurrentItem() == pager.getAdapter().getCount() - 1) {
-                distanceToDestination.setText("0 ft");
-            } else if (pager.getCurrentItem() == pager.getAdapter().getCount() - 2) {
-                distanceToDestination.setDistance(instructions.get(pager.getCurrentItem())
-                        .getRemainingDistance(correctedLocation));
-            } else {
-                updateDistanceToDestination(pager.getCurrentItem(), correctedLocation);
-            }
-
-            debugView.setCurrentLocation(location);
-            debugView.setSnapLocation(correctedLocation);
-            if (activeInstruction != null) {
-                debugView.setClosestInstruction(activeInstruction, closestDistance);
-            }
-            debugView.setAverageSpeed(getAverageSpeed());
-            logForDebugging(location, correctedLocation);
         }
+
+        if (recordedDistance < closestDistance) {
+            activeInstruction = null;
+            recordedDistance = 100000;
+        } else {
+            recordedDistance = closestDistance;
+        }
+
+        final Iterator it = route.getSeenInstructions().iterator();
+        while (it.hasNext()) {
+            Instruction instruction = (Instruction) it.next();
+            final Location l = new Location("temp");
+            l.setLatitude(instruction.getLocation().getLatitude());
+            l.setLongitude(instruction.getLocation().getLongitude());
+            final int distance = (int) Math.floor(l.distanceTo(correctedLocation));
+            if (distance > getAdvanceRadius()) {
+                Logger.logToDatabase(act, ROUTE_TAG, "post language: " +
+                        instruction.toString());
+                flipInstructionToAfter(instruction, correctedLocation);
+            }
+        }
+
+        if (pager.getCurrentItem() == pager.getAdapter().getCount() - 1) {
+            distanceToDestination.setText("0 ft");
+        } else if (pager.getCurrentItem() == pager.getAdapter().getCount() - 2) {
+            distanceToDestination.setDistance(instructions.get(pager.getCurrentItem())
+                    .getRemainingDistance(correctedLocation));
+        } else {
+            updateDistanceToDestination(pager.getCurrentItem(), correctedLocation);
+        }
+
+        debugView.setCurrentLocation(location);
+        debugView.setSnapLocation(correctedLocation);
+        if (activeInstruction != null) {
+            debugView.setClosestInstruction(activeInstruction, closestDistance);
+        }
+        debugView.setAverageSpeed(getAverageSpeed());
+        logForDebugging(location, correctedLocation);
+    }
 
     private void flipInstructionToAfter(Instruction instruction, Location location) {
         if (flippedInstructions.contains(instruction)) {
@@ -473,10 +473,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             instructionDistance.setText(DistanceFormatter.format(instruction
                     .getRemainingDistance(location), true));
         }
-    }
-
-    public void flipInstruction(int page) {
-        flipInstruction(instructions.get(page));
     }
 
     private View getViewForIndex(int index) {
@@ -573,7 +569,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onPageScrolled(int i, float v, int i2) {
         if (pager.getCurrentItem() == pagerPositionWhenPaused) {
-            resume.setVisibility(View.GONE);
+            onClickResume();
             setCurrentPagerItemStyling(pagerPositionWhenPaused);
         }
     }
@@ -719,12 +715,16 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void setCurrentPagerItemStyling(int page) {
+        if (page == instructions.size() - 1) {
+            adapter.setBackgroundColorComplete(pager.findViewWithTag("Instruction_" + page));
+        } else {
+            adapter.setBackgroundColorActive(pager.findViewWithTag("Instruction_" + page));
+        }
+
         adapter.setTurnIcon(pager.findViewWithTag("Instruction_" + page),
                 DisplayHelper.getRouteDrawable(pager.getContext(),
                         instructions.get(page).getTurnInstruction(),
                         DisplayHelper.IconStyle.STANDARD));
-
-        adapter.setBackgroundColorActive(pager.findViewWithTag("Instruction_" + page));
         resetPagerItemStyling(page);
     }
 
