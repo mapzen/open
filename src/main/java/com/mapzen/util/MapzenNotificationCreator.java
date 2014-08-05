@@ -1,13 +1,14 @@
 package com.mapzen.util;
 
+import com.mapzen.R;
+import com.mapzen.activity.BaseActivity;
+
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.support.v4.app.TaskStackBuilder;
-import com.mapzen.R;
-import com.mapzen.activity.BaseActivity;
 
 public class MapzenNotificationCreator {
     public static final String EXIT_NAVIGATION = "exit_navigation";
