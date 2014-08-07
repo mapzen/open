@@ -2,7 +2,6 @@ package com.mapzen.activity;
 
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
-import com.mapzen.android.lost.LocationClient;
 
 import org.scribe.model.Token;
 import org.scribe.model.Verifier;
@@ -22,8 +21,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import javax.inject.Inject;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -39,7 +36,6 @@ public class InitActivity extends Activity {
     private Animation fadeIn, fadeInSlow, fadeOut;
     private Verifier verifier;
     private int clickCount;
-    @Inject LocationClient locationClient;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,13 +57,11 @@ public class InitActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        locationClient.connect();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        locationClient.disconnect();
     }
 
     @Override
