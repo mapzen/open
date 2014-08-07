@@ -238,7 +238,7 @@ public class MapFragment extends BaseFragment {
 
     public void findMe() {
         addLocationDot();
-
+        getMapController().resetZoomAndPointNorth();
         if (followMe || !initialRelocateHappened) {
             // TODO find ways to accomplish this without two flags ;(
             initialRelocateHappened = true;

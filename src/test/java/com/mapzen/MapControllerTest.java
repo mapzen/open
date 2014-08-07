@@ -359,6 +359,23 @@ public class MapControllerTest {
     }
 
     @Test
+    public void resetZoomAndPointNorth_shouldSetDefaultZoom() {
+        getMapController().setZoomLevel(3);
+        assertThat(getMapController().getZoomLevel()).isEqualTo(3);
+        getMapController().resetZoomAndPointNorth();
+        assertThat(getMapController().getZoomLevel())
+                .isEqualTo(getMapController().DEFAULT_ZOOMLEVEL);
+    }
+
+    @Test
+    public void resetZoomAndPointNorth_shouldSetZeroBearing() {
+        getMapController().getMapPosition().setBearing(1.0f);
+        assertThat(getMapController().getMapPosition().getBearing()).isEqualTo(1.0f);
+        getMapController().resetZoomAndPointNorth();
+        assertThat(getMapController().getMapPosition().getBearing()).isEqualTo(0.0f);
+    }
+
+    @Test
     public void restoreFromSavedLocation_shouldActivateMapLocationUpdates() {
         getMapController().restoreFromSavedLocation();
         MapzenApplication app = ((MapzenApplication) Robolectric.application);

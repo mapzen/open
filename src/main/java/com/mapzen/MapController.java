@@ -124,6 +124,11 @@ public final class MapController {
         }
     }
 
+    public void resetZoomAndPointNorth() {
+        setZoomLevel(DEFAULT_ZOOMLEVEL);
+        mapPosition.setBearing(0.0f);
+    }
+
     public void setMapPerspectiveForInstruction(Instruction instruction) {
         quarterOn(instruction.getLocation(), instruction.getRotationBearing());
     }
