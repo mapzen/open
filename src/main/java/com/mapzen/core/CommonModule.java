@@ -3,6 +3,7 @@ package com.mapzen.core;
 import com.mapzen.MapzenApplication;
 import com.mapzen.android.lost.LocationClient;
 import com.mapzen.helpers.ZoomController;
+import com.mapzen.route.RouteEngine;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
 import android.content.Context;
@@ -34,6 +35,10 @@ public class CommonModule {
 
     @Provides @Singleton ZoomController provideZoomController() {
         return new ZoomController();
+    }
+
+    @Provides @Singleton RouteEngine provideRouteEngine() {
+        return new RouteEngine();
     }
 
     /**

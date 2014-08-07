@@ -49,7 +49,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
@@ -82,7 +81,7 @@ import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
 import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
-        ViewPager.OnPageChangeListener, Router.Callback {
+        ViewPager.OnPageChangeListener, Router.Callback, RouteEngine.RouteListener {
     public static final String TAG = RouteFragment.class.getSimpleName();
     public static final float DEFAULT_ROUTING_TILT = 45.0f;
     public static final double MIN_CHANGE_FOR_SHOW_RESUME = .00000001;
@@ -92,6 +91,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Inject ZoomController zoomController;
     @Inject LocationClient locationClient;
     @Inject Router router;
+    @Inject RouteEngine routeEngine;
 
     @InjectView(R.id.routes) ViewPager pager;
     @InjectView(R.id.resume_button) ImageButton resume;
@@ -298,7 +298,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return simpleFeature.getGeoPoint();
     }
 
-    private void manageMap(Location location, Location originalLocation) {
+    private void manageMap(Location originalLocation, Location location) {
         if (location != null) {
             zoomController.setAverageSpeed(getAverageSpeed());
             zoomController.setCurrentSpeed(originalLocation.getSpeed());
@@ -350,90 +350,60 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 res.getInteger(defKey)), speed);
     }
 
-    int recordedDistance = 10000;
-    Instruction activeInstruction;
     public void onLocationChanged(Location location) {
         if (!autoPaging || isRouting) {
             return;
         }
-        Location correctedLocation = route.snapToRoute(location);
-        if (correctedLocation == null) {
-            if (route.isLost()) {
-                createRouteTo(location);
-                voiceNavigationController.recalculating();
-            }
-            return;
+
+        routeEngine.onLocationChanged(location);
+    }
+
+    @Override
+    public void onRecalculate(Location location) {
+        createRouteTo(location);
+        voiceNavigationController.recalculating();
+    }
+
+    @Override
+    public void onSnapLocation(Location originalLocation, Location snapLocation) {
+        storeLocationInfo(originalLocation, snapLocation);
+        manageMap(originalLocation, snapLocation);
+        debugView.setCurrentLocation(originalLocation);
+        debugView.setSnapLocation(snapLocation);
+        debugView.setAverageSpeed(getAverageSpeed());
+        logForDebugging(originalLocation, snapLocation);
+    }
+
+    @Override
+    public void onNewInstruction(Instruction instruction, int index) {
+        pagerPositionWhenPaused = index;
+        Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: " + instruction.toString());
+        pager.setCurrentItem(index);
+        if (route.getRouteInstructions().get(index) != null) {
+            debugView.setClosestInstruction(instruction);
         }
-        storeLocationInfo(location, correctedLocation);
-        manageMap(correctedLocation, location);
+    }
 
-        Instruction closestInstruction = null;
-        int closestDistance = 0;
-        if (activeInstruction == null) {
-            closestInstruction = route.getNextInstruction();
-            if (closestInstruction == null) {
-                return;
-            }
-            closestDistance =
-                    (int) Math.floor(correctedLocation
-                            .distanceTo(closestInstruction.getLocation()));
-            activeInstruction = closestInstruction;
-            recordedDistance = closestDistance;
-        }
+    @Override
+    public void onFlipInstruction(Instruction instruction, Location snapLocation) {
+        Logger.logToDatabase(act, ROUTE_TAG, "post language: " + instruction.toString());
+        flipInstructionToAfter(instruction, snapLocation);
+    }
 
-        closestDistance =
-                (int) Math.floor(correctedLocation.distanceTo(activeInstruction.getLocation()));
-
-        final int instructionIndex = instructions.indexOf(activeInstruction);
-        if (closestDistance < getAdvanceRadius()) {
-            pagerPositionWhenPaused = instructionIndex;
-            Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: "
-                    + activeInstruction.toString());
-            pager.setCurrentItem(instructionIndex);
-            if (!route.getSeenInstructions().contains(activeInstruction)) {
-                route.addSeenInstruction(activeInstruction);
-            }
-        }
-
-        if (recordedDistance < closestDistance) {
-            activeInstruction = null;
-            recordedDistance = 100000;
-        } else {
-            recordedDistance = closestDistance;
-        }
-
-        final Iterator it = route.getSeenInstructions().iterator();
-        while (it.hasNext()) {
-            Instruction instruction = (Instruction) it.next();
-            final Location l = new Location("temp");
-            l.setLatitude(instruction.getLocation().getLatitude());
-            l.setLongitude(instruction.getLocation().getLongitude());
-            final int distance = (int) Math.floor(l.distanceTo(correctedLocation));
-            if (distance > getAdvanceRadius()) {
-                Logger.logToDatabase(act, ROUTE_TAG, "post language: " +
-                        instruction.toString());
-                flipInstructionToAfter(instruction, correctedLocation);
-            }
-        }
-
+    @Override
+    public void onUpdateDistance(Location snapLocation, int closestDistance) {
         final Instruction currentInstruction = instructions.get(pager.getCurrentItem());
         if (pager.getCurrentItem() == pager.getAdapter().getCount() - 1) {
             distanceToDestination.setText("0 ft");
         } else if (pager.getCurrentItem() == pager.getAdapter().getCount() - 2 &&
                 flippedInstructions.contains(currentInstruction)) {
             distanceToDestination.setDistance(instructions.get(pager.getCurrentItem())
-                    .getRemainingDistance(correctedLocation));
+                    .getRemainingDistance(snapLocation));
         } else {
-            updateDistanceToDestination(pager.getCurrentItem(), correctedLocation);
+            updateDistanceToDestination(pager.getCurrentItem(), snapLocation);
         }
 
-        debugView.setCurrentLocation(location);
-        debugView.setSnapLocation(correctedLocation);
-        if (activeInstruction != null) {
-            debugView.setClosestInstruction(activeInstruction, closestDistance);
-        }
-        debugView.setAverageSpeed(getAverageSpeed());
-        logForDebugging(location, correctedLocation);
+        debugView.setClosestDistance(closestDistance);
     }
 
     private void flipInstructionToAfter(Instruction instruction, Location location) {
@@ -514,6 +484,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             this.instructions = route.getRouteInstructions();
             storeRouteInDatabase(route.getRawRoute());
             getMapController().setMapPerspectiveForInstruction(instructions.get(0));
+            routeEngine.setRoute(route);
+            routeEngine.setListener(this);
+            routeEngine.setZoomController(zoomController);
         } else {
             return false;
         }

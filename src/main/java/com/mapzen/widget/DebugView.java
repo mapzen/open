@@ -39,12 +39,15 @@ public class DebugView extends RelativeLayout {
         ButterKnife.inject(this);
     }
 
-    public void setClosestInstruction(Instruction instruction, int meters) {
+    public void setClosestInstruction(Instruction instruction) {
         instructionCoordinates.setText(formatCoordinates(instruction.getLocation()));
         instructionBearing.setText(formatBearing(instruction));
         instructionTurn.setText(instruction.getHumanTurnInstruction());
         instructionName.setText(instruction.getName());
         instructionDistance.setText(instruction.getFormattedDistance());
+    }
+
+    public void setClosestDistance(int meters) {
         instructionDisplacement.setText(meters + " meters away");
     }
 
