@@ -191,39 +191,31 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onLocationChange_shouldStoreOriginalLocationRecordInDatabase() throws Exception {
+    public void onSnapLocation_shouldStoreOriginalLocationRecordInDatabase() throws Exception {
         initTestFragment();
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        Location sample1 = fragment.getRoute().getGeometry().get(0);
-        Location sample2 = fragment.getRoute().getGeometry().get(1);
-        Location expected = fragment.getRoute().getGeometry().get(2);
-        instructions.add(getTestInstruction(sample1.getLatitude(), sample1.getLongitude()));
-        instructions.add(getTestInstruction(sample2.getLatitude(), sample2.getLongitude()));
-        fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
-        fragment.onLocationChanged(expected);
+        Location expected = fragment.getRoute().getGeometry().get(2);
+        fragment.onSnapLocation(expected, fragment.getRoute().snapToRoute(expected));
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
                 new String[] { DatabaseHelper.COLUMN_LAT, DatabaseHelper.COLUMN_LNG },
                 null, null, null, null, null);
-        assertThat(cursor).hasCount(1);
         cursor.moveToNext();
         assertThat(cursor.getString(0)).isEqualTo(String.valueOf(expected.getLatitude()));
         assertThat(cursor.getString(1)).isEqualTo(String.valueOf(expected.getLongitude()));
     }
 
     @Test
-    public void onLocationChange_shouldStoreCorrectedLocationRecordInDatabase() throws Exception {
+    public void onSnapLocation_shouldStoreCorrectedLocationRecordInDatabase() throws Exception {
         initTestFragment();
         FragmentTestUtil.startFragment(fragment);
         Location testLocation = fragment.getRoute().getGeometry().get(2);
-        fragment.onLocationChanged(testLocation);
+        fragment.onSnapLocation(testLocation, fragment.getRoute().snapToRoute(testLocation));
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOCATIONS,
                 new String[] {
                         DatabaseHelper.COLUMN_CORRECTED_LAT,
                         DatabaseHelper.COLUMN_CORRECTED_LNG
                 },
                 null, null, null, null, null);
-        assertThat(cursor).hasCount(1);
         cursor.moveToNext();
         assertThat(cursor.getString(0)).isNotNull();
         assertThat(cursor.getString(1)).isNotNull();
@@ -377,13 +369,12 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onLocationChange_shouldReRouteWhenLost() throws Exception {
+    public void onRecalculate_shouldCreateNewRoute() throws Exception {
         initTestFragment();
         FragmentTestUtil.startFragment(fragment);
 
         Route oldRoute = fragment.getRoute();
-        Location testLocation = getTestLocation(111.0, 111.0);
-        fragment.onLocationChanged(testLocation);
+        fragment.onRecalculate(getTestLocation(111.0, 111.0));
         verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(MOCK_NY_TO_VT));
         assertThat(fragment.getRoute()).isNotSameAs(oldRoute);
@@ -973,11 +964,11 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void shouldAnnounceRecalculationOnLost() throws Exception {
+    public void onRecalculate_shouldAnnounceRecalculation() throws Exception {
         initTestFragment();
         FragmentTestUtil.startFragment(fragment);
         Location testLocation = getTestLocation(111.0, 111.0);
-        fragment.onLocationChanged(testLocation);
+        fragment.onRecalculate(testLocation);
         assertLastSpokenText(act.getString(R.string.recalculating));
     }
 
