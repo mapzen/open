@@ -50,7 +50,6 @@ public class InitActivity extends Activity {
         View rootView = getWindow().getDecorView().getRootView();
         clickCount = 0;
         ButterKnife.inject(this, rootView);
-        getActionBar().hide();
         if (app.isLoggedIn() || wasForceLoggedIn()) {
             startBaseActivity();
         }

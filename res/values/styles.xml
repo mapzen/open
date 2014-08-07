@@ -16,6 +16,10 @@
         <item name="android:colorBackground">@android:color/white</item>
     </style>
 
+    <style name="Theme.Mapzen.NoActionBar" parent="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
     <style name="ActionBar.Solid.Mapzen" parent="@android:style/Widget.Holo.Light.ActionBar.Solid">
         <item name="android:titleTextStyle">@style/MapzenTitleText</item>
         <item name="android:background">@color/transparent_white</item>

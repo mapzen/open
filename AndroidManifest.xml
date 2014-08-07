@@ -46,6 +46,7 @@
         <activity
                 android:name=".activity.InitActivity"
                 android:launchMode="singleTask"
+                android:theme="@style/Theme.Mapzen.NoActionBar"
                 android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

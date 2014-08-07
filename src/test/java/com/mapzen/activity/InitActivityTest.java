@@ -39,8 +39,8 @@ public class InitActivityTest {
     }
 
     @Test
-    public void shouldNotShowActionbar() throws Exception {
-        assertThat(activity.getActionBar()).isNotShowing();
+    public void shouldNotHaveActionBar() throws Exception {
+        assertThat(activity.getActionBar()).isNull();
     }
 
     @Test
