@@ -5,9 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import com.mapzen.MapzenApplication;
 
-
 public class InitialActivity extends Activity {
-
     private MapzenApplication app;
 
     @Override
@@ -29,9 +27,8 @@ public class InitialActivity extends Activity {
     }
 
     private void startLoginActivity() {
-        Intent baseActivity = new Intent(this, InitialActivity.class);
-        startActivity(baseActivity);
+        Intent loginActivity = new Intent(this, LoginActivity.class);
+        startActivity(loginActivity);
         finish();
     }
-
 }

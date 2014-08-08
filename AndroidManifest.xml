@@ -57,7 +57,6 @@
         </activity>
         <activity
                 android:name=".activity.InitialActivity"
-                android:launchMode="singleTask"
                 android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

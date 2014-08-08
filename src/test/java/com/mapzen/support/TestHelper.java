@@ -84,6 +84,13 @@ public final class TestHelper {
         return activity;
     }
 
+    public static InitialActivity initInitialActivity() {
+        InitialActivity activity = buildActivity(InitialActivity.class)
+                .create()
+                .get();
+        return activity;
+    }
+
     public static MapFragment initMapFragment(BaseActivity activity) {
         FragmentManager manager = activity.getSupportFragmentManager();
         MapFragment mapFragment = (MapFragment) manager.findFragmentById(R.id.map_fragment);
