@@ -39,7 +39,7 @@ import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 
-import static com.mapzen.MapController.DEFAULT_ZOOMLEVEL;
+import static com.mapzen.MapController.DEFAULT_ZOOM_LEVEL;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.android.Pelias.getPelias;
 import static com.mapzen.search.SavedSearch.getSavedSearch;
@@ -162,7 +162,7 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     private void centerOnPlace(int i) {
-        centerOnPlace(i, Math.pow(2, DEFAULT_ZOOMLEVEL));
+        centerOnPlace(i, Math.pow(2, DEFAULT_ZOOM_LEVEL));
     }
 
     private void centerOnPlace(int i, double zoom) {

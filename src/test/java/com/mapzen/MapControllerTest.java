@@ -364,7 +364,7 @@ public class MapControllerTest {
         assertThat(getMapController().getZoomLevel()).isEqualTo(3);
         getMapController().resetZoomAndPointNorth();
         assertThat(getMapController().getZoomLevel())
-                .isEqualTo(getMapController().DEFAULT_ZOOMLEVEL);
+            .isEqualTo(MapController.DEFAULT_ZOOM_LEVEL);
     }
 
     @Test
