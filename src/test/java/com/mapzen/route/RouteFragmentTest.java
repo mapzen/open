@@ -5,7 +5,6 @@ import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.android.lost.LocationClient;
-import com.mapzen.core.MapzenLocation;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.helpers.DistanceFormatter;
@@ -73,7 +72,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -1375,7 +1373,7 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         Thread.sleep(300);
         Robolectric.runUiThreadTasks();
-        for(Intent intent: getShadowApplication().getBroadcastIntents()) {
+        for (Intent intent: getShadowApplication().getBroadcastIntents()) {
             if (intent.getAction() == COM_MAPZEN_UPDATES_LOCATION) {
                 Location location = intent.getExtras().getParcelable(KEY_LOCATION);
                 assertThat(location).hasLatitude(0.0);
