@@ -94,6 +94,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "on " + TABLE_ROUTE_GROUP
             + " (" + COLUMN_ROUTE_ID + "," + COLUMN_GROUP_ID + ");";
 
+    private final String createUniqueLocationIndexSql = "CREATE UNIQUE INDEX unique_location "
+            + "on " + TABLE_LOCATIONS
+            + " (" + COLUMN_SPEED + "," + COLUMN_LAT + "," + COLUMN_LNG
+            + "," + COLUMN_ACC + "," + COLUMN_BEARING + "," + COLUMN_TIME + ");";
+
     private final String createRouteGeometryIndexSql = "CREATE UNIQUE INDEX route_lat_lng "
                 + "on " + TABLE_ROUTE_GEOMETRY
                 + " (" + COLUMN_ROUTE_ID + "," + COLUMN_LAT + ", " + COLUMN_LNG + ");";
@@ -112,6 +117,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(createRouteGroupSql);
         db.execSQL(createGroupsSql);
         db.execSQL(createRouteGroupIndexSql);
+        db.execSQL(createUniqueLocationIndexSql);
     }
 
     @Override
@@ -140,7 +146,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_DUMP, location.toString());
         values.put(COLUMN_ALT, location.getAltitude());
         values.put(COLUMN_ACC, location.getAccuracy());
-        values.put(COLUMN_TIME, System.currentTimeMillis());
+        values.put(COLUMN_TIME, location.getTime());
         values.put(COLUMN_SPEED, location.getSpeed());
         values.put(COLUMN_BEARING, location.getBearing());
         values.put(COLUMN_CORRECTED_LAT, correctedLocation.getLatitude());

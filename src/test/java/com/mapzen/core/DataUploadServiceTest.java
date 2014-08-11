@@ -17,6 +17,7 @@ import org.scribe.oauth.OAuthService;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -35,6 +36,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
@@ -171,6 +174,26 @@ public class DataUploadServiceTest {
         verify(spy, never()).submitCompressedFile(any(ByteArrayOutputStream.class),
                 eq(expectedGroupId),
                 eq(expectedRouteDescription));
+    }
+
+    @Test
+    public void shouldHaveLocationsFromAllRoutesInGroup() throws Exception {
+        String groupId = "test-group-id";
+        String routeId = "test-route-id";
+        fillLocationsTable(groupId, routeId, 10);
+        String anotherRoute = "second-route-id";
+        fillLocationsTable(groupId, anotherRoute, 10);
+
+        DOMSource domSource = service.getDocument(groupId);
+        Document document = domSource.getNode().getOwnerDocument();
+        XPathFactory xpf = XPathFactory.newInstance();
+        XPath xp = xpf.newXPath();
+
+        XPathExpression expr = xp.compile("//trk/trkseg/trkpt");
+        Object result = expr.evaluate(document, XPathConstants.NODESET);
+        NodeList nodes = (NodeList) result;
+
+        assertThat(nodes.getLength()).isEqualTo(20);
     }
 
     @Test
