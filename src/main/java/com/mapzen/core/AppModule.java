@@ -3,7 +3,6 @@ package com.mapzen.core;
 import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
-import com.mapzen.activity.InitialActivity;
 import com.mapzen.activity.LoginActivity;
 import com.mapzen.adapters.PlaceArrayAdapter;
 import com.mapzen.fragment.ItemFragment;
@@ -31,7 +30,6 @@ import dagger.Provides;
 @Module(
         injects = {
                 BaseActivity.class,
-                InitialActivity.class,
                 LoginActivity.class,
                 ItemFragment.class,
                 RouteFragment.class,

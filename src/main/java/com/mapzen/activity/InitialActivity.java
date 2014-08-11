@@ -12,7 +12,6 @@ public class InitialActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         app = (MapzenApplication) getApplication();
-        app.inject(this);
         if (app.isLoggedIn() || app.wasForceLoggedIn()) {
             startBaseActivity();
         } else {

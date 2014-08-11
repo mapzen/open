@@ -1,17 +1,12 @@
 package com.mapzen.activity;
 
-import com.mapzen.TestMapzenApplication;
-import com.mapzen.android.lost.LocationClient;
 import com.mapzen.support.MapzenTestRunner;
 import org.fest.assertions.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.scribe.model.Token;
-
-import javax.inject.Inject;
 
 import static com.mapzen.support.TestHelper.initBaseActivity;
 import static com.mapzen.support.TestHelper.initInitialActivity;
@@ -22,11 +17,9 @@ import static org.robolectric.Robolectric.shadowOf;
 @RunWith(MapzenTestRunner.class)
 public class InitialActivityTest {
     private BaseActivity baseActivity;
-    @Inject LocationClient locationClient;
 
     @Before
     public void setUp() throws Exception {
-        ((TestMapzenApplication) Robolectric.application).inject(this);
         baseActivity = initBaseActivity();
     }
 

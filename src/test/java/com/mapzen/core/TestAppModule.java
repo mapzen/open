@@ -2,8 +2,6 @@ package com.mapzen.core;
 
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.activity.BaseActivityTest;
-import com.mapzen.activity.InitialActivity;
-import com.mapzen.activity.InitialActivityTest;
 import com.mapzen.activity.LoginActivity;
 import com.mapzen.activity.LoginActivityTest;
 import com.mapzen.adapters.PlaceArrayAdapter;
@@ -38,8 +36,6 @@ import static org.mockito.Mockito.doNothing;
 @Module(
         injects = {
                 TestBaseActivity.class,
-                InitialActivity.class,
-                InitialActivityTest.class,
                 BaseActivity.class,
                 BaseActivityTest.class,
                 LoginActivity.class,
