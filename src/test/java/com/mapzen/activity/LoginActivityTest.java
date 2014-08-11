@@ -1,6 +1,7 @@
 package com.mapzen.activity;
 
 import android.content.Intent;
+import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
 import com.mapzen.android.lost.LocationClient;
@@ -18,19 +19,19 @@ import android.net.Uri;
 
 import javax.inject.Inject;
 
-import static com.mapzen.support.TestHelper.initInitActivity;
+import static com.mapzen.support.TestHelper.initLoginActivity;
 import static org.robolectric.Robolectric.shadowOf;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
-public class InitActivityTest {
-    private InitActivity activity;
+public class LoginActivityTest {
+    private LoginActivity activity;
     @Inject LocationClient locationClient;
 
     @Before
     public void setUp() throws Exception {
         ((TestMapzenApplication) Robolectric.application).inject(this);
-        activity = initInitActivity();
+        activity = initLoginActivity();
     }
 
     @Test
@@ -39,8 +40,8 @@ public class InitActivityTest {
     }
 
     @Test
-    public void shouldNotShowActionbar() throws Exception {
-        assertThat(activity.getActionBar()).isNotShowing();
+    public void shouldNotHaveActionBar() throws Exception {
+        assertThat(activity.getActionBar()).isNull();
     }
 
     @Test
@@ -90,7 +91,7 @@ public class InitActivityTest {
                 .getComponent().toString();
         assertThat(activityStarted)
                 .isEqualTo("ComponentInfo{com.mapzen/com.mapzen.activity.BaseActivity}");
-        assertThat(activity.wasForceLoggedIn()).isTrue();
+        assertThat(((MapzenApplication) activity.getApplication()).wasForceLoggedIn()).isTrue();
     }
 
     @Test
@@ -100,7 +101,7 @@ public class InitActivityTest {
         }
         Intent intent = shadowOf(activity).getNextStartedActivity();
         assertThat(intent).isNull();
-        assertThat(activity.wasForceLoggedIn()).isFalse();
+        assertThat(((MapzenApplication) activity.getApplication()).wasForceLoggedIn()).isFalse();
     }
 
     @Test

@@ -179,7 +179,7 @@ public class BaseActivity extends MapActivity {
                 editor.remove("forced_login");
                 editor.commit();
                 toggleOSMLogin();
-                startActivity(new Intent(this, InitActivity.class));
+                startActivity(new Intent(this, InitialActivity.class));
                 finish();
                 return true;
             case R.id.upload_traces:

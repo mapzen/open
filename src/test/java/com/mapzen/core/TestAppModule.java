@@ -2,8 +2,8 @@ package com.mapzen.core;
 
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.activity.BaseActivityTest;
-import com.mapzen.activity.InitActivity;
-import com.mapzen.activity.InitActivityTest;
+import com.mapzen.activity.LoginActivity;
+import com.mapzen.activity.LoginActivityTest;
 import com.mapzen.adapters.PlaceArrayAdapter;
 import com.mapzen.adapters.PlaceArrayAdapterTest;
 import com.mapzen.fragment.ItemFragment;
@@ -38,8 +38,8 @@ import static org.mockito.Mockito.doNothing;
                 TestBaseActivity.class,
                 BaseActivity.class,
                 BaseActivityTest.class,
-                InitActivity.class,
-                InitActivityTest.class,
+                LoginActivity.class,
+                LoginActivityTest.class,
                 RouteFragment.class,
                 RouteFragmentTest.class,
                 ItemFragment.class,

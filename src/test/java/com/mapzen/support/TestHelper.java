@@ -2,7 +2,8 @@ package com.mapzen.support;
 
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
-import com.mapzen.activity.InitActivity;
+import com.mapzen.activity.InitialActivity;
+import com.mapzen.activity.LoginActivity;
 import com.mapzen.android.gson.Feature;
 import com.mapzen.android.gson.Geometry;
 import com.mapzen.android.gson.Properties;
@@ -73,12 +74,19 @@ public final class TestHelper {
         return activity;
     }
 
-    public static InitActivity initInitActivity() {
-        InitActivity activity = buildActivity(InitActivity.class)
+    public static LoginActivity initLoginActivity() {
+        LoginActivity activity = buildActivity(LoginActivity.class)
                 .create()
                 .start()
                 .resume()
                 .visible()
+                .get();
+        return activity;
+    }
+
+    public static InitialActivity initInitialActivity() {
+        InitialActivity activity = buildActivity(InitialActivity.class)
+                .create()
                 .get();
         return activity;
     }

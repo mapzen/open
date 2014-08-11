@@ -30,7 +30,7 @@ import butterknife.OnClick;
 
 import static com.mapzen.core.OSMOauthFragment.OSM_VERIFIER_KEY;
 
-public class InitActivity extends Activity {
+public class LoginActivity extends Activity {
     @InjectView(R.id.sign_up_button) Button signUp;
     @InjectView(R.id.log_in_button) Button logIn;
     private MapzenApplication app;
@@ -50,10 +50,6 @@ public class InitActivity extends Activity {
         View rootView = getWindow().getDecorView().getRootView();
         clickCount = 0;
         ButterKnife.inject(this, rootView);
-        getActionBar().hide();
-        if (app.isLoggedIn() || wasForceLoggedIn()) {
-            startBaseActivity();
-        }
         loadAnimations();
         animateViewTransitions();
     }
@@ -105,11 +101,6 @@ public class InitActivity extends Activity {
         editor.putBoolean("forced_login", true);
         editor.commit();
         startBaseActivity();
-    }
-
-    protected boolean wasForceLoggedIn() {
-        SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
-        return prefs.getBoolean("forced_login", false);
     }
 
     private void openSignUpPage() {

@@ -90,6 +90,11 @@ public class MapzenApplication extends Application {
         return accessToken != null;
     }
 
+    public boolean wasForceLoggedIn() {
+        SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
+        return prefs.getBoolean("forced_login", false);
+    }
+
     public OAuthService getOsmOauthService() {
         return osmOauthService;
     }
