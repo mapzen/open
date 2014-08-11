@@ -23,13 +23,13 @@ public final class MapController {
     public static final String KEY_MAP_SCALE = "scale";
     public static final String KEY_BEARING = "rotation";
 
-    public static final int DEFAULT_ZOOMLEVEL = 15;
+    public static final int DEFAULT_ZOOM_LEVEL = 15;
     public static final int ROUTE_ZOOM_LEVEL = 17;
     public static final String DEBUG_LOCATION = "fixed_debug_location";
     private static MapController mapController;
     private Map map;
     private Location location;
-    private MapPosition mapPosition = new MapPosition(1.0, 1.0, Math.pow(2, DEFAULT_ZOOMLEVEL));
+    private MapPosition mapPosition = new MapPosition(1.0, 1.0, Math.pow(2, DEFAULT_ZOOM_LEVEL));
     private BaseActivity activity;
     private SharedPreferences preferences;
 
@@ -124,6 +124,11 @@ public final class MapController {
         }
     }
 
+    public void resetZoomAndPointNorth() {
+        setZoomLevel(DEFAULT_ZOOM_LEVEL);
+        mapPosition.setBearing(0.0f);
+    }
+
     public void setMapPerspectiveForInstruction(Instruction instruction) {
         quarterOn(instruction.getLocation(), instruction.getRotationBearing());
     }
@@ -173,7 +178,7 @@ public final class MapController {
         int latitudeE6 = preferences.getInt(KEY_LATITUDE, 0);
         int longitudeE6 = preferences.getInt(KEY_LONGITUDE, 0);
         float scale = preferences.getFloat(KEY_MAP_SCALE,
-                (float) Math.pow(2, DEFAULT_ZOOMLEVEL));
+                (float) Math.pow(2, DEFAULT_ZOOM_LEVEL));
         float tilt = preferences.getFloat(KEY_TILT, 0);
         float bearing = preferences.getFloat(KEY_BEARING, 0);
         MapPosition mapPosition = new MapPosition();

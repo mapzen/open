@@ -37,7 +37,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.mapzen.MapController.DEFAULT_ZOOMLEVEL;
+import static com.mapzen.MapController.DEFAULT_ZOOM_LEVEL;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.core.MapzenLocation.COM_MAPZEN_FIND_ME;
@@ -89,7 +89,7 @@ public class MapFragment extends BaseFragment {
     }
 
     public void centerOn(SimpleFeature simpleFeature) {
-        centerOn(simpleFeature, Math.pow(2, DEFAULT_ZOOMLEVEL));
+        centerOn(simpleFeature, Math.pow(2, DEFAULT_ZOOM_LEVEL));
     }
 
     public void centerOn(SimpleFeature simpleFeature, double zoom) {
@@ -238,7 +238,7 @@ public class MapFragment extends BaseFragment {
 
     public void findMe() {
         addLocationDot();
-
+        getMapController().resetZoomAndPointNorth();
         if (followMe || !initialRelocateHappened) {
             // TODO find ways to accomplish this without two flags ;(
             initialRelocateHappened = true;

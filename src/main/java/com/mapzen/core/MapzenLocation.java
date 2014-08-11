@@ -91,7 +91,7 @@ public final class MapzenLocation {
 
         @Override
         public void onConnected(Bundle bundle) {
-            getMapController().setZoomLevel(MapController.DEFAULT_ZOOMLEVEL);
+            getMapController().setZoomLevel(MapController.DEFAULT_ZOOM_LEVEL);
             final Location location = locationClient.getLastLocation();
             Logger.d("Last known location: " + location);
 

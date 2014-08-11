@@ -354,7 +354,7 @@ public class BaseActivityTest {
         getMapController().setZoomLevel(1);
         initLastLocation();
         invokeOnConnected();
-        assertThat(getMapController().getZoomLevel()).isEqualTo(MapController.DEFAULT_ZOOMLEVEL);
+        assertThat(getMapController().getZoomLevel()).isEqualTo(MapController.DEFAULT_ZOOM_LEVEL);
     }
 
     @Test
