@@ -120,11 +120,6 @@ public class InitActivityTest {
     }
 
     @Test
-    public void onResume_shouldConnectLocationClient() {
-        assertThat(locationClient.isConnected()).isTrue();
-    }
-
-    @Test
     public void onPause_shouldDisConnectLocationClient() {
         activity.onPause();
         assertThat(locationClient.isConnected()).isFalse();
