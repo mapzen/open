@@ -309,7 +309,9 @@ public class MapFragment extends BaseFragment {
 
     public void centerOnCurrentLocation() {
         followMe = true;
-        findMe();
+        if (getMapController().getLocation() != null) {
+            findMe();
+        }
     }
 
     private void unregisterLocationReceivers() {

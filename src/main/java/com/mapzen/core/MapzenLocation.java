@@ -102,8 +102,10 @@ public final class MapzenLocation {
                     application.sendBroadcast(findMe);
                 }
             } else {
-                Toast.makeText(application, application.getString(R.string.waiting),
-                        Toast.LENGTH_LONG).show();
+                if (getMapController().getMap() != null) {
+                    Toast.makeText(application, application.getString(R.string.waiting),
+                            Toast.LENGTH_LONG).show();
+                }
             }
 
             LocationRequest locationRequest = LocationRequest.create();
