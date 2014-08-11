@@ -1433,6 +1433,7 @@ public class RouteFragmentTest {
 
     private void assertZoomLevel(int expected, float milesPerHour, Location location) {
         location.setSpeed(ZoomController.milesPerHourToMetersPerSecond(milesPerHour));
+        location.setTime(System.currentTimeMillis());
         fragment.onLocationChanged(location);
         assertThat(getMapController().getZoomLevel()).isEqualTo(expected);
     }
