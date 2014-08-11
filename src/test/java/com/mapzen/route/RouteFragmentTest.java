@@ -5,6 +5,7 @@ import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.android.lost.LocationClient;
+import com.mapzen.core.MapzenLocation;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.helpers.DistanceFormatter;
@@ -79,6 +80,7 @@ import javax.inject.Inject;
 import static com.mapzen.MapController.KEY_STORED_MAPPOSITION;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
+import static com.mapzen.core.MapzenLocation.KEY_LOCATION;
 import static com.mapzen.entity.SimpleFeature.NAME;
 import static com.mapzen.support.TestHelper.MOCK_ACE_HOTEL;
 import static com.mapzen.support.TestHelper.MOCK_AROUND_THE_BLOCK;
@@ -1333,7 +1335,7 @@ public class RouteFragmentTest {
         sNotification.getActions().get(0).actionIntent.send();
 
         ShadowApplication application = shadowOf(act.getApplication());
-        Intent broadcastIntent = application.getBroadcastIntents().get(1);
+        Intent broadcastIntent = application.getBroadcastIntents().get(0);
         String broadcastClassName = broadcastIntent.getComponent().getClassName();
         boolean shouldExit = broadcastIntent.getExtras()
                 .getBoolean(MapzenNotificationCreator.EXIT_NAVIGATION);
@@ -1373,10 +1375,13 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         Thread.sleep(300);
         Robolectric.runUiThreadTasks();
-        List<Intent> intents = getShadowApplication().getBroadcastIntents();
-        Location location = intents.get(1).getExtras().getParcelable("location");
-        assertThat(location).hasLatitude(0.0);
-        assertThat(location).hasLongitude(0.1);
+        for(Intent intent: getShadowApplication().getBroadcastIntents()) {
+            if (intent.getAction() == COM_MAPZEN_UPDATES_LOCATION) {
+                Location location = intent.getExtras().getParcelable(KEY_LOCATION);
+                assertThat(location).hasLatitude(0.0);
+                assertThat(location).hasLongitude(0.1);
+            }
+        }
     }
 
     @Test
