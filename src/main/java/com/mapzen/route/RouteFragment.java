@@ -73,12 +73,15 @@ import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_MSG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_POSITION;
 import static com.mapzen.util.DatabaseHelper.COLUMN_RAW;
+import static com.mapzen.util.DatabaseHelper.COLUMN_GROUP_ID;
 import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
 import static com.mapzen.util.DatabaseHelper.COLUMN_SPEED;
 import static com.mapzen.util.DatabaseHelper.COLUMN_TABLE_ID;
+import static com.mapzen.util.DatabaseHelper.TABLE_GROUPS;
 import static com.mapzen.util.DatabaseHelper.TABLE_LOCATIONS;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTES;
 import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
+import static com.mapzen.util.DatabaseHelper.TABLE_ROUTE_GROUP;
 import static com.mapzen.util.DatabaseHelper.valuesForLocationCorrection;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
@@ -101,6 +104,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private ArrayList<Instruction> instructions;
     private RouteAdapter adapter;
     private Route route;
+    private String groupId;
     private LocationReceiver locationReceiver;
     private RouteLocationIndicator routeLocationIndicator;
     private SimpleFeature simpleFeature;
@@ -212,12 +216,21 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        createGroup();
         Location startPoint = route.getStartCoordinates();
         routeLocationIndicator.setPosition(startPoint.getLatitude(), startPoint.getLongitude());
         routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
         mapFragment.getMap().layers().add(routeLocationIndicator);
         mapFragment.hideLocationMarker();
         mapFragment.getMap().viewport().setTilt(DEFAULT_ROUTING_TILT);
+    }
+
+    private void createGroup() {
+        groupId = UUID.randomUUID().toString();
+        ContentValues groupValue = new ContentValues();
+        groupValue.put(COLUMN_TABLE_ID, groupId);
+        groupValue.put(COLUMN_MSG, getGPXDescription());
+        insertIntoDb(TABLE_GROUPS, null, groupValue);
     }
 
     @Override
@@ -240,7 +253,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onDetach() {
         super.onDetach();
-        markReadyForUpload(routeId);
+        markReadyForUpload();
         clearRoute();
         act.updateView();
         mapFragment.showLocationMarker();
@@ -525,8 +538,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         routeId = UUID.randomUUID().toString();
         insertValues.put(COLUMN_TABLE_ID, routeId);
         insertValues.put(COLUMN_RAW, rawRoute.toString());
-        insertValues.put(COLUMN_MSG, getGPXDescription());
         insertIntoDb(TABLE_ROUTES, null, insertValues);
+
+        ContentValues routeGroupEntry = new ContentValues();
+        routeGroupEntry.put(COLUMN_ROUTE_ID, routeId);
+        routeGroupEntry.put(COLUMN_GROUP_ID, groupId);
+        insertIntoDb(TABLE_ROUTE_GROUP, null, routeGroupEntry);
     }
 
     private void drawRoute() {
@@ -649,7 +666,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void insertIntoDb(String table, String nullHack, ContentValues contentValues) {
         try {
-            act.getDb().insert(table, nullHack, contentValues);
+            long result = act.getDb().insert(table, nullHack, contentValues);
+            if (result < 0) {
+                Logger.e("error inserting into db");
+            }
         } catch (IllegalStateException e) {
             BugSenseHandler.sendException(e);
         }
@@ -687,10 +707,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @Override
     public void success(Route route) {
-        if (routeId != null) {
-            // This essentially means there is another route ??
-            markReadyForUpload(routeId);
-        }
         if (setRoute(route)) {
             act.dismissProgressDialog();
             isRouting = false;
@@ -744,12 +760,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    private void markReadyForUpload(String currentRouteId) {
+    private void markReadyForUpload() {
         ContentValues cv = new ContentValues();
         cv.put(DatabaseHelper.COLUMN_READY_FOR_UPLOAD, 1);
         try {
-            act.getDb().update(TABLE_ROUTES, cv, COLUMN_TABLE_ID + " = ?",
-                    new String[] { currentRouteId });
+            act.getDb().update(TABLE_GROUPS, cv, COLUMN_TABLE_ID + " = ?",
+                    new String[] { groupId });
         } catch (IllegalStateException e) {
             BugSenseHandler.sendException(e);
         }

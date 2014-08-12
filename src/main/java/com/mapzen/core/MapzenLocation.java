@@ -97,8 +97,10 @@ public final class MapzenLocation {
 
             if (location != null) {
                 getMapController().setLocation(location);
-                Intent findMe = new Intent("findMe");
-                application.sendBroadcast(findMe);
+                if (application.shouldMoveMapToLocation()) {
+                    Intent findMe = new Intent(COM_MAPZEN_FIND_ME);
+                    application.sendBroadcast(findMe);
+                }
             } else {
                 Toast.makeText(application, application.getString(R.string.waiting),
                         Toast.LENGTH_LONG).show();

@@ -1,6 +1,8 @@
 package com.mapzen.route;
 
 import android.widget.ImageButton;
+
+import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
 import com.mapzen.entity.SimpleFeature;
@@ -142,6 +144,19 @@ public class RoutePreviewFragmentTest {
         fragment.success(new Route(getFixture("around_the_block")));
         assertThat(textView).isNotNull();
         assertThat(textView).hasText(feature.getProperty(NAME));
+    }
+
+    @Test
+    public void onResume_shouldDeactivateMoveToMapUpdates() throws Exception {
+        assertThat(((MapzenApplication) Robolectric.application)
+                .shouldMoveMapToLocation()).isFalse();
+    }
+
+    @Test
+    public void onDetach_shouldActivateMoveToMapUpdates() throws Exception {
+        fragment.onDetach();
+        assertThat(((MapzenApplication) Robolectric.application)
+                .shouldMoveMapToLocation()).isTrue();
     }
 
     @Test

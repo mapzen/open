@@ -31,11 +31,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_ROUTES = "routes";
     public static final String COLUMN_RAW = "raw";
     public static final String COLUMN_ROUTE_ID = "route_id";
+    public static final String COLUMN_GROUP_ID = "group_id";
     public static final String TABLE_LOG_ENTRIES = "log_entries";
     public static final String COLUMN_TAG = "tag";
     public static final String COLUMN_MSG = "msg";
     public static final String COLUMN_POSITION = "position";
     public static final String TABLE_ROUTE_GEOMETRY = "route_geometry";
+    public static final String TABLE_GROUPS = "groups";
+    public static final String TABLE_ROUTE_GROUP = "route_groups";
     public static final String COLUMN_TABLE_ID = "_id";
     public static final String COLUMN_UPLOADED = "uploaded";
     public static final String COLUMN_READY_FOR_UPLOAD = "ready_for_upload";
@@ -61,9 +64,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private final String createRoutesSql = "create table " + TABLE_ROUTES + " ("
             + COLUMN_TABLE_ID + " text primary key,"
-            + COLUMN_UPLOADED + " integer,"
-            + COLUMN_READY_FOR_UPLOAD + " integer,"
-            + COLUMN_MSG + " text not null,"
             + COLUMN_RAW + " text not null)";
 
     private final String createLogEntriesSql = "create table " + TABLE_LOG_ENTRIES + " ("
@@ -77,6 +77,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + COLUMN_POSITION + " integer not null,"
             + COLUMN_LAT + " text not null,"
             + COLUMN_LNG + " text not null)";
+
+    private final String createGroupsSql = "create table " + TABLE_GROUPS + " ("
+            + COLUMN_TABLE_ID + " text not null, "
+            + COLUMN_UPLOADED + " integer, "
+            + COLUMN_MSG + " text, "
+            + COLUMN_READY_FOR_UPLOAD + " integer, "
+            + COLUMN_TIME + " datetime default current_timestamp)";
+
+    private final String createRouteGroupSql = "create table " + TABLE_ROUTE_GROUP + " ("
+            + COLUMN_ROUTE_ID + " text not null,"
+            + COLUMN_GROUP_ID + " text not null,"
+            + COLUMN_TIME + "datetime default current_timestamp)";
+
+    private final String createRouteGroupIndexSql = "CREATE UNIQUE INDEX route_id_group_id "
+            + "on " + TABLE_ROUTE_GROUP
+            + " (" + COLUMN_ROUTE_ID + "," + COLUMN_GROUP_ID + ");";
+
+    private final String createUniqueLocationIndexSql = "CREATE UNIQUE INDEX unique_location "
+            + "on " + TABLE_LOCATIONS
+            + " (" + COLUMN_SPEED + "," + COLUMN_LAT + "," + COLUMN_LNG
+            + "," + COLUMN_ACC + "," + COLUMN_BEARING + "," + COLUMN_TIME + ");";
 
     private final String createRouteGeometryIndexSql = "CREATE UNIQUE INDEX route_lat_lng "
                 + "on " + TABLE_ROUTE_GEOMETRY
@@ -93,6 +114,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(createLogEntriesSql);
         db.execSQL(createRouteGeometrySql);
         db.execSQL(createRouteGeometryIndexSql);
+        db.execSQL(createRouteGroupSql);
+        db.execSQL(createGroupsSql);
+        db.execSQL(createRouteGroupIndexSql);
+        db.execSQL(createUniqueLocationIndexSql);
     }
 
     @Override
@@ -106,6 +131,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("drop table " + TABLE_ROUTES);
         db.execSQL("drop table " + TABLE_LOG_ENTRIES);
         db.execSQL("drop table " + TABLE_ROUTE_GEOMETRY);
+        db.execSQL("drop table " + TABLE_ROUTE_GROUP);
+        db.execSQL("drop table " + TABLE_GROUPS);
         createDatabases(db);
     }
 
@@ -119,7 +146,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_DUMP, location.toString());
         values.put(COLUMN_ALT, location.getAltitude());
         values.put(COLUMN_ACC, location.getAccuracy());
-        values.put(COLUMN_TIME, System.currentTimeMillis());
+        values.put(COLUMN_TIME, location.getTime());
         values.put(COLUMN_SPEED, location.getSpeed());
         values.put(COLUMN_BEARING, location.getBearing());
         values.put(COLUMN_CORRECTED_LAT, correctedLocation.getLatitude());

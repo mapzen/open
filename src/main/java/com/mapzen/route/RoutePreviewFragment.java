@@ -83,6 +83,7 @@ public class RoutePreviewFragment extends BaseFragment
     @Override
     public void onResume() {
         super.onResume();
+        app.deactivateMoveMapToLocation();
         act.hideActionBar();
     }
 
@@ -94,6 +95,7 @@ public class RoutePreviewFragment extends BaseFragment
         mapFragment.updateMap();
         act.enableActionbar();
         act.showActionBar();
+        app.activateMoveMapToLocation();
         unregisterViewUpdater();
     }
 
