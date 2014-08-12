@@ -511,6 +511,19 @@ public class BaseActivityTest {
     }
 
     @Test
+    public void onOpenAndCloseSearch_shouldNotHaveOSMLoginOption() throws Exception {
+        Menu menu = new TestMenu();
+        activity.onCreateOptionsMenu(menu);
+        Token token = new Token("stuff", "fun");
+        activity.setAccessToken(token);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.onActionViewExpanded();
+        searchView.onActionViewCollapsed();
+        MenuItem menuItem = menu.findItem(R.id.login);
+        assertThat(menuItem).isNotVisible();
+    }
+
+    @Test
     public void onOptionsItemSelected_shouldLogout() throws Exception {
         Token token = new Token("stuff", "fun");
         Menu menu = new TestMenu();
