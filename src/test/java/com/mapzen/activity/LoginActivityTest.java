@@ -13,6 +13,8 @@ import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 import org.scribe.model.Token;
+
+import static com.mapzen.activity.LoginActivity.OSM_VERIFIER_KEY;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import android.net.Uri;
@@ -71,7 +73,7 @@ public class LoginActivityTest {
     @Test
     public void shouldStartBaseActivityOnTokenReturn() {
         Uri.Builder oauthTokenBuilder = new Uri.Builder();
-        oauthTokenBuilder.appendQueryParameter(activity.getOSMVerifierKey(), "Bogus verifier");
+        oauthTokenBuilder.appendQueryParameter(OSM_VERIFIER_KEY, "Bogus verifier");
         Uri oauthToken = oauthTokenBuilder.build();
         Intent intent = new Intent();
         intent.setData(oauthToken);

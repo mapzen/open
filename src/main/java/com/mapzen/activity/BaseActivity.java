@@ -5,7 +5,6 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.android.lost.LocationClient;
 import com.mapzen.core.DataUploadService;
-import com.mapzen.core.OSMOauthFragment;
 import com.mapzen.core.SettingsFragment;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.route.RouteFragment;
@@ -27,7 +26,6 @@ import org.oscim.android.MapActivity;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.Map;
 import org.scribe.model.Token;
-import org.scribe.model.Verifier;
 
 import android.app.AlarmManager;
 import android.app.NotificationManager;
@@ -42,10 +40,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
@@ -82,8 +77,6 @@ public class BaseActivity extends MapActivity {
     private MapzenApplication app;
     private MapFragment mapFragment;
     private MapzenGPSPromptDialogFragment gpsPromptDialogFragment;
-    private Token requestToken = null;
-    private Verifier verifier = null;
 
     protected boolean enableActionbar = true;
 
@@ -162,23 +155,12 @@ public class BaseActivity extends MapActivity {
                 initDebugDataSubmitter();
                 debugDataExecutor.execute(debugDataSubmitter);
                 return true;
-            case R.id.login:
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                Fragment prev = getSupportFragmentManager().findFragmentByTag(OSMOauthFragment.TAG);
-                if (prev != null) {
-                    ft.remove(prev);
-                }
-                ft.addToBackStack(null);
-                DialogFragment newFragment = OSMOauthFragment.newInstance(this);
-                newFragment.show(ft, OSMOauthFragment.TAG);
-                return true;
             case R.id.logout:
                 SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.remove("token");
                 editor.remove("forced_login");
                 editor.commit();
-                toggleOSMLogin();
                 startActivity(new Intent(this, InitialActivity.class));
                 finish();
                 return true;
@@ -289,7 +271,6 @@ public class BaseActivity extends MapActivity {
                 handleMapsIntent(searchView, data);
             }
         }
-        toggleOSMLogin();
         return true;
     }
 
@@ -299,7 +280,6 @@ public class BaseActivity extends MapActivity {
 
     public void showOptionsMenu() {
         activityMenu.setGroupVisible(R.id.overflow_menu, true);
-        toggleOSMLogin();
     }
 
     private void resetSearchView() {
@@ -358,24 +338,6 @@ public class BaseActivity extends MapActivity {
                 MenuInflater inflater = getMenuInflater();
                 activityMenu.clear();
                 inflater.inflate(R.menu.debug_option_group, activityMenu);
-            }
-        });
-    }
-
-    private void toggleOSMLogin() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                MenuItem loginMenu = activityMenu.findItem(R.id.login);
-                MenuItem logoutMenu = activityMenu.findItem(R.id.logout);
-
-                if ((app.getAccessToken() != null) || wasForceLoggedIn()) {
-                    loginMenu.setVisible(false);
-                    logoutMenu.setVisible(true);
-                } else {
-                    loginMenu.setVisible(true);
-                    logoutMenu.setVisible(false);
-                }
             }
         });
     }
@@ -518,23 +480,6 @@ public class BaseActivity extends MapActivity {
 
     public void setAccessToken(Token accessToken) {
         app.setAccessToken(accessToken);
-        toggleOSMLogin();
-    }
-
-    public Verifier getVerifier() {
-        return verifier;
-    }
-
-    public void setVerifier(Verifier verifier) {
-        this.verifier = verifier;
-    }
-
-    public Token getRequestToken() {
-        return requestToken;
-    }
-
-    public void setRequestToken(Token requestToken) {
-        this.requestToken = requestToken;
     }
 
     public void updateView() {
@@ -570,11 +515,6 @@ public class BaseActivity extends MapActivity {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(SavedSearch.TAG, getSavedSearch().serialize());
         editor.commit();
-    }
-
-    private boolean wasForceLoggedIn() {
-        SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
-        return prefs.getBoolean("forced_login", false);
     }
 
     public void locateButtonAction(View view) {

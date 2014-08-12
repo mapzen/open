@@ -10,14 +10,8 @@
     <group android:id="@+id/overflow_menu">
 
     <item
-        android:id="@+id/login"
-        android:title="@string/osm_login"
-        android:showAsAction="never" />
-
-    <item
         android:id="@+id/logout"
         android:title="@string/osm_logout"
-        android:visible="false"
         android:showAsAction="never" />
    </group>
 

@@ -28,9 +28,9 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-import static com.mapzen.core.OSMOauthFragment.OSM_VERIFIER_KEY;
-
 public class LoginActivity extends Activity {
+    public static final String OSM_VERIFIER_KEY = "oauth_verifier";
+
     @InjectView(R.id.sign_up_button) Button signUp;
     @InjectView(R.id.log_in_button) Button logIn;
     private MapzenApplication app;
@@ -202,9 +202,5 @@ public class LoginActivity extends Activity {
         Toast.makeText(getApplicationContext(), getString(R.string.login_error),
                 Toast.LENGTH_LONG).show();
         startBaseActivity();
-    }
-
-    public String getOSMVerifierKey() {
-        return OSM_VERIFIER_KEY;
     }
 }
