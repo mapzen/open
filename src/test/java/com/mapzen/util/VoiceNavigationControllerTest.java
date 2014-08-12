@@ -57,25 +57,25 @@ public class VoiceNavigationControllerTest {
     @Test
     public void shouldReplaceMiWithMiles() throws Exception {
         int distanceInMeters = (int) Math.round(2 * METERS_IN_ONE_MILE);
-        controller.playInstruction(getTestInstruction(distanceInMeters));
+        controller.playFlippedInstruction(getTestInstruction(distanceInMeters));
         assertThat(shadowTextToSpeech.getLastSpokenText())
-                .isEqualTo("Head on 19th Street for 2 miles");
+                .isEqualTo("Continue on 19th Street for 2 miles");
     }
 
     @Test
     public void shouldReplace1MilesWith1Mile() throws Exception {
         int distanceInMeters = (int) Math.round(METERS_IN_ONE_MILE);
-        controller.playInstruction(getTestInstruction(distanceInMeters));
+        controller.playFlippedInstruction(getTestInstruction(distanceInMeters));
         assertThat(shadowTextToSpeech.getLastSpokenText())
-                .isEqualTo("Head on 19th Street for 1 mile");
+                .isEqualTo("Continue on 19th Street for 1 mile");
     }
 
     @Test
     public void shouldReplaceFtWithFeet() throws Exception {
         int distanceInMeters = (int) Math.ceil(100 * METERS_IN_ONE_FOOT);
-        controller.playInstruction(getTestInstruction(distanceInMeters));
+        controller.playFlippedInstruction(getTestInstruction(distanceInMeters));
         assertThat(shadowTextToSpeech.getLastSpokenText())
-                .isEqualTo("Head on 19th Street for 100 feet");
+                .isEqualTo("Continue on 19th Street for 100 feet");
     }
 
     @Test

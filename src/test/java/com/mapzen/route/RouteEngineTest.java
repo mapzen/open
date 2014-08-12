@@ -1,7 +1,6 @@
 package com.mapzen.route;
 
 import com.mapzen.helpers.ZoomController;
-import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.support.MapzenTestRunner;
 
@@ -60,17 +59,14 @@ public class RouteEngineTest {
     public void shouldNotifyNewInstruction() throws Exception {
         route.addSeenInstruction(route.getRouteInstructions().get(0));
         routeEngine.onLocationChanged(route.getRouteInstructions().get(1).getLocation());
-        assertThat(listener.activeInstruction).isEqualTo(route.getRouteInstructions().get(1));
-        assertThat(listener.index).isEqualTo(1);
+        assertThat(listener.enterIndex).isEqualTo(1);
     }
 
     @Test
-    public void shouldNotifyFlipInstruction() throws Exception {
-        Location location = route.getRouteInstructions().get(1).getLocation();
-        route.addSeenInstruction(route.getRouteInstructions().get(0));
-        routeEngine.onLocationChanged(location);
-        assertThat(listener.flippedInstruction).isEqualTo(route.getRouteInstructions().get(0));
-        assertThat(listener.snapLocation).isEqualsToByComparingFields(route.snapToRoute(location));
+    public void shouldNotifyExitRadius() throws Exception {
+        routeEngine.onLocationChanged(route.getRouteInstructions().get(0).getLocation());
+        routeEngine.onLocationChanged(route.getRouteInstructions().get(1).getLocation());
+        assertThat(listener.exitIndex).isEqualTo(0);
     }
 
     @Test
@@ -78,18 +74,16 @@ public class RouteEngineTest {
         Location location = route.getRouteInstructions().get(1).getLocation();
         route.addSeenInstruction(route.getRouteInstructions().get(0));
         routeEngine.onLocationChanged(location);
-        assertThat(listener.snapLocation).isEqualsToByComparingFields(route.snapToRoute(location));
         assertThat(listener.closestDistance).isEqualTo(0);
     }
 
     private static class TestRouteListener implements RouteEngine.RouteListener {
         private Location originalLocation;
         private Location snapLocation;
-        private Instruction activeInstruction;
-        private Instruction flippedInstruction;
 
         private boolean recalculating = false;
-        private int index = -1;
+        private int enterIndex = -1;
+        private int exitIndex = -1;
         private int closestDistance = -1;
 
         @Override
@@ -104,20 +98,17 @@ public class RouteEngineTest {
         }
 
         @Override
-        public void onNewInstruction(Instruction instruction, int index) {
-            this.activeInstruction = instruction;
-            this.index = index;
+        public void onEnterInstructionRadius(int index) {
+            enterIndex = index;
         }
 
         @Override
-        public void onFlipInstruction(Instruction instruction, Location snapLocation) {
-            this.flippedInstruction = instruction;
-            this.snapLocation = snapLocation;
+        public void onExitInstructionRadius(int index) {
+            exitIndex = index;
         }
 
         @Override
-        public void onUpdateDistance(Location snapLocation, int closestDistance) {
-            this.snapLocation = snapLocation;
+        public void onUpdateDistance(int closestDistance) {
             this.closestDistance = closestDistance;
         }
     }

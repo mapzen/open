@@ -5,7 +5,6 @@ import com.mapzen.activity.BaseActivity;
 import com.mapzen.android.lost.LocationClient;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
-import com.mapzen.helpers.DistanceFormatter;
 import com.mapzen.helpers.ZoomController;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
@@ -48,8 +47,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -111,7 +108,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     VoiceNavigationController voiceNavigationController;
     private MapzenNotificationCreator notificationCreator;
 
-    private Set<Instruction> flippedInstructions = new HashSet<Instruction>();
     private boolean isRouting = false;
     private boolean autoPaging = true;
 
@@ -192,20 +188,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void initSpeakerbox() {
         voiceNavigationController = new VoiceNavigationController(getActivity());
-        playFirstInstruction();
-    }
-
-    private void playFirstInstruction() {
-        if (instructions != null && instructions.size() > 0) {
-            voiceNavigationController.playInstruction(instructions.get(0));
-        }
     }
 
     @OnClick(R.id.resume_button)
     @SuppressWarnings("unused")
     public void onClickResume() {
         Instruction instruction = instructions.get(pager.getCurrentItem());
-        updateRemainingDistance(instruction, instruction.getLocation());
         resumeAutoPaging();
     }
 
@@ -375,52 +363,36 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     @Override
-    public void onNewInstruction(Instruction instruction, int index) {
+    public void onEnterInstructionRadius(int index) {
+        voiceNavigationController.playInstruction(instructions.get(index));
+        if (index == instructions.size() - 1) {
+            pager.setCurrentItem(index);
+        }
+    }
+
+    @Override
+    public void onExitInstructionRadius(int index) {
+        voiceNavigationController.playFlippedInstruction(instructions.get(index));
+        if (index != instructions.size() - 2) {
+            showInstruction(index + 1);
+        } else {
+            flipInstruction(index);
+        }
+
+        final Instruction nextInstruction = instructions.get(index + 1);
+        if (nextInstruction != null) {
+            debugView.setClosestInstruction(nextInstruction);
+        }
+    }
+
+    private void showInstruction(int index) {
+        final Instruction instruction = instructions.get(index);
         pagerPositionWhenPaused = index;
         Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: " + instruction.toString());
         pager.setCurrentItem(index);
-        if (route.getRouteInstructions().get(index) != null) {
-            debugView.setClosestInstruction(instruction);
-        }
     }
 
-    @Override
-    public void onFlipInstruction(Instruction instruction, Location snapLocation) {
-        Logger.logToDatabase(act, ROUTE_TAG, "post language: " + instruction.toString());
-        flipInstructionToAfter(instruction, snapLocation);
-    }
-
-    @Override
-    public void onUpdateDistance(Location snapLocation, int closestDistance) {
-        final Instruction currentInstruction = instructions.get(pager.getCurrentItem());
-        if (pager.getCurrentItem() == pager.getAdapter().getCount() - 1) {
-            distanceToDestination.setText("0 ft");
-        } else if (pager.getCurrentItem() == pager.getAdapter().getCount() - 2 &&
-                flippedInstructions.contains(currentInstruction)) {
-            distanceToDestination.setDistance(instructions.get(pager.getCurrentItem())
-                    .getRemainingDistance(snapLocation));
-        } else {
-            updateDistanceToDestination(pager.getCurrentItem(), snapLocation);
-        }
-
-        debugView.setClosestDistance(closestDistance);
-    }
-
-    private void flipInstructionToAfter(Instruction instruction, Location location) {
-        if (flippedInstructions.contains(instruction)) {
-            updateRemainingDistance(instruction, location);
-        } else {
-            flipInstruction(instruction);
-        }
-    }
-
-    private void flipInstruction(Instruction instruction) {
-        final int index = instructions.indexOf(instruction);
-        flippedInstructions.add(instruction);
-        if (pager.getCurrentItem() == index) {
-            voiceNavigationController.playFlippedInstruction(instruction);
-        }
-
+    private void flipInstruction(int index) {
         final View view = getViewForIndex(index);
         if (view != null) {
             TextView fullBefore = (TextView) view.findViewById(R.id.full_instruction);
@@ -435,13 +407,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    private void updateRemainingDistance(Instruction instruction, Location location) {
-        final View view = getViewForIndex(instructions.indexOf(instruction));
-        if (view != null) {
-            TextView instructionDistance = (TextView) view.findViewById(R.id.distance_instruction);
-            instructionDistance.setText(DistanceFormatter.format(instruction
-                    .getRemainingDistance(location), true));
-        }
+    @Override
+    public void onUpdateDistance(int closestDistance) {
+        debugView.setClosestDistance(closestDistance);
     }
 
     private View getViewForIndex(int index) {
@@ -458,24 +426,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
                     "turnPoint: " + instruction.toString());
         }
-    }
-
-    /**
-     * Updates overall distance to destination when continuing on the current instruction.
-     */
-    private void updateDistanceToDestination(int currentPosition, Location location) {
-        int distance = 0;
-        for (Instruction instruction : instructions) {
-            if (!flippedInstructions.contains(instruction)) {
-                distance += instruction.getDistance();
-            }
-        }
-
-        if (flippedInstructions.contains(instructions.get(currentPosition))) {
-            distance += instructions.get(currentPosition).getRemainingDistance(location);
-        }
-
-        distanceToDestination.setDistance(distance);
     }
 
     public boolean setRoute(Route route) {
@@ -558,17 +508,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         } else {
             setCurrentPagerItemStyling(i);
         }
-        voiceNavigationController.playInstruction(instructions.get(i));
         notificationCreator.createNewNotification(simpleFeature.getMarker().title,
                 instructions.get(i).getFullInstruction());
     }
 
     @Override
     public void onPageScrollStateChanged(int i) {
-    }
-
-    public Set<Instruction> getFlippedInstructions() {
-        return flippedInstructions;
     }
 
     public int getNumberOfLocationsForAverageSpeed() {
@@ -677,7 +622,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     @Override
                     public void run() {
                         pager.setAdapter(new RouteAdapter(act, instructions, fragment));
-                        playFirstInstruction();
                         notificationCreator.createNewNotification(simpleFeature.getMarker().title,
                                 instructions.get(0).getFullInstruction());
                         setCurrentPagerItemStyling(0);

@@ -525,19 +525,14 @@ public class RouteFragmentTest {
 
     @Test
     public void onTouch_shouldStoreCurrentItemWhenPagerWasFirstTouched() throws Exception {
-        Route route = fragment.getRoute();
-        ArrayList<Instruction> instructions = route.getRouteInstructions();
-        route.addSeenInstruction(instructions.get(0));
-        route.addSeenInstruction(instructions.get(1));
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-        fragment.onLocationChanged(instructions.get(2).getLocation());
+        loadAceHotelMockRoute();
+        fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(0).getLocation());
+        fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(1).getLocation());
         simulateUserPagerTouch();
         fragment.pager.setCurrentItem(0);
         simulateUserPagerTouch();
-        ImageButton resume = (ImageButton) fragment.getView().findViewById(R.id.resume_button);
-        resume.performClick();
-        assertThat(fragment.pager.getCurrentItem()).isEqualTo(2);
+        fragment.getView().findViewById(R.id.resume_button).performClick();
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(1);
     }
 
     @Test
@@ -555,9 +550,9 @@ public class RouteFragmentTest {
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
         route.addSeenInstruction(instructions.get(0));
-        route.addSeenInstruction(instructions.get(1));
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
+        fragment.onLocationChanged(instructions.get(1).getLocation());
         fragment.onLocationChanged(instructions.get(2).getLocation());
         simulateUserPagerTouch();
         fragment.pager.setCurrentItem(0);
@@ -666,15 +661,10 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldAdvance() throws Exception {
-        Route route = fragment.getRoute();
-        ArrayList<Instruction> instructions = route.getRouteInstructions();
-        fragment.setInstructions(instructions);
-        route.addSeenInstruction(instructions.get(0));
-        route.addSeenInstruction(instructions.get(1));
-        FragmentTestUtil.startFragment(fragment);
-        assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
-        fragment.onLocationChanged(instructions.get(2).getLocation());
-        assertThat(fragment.pager.getCurrentItem()).isEqualTo(2);
+        loadAceHotelMockRoute();
+        fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(0).getLocation());
+        fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(1).getLocation());
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(1);
     }
 
     @Test
@@ -691,17 +681,12 @@ public class RouteFragmentTest {
 
     @Test
     public void onLocationChange_shouldAdvanceWhenUserHasResumed() throws Exception {
-        Route route = fragment.getRoute();
-        ArrayList<Instruction> instructions = route.getRouteInstructions();
-        route.addSeenInstruction(instructions.get(0));
-        route.addSeenInstruction(instructions.get(1));
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
+        loadAceHotelMockRoute();
         simulateUserPagerTouch();
-        assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
-        View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
-        view.findViewById(R.id.resume_button).performClick();
-        fragment.onLocationChanged(instructions.get(2).getLocation());
+        fragment.getRoute().addSeenInstruction(fragment.getRoute().getRouteInstructions().get(0));
+        fragment.onClickResume();
+        fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(1).getLocation());
+        fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(2).getLocation());
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(2);
     }
 
@@ -711,22 +696,6 @@ public class RouteFragmentTest {
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
         fragment.onLocationChanged(getTestLocation(1, 0));
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
-    }
-
-    @Test
-    public void onLocationChange_shouldFlipToPostInstructionLanguage() throws Exception {
-        fragment.setRoute(new Route(MOCK_ROUTE_JSON));
-        FragmentTestUtil.startFragment(fragment);
-        fragment.onResume();
-        Route route = fragment.getRoute();
-        ArrayList<Instruction> instructions = route.getRouteInstructions();
-        fragment.onLocationChanged(instructions.get(0).getLocation());
-        fragment.onLocationChanged(instructions.get(1).getLocation());
-        fragment.onLocationChanged(instructions.get(1).getLocation());
-        fragment.onLocationChanged(instructions.get(2).getLocation());
-        assertThat(fragment.getFlippedInstructions().contains(instructions.get(0))).isTrue();
-        assertThat(fragment.getFlippedInstructions().contains(instructions.get(1))).isTrue();
-        assertThat(fragment.getFlippedInstructions().contains(instructions.get(2))).isFalse();
     }
 
     @Test
@@ -746,40 +715,6 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onLocationChanged_shouldUpdateDistanceBelowTurnIcon() throws Exception {
-        loadMockAroundTheBlock();
-        Route route = fragment.getRoute();
-        ArrayList<Instruction> instructions = route.getRouteInstructions();
-        fragment.getRoute().addSeenInstruction(instructions.get(0));
-        fragment.getFlippedInstructions().add(instructions.get(0));
-        Location midPoint = getTestLocation(40.660278, -73.988611);
-        fragment.onLocationChanged(midPoint);
-
-        View view = fragment.pager.findViewWithTag("Instruction_0");
-        String expectedInstructionDistance = DistanceFormatter.format(instructions.get(0)
-                .getRemainingDistance(midPoint));
-        TextView distanceText = (TextView) view.findViewById(R.id.distance_instruction);
-        assertThat(distanceText).hasText(expectedInstructionDistance);
-    }
-
-    @Test
-    public void onLocationChanged_shouldUpdateDistanceToDestination() throws Exception {
-        loadMockAroundTheBlock();
-        Route route = fragment.getRoute();
-        ArrayList<Instruction> instructions = route.getRouteInstructions();
-        fragment.getRoute().addSeenInstruction(instructions.get(0));
-        fragment.getFlippedInstructions().add(instructions.get(0));
-        Location midPoint = getTestLocation(40.660278, -73.988611);
-        fragment.onLocationChanged(midPoint);
-
-        int expectedDistanceToDestination = route.getTotalDistance()
-                - instructions.get(0).getDistance()
-                + instructions.get(0).getRemainingDistance(midPoint);
-        assertThat(fragment.distanceToDestination.getText())
-                .isEqualTo(DistanceFormatter.format(expectedDistanceToDestination));
-    }
-
-    @Test
     public void onLocationChanged_shouldNotAdvanceWhenDistanceEqualsTurnRadius() throws Exception {
         loadAceHotelMockRoute();
         fragment.getRoute().addSeenInstruction(fragment.getRoute().getRouteInstructions().get(0));
@@ -790,70 +725,11 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onLocationChanged_shouldNotFlipWhenDistanceEqualsTurnRadius() throws Exception {
-        loadAceHotelMockRoute();
-        fragment.getRoute().addSeenInstruction(fragment.getRoute().getRouteInstructions().get(0));
-        fragment.getRoute().addSeenInstruction(fragment.getRoute().getRouteInstructions().get(1));
-        fragment.getRoute().addSeenInstruction(fragment.getRoute().getRouteInstructions().get(2));
-        fragment.pager.setCurrentItem(2);
-        fragment.onLocationChanged(getTestLocation(40.743016, -73.987105)); // 50 meters away
-        assertThat(fragment.getFlippedInstructions())
-                .doesNotContain(fragment.getRoute().getRouteInstructions().get(2));
-    }
-
-    @Test
     public void distanceToDestination_shouldEqualRouteDistanceAtStart() throws Exception {
         loadAceHotelMockRoute();
         fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(0).getLocation());
         int expected = fragment.getRoute().getTotalDistance();
         assertThat(fragment.distanceToDestination).hasText(DistanceFormatter.format(expected));
-    }
-
-    @Test
-    public void distanceToDestination_shouldSubtractFirstInstructionAtFirstTurn() throws Exception {
-        loadAceHotelMockRoute();
-        fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(0).getLocation());
-        fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(1).getLocation());
-        int expected = fragment.getRoute().getTotalDistance()
-                - fragment.getRoute().getRouteInstructions().get(0).getDistance();
-        assertThat(fragment.distanceToDestination).hasText(DistanceFormatter.format(expected));
-    }
-
-    @Test
-    public void penultimateInstruction_shouldSyncInstructionAndOverallDistance() throws Exception {
-        loadMockRoute();
-        Route route = fragment.getRoute();
-        ArrayList<Instruction> instructions = route.getRouteInstructions();
-        fragment.pager.setCurrentItem(instructions.size() - 2);
-        Instruction oneBeforeLast = instructions.get(instructions.size() - 2);
-        fragment.getFlippedInstructions().add(oneBeforeLast);
-        ArrayList<Location> geometry = route.getGeometry();
-        Location location = geometry.get(geometry.size() - 1);
-        fragment.onLocationChanged(location);
-        String expected = DistanceFormatter.format(oneBeforeLast.getRemainingDistance(location));
-        assertThat(fragment.distanceToDestination).hasText(expected);
-    }
-
-    @Test
-    public void ultimateInstruction_shouldHaveZeroDistanceToDestination() throws Exception {
-        loadMockRoute();
-        Route route = fragment.getRoute();
-        ArrayList<Location> geometry = route.getGeometry();
-        ArrayList<Instruction> instructions = route.getRouteInstructions();
-        fragment.pager.setCurrentItem(instructions.size() - 1);
-        fragment.onLocationChanged(geometry.get(geometry.size() - 1));
-        assertThat(fragment.distanceToDestination).hasText("0 ft");
-    }
-
-    @Test
-    public void onLocationChange_shouldNotFlipToPostInstructionLanguage() throws Exception {
-        FragmentTestUtil.startFragment(fragment);
-        fragment.onResume();
-        Route route = fragment.getRoute();
-        ArrayList<Instruction> instructions = route.getRouteInstructions();
-        assertThat(fragment.getFlippedInstructions().contains(instructions.get(0))).isFalse();
-        assertThat(fragment.getFlippedInstructions().contains(instructions.get(1))).isFalse();
-        assertThat(fragment.getFlippedInstructions().contains(instructions.get(2))).isFalse();
     }
 
     @Test
@@ -885,6 +761,7 @@ public class RouteFragmentTest {
 
         FragmentTestUtil.startFragment(fragment);
         Location location = fragment.getRoute().getRouteInstructions().get(0).getLocation();
+        fragment.setInstructions(fragment.getRoute().getRouteInstructions());
 
         assertAdvanceRadius(100, 10, location);
         assertAdvanceRadius(200, 20, location);
@@ -906,17 +783,7 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onCreateView_shouldSpeakFirstInstruction() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        Instruction instruction = getTestInstruction(0, 0);
-        instructions.add(instruction);
-        fragment.setInstructions(instructions);
-        FragmentTestUtil.startFragment(fragment);
-        assertLastSpokenText("Head on 19th Street for 520 feet");
-    }
-
-    @Test
-    public void onPageSelected_shouldSpeakInstruction() throws Exception {
+    public void onEnterInstructionRadius_shouldSpeakTurnInstruction() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 
         Instruction firstInstruction = getTestInstruction(0, 0);
@@ -929,8 +796,26 @@ public class RouteFragmentTest {
 
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
-        fragment.onPageSelected(1);
-        assertLastSpokenText("Head on 19th Street for 0.1 miles");
+        fragment.onEnterInstructionRadius(0);
+        assertLastSpokenText("Head on 19th Street");
+    }
+
+    @Test
+    public void onExitInstructionRadius_shouldSpeakContinueInstruction() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+
+        Instruction firstInstruction = getTestInstruction(0, 0);
+        firstInstruction.setDistance(100);
+        instructions.add(firstInstruction);
+
+        Instruction secondInstruction = getTestInstruction(0, 0);
+        secondInstruction.setDistance(200);
+        instructions.add(secondInstruction);
+
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onExitInstructionRadius(0);
+        assertLastSpokenText("Continue on 19th Street for 320 feet");
     }
 
     @Test

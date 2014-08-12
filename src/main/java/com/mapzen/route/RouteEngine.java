@@ -6,71 +6,54 @@ import com.mapzen.osrm.Route;
 
 import android.location.Location;
 
-import java.util.Iterator;
-
 public class RouteEngine {
     private Route route;
     private RouteListener listener;
     private ZoomController zoomController;
-    private int recordedDistance = 10000;
-    private Instruction activeInstruction;
+    private Instruction nextInstruction;
+    private int currentIndex = -1;
+    private int distance;
 
     public void onLocationChanged(Location location) {
-        Location correctedLocation = route.snapToRoute(location);
-        if (correctedLocation == null) {
+        final Location snapLocation = route.snapToRoute(location);
+        if (snapLocation == null) {
             if (route.isLost()) {
                 listener.onRecalculate(location);
             }
             return;
         }
 
-        listener.onSnapLocation(location, correctedLocation);
-
-        Instruction closestInstruction;
-        int closestDistance;
-        if (activeInstruction == null) {
-            closestInstruction = route.getNextInstruction();
-            if (closestInstruction == null) {
-                return;
-            }
-            closestDistance =
-                    (int) Math.floor(correctedLocation
-                            .distanceTo(closestInstruction.getLocation()));
-            activeInstruction = closestInstruction;
-            recordedDistance = closestDistance;
+        listener.onSnapLocation(location, snapLocation);
+        nextInstruction = route.getNextInstruction();
+        if (nextInstruction == null) {
+            return;
         }
 
-        closestDistance =
-                (int) Math.floor(correctedLocation.distanceTo(activeInstruction.getLocation()));
+        final int index = route.getRouteInstructions().indexOf(nextInstruction);
+        distance = (int) Math.floor(snapLocation.distanceTo(nextInstruction.getLocation()));
 
-        final int instructionIndex = route.getRouteInstructions().indexOf(activeInstruction);
-        if (closestDistance < zoomController.getTurnRadius()) {
-            listener.onNewInstruction(activeInstruction, instructionIndex);
-            if (!route.getSeenInstructions().contains(activeInstruction)) {
-                route.addSeenInstruction(activeInstruction);
+        checkExitRadius(snapLocation);
+        checkEnterRadius(index);
+        listener.onUpdateDistance(distance);
+    }
+
+    private void checkExitRadius(Location snapLocation) {
+        if (currentIndex > -1) {
+            if (route.getRouteInstructions().get(currentIndex).getLocation()
+                    .distanceTo(snapLocation) > zoomController.getTurnRadius()) {
+                listener.onExitInstructionRadius(currentIndex);
+                currentIndex = -1;
             }
         }
+    }
 
-        if (recordedDistance < closestDistance) {
-            activeInstruction = null;
-            recordedDistance = 100000;
-        } else {
-            recordedDistance = closestDistance;
+    private void checkEnterRadius(int index) {
+        if (distance < zoomController.getTurnRadius() &&
+                !route.getSeenInstructions().contains(nextInstruction)) {
+            listener.onEnterInstructionRadius(index);
+            route.addSeenInstruction(nextInstruction);
+            currentIndex = index;
         }
-
-        final Iterator it = route.getSeenInstructions().iterator();
-        while (it.hasNext()) {
-            Instruction instruction = (Instruction) it.next();
-            final Location l = new Location("temp");
-            l.setLatitude(instruction.getLocation().getLatitude());
-            l.setLongitude(instruction.getLocation().getLongitude());
-            final int distance = (int) Math.floor(l.distanceTo(correctedLocation));
-            if (distance > zoomController.getTurnRadius()) {
-                listener.onFlipInstruction(instruction, correctedLocation);
-            }
-        }
-
-        listener.onUpdateDistance(correctedLocation, closestDistance);
     }
 
     public void setRoute(Route route) {
@@ -88,8 +71,8 @@ public class RouteEngine {
     public interface RouteListener {
         public void onRecalculate(Location location);
         public void onSnapLocation(Location originalLocation, Location snapLocation);
-        public void onNewInstruction(Instruction instruction, int index);
-        public void onFlipInstruction(Instruction instruction, Location snapLocation);
-        public void onUpdateDistance(Location snapLocation, int closestDistance);
+        public void onEnterInstructionRadius(int index);
+        public void onExitInstructionRadius(int index);
+        public void onUpdateDistance(int closestDistance);
     }
 }
