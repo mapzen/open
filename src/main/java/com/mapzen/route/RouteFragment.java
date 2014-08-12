@@ -5,6 +5,7 @@ import com.mapzen.activity.BaseActivity;
 import com.mapzen.android.lost.LocationClient;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
+import com.mapzen.helpers.DistanceFormatter;
 import com.mapzen.helpers.ZoomController;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
@@ -408,8 +409,17 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     @Override
-    public void onUpdateDistance(int closestDistance) {
+    public void onUpdateDistance(int closestDistance, int instructionDistance,
+            int distanceToDestination) {
         debugView.setClosestDistance(closestDistance);
+        this.distanceToDestination.setDistance(distanceToDestination);
+
+        final View view = getViewForIndex(pager.getCurrentItem());
+        if (view != null) {
+            final TextView currentInstructionDistance =
+                    (TextView) view.findViewById(R.id.distance_instruction);
+            currentInstructionDistance.setText(DistanceFormatter.format(instructionDistance, true));
+        }
     }
 
     private View getViewForIndex(int index) {

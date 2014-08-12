@@ -12,7 +12,8 @@ public class RouteEngine {
     private ZoomController zoomController;
     private Instruction nextInstruction;
     private int currentIndex = -1;
-    private int distance;
+    private int closestDistance;
+    private int distanceToDestination;
 
     public void onLocationChanged(Location location) {
         final Location snapLocation = route.snapToRoute(location);
@@ -30,11 +31,10 @@ public class RouteEngine {
         }
 
         final int index = route.getRouteInstructions().indexOf(nextInstruction);
-        distance = (int) Math.floor(snapLocation.distanceTo(nextInstruction.getLocation()));
-
+        closestDistance = (int) Math.floor(snapLocation.distanceTo(nextInstruction.getLocation()));
         checkExitRadius(snapLocation);
         checkEnterRadius(index);
-        listener.onUpdateDistance(distance);
+        calculateDistance(snapLocation, index);
     }
 
     private void checkExitRadius(Location snapLocation) {
@@ -48,16 +48,50 @@ public class RouteEngine {
     }
 
     private void checkEnterRadius(int index) {
-        if (distance < zoomController.getTurnRadius() &&
+        if (closestDistance < zoomController.getTurnRadius() &&
                 !route.getSeenInstructions().contains(nextInstruction)) {
             listener.onEnterInstructionRadius(index);
+            calculateDistanceToDestination();
             route.addSeenInstruction(nextInstruction);
             currentIndex = index;
         }
     }
 
+    private void calculateDistance(Location snapLocation, int index) {
+        int instructionDistance = nextInstruction.getDistance();
+        int currentDistanceToDestination = distanceToDestination;
+        if (index > 0) {
+            if (currentIndex > 0) {
+                instructionDistance = route.getRouteInstructions().get(currentIndex - 1)
+                        .getRemainingDistance(snapLocation);
+            } else {
+                instructionDistance = route.getRouteInstructions().get(index - 1)
+                        .getRemainingDistance(snapLocation);
+                currentDistanceToDestination -= route.getRouteInstructions().get(index - 1)
+                        .getDistance();
+                currentDistanceToDestination += instructionDistance;
+            }
+        }
+
+        if (currentIndex == route.getRouteInstructions().size() - 1) {
+            instructionDistance = 0;
+            currentDistanceToDestination = 0;
+        }
+
+        listener.onUpdateDistance(closestDistance, instructionDistance,
+                currentDistanceToDestination);
+    }
+
+    private void calculateDistanceToDestination() {
+        distanceToDestination = route.getTotalDistance();
+        for (Instruction instruction : route.getSeenInstructions()) {
+            distanceToDestination -= instruction.getDistance();
+        }
+    }
+
     public void setRoute(Route route) {
         this.route = route;
+        this.distanceToDestination = route.getTotalDistance();
     }
 
     public void setListener(RouteListener listener) {
@@ -73,6 +107,7 @@ public class RouteEngine {
         public void onSnapLocation(Location originalLocation, Location snapLocation);
         public void onEnterInstructionRadius(int index);
         public void onExitInstructionRadius(int index);
-        public void onUpdateDistance(int closestDistance);
+        public void onUpdateDistance(int closestDistance, int instructionDistance,
+                int distanceToDestination);
     }
 }
