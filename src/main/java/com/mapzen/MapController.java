@@ -74,6 +74,10 @@ public final class MapController {
         }
     }
 
+    public void nullMap() {
+        map = null;
+    }
+
     public MapController setLocation(Location location) {
         this.location = location;
         mapPosition.setPosition(location.getLatitude(), location.getLongitude());
@@ -158,6 +162,10 @@ public final class MapController {
         editor.putFloat(KEY_MAP_SCALE, (float) mapPosition.scale);
         editor.putFloat(KEY_BEARING, mapPosition.getBearing());
         editor.commit();
+    }
+
+    public void clearLocation() {
+        location = null;
     }
 
     private boolean hasStoredMapPosition() {
