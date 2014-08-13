@@ -15,20 +15,23 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" />
 
-    <Button
+    <ImageButton
         android:id="@+id/locate_button"
+        android:src="@drawable/ic_locate_button"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_margin="10dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="20dp"
         android:layout_above="@id/pager_results_container"
         android:layout_alignParentRight="true"
         android:onClick="locateButtonAction"
-        android:background="@drawable/ic_locate" />
+        android:background="@color/transparent_white" />
 
     <TextView
         android:id="@+id/attribution"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
         android:text="@string/osm_attribution"
         android:textSize="@dimen/tiny"
         android:layout_above="@id/pager_results_container"
