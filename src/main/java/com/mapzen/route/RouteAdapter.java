@@ -5,6 +5,7 @@ import com.mapzen.osrm.Instruction;
 import com.mapzen.util.DisplayHelper;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v4.view.PagerAdapter;
 import android.text.Spannable;
@@ -41,6 +42,7 @@ public class RouteAdapter extends PagerAdapter {
         currentInstruction = instructions.get(position);
         final View view = View.inflate(context, R.layout.instruction, null);
         setBackgroundColor(position, view);
+        setTextColor(position, view);
         setFullInstruction(view);
         setFullInstructionAfterAction(view);
         setTurnIcon(view);
@@ -55,9 +57,19 @@ public class RouteAdapter extends PagerAdapter {
 
     private void setBackgroundColor(int position, View view) {
         if (position == instructions.size() - 1) {
-            view.setBackgroundColor(context.getResources().getColor(R.color.destination_green));
+            view.setBackgroundColor(context.getResources().getColor(R.color.destination_color));
         } else {
             view.setBackgroundColor(context.getResources().getColor(R.color.transparent_gray));
+        }
+    }
+
+    private void setTextColor(int position, View view) {
+        final TextView fullInstruction = (TextView) view.findViewById(R.id.full_instruction);
+        if (position == instructions.size() - 1) {
+            fullInstruction.setTextColor(
+                    context.getResources().getColor(R.color.destination_text_color));
+        } else {
+            fullInstruction.setTextColor(Color.BLACK);
         }
     }
 
@@ -178,7 +190,7 @@ public class RouteAdapter extends PagerAdapter {
 
     public void setBackgroundColorComplete(View view) {
         if (view != null) {
-            view.setBackgroundColor(context.getResources().getColor(R.color.destination_green));
+            view.setBackgroundColor(context.getResources().getColor(R.color.destination_color));
         }
     }
 }
