@@ -41,7 +41,7 @@ public class VoiceNavigationController {
     }
 
     public void playInstruction(Instruction instruction) {
-        speakerbox.play(instruction.getFullInstruction());
+        speakerbox.play(instruction.getSimpleInstruction());
     }
 
     public void playFlippedInstruction(Instruction instruction) {

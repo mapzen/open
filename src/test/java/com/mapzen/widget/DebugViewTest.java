@@ -41,7 +41,8 @@ public class DebugViewTest {
 
         Route route = new Route(TestHelper.MOCK_AROUND_THE_BLOCK);
         Instruction instruction = route.getRouteInstructions().get(0);
-        debugView.setClosestInstruction(instruction, 30);
+        debugView.setClosestInstruction(instruction);
+        debugView.setClosestDistance(30);
     }
 
     @Test
