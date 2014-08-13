@@ -7,7 +7,6 @@ import com.mapzen.TestMapzenApplication;
 import com.mapzen.android.gson.Feature;
 import com.mapzen.android.lost.LocationClient;
 import com.mapzen.core.MapzenLocation;
-import com.mapzen.core.OSMOauthFragment;
 import com.mapzen.core.SettingsFragment;
 import com.mapzen.search.PagerResultsFragment;
 import com.mapzen.search.SavedSearch;
@@ -22,7 +21,6 @@ import com.squareup.okhttp.mockwebserver.RecordedRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAlarmManager;
@@ -30,7 +28,6 @@ import org.robolectric.shadows.ShadowLocationManager;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
 import org.scribe.model.Token;
-import org.scribe.oauth.OAuthService;
 
 import android.app.AlarmManager;
 import android.content.Context;
@@ -475,24 +472,6 @@ public class BaseActivityTest {
     }
 
     @Test
-    public void shouldHaveOSMLoginOption() throws Exception {
-        Menu menu = new TestMenu();
-        activity.onCreateOptionsMenu(menu);
-        MenuItem menuItem = menu.findItem(R.id.login);
-        assertThat(menuItem).isVisible();
-    }
-
-    @Test
-    public void shouldNotHaveOSMLoginOption() throws Exception {
-        Token token = new Token("stuff", "fun");
-        Menu menu = new TestMenu();
-        activity.onCreateOptionsMenu(menu);
-        activity.setAccessToken(token);
-        MenuItem menuItem = menu.findItem(R.id.login);
-        assertThat(menuItem).isNotVisible();
-    }
-
-    @Test
     public void shouldHaveOSMLogoutOption() throws Exception {
         Token token = new Token("stuff", "fun");
         Menu menu = new TestMenu();
@@ -500,14 +479,6 @@ public class BaseActivityTest {
         activity.setAccessToken(token);
         MenuItem menuItem = menu.findItem(R.id.logout);
         assertThat(menuItem).isVisible();
-    }
-
-    @Test
-    public void shouldNotHaveOSMLogoutOption() throws Exception {
-        Menu menu = new TestMenu();
-        activity.onCreateOptionsMenu(menu);
-        MenuItem menuItem = menu.findItem(R.id.logout);
-        assertThat(menuItem).isNotVisible();
     }
 
     @Test
@@ -520,33 +491,6 @@ public class BaseActivityTest {
         assertThat(((MapzenApplication) application).getAccessToken()).isNotNull();
         activity.onOptionsItemSelected(menuItem);
         assertThat(((MapzenApplication) application).getAccessToken()).isNull();
-    }
-
-    @Test
-    public void onOptionsItemSelected_shouldToggleLoginLogout() throws Exception {
-        Token token = new Token("stuff", "fun");
-        Menu menu = new TestMenu();
-        activity.onCreateOptionsMenu(menu);
-        activity.setAccessToken(token);
-        MenuItem logoutItem = menu.findItem(R.id.logout);
-        activity.onOptionsItemSelected(logoutItem);
-        assertThat(logoutItem).isNotVisible();
-        MenuItem loginItem = menu.findItem(R.id.login);
-        assertThat(loginItem).isVisible();
-    }
-
-    @Test
-    public void onOptionsItemSelected_shouldStartOSMOauthFragment() throws Exception {
-        Menu menu = new TestMenu();
-        final TestBaseActivity testBaseActivity = (TestBaseActivity) activity;
-        testBaseActivity.onCreateOptionsMenu(menu);
-        OAuthService serviceMock = Mockito.mock(OAuthService.class);
-        ((MapzenApplication) application).setOsmOauthService(serviceMock);
-        MenuItem loginItem = menu.findItem(R.id.login);
-        testBaseActivity.onOptionsItemSelected(loginItem);
-
-        assertThat(testBaseActivity.getSupportFragmentManager())
-                .hasFragmentWithTag(OSMOauthFragment.TAG);
     }
 
     @Test
