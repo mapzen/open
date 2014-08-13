@@ -5,7 +5,9 @@
     <color name="destination_green">#CC91c475</color>
     <color name="teal_background">#6da1a5</color>
     <color name="button_red">#d46a5f</color>
+    <color name="button_red_pressed">#ba4845</color>
     <color name="button_dark_blue">#345557</color>
+    <color name="button_dark_blue_pressed">#1a333d</color>
     <color name="sign_up_text">#3b3b3b</color>
 
     <!-- new colors --> 
