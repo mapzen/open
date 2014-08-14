@@ -16,7 +16,7 @@ dependencies:
 
 test:
   override:
-    - mvn install -P jenkins -Dosm_oauth.key=$OSM_AUTH_KEY -Dosm_oauth.secret=$OSM_AUTH_SECRET
+    - mvn install -P jenkins -Dmixpanel.token=$MIXPANEL_TOKEN -Dosm_oauth.key=$OSM_AUTH_KEY -Dosm_oauth.secret=$OSM_AUTH_SECRET
 
 deployment:
   latest:
