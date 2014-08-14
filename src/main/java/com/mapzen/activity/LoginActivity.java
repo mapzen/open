@@ -31,7 +31,6 @@ import butterknife.OnClick;
 public class LoginActivity extends Activity {
     public static final String OSM_VERIFIER_KEY = "oauth_verifier";
 
-    @InjectView(R.id.sign_up_button) Button signUp;
     @InjectView(R.id.log_in_button) Button logIn;
     private MapzenApplication app;
     private Token requestToken = null;
@@ -75,12 +74,6 @@ public class LoginActivity extends Activity {
         }
     }
 
-    @OnClick(R.id.sign_up_button)
-    @SuppressWarnings("unused")
-    protected void onClickSignUp() {
-        openSignUpPage();
-    }
-
     @OnClick(R.id.log_in_button)
     @SuppressWarnings("unused")
     protected void onClickLogIn() {
@@ -101,12 +94,6 @@ public class LoginActivity extends Activity {
         editor.putBoolean("forced_login", true);
         editor.commit();
         startBaseActivity();
-    }
-
-    private void openSignUpPage() {
-        String signUpURL = getString(R.string.osm_sign_up_url);
-        Intent signUpIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(signUpURL));
-        startActivity(signUpIntent);
     }
 
     public void loginRoutine() {
@@ -188,7 +175,6 @@ public class LoginActivity extends Activity {
     private void fadeInLoginView() {
         findViewById(R.id.login_explanation).startAnimation(fadeIn);
         findViewById(R.id.log_in_button).startAnimation(fadeInSlow);
-        findViewById(R.id.sign_up_button).startAnimation(fadeInSlow);
         findViewById(R.id.login_layout).setVisibility(LinearLayout.VISIBLE);
     }
 

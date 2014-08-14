@@ -51,13 +51,6 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void shouldOpenSignUpPage() {
-        activity.findViewById(R.id.sign_up_button).callOnClick();
-        String urlOpened = shadowOf(activity).getNextStartedActivity().getDataString();
-        assertThat(urlOpened).isEqualTo("https://www.openstreetmap.org/user/new");
-    }
-
-    @Test
     public void shouldOpenLoginPage() {
         Token testToken = new Token("Bogus_key", "Bogus_verfier");
         activity.openLoginPage(testToken);

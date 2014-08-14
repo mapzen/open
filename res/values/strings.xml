@@ -108,9 +108,7 @@
     <string name="logo_description">Mapzen Logo</string>
     <string name="osm_logout">OpenStreetMap Logout</string>
     <string name="osm_login_title">Please Authorize</string>
-    <string name="osm_init_login">Log in with Open Street Map</string>
-    <string name="osm_init_sign_up">Sign up with Open Street Map</string>
-    <string name="osm_sign_up_url">https://www.openstreetmap.org/user/new</string>
+    <string name="osm_init_login">Continue with Open Street Map</string>
     <string name="login_explanation">Sign up or log in with Open Street Map to get started.</string>
     <string name="motto">Start where you are.</string>
     <string name="login_error">Unable to log in. You can try to log in again by restarting the application.</string>
