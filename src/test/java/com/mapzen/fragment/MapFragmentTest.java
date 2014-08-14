@@ -35,10 +35,6 @@ import static com.mapzen.support.TestHelper.initBaseActivity;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.reflect.core.Reflection.field;
-import static com.mapzen.MapController.getMapController;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
@@ -223,14 +219,6 @@ public class MapFragmentTest {
         mapFragment.showLocationMarker();
         assertThat(mapFragment.getMap().layers().
                 contains(mapFragment.getLocationMarkerLayer())).isTrue();
-    }
-
-    @Test
-    public void ifNoLocationAvailable_shouldNotChangeLocationOnFindMe() {
-        MapFragment spy = spy(mapFragment);
-        getMapController().clearLocation();
-        mapFragment.findMe();
-        verify(spy, never()).getUserLocationPoint();
     }
 
     private void setTileSourceConfiguration(String source) {

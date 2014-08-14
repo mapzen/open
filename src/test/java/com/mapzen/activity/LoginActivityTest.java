@@ -37,7 +37,7 @@ public class LoginActivityTest {
     public void setUp() throws Exception {
         ((TestMapzenApplication) Robolectric.application).inject(this);
         activity = initLoginActivity();
-        getMapController().nullMap();
+        getMapController().setActivity(new BaseActivity());
     }
 
     @Test
@@ -128,7 +128,7 @@ public class LoginActivityTest {
 
     @Test
     public void shouldNotDisplayLocationError() {
-        getMapController().nullMap();
+        getMapController().setActivity(new BaseActivity());
         LocationClient mock = mock(LocationClient.class);
         Mockito.when(mock.getLastLocation()).thenReturn(null);
         assertThat(ShadowToast.getTextOfLatestToast()).isNull();
@@ -144,8 +144,4 @@ public class LoginActivityTest {
         activity.onPause();
         assertThat(locationClient.isConnected()).isFalse();
     }
-
-
-
-
 }

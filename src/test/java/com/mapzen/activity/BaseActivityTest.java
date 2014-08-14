@@ -85,7 +85,7 @@ public class BaseActivityTest {
     @After
     public void tearDown() {
         activity.finish();
-        getMapController().nullMap();
+        getMapController().setActivity(new BaseActivity());
     }
 
     @Test
