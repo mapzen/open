@@ -2,6 +2,8 @@ package com.mapzen.core;
 
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.activity.BaseActivityTest;
+import com.mapzen.activity.InitialActivity;
+import com.mapzen.activity.InitialActivityTest;
 import com.mapzen.activity.LoginActivity;
 import com.mapzen.activity.LoginActivityTest;
 import com.mapzen.adapters.PlaceArrayAdapter;
@@ -16,6 +18,8 @@ import com.mapzen.route.RoutePreviewFragment;
 import com.mapzen.route.RoutePreviewFragmentTest;
 import com.mapzen.search.AutoCompleteAdapter;
 import com.mapzen.support.TestBaseActivity;
+
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.mockito.Mockito;
 import org.oscim.layers.PathLayer;
@@ -32,9 +36,12 @@ import dagger.Provides;
 
 import static com.mapzen.osrm.Router.getRouter;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 
 @Module(
         injects = {
+                InitialActivity.class,
+                InitialActivityTest.class,
                 TestBaseActivity.class,
                 BaseActivity.class,
                 BaseActivityTest.class,
@@ -72,11 +79,15 @@ public class TestAppModule {
     }
 
     @Provides @Singleton PathLayer providePathLayer() {
-        return Mockito.mock(PathLayer.class);
+        return mock(PathLayer.class);
     }
 
     @Provides @Singleton ItemizedLayer<MarkerItem> provideItemizedLayer() {
-        return Mockito.mock(ItemizedLayer.class);
+        return mock(ItemizedLayer.class);
+    }
+
+    @Provides @Singleton MixpanelAPI provideMixpanelApi() {
+        return mock(MixpanelAPI.class);
     }
 
     @Provides @Singleton Typeface provideTypeface() {

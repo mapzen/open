@@ -3,6 +3,7 @@ package com.mapzen.core;
 import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
+import com.mapzen.activity.InitialActivity;
 import com.mapzen.activity.LoginActivity;
 import com.mapzen.adapters.PlaceArrayAdapter;
 import com.mapzen.fragment.ItemFragment;
@@ -10,6 +11,8 @@ import com.mapzen.osrm.Router;
 import com.mapzen.route.RouteFragment;
 import com.mapzen.route.RoutePreviewFragment;
 import com.mapzen.search.AutoCompleteAdapter;
+
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.oscim.android.canvas.AndroidGraphics;
 import org.oscim.backend.canvas.Color;
@@ -29,6 +32,7 @@ import dagger.Provides;
 
 @Module(
         injects = {
+                InitialActivity.class,
                 BaseActivity.class,
                 LoginActivity.class,
                 ItemFragment.class,
@@ -69,5 +73,9 @@ public class AppModule {
 
     @Provides @Singleton Typeface provideTypeface() {
         return Typeface.createFromAsset(context.getAssets(), "fonts/RobotoCondensed-Light.ttf");
+    }
+
+    @Provides @Singleton MixpanelAPI provideMixpanelApi() {
+        return MixpanelAPI.getInstance(context, context.getString(R.string.mixpanel_token));
     }
 }
