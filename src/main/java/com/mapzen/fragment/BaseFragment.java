@@ -1,5 +1,9 @@
 package com.mapzen.fragment;
 
+import com.mapzen.MapzenApplication;
+import com.mapzen.R;
+import com.mapzen.activity.BaseActivity;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,9 +11,6 @@ import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.widget.Toast;
-import com.mapzen.MapzenApplication;
-import com.mapzen.R;
-import com.mapzen.activity.BaseActivity;
 
 import retrofit.RetrofitError;
 
@@ -55,7 +56,7 @@ public abstract class BaseFragment extends Fragment implements BaseActivity.View
                 }
             });
         }
-        act.dismissProgressDialog();
+        act.hideLoadingIndicator();
         Log.e(MapzenApplication.LOG_TAG, "request: error: " + String.valueOf(status));
     }
 
@@ -68,7 +69,7 @@ public abstract class BaseFragment extends Fragment implements BaseActivity.View
 
     protected void onServerError(RetrofitError error) {
         Toast.makeText(act, act.getString(R.string.generic_server_error), Toast.LENGTH_LONG).show();
-        act.dismissProgressDialog();
+        act.hideLoadingIndicator();
         Log.e(MapzenApplication.LOG_TAG, "request: error: " + error.toString());
     }
 

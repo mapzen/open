@@ -225,7 +225,7 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     public boolean executeSearchOnMap(final SearchView view, String query) {
-        act.showProgressDialog();
+        act.showLoadingIndicator();
         app.setCurrentSearchTerm(query);
         searchTermForCurrentResults = query;
         getSavedSearch().store(query);
@@ -239,7 +239,7 @@ public class PagerResultsFragment extends BaseFragment {
             @Override
             public void success(Result result, retrofit.client.Response response) {
                 setSearchResults(result.getFeatures());
-                act.dismissProgressDialog();
+                act.hideLoadingIndicator();
                 view.clearFocus();
             }
 

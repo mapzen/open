@@ -108,13 +108,6 @@ public class MapFragment extends BaseFragment {
         getMap().animator().animateTo(DURATION, geoPoint, zoom, false);
     }
 
-    public MarkerItem getMeMarker() {
-        if (locationMarkerLayer.size() == 1) {
-            return meMarkers.get(0);
-        }
-        return null;
-    }
-
     public void addPoi(SimpleFeature simpleFeature) {
         MarkerItem markerItem = simpleFeature.getMarker();
         poiMarkersLayer.addItem(markerItem);
@@ -247,7 +240,7 @@ public class MapFragment extends BaseFragment {
             }
 
             updateMap();
-       }
+        }
     }
 
     private void addLocationDot() {
@@ -325,6 +318,16 @@ public class MapFragment extends BaseFragment {
 
         locationReceiver = new LocationReceiver(COM_MAPZEN_UPDATES_LOCATION);
         app.registerReceiver(locationReceiver, locationReceiver.getIntentFilter());
+    }
+
+    public void showProgress() {
+        getView().findViewById(R.id.map).setVisibility(View.GONE);
+        getView().findViewById(R.id.progress).setVisibility(View.VISIBLE);
+    }
+
+    public void hideProgress() {
+        getView().findViewById(R.id.map).setVisibility(View.VISIBLE);
+        getView().findViewById(R.id.progress).setVisibility(View.GONE);
     }
 
     private final class FindMeReceiver extends IntentReceiver {
