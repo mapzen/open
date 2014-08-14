@@ -237,15 +237,17 @@ public class MapFragment extends BaseFragment {
     }
 
     public void findMe() {
-        addLocationDot();
-        getMapController().resetZoomAndPointNorth();
-        if (followMe || !initialRelocateHappened) {
-            // TODO find ways to accomplish this without two flags ;(
-            initialRelocateHappened = true;
-            getMap().setMapPosition(getUserLocationPosition());
-        }
+        if (getMapController().getLocation() != null) {
+            addLocationDot();
+            getMapController().resetZoomAndPointNorth();
+            if (followMe || !initialRelocateHappened) {
+                // TODO find ways to accomplish this without two flags ;(
+                initialRelocateHappened = true;
+                getMap().setMapPosition(getUserLocationPosition());
+            }
 
-        updateMap();
+            updateMap();
+       }
     }
 
     private void addLocationDot() {

@@ -9,12 +9,14 @@ import com.mapzen.support.MapzenTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 import org.scribe.model.Token;
 
 import static com.mapzen.activity.LoginActivity.OSM_VERIFIER_KEY;
+import static com.mapzen.MapController.getMapController;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import android.net.Uri;
@@ -23,6 +25,7 @@ import javax.inject.Inject;
 
 import static com.mapzen.support.TestHelper.initLoginActivity;
 import static org.robolectric.Robolectric.shadowOf;
+import static org.mockito.Mockito.mock;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
@@ -34,6 +37,7 @@ public class LoginActivityTest {
     public void setUp() throws Exception {
         ((TestMapzenApplication) Robolectric.application).inject(this);
         activity = initLoginActivity();
+        getMapController().setActivity(new BaseActivity());
     }
 
     @Test
@@ -120,6 +124,14 @@ public class LoginActivityTest {
         activity.unableToLogInAction();
         boolean showedToast = ShadowToast.showedToast(activity.getString(R.string.login_error));
         assertThat(showedToast).isTrue();
+    }
+
+    @Test
+    public void shouldNotDisplayLocationError() {
+        getMapController().setActivity(new BaseActivity());
+        LocationClient mock = mock(LocationClient.class);
+        Mockito.when(mock.getLastLocation()).thenReturn(null);
+        assertThat(ShadowToast.getTextOfLatestToast()).isNull();
     }
 
     @Test

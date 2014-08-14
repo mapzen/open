@@ -18,6 +18,7 @@ import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -79,6 +80,12 @@ public class BaseActivityTest {
         menu = new TestMenu();
         activity = initBaseActivityWithMenu(menu);
         getSavedSearch().clear();
+    }
+
+    @After
+    public void tearDown() {
+        activity.finish();
+        getMapController().setActivity(new BaseActivity());
     }
 
     @Test
