@@ -542,7 +542,7 @@ public class RouteFragmentTest {
     @Test
     public void onCreateView_shouldHaveTotalDistance() throws Exception {
         FragmentTestUtil.startFragment(fragment);
-        act.showProgressDialog();
+        act.showLoadingIndicator();
         View view = fragment.onCreateView(act.getLayoutInflater(), null, null);
         DistanceView textView = (DistanceView) view.findViewById(R.id.destination_distance);
         int distance = fragment.getRoute().getTotalDistance();

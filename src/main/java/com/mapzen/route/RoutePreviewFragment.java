@@ -1,9 +1,5 @@
 package com.mapzen.route;
 
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
@@ -25,7 +21,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -192,7 +192,7 @@ public class RoutePreviewFragment extends BaseFragment
     public void createRouteToDestination() {
         mapFragment.clearMarkers();
         mapFragment.updateMap();
-        act.showProgressDialog();
+        act.showLoadingIndicator();
         router.clearLocations()
                 .setLocation(getOriginPoint())
                 .setLocation(getDestinationPoint())
@@ -231,7 +231,7 @@ public class RoutePreviewFragment extends BaseFragment
                     .add(R.id.routes_preview_container, this, TAG)
                     .commit();
         }
-        act.dismissProgressDialog();
+        act.hideLoadingIndicator();
         ArrayList<Location> points = route.getGeometry();
         path.clearPath();
         double minlat = points.get(0).getLatitude();

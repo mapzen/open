@@ -264,7 +264,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         mapFragment.clearMarkers();
         mapFragment.updateMap();
         isRouting = true;
-        act.showProgressDialog();
+        act.showLoadingIndicator();
         router.clearLocations()
                 .setLocation(locationToPair(location))
                 // To allow routing to see which direction you are travelling
@@ -636,7 +636,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void success(Route route) {
         if (setRoute(route)) {
-            act.dismissProgressDialog();
+            act.hideLoadingIndicator();
             isRouting = false;
             if (!isAdded()) {
                 act.getSupportFragmentManager().beginTransaction()

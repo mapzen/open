@@ -20,6 +20,7 @@ import org.oscim.tiling.source.HttpEngine;
 import org.oscim.tiling.source.OkHttpEngine;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
+import org.robolectric.util.FragmentTestUtil;
 
 import android.content.BroadcastReceiver;
 import android.content.Intent;
@@ -219,6 +220,40 @@ public class MapFragmentTest {
         mapFragment.showLocationMarker();
         assertThat(mapFragment.getMap().layers().
                 contains(mapFragment.getLocationMarkerLayer())).isTrue();
+    }
+
+    @Test
+    public void showProgress_shouldHideMapView() throws Exception {
+        FragmentTestUtil.startFragment(mapFragment);
+        mapFragment.showProgress();
+        Robolectric.runUiThreadTasks();
+        assertThat(mapFragment.getView().findViewById(R.id.map)).isNotVisible();
+    }
+
+    @Test
+    public void showProgress_shouldShowProgressView() throws Exception {
+        FragmentTestUtil.startFragment(mapFragment);
+        mapFragment.showProgress();
+        Robolectric.runUiThreadTasks();
+        assertThat(mapFragment.getView().findViewById(R.id.progress)).isVisible();
+    }
+
+    @Test
+    public void hideProgress_shouldShowMapView() throws Exception {
+        FragmentTestUtil.startFragment(mapFragment);
+        mapFragment.showProgress();
+        mapFragment.hideProgress();
+        Robolectric.runUiThreadTasks();
+        assertThat(mapFragment.getView().findViewById(R.id.map)).isVisible();
+    }
+
+    @Test
+    public void hideProgress_shouldHideProgressView() throws Exception {
+        FragmentTestUtil.startFragment(mapFragment);
+        mapFragment.showProgress();
+        mapFragment.hideProgress();
+        Robolectric.runUiThreadTasks();
+        assertThat(mapFragment.getView().findViewById(R.id.progress)).isNotVisible();
     }
 
     private void setTileSourceConfiguration(String source) {

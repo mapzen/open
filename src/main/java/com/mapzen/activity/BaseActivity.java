@@ -173,14 +173,12 @@ public class BaseActivity extends MapActivity {
         }
     }
 
-    public void showProgressDialog() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getMapFragment().getView().findViewById(R.id.map).setVisibility(View.GONE);
-                getMapFragment().getView().findViewById(R.id.progress).setVisibility(View.VISIBLE);
-            }
-        });
+    public void showLoadingIndicator() {
+        getMapFragment().showProgress();
+    }
+
+    public void hideLoadingIndicator() {
+        getMapFragment().hideProgress();
     }
 
     public void showGPSPromptDialog() {
@@ -193,16 +191,6 @@ public class BaseActivity extends MapActivity {
         if (!locationClient.isGPSEnabled()) {
             showGPSPromptDialog();
         }
-    }
-
-    public void dismissProgressDialog() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getMapFragment().getView().findViewById(R.id.map).setVisibility(View.VISIBLE);
-                getMapFragment().getView().findViewById(R.id.progress).setVisibility(View.GONE);
-            }
-        });
     }
 
     private void initMapFragment() {
