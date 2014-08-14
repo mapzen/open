@@ -20,6 +20,7 @@ import com.mapzen.util.MapzenGPSPromptDialogFragment;
 import com.mapzen.util.MapzenProgressDialogFragment;
 
 import com.bugsense.trace.BugSenseHandler;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.squareup.okhttp.OkHttpClient;
 
 import org.oscim.android.MapActivity;
@@ -77,6 +78,7 @@ public class BaseActivity extends MapActivity {
     private MapzenApplication app;
     private MapFragment mapFragment;
     private MapzenGPSPromptDialogFragment gpsPromptDialogFragment;
+    @Inject MixpanelAPI mixpanelAPI;
 
     protected boolean enableActionbar = true;
 
@@ -116,6 +118,7 @@ public class BaseActivity extends MapActivity {
     protected void onDestroy() {
         super.onDestroy();
         clearNotifications();
+        mixpanelAPI.flush();
     }
 
     private void clearNotifications() {

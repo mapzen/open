@@ -14,6 +14,7 @@ import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 
 import com.google.common.io.Files;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
@@ -73,6 +74,7 @@ public class BaseActivityTest {
     private BaseActivity activity;
     private TestMenu menu;
     @Inject LocationClient locationClient;
+    @Inject MixpanelAPI mixpanelAPI;
 
     @Before
     public void setUp() throws Exception {
@@ -157,6 +159,12 @@ public class BaseActivityTest {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         getSavedSearch().deserialize(prefs.getString(SavedSearch.TAG, ""));
         assertThat(getSavedSearch().get().next()).isEqualTo("expected");
+    }
+
+    @Test
+    public void onDestroy_shouldFlushMixpanelApi() throws Exception {
+        activity.onDestroy();
+        verify(mixpanelAPI).flush();
     }
 
     @Test
