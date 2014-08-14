@@ -37,6 +37,7 @@
     </repositories>
 
     <properties>
+        <mixpanel.token>bogus_token</mixpanel.token>
         <osm_oauth.key>bogus_key</osm_oauth.key>
         <osm_oauth.secret>bogus_secret</osm_oauth.secret>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -133,6 +134,13 @@
             <groupId>org.oscim</groupId>
             <artifactId>vtm-android</artifactId>
             <version>0.5.9-SNAPSHOT</version>
+            <type>aar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mixpanel.android</groupId>
+            <artifactId>mixpanel-android</artifactId>
+            <version>4.2.2</version>
             <type>aar</type>
         </dependency>
 
@@ -372,6 +380,10 @@
                         <replacement>
                             <token>REPLACE_SECRET</token>
                             <value>${osm_oauth.secret}</value>
+                        </replacement>
+                        <replacement>
+                            <token>REPLACE_MIXPANEL_TOKEN</token>
+                            <value>${mixpanel.token}</value>
                         </replacement>
                     </replacements>
                 </configuration>
