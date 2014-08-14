@@ -174,11 +174,25 @@ public class BaseActivity extends MapActivity {
     }
 
     public void showLoadingIndicator() {
-        getMapFragment().showProgress();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getMapFragment().showProgress();
+                findViewById(R.id.locate_button).setVisibility(View.GONE);
+                findViewById(R.id.attribution).setVisibility(View.GONE);
+            }
+        });
     }
 
     public void hideLoadingIndicator() {
-        getMapFragment().hideProgress();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getMapFragment().hideProgress();
+                findViewById(R.id.locate_button).setVisibility(View.VISIBLE);
+                findViewById(R.id.attribution).setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     public void showGPSPromptDialog() {

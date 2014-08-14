@@ -226,7 +226,6 @@ public class MapFragmentTest {
     public void showProgress_shouldHideMapView() throws Exception {
         FragmentTestUtil.startFragment(mapFragment);
         mapFragment.showProgress();
-        Robolectric.runUiThreadTasks();
         assertThat(mapFragment.getView().findViewById(R.id.map)).isNotVisible();
     }
 
@@ -234,7 +233,6 @@ public class MapFragmentTest {
     public void showProgress_shouldShowProgressView() throws Exception {
         FragmentTestUtil.startFragment(mapFragment);
         mapFragment.showProgress();
-        Robolectric.runUiThreadTasks();
         assertThat(mapFragment.getView().findViewById(R.id.progress)).isVisible();
     }
 
@@ -243,7 +241,6 @@ public class MapFragmentTest {
         FragmentTestUtil.startFragment(mapFragment);
         mapFragment.showProgress();
         mapFragment.hideProgress();
-        Robolectric.runUiThreadTasks();
         assertThat(mapFragment.getView().findViewById(R.id.map)).isVisible();
     }
 
@@ -252,7 +249,6 @@ public class MapFragmentTest {
         FragmentTestUtil.startFragment(mapFragment);
         mapFragment.showProgress();
         mapFragment.hideProgress();
-        Robolectric.runUiThreadTasks();
         assertThat(mapFragment.getView().findViewById(R.id.progress)).isNotVisible();
     }
 

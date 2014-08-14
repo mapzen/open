@@ -531,6 +531,36 @@ public class BaseActivityTest {
         assertThat(activity.getSearchView()).isNull();
     }
 
+    @Test
+    public void showLoadingIndicator_shouldHideFindMe() throws Exception {
+        activity.showLoadingIndicator();
+        Robolectric.runUiThreadTasks();
+        assertThat(activity.findViewById(R.id.locate_button)).isNotVisible();
+    }
+
+    @Test
+    public void showLoadingIndicator_shouldHideCopyright() throws Exception {
+        activity.showLoadingIndicator();
+        Robolectric.runUiThreadTasks();
+        assertThat(activity.findViewById(R.id.attribution)).isNotVisible();
+    }
+
+    @Test
+    public void hideLoadingIndicator_shouldShowFindMe() throws Exception {
+        activity.showLoadingIndicator();
+        activity.hideLoadingIndicator();
+        Robolectric.runUiThreadTasks();
+        assertThat(activity.findViewById(R.id.locate_button)).isVisible();
+    }
+
+    @Test
+    public void hideLoadingIndicator_shouldShowCopyright() throws Exception {
+        activity.showLoadingIndicator();
+        activity.hideLoadingIndicator();
+        Robolectric.runUiThreadTasks();
+        assertThat(activity.findViewById(R.id.attribution)).isVisible();
+    }
+
     private Location initLastLocation() {
         Location location = new Location(GPS_PROVIDER);
         location.setLatitude(1.0);

@@ -240,7 +240,7 @@ public class MapFragment extends BaseFragment {
             }
 
             updateMap();
-       }
+        }
     }
 
     private void addLocationDot() {
@@ -321,23 +321,13 @@ public class MapFragment extends BaseFragment {
     }
 
     public void showProgress() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getView().findViewById(R.id.map).setVisibility(View.GONE);
-                getView().findViewById(R.id.progress).setVisibility(View.VISIBLE);
-            }
-        });
+        getView().findViewById(R.id.map).setVisibility(View.GONE);
+        getView().findViewById(R.id.progress).setVisibility(View.VISIBLE);
     }
 
     public void hideProgress() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getView().findViewById(R.id.map).setVisibility(View.VISIBLE);
-                getView().findViewById(R.id.progress).setVisibility(View.GONE);
-            }
-        });
+        getView().findViewById(R.id.map).setVisibility(View.VISIBLE);
+        getView().findViewById(R.id.progress).setVisibility(View.GONE);
     }
 
     private final class FindMeReceiver extends IntentReceiver {
