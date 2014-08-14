@@ -108,13 +108,6 @@ public class MapFragment extends BaseFragment {
         getMap().animator().animateTo(DURATION, geoPoint, zoom, false);
     }
 
-    public MarkerItem getMeMarker() {
-        if (locationMarkerLayer.size() == 1) {
-            return meMarkers.get(0);
-        }
-        return null;
-    }
-
     public void addPoi(SimpleFeature simpleFeature) {
         MarkerItem markerItem = simpleFeature.getMarker();
         poiMarkersLayer.addItem(markerItem);
