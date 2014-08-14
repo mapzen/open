@@ -4,7 +4,6 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.android.lost.LocationClient;
 import com.mapzen.helpers.ZoomController;
 import com.mapzen.route.RouteEngine;
-import com.mapzen.util.MapzenProgressDialogFragment;
 
 import android.content.Context;
 
@@ -19,10 +18,6 @@ public class CommonModule {
 
     public CommonModule(MapzenApplication application) {
         this.application = application;
-    }
-
-    @Provides @Singleton MapzenProgressDialogFragment provideMapzenProgressDialogFragment() {
-        return new MapzenProgressDialogFragment();
     }
 
     @Provides @Singleton LocationClient provideLocationClient() {

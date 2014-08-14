@@ -923,7 +923,8 @@ public class RouteFragmentTest {
         Location testLocation = getTestLocation(100.0, 100.0);
         FragmentTestUtil.startFragment(fragment);
         fragment.createRouteTo(testLocation);
-        assertThat(act.getProgressDialogFragment()).isAdded();
+        assertThat(act.getMapFragment().getView().findViewById(R.id.map)).isNotVisible();
+        assertThat(act.getMapFragment().getView().findViewById(R.id.progress)).isVisible();
     }
 
     @Test
@@ -933,7 +934,8 @@ public class RouteFragmentTest {
         fragment.createRouteTo(testLocation);
         verify(router).setCallback(callback.capture());
         callback.getValue().failure(500);
-        assertThat(act.getProgressDialogFragment()).isNotAdded();
+        assertThat(act.getMapFragment().getView().findViewById(R.id.map)).isVisible();
+        assertThat(act.getMapFragment().getView().findViewById(R.id.progress)).isNotVisible();
     }
 
     @Test
@@ -943,7 +945,8 @@ public class RouteFragmentTest {
         fragment.createRouteTo(testLocation);
         verify(router).setCallback(callback.capture());
         callback.getValue().failure(207);
-        assertThat(act.getProgressDialogFragment()).isNotAdded();
+        assertThat(act.getMapFragment().getView().findViewById(R.id.map)).isVisible();
+        assertThat(act.getMapFragment().getView().findViewById(R.id.progress)).isNotVisible();
     }
 
     @Test

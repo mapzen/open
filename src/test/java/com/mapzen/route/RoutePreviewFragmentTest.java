@@ -1,7 +1,5 @@
 package com.mapzen.route;
 
-import android.widget.ImageButton;
-
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
@@ -11,6 +9,7 @@ import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +27,7 @@ import org.robolectric.util.FragmentTestUtil;
 
 import android.content.Intent;
 import android.location.Location;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -98,21 +98,24 @@ public class RoutePreviewFragmentTest {
     @Test
     public void setRouteTo_shouldShowLoadingDialog() throws Exception {
         fragment.createRouteToDestination();
-        assertThat(activity.getProgressDialogFragment()).isAdded();
+        assertThat(activity.getMapFragment().getView().findViewById(R.id.map)).isNotVisible();
+        assertThat(activity.getMapFragment().getView().findViewById(R.id.progress)).isVisible();
     }
 
     @Test
     public void setRouteTo_successShouldDismissLoadingDialogUpon() throws Exception {
         fragment.createRouteToDestination();
         fragment.success(new Route(getFixture("around_the_block")));
-        assertThat(activity.getProgressDialogFragment()).isNotAdded();
+        assertThat(activity.getMapFragment().getView().findViewById(R.id.map)).isVisible();
+        assertThat(activity.getMapFragment().getView().findViewById(R.id.progress)).isNotVisible();
     }
 
     @Test
     public void setRouteTo_failureShouldDismissLoadingDialogUpon() throws Exception {
         fragment.createRouteToDestination();
         fragment.failure(500);
-        assertThat(activity.getProgressDialogFragment()).isNotAdded();
+        assertThat(activity.getMapFragment().getView().findViewById(R.id.map)).isVisible();
+        assertThat(activity.getMapFragment().getView().findViewById(R.id.progress)).isNotVisible();
     }
 
     @Test

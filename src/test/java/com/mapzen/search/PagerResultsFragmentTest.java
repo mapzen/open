@@ -8,7 +8,6 @@ import com.mapzen.android.TestPelias;
 import com.mapzen.android.gson.Result;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.support.MapzenTestRunner;
-import com.mapzen.util.MapzenProgressDialogFragment;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -99,19 +98,17 @@ public class PagerResultsFragmentTest {
 
     @Test
     public void executeSearchOnMap_shouldDismissProgressDialogOnError() throws Exception {
-        MapzenProgressDialogFragment dialogFragment = act.getProgressDialogFragment();
         fragment.executeSearchOnMap(new SearchView(app), "Empire State Building");
-        assertThat(dialogFragment).isAdded();
         verify(peliasServiceMock).getSearch(eq("Empire State Building"), anyString(),
                 peliasCallback.capture());
         peliasCallback.getValue().failure(RetrofitError.unexpectedError("", null));
-        assertThat(dialogFragment).isNotAdded();
+        assertThat(act.getMapFragment().getView().findViewById(R.id.map)).isVisible();
+        assertThat(act.getMapFragment().getView().findViewById(R.id.progress)).isNotVisible();
     }
 
     @Test
     public void executeSearchOnMap_shouldToastAnError() {
         fragment.executeSearchOnMap(new SearchView(app), "Empire State Building");
-        assertThat(act.getProgressDialogFragment()).isAdded();
         verify(peliasServiceMock).getSearch(eq("Empire State Building"), anyString(),
                 peliasCallback.capture());
         peliasCallback.getValue().failure(RetrofitError.unexpectedError("", null));

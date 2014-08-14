@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_progress_01" android:duration="50" />
+    <item android:drawable="@drawable/ic_progress_02" android:duration="50" />
+    <item android:drawable="@drawable/ic_progress_03" android:duration="50" />
+    <item android:drawable="@drawable/ic_progress_04" android:duration="50" />
+    <item android:drawable="@drawable/ic_progress_05" android:duration="50" />
+    <item android:drawable="@drawable/ic_progress_06" android:duration="50" />
+    <item android:drawable="@drawable/ic_progress_07" android:duration="50" />
+    <item android:drawable="@drawable/ic_progress_08" android:duration="50" />
+    <item android:drawable="@drawable/ic_progress_09" android:duration="50" />
+    <item android:drawable="@drawable/ic_progress_10" android:duration="50" />
+    <item android:drawable="@drawable/ic_progress_11" android:duration="50" />
+    <item android:drawable="@drawable/ic_progress_12" android:duration="50" />
+    <item android:drawable="@drawable/ic_progress_13" android:duration="50" />
+    <item android:drawable="@drawable/ic_progress_14" android:duration="50" />
+    <item android:drawable="@drawable/ic_progress_15" android:duration="50" />
+    <item android:drawable="@drawable/ic_progress_16" android:duration="50" />
+    <item android:drawable="@drawable/ic_progress_17" android:duration="50" />
+    <item android:drawable="@drawable/ic_progress_18" android:duration="50" />
+</animation-list>

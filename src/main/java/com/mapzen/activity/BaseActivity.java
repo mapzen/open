@@ -17,7 +17,6 @@ import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.DebugDataSubmitter;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenGPSPromptDialogFragment;
-import com.mapzen.util.MapzenProgressDialogFragment;
 
 import com.bugsense.trace.BugSenseHandler;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -65,7 +64,6 @@ import static com.mapzen.MapController.getMapController;
 import static com.mapzen.search.SavedSearch.getSavedSearch;
 
 public class BaseActivity extends MapActivity {
-    @Inject MapzenProgressDialogFragment progressDialogFragment;
     public static final String COM_MAPZEN_UPDATE_VIEW = "com.mapzen.updates.view";
     public static final String COM_MAPZEN_UPDATES_LOCATION = "com.mapzen.updates.location";
     public static final String
@@ -176,9 +174,13 @@ public class BaseActivity extends MapActivity {
     }
 
     public void showProgressDialog() {
-        if (!progressDialogFragment.isAdded()) {
-            progressDialogFragment.show(getSupportFragmentManager(), "dialog");
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getMapFragment().getView().findViewById(R.id.map).setVisibility(View.GONE);
+                getMapFragment().getView().findViewById(R.id.progress).setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     public void showGPSPromptDialog() {
@@ -194,11 +196,13 @@ public class BaseActivity extends MapActivity {
     }
 
     public void dismissProgressDialog() {
-        progressDialogFragment.dismiss();
-    }
-
-    public MapzenProgressDialogFragment getProgressDialogFragment() {
-        return progressDialogFragment;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getMapFragment().getView().findViewById(R.id.map).setVisibility(View.VISIBLE);
+                getMapFragment().getView().findViewById(R.id.progress).setVisibility(View.GONE);
+            }
+        });
     }
 
     private void initMapFragment() {
