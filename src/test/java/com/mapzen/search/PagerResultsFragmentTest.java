@@ -228,4 +228,16 @@ public class PagerResultsFragmentTest {
         fragment.onResume();
         assertThat(act.getSearchView()).isNotFocused();
     }
+
+    @Test
+    public void shouldHideRootLayout() throws Exception {
+        assertThat(fragment.getView().findViewById(R.id.results_root)).isNotVisible();
+    }
+
+    @Test
+    public void displayResults_shouldRevealRootLayout() throws Exception {
+        fragment.add(getTestSimpleFeature());
+        fragment.displayResults(1, 0);
+        assertThat(fragment.getView().findViewById(R.id.results_root)).isVisible();
+    }
 }

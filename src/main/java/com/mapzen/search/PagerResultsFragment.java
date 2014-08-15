@@ -258,6 +258,7 @@ public class PagerResultsFragment extends BaseFragment {
         centerOnPlace(currentPos);
         mapFragment.updateMap();
         setMultiResultHeaderVisibility(length);
+        getView().findViewById(R.id.results_root).setVisibility(View.VISIBLE);
     }
 
     private void setMultiResultHeaderVisibility(int length) {
