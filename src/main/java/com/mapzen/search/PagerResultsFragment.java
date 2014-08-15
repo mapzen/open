@@ -229,7 +229,8 @@ public class PagerResultsFragment extends BaseFragment {
 
     public boolean executeSearchOnMap(final SearchView view, String query) {
         if (!isConnected()) {
-            Toast.makeText(act, getString(R.string.no_network), Toast.LENGTH_SHORT).show();
+            Toast.makeText(view.getContext(), view.getContext().getString(R.string.no_network),
+                    Toast.LENGTH_SHORT).show();
             return false;
         }
 
