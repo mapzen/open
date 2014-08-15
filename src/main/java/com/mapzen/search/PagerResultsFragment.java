@@ -16,6 +16,8 @@ import org.oscim.layers.marker.MarkerItem;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
@@ -39,6 +41,7 @@ import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 
+import static android.content.Context.CONNECTIVITY_SERVICE;
 import static com.mapzen.MapController.DEFAULT_ZOOM_LEVEL;
 import static com.mapzen.MapController.getMapController;
 import static com.mapzen.android.Pelias.getPelias;
@@ -225,6 +228,11 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     public boolean executeSearchOnMap(final SearchView view, String query) {
+        if (!isConnected()) {
+            Toast.makeText(act, getString(R.string.no_network), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
         act.showLoadingIndicator();
         app.setCurrentSearchTerm(query);
         searchTermForCurrentResults = query;
@@ -232,6 +240,17 @@ public class PagerResultsFragment extends BaseFragment {
         getPelias().search(query, ApiHelper.getViewBox(mapFragment.getMap()),
                 getSearchCallback(view));
         return true;
+    }
+
+    private boolean isConnected() {
+        final NetworkInfo networkInfo = ((ConnectivityManager)
+                act.getSystemService(CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+
+        if (networkInfo == null) {
+            return false;
+        }
+
+        return networkInfo.isConnected();
     }
 
     private Callback<Result> getSearchCallback(final SearchView view) {
