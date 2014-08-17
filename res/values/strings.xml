@@ -9,9 +9,8 @@
     <string name="view_all">VIEW ALL</string>
     <string name="no_route_found">No Route Found</string>
     <string name="current_location">Current Location</string>
-    <string name="generic_server_error">Server Error</string>
+    <string name="generic_server_error">An error occurred</string>
     <string name="progress_dialog_title">Loading</string>
-    <string name="progress_dialog_message">Wait while loading</string>
     <string name="gps_dialog_title">GPS Disabled</string>
     <string name="gps_dialog_message">The GPS on your device is disabled. Would you like to enable it for improved location accuracy?</string>
     <string name="gps_positive_button">Yes</string>
@@ -28,6 +27,7 @@
     <string name="routing_to_text">To\u0020</string>
     <string name="search_hint_icon_spacer">"   "</string>
     <string name="osm_attribution">© OpenStreetMap</string>
+    <string name="no_network">Network connection unavailable</string>
 
     <!--Settings-->
 

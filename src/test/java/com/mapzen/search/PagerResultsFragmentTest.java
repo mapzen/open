@@ -16,12 +16,15 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.util.FragmentTestUtil;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.SearchView;
@@ -30,6 +33,7 @@ import android.widget.Toast;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 
+import static android.content.Context.CONNECTIVITY_SERVICE;
 import static com.mapzen.search.SavedSearch.getSavedSearch;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
@@ -41,6 +45,8 @@ import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.getShadowApplication;
+import static org.robolectric.Robolectric.shadowOf;
+import static org.robolectric.shadows.ShadowToast.getTextOfLatestToast;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
@@ -112,8 +118,7 @@ public class PagerResultsFragmentTest {
         verify(peliasServiceMock).getSearch(eq("Empire State Building"), anyString(),
                 peliasCallback.capture());
         peliasCallback.getValue().failure(RetrofitError.unexpectedError("", null));
-        assertThat(ShadowToast.getTextOfLatestToast())
-                .isEqualTo(app.getString(R.string.generic_server_error));
+        assertThat(getTextOfLatestToast()).isEqualTo(app.getString(R.string.generic_server_error));
         assertThat(ShadowToast.getLatestToast()).hasDuration(Toast.LENGTH_LONG);
     }
 
@@ -227,5 +232,37 @@ public class PagerResultsFragmentTest {
         act.getSearchView().requestFocus();
         fragment.onResume();
         assertThat(act.getSearchView()).isNotFocused();
+    }
+
+    @Test
+    public void shouldHideRootLayout() throws Exception {
+        assertThat(fragment.getView().findViewById(R.id.results_root)).isNotVisible();
+    }
+
+    @Test
+    public void displayResults_shouldRevealRootLayout() throws Exception {
+        fragment.add(getTestSimpleFeature());
+        fragment.displayResults(1, 0);
+        assertThat(fragment.getView().findViewById(R.id.results_root)).isVisible();
+    }
+
+    @Test
+    public void executeSearchOnMap_shouldToastErrorIfNetworkNotAvailable() throws Exception {
+        simulateNoNetworkConnection();
+        fragment.executeSearchOnMap(act.getSearchView(), "query");
+        assertThat(getTextOfLatestToast()).isEqualTo(act.getString(R.string.no_network));
+    }
+
+    @Test
+    public void executeSearchOnMap_shouldReturnFalseIfNetworkNotAvailable() throws Exception {
+        simulateNoNetworkConnection();
+        assertThat(fragment.executeSearchOnMap(act.getSearchView(), "query")).isFalse();
+    }
+
+    private void simulateNoNetworkConnection() {
+        ConnectivityManager cm = (ConnectivityManager) act.getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        ShadowNetworkInfo shadowNetworkInfo = shadowOf(networkInfo);
+        shadowNetworkInfo.setConnectionStatus(false);
     }
 }
