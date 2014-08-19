@@ -123,5 +123,7 @@
     <string name="reverse">reverse</string>
 
     <string name="secret_phrase">yo!!!</string>
+    <string name="debug_settings_on">Debug settings on</string>
+    <string name="debug_settings_off">Debug settings off</string>
 
 </resources>

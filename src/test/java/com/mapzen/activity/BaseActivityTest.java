@@ -27,7 +27,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAlarmManager;
 import org.robolectric.shadows.ShadowLocationManager;
-import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
 import org.scribe.model.Token;
 
@@ -66,6 +65,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.shadowOf;
+import static org.robolectric.shadows.ShadowToast.getTextOfLatestToast;
 import static org.robolectric.util.FragmentTestUtil.startFragment;
 
 @Config(emulateSdk = 18)
@@ -92,23 +92,46 @@ public class BaseActivityTest {
 
     @Test
     public void toggleDebugMode_shouldToggleSettings() {
-        assertThat(menu.findItem(R.id.settings)).isNull();
+        activity.onPrepareOptionsMenu(menu);
+        assertThat(menu.findItem(R.id.settings)).isNotVisible();
         activity.toggleDebugMode();
-        assertThat(menu.findItem(R.id.settings).isVisible()).isTrue();
+        activity.onPrepareOptionsMenu(menu);
+        assertThat(menu.findItem(R.id.settings)).isVisible();
     }
 
     @Test
     public void toggleDebugMode_shouldToggleSubmitData() {
-        assertThat(menu.findItem(R.id.phone_home)).isNull();
+        activity.onPrepareOptionsMenu(menu);
+        assertThat(menu.findItem(R.id.phone_home)).isNotVisible();
         activity.toggleDebugMode();
-        assertThat(menu.findItem(R.id.phone_home).isVisible()).isTrue();
+        activity.onPrepareOptionsMenu(menu);
+        assertThat(menu.findItem(R.id.phone_home)).isVisible();
     }
 
     @Test
     public void toggleDebugMode_shouldToggleUploadGPSTraces() {
-        assertThat(menu.findItem(R.id.upload_traces)).isNull();
+        activity.onPrepareOptionsMenu(menu);
+        assertThat(menu.findItem(R.id.upload_traces)).isNotVisible();
         activity.toggleDebugMode();
-        assertThat(menu.findItem(R.id.upload_traces).isVisible()).isTrue();
+        activity.onPrepareOptionsMenu(menu);
+        assertThat(menu.findItem(R.id.upload_traces)).isVisible();
+    }
+
+    @Test
+    public void toggleDebugMode_shouldCollapseActionView() throws Exception {
+        menu.findItem(R.id.search).expandActionView();
+        activity.toggleDebugMode();
+        assertThat(menu.findItem(R.id.search)).isActionViewCollapsed();
+    }
+
+    @Test
+    public void toggleDebugMode_shouldToastState() throws Exception {
+        activity.toggleDebugMode();
+        assertThat(getTextOfLatestToast())
+                .isEqualTo(activity.getString(R.string.debug_settings_on));
+        activity.toggleDebugMode();
+        assertThat(getTextOfLatestToast())
+                .isEqualTo(activity.getString(R.string.debug_settings_off));
     }
 
     @Test
@@ -435,7 +458,7 @@ public class BaseActivityTest {
         MenuItem menuItem = menu.findItem(R.id.phone_home);
         testBaseActivity.onOptionsItemSelected(menuItem);
 
-        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(expected);
+        assertThat(getTextOfLatestToast()).isEqualTo(expected);
         server.shutdown();
     }
 
@@ -453,7 +476,7 @@ public class BaseActivityTest {
         MenuItem menuItem = menu.findItem(R.id.phone_home);
         testBaseActivity.onOptionsItemSelected(menuItem);
 
-        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo(expected);
+        assertThat(getTextOfLatestToast()).isEqualTo(expected);
         server.shutdown();
     }
 
@@ -483,7 +506,7 @@ public class BaseActivityTest {
         shadowOf(locationManager).setLastKnownLocation(NETWORK_PROVIDER, null);
         shadowOf(locationManager).setLastKnownLocation(GPS_PROVIDER, null);
         invokeOnConnected();
-        assertThat(ShadowToast.getTextOfLatestToast()).isEqualTo("Waiting for location");
+        assertThat(getTextOfLatestToast()).isEqualTo("Waiting for location");
     }
 
     @Test

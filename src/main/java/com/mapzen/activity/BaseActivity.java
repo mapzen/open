@@ -45,12 +45,12 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.Calendar;
@@ -139,7 +139,13 @@ public class BaseActivity extends MapActivity {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(getString(R.string.settings_key_debug), !isInDebugMode());
         editor.commit();
-        toggleMenus();
+        searchMenuItem.collapseActionView();
+        supportInvalidateOptionsMenu();
+        if (isInDebugMode()) {
+            Toast.makeText(this, getString(R.string.debug_settings_on), Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, getString(R.string.debug_settings_off), Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -232,11 +238,8 @@ public class BaseActivity extends MapActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         activityMenu = menu;
-        MenuInflater inflater = getMenuInflater();
-        int menuLayout = isInDebugMode() ? R.menu.debug_option_group : R.menu.options_menu;
-        inflater.inflate(menuLayout, menu);
-        SearchManager searchManager =
-                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        getMenuInflater().inflate(R.menu.options_menu, menu);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchMenuItem = menu.findItem(R.id.search);
         searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
@@ -280,6 +283,15 @@ public class BaseActivity extends MapActivity {
                 handleMapsIntent(searchView, data);
             }
         }
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        final boolean debug = isInDebugMode();
+        menu.findItem(R.id.settings).setVisible(debug);
+        menu.findItem(R.id.phone_home).setVisible(debug);
+        menu.findItem(R.id.upload_traces).setVisible(debug);
         return true;
     }
 
@@ -338,17 +350,6 @@ public class BaseActivity extends MapActivity {
     public AutoCompleteTextView getQueryAutoCompleteTextView(SearchView searchView) {
         return (AutoCompleteTextView) searchView.findViewById(searchView.getContext()
                 .getResources().getIdentifier("android:id/search_src_text", null, null));
-    }
-
-    private void toggleMenus() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                MenuInflater inflater = getMenuInflater();
-                activityMenu.clear();
-                inflater.inflate(R.menu.debug_option_group, activityMenu);
-            }
-        });
     }
 
     @Override
