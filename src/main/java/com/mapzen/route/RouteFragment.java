@@ -387,16 +387,19 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onExitInstructionRadius(int index) {
         voiceNavigationController.playFlippedInstruction(instructions.get(index));
-        if (index != instructions.size() - 2) {
-            showInstruction(index + 1);
-        } else {
+        if (isLastInstructionBeforeDestination(index)) {
             flipInstruction(index);
+        } else if (hasNextInstruction(index)) {
+            showInstruction(index + 1);
         }
+    }
 
-        final Instruction nextInstruction = instructions.get(index + 1);
-        if (nextInstruction != null) {
-            debugView.setClosestInstruction(nextInstruction);
-        }
+    private boolean isLastInstructionBeforeDestination(int index) {
+        return index == instructions.size() - 2;
+    }
+
+    private boolean hasNextInstruction(int index) {
+        return index + 1 < instructions.size() && instructions.get(index) != null;
     }
 
     private void showInstruction(int index) {
@@ -404,6 +407,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pagerPositionWhenPaused = index;
         Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: " + instruction.toString());
         pager.setCurrentItem(index);
+        debugView.setClosestInstruction(instruction);
     }
 
     private void flipInstruction(int index) {
