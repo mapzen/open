@@ -5,6 +5,7 @@ import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.android.PeliasService;
 import com.mapzen.android.TestPelias;
+import com.mapzen.android.gson.Feature;
 import com.mapzen.android.gson.Result;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.support.MapzenTestRunner;
@@ -16,6 +17,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowLog;
 import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
@@ -30,11 +32,15 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 import static com.mapzen.search.SavedSearch.getSavedSearch;
+import static com.mapzen.support.TestHelper.getTestFeature;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static com.mapzen.support.TestHelper.initMapFragment;
@@ -257,6 +263,17 @@ public class PagerResultsFragmentTest {
     public void executeSearchOnMap_shouldReturnFalseIfNetworkNotAvailable() throws Exception {
         simulateNoNetworkConnection();
         assertThat(fragment.executeSearchOnMap(act.getSearchView(), "query")).isFalse();
+    }
+
+    @Test
+    public void setSearchResults_shouldCheckForNullPager() throws Exception {
+        ArrayList<Feature> features = new ArrayList<Feature>();
+        features.add(getTestFeature());
+        fragment.pager = null;
+        fragment.setSearchResults(features);
+        List<ShadowLog.LogItem> logs = ShadowLog.getLogs();
+        assertThat(logs.get(logs.size() - 1).msg)
+                .isEqualTo("Unable to display search results: pager is null");
     }
 
     private void simulateNoNetworkConnection() {

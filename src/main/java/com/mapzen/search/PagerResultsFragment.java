@@ -219,7 +219,13 @@ public class PagerResultsFragment extends BaseFragment {
                 SimpleFeature simpleFeature = SimpleFeature.fromFeature(feature);
                 add(simpleFeature);
             }
-            displayResults(features.size(), pager.getCurrentItem());
+
+            if (pager != null) {
+                displayResults(features.size(), pager.getCurrentItem());
+            } else {
+                Logger.e("Unable to display search results: pager is null");
+            }
+
         } else {
             hide();
             Toast.makeText(act, "No results where found for: " + act.getSearchView().getQuery(),

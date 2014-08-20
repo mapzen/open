@@ -863,6 +863,16 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onExitInstructionRadius_shouldVerifyNextIndexIsWithinBounds() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction(0, 0));
+        instructions.add(getTestInstruction(0, 0));
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onExitInstructionRadius(1);
+    }
+
+    @Test
     public void onPageSelected_shouldTurnMap() throws Exception {
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
