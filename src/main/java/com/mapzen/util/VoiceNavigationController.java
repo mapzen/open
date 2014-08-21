@@ -18,6 +18,7 @@ public class VoiceNavigationController {
     public VoiceNavigationController(Activity activity) {
         this.activity = activity;
         this.speakerbox = new Speakerbox(activity);
+        speakerbox.setQueueMode(TextToSpeech.QUEUE_ADD);
         addRemixPatterns();
 
         if (!isVoiceNavigationEnabled()) {

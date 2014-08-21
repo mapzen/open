@@ -13,6 +13,7 @@ import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
 import com.mapzen.shadows.ShadowBugSenseHandler;
+import com.mapzen.shadows.ShadowTextToSpeech;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
 import com.mapzen.support.TestHelper;
@@ -40,7 +41,6 @@ import org.robolectric.shadows.ShadowEnvironment;
 import org.robolectric.shadows.ShadowLocationManager;
 import org.robolectric.shadows.ShadowNotification;
 import org.robolectric.shadows.ShadowNotificationManager;
-import org.robolectric.shadows.ShadowTextToSpeech;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.shadows.ShadowView;
 import org.robolectric.tester.android.view.TestMenu;
@@ -107,6 +107,7 @@ import static org.mockito.Mockito.verify;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.getShadowApplication;
 import static org.robolectric.Robolectric.shadowOf;
+import static org.robolectric.Robolectric.shadowOf_;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
@@ -1416,7 +1417,7 @@ public class RouteFragmentTest {
 
     private void assertLastSpokenText(String expected) {
         TextToSpeech tts = fragment.voiceNavigationController.getTextToSpeech();
-        ShadowTextToSpeech shadowTts = shadowOf(tts);
+        ShadowTextToSpeech shadowTts = shadowOf_(tts);
         shadowTts.getOnInitListener().onInit(TextToSpeech.SUCCESS);
         assertThat(shadowTts.getLastSpokenText()).isEqualTo(expected);
     }

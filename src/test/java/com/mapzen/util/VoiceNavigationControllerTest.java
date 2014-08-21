@@ -1,13 +1,13 @@
 package com.mapzen.util;
 
 import com.mapzen.R;
+import com.mapzen.shadows.ShadowTextToSpeech;
 import com.mapzen.support.MapzenTestRunner;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowTextToSpeech;
 
 import android.app.Activity;
 import android.preference.PreferenceManager;
@@ -18,7 +18,7 @@ import static com.mapzen.helpers.DistanceFormatter.METERS_IN_ONE_MILE;
 import static com.mapzen.support.TestHelper.getTestInstruction;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
-import static org.robolectric.Robolectric.shadowOf;
+import static org.robolectric.Robolectric.shadowOf_;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
@@ -29,7 +29,7 @@ public class VoiceNavigationControllerTest {
     @Before
     public void setUp() throws Exception {
         controller = new VoiceNavigationController(new Activity());
-        shadowTextToSpeech = shadowOf(controller.speakerbox.getTextToSpeech());
+        shadowTextToSpeech = shadowOf_(controller.speakerbox.getTextToSpeech());
         shadowTextToSpeech.getOnInitListener().onInit(TextToSpeech.SUCCESS);
     }
 
@@ -95,5 +95,11 @@ public class VoiceNavigationControllerTest {
 
         controller.playInstruction(getTestInstruction(","));
         assertThat(shadowTextToSpeech.getLastSpokenText()).doesNotContain(",");
+    }
+
+    @Test
+    public void shouldSetQueueModeAdd() throws Exception {
+        controller.playInstruction(getTestInstruction());
+        assertThat(shadowTextToSpeech.getQueueMode()).isEqualTo(TextToSpeech.QUEUE_ADD);
     }
 }
