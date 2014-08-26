@@ -18,6 +18,7 @@ import org.oscim.map.Map;
 import org.oscim.tiling.TileSource;
 import org.oscim.tiling.source.HttpEngine;
 import org.oscim.tiling.source.OkHttpEngine;
+import org.oscim.tiling.source.UrlTileSource;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.FragmentTestUtil;
@@ -199,6 +200,25 @@ public class MapFragmentTest {
                 .in(tileSource).get();
 
         assertThat(factory).isInstanceOf(OkHttpEngine.OkHttpFactory.class);
+    }
+
+    @Test
+    public void shouldUse10MegResponseCache() throws Exception {
+        Map map = mapFragment.getMap();
+        TileLayer baseLayer = field("mBaseLayer").ofType(TileLayer.class).in(map).get();
+        UrlTileSource tileSource =
+                (UrlTileSource) field("mTileSource").ofType(TileSource.class).in(baseLayer).get();
+        assertThat(tileSource.getResponseCache().getMaxSize()).isEqualTo(MapFragment.CACHE_SIZE);
+    }
+
+    @Test
+    public void shouldUseResponseCacheStoredOnFile() throws Exception {
+        Map map = mapFragment.getMap();
+        TileLayer baseLayer = field("mBaseLayer").ofType(TileLayer.class).in(map).get();
+        UrlTileSource tileSource =
+                (UrlTileSource) field("mTileSource").ofType(TileSource.class).in(baseLayer).get();
+        assertThat(tileSource.getResponseCache().getDirectory().getAbsolutePath())
+                .isEqualTo(activity.getExternalCacheDir().getAbsolutePath() + "/tile-cache");
     }
 
     @Test
