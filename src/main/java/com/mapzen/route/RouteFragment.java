@@ -1,5 +1,6 @@
 package com.mapzen.route;
 
+import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.android.lost.LocationClient;
@@ -23,8 +24,14 @@ import com.bugsense.trace.BugSenseHandler;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.json.JSONObject;
+import org.oscim.core.BoundingBox;
 import org.oscim.core.GeoPoint;
+import org.oscim.core.MapPosition;
+import org.oscim.event.Event;
+import org.oscim.layers.Layer;
 import org.oscim.layers.PathLayer;
+import org.oscim.map.Map;
+import org.oscim.map.ViewController;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
@@ -34,7 +41,9 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -48,6 +57,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -88,7 +98,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public static final double MIN_CHANGE_FOR_SHOW_RESUME = .00000001;
     public static final String ROUTE_TAG = "route";
 
-    @Inject PathLayer path;
     @Inject ZoomController zoomController;
     @Inject LocationClient locationClient;
     @Inject Router router;
@@ -109,6 +118,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private String routeId;
     private int pagerPositionWhenPaused = 0;
     private double currentXCor;
+    private AsyncTask<Void, Void, Void> activeTask = null;
 
     VoiceNavigationController voiceNavigationController;
     private MapzenNotificationCreator notificationCreator;
@@ -178,6 +188,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         } else {
             locationClient.setMockMode(false);
         }
+
         return rootView;
     }
 
@@ -230,20 +241,23 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.disableActionbar();
         act.hideActionBar();
         app.deactivateMoveMapToLocation();
+        setupLinedrawing();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        Logger.d("RouteFragment::onPause");
         act.unregisterReceiver(locationReceiver);
         app.activateMoveMapToLocation();
+        teardownLinedrawing();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         markReadyForUpload();
-        clearRoute();
+        cleanupLines();
         act.updateView();
         mapFragment.showLocationMarker();
         mapFragment.getMap().layers().remove(routeLocationIndicator);
@@ -260,7 +274,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public void createRouteTo(Location location) {
-        clearRoute();
+        cleanupLines();
         mapFragment.clearMarkers();
         mapFragment.updateMap();
         isRouting = true;
@@ -308,11 +322,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             getMapController().quarterOn(location, route.getCurrentRotationBearing());
             routeLocationIndicator.setPosition(location.getLatitude(), location.getLongitude());
             routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
-            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChange: Corrected: "
+            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::manageMap: Corrected: "
                     + location.toString());
         } else {
             Logger.logToDatabase(act, ROUTE_TAG,
-                    "RouteFragment::onLocationChange: Unable to Correct: location: "
+                    "RouteFragment::manageMap: Unable to Correct: location: "
                             + originalLocation.toString());
         }
     }
@@ -466,18 +480,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         insertIntoDb(TABLE_ROUTE_GROUP, null, routeGroupEntry);
     }
 
-    private void drawRoute() {
-        if (!getMapController().getMap().layers().contains(path)) {
-            getMapController().getMap().layers().add(path);
-        }
-        path.clearPath();
+    private void storeRoute() {
         if (route != null) {
             ArrayList<Location> geometry = route.getGeometry();
             ArrayList<ContentValues> databaseValues = new ArrayList<ContentValues>();
             for (int index = 0; index < geometry.size(); index++) {
                 Location location = geometry.get(index);
                 databaseValues.add(buildContentValues(location, index));
-                path.addPoint(locationToGeoPoint(location));
             }
             insertIntoDb(TABLE_ROUTE_GEOMETRY, null, databaseValues);
         }
@@ -495,11 +504,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     public Route getRoute() {
         return route;
-    }
-
-    private void clearRoute() {
-        path.clearPath();
-        mapFragment.updateMap();
     }
 
     @Override
@@ -641,7 +645,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     }
                 });
             }
-            drawRoute();
+            storeRoute();
         } else {
             Toast.makeText(act,
                     act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
@@ -867,6 +871,85 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             return false;
         } else {
             return true;
+        }
+    }
+
+    private Map.UpdateListener mapListener = new Map.UpdateListener() {
+        @Override
+        public void onMapEvent(final Event e, MapPosition mapPosition) {
+            if (activeTask != null) {
+                activeTask.cancel(true);
+            }
+            activeTask = (new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                }
+
+                @Override
+                protected Void doInBackground(Void... params) {
+                    final ArrayList<Location> locations = route.getGeometry();
+                    final ViewController viewPort = getMapController().getMap().viewport();
+                    if (isCancelled()) {
+                        Logger.d("Cancelled before starting");
+                        return null;
+                    }
+                    BoundingBox boundingBox = viewPort.getBBox();
+                    cleanupLines();
+
+                    long starttime = System.currentTimeMillis();
+                    PathLayer p = null;
+                    for (Location loc : locations) {
+                        if (isCancelled()) {
+                            Logger.d("Cancelled during iteration: index: "
+                                    + String.valueOf(locations.indexOf(loc)
+                                    + " of: " + String.valueOf(locations.size())));
+                            return null;
+                        }
+                        GeoPoint point = locationToGeoPoint(loc);
+                        if (boundingBox.contains(point)) {
+                            if (p == null) {
+                                p = new PathLayer(
+                                        MapController.getMapController().getMap(), Color.BLACK, 8);
+                                getMapController().getMap().layers().remove(routeLocationIndicator);
+                                getMapController().getMap().layers().add(p);
+                                getMapController().getMap().layers().add(routeLocationIndicator);
+                            }
+                            p.addPoint(point);
+                        } else {
+                            p = null;
+                        }
+                    }
+                    Logger.d("TIMING: " + (System.currentTimeMillis() - starttime));
+                    Logger.d("map is updated: map is updated" + e.toString());
+                    Logger.d("viewbox: " + viewPort.getBBox().toString());
+                    return null;
+                }
+            });
+            activeTask.execute();
+        }
+    };
+
+    private void setupLinedrawing() {
+        getMapController().getMap().events.bind(mapListener);
+    }
+
+    private void teardownLinedrawing() {
+        getMapController().getMap().events.unbind(mapListener);
+        if (activeTask != null) {
+            activeTask.cancel(true);
+        }
+        cleanupLines();
+        mapFragment.updateMap();
+    }
+
+    private void cleanupLines() {
+        Iterator<Layer> laysersIt = getMapController().getMap().layers().iterator();
+        while (laysersIt.hasNext()) {
+            Layer l = laysersIt.next();
+            if (l.getClass().equals(PathLayer.class)) {
+                getMapController().getMap().layers().remove(l);
+            }
         }
     }
 }

@@ -40,10 +40,12 @@ import static com.mapzen.MapController.getMapController;
 import static com.mapzen.MapController.locationToGeoPoint;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATE_VIEW;
 import static com.mapzen.entity.SimpleFeature.NAME;
+import static com.mapzen.route.RoutePreviewFragment.REDUCE_TOLERANCE;
 import static com.mapzen.support.TestHelper.getFixture;
 import static com.mapzen.support.TestHelper.getTestLocation;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initBaseActivity;
+import static com.mapzen.util.DouglasPeuckerReducer.reduceWithTolerance;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -225,11 +227,22 @@ public class RoutePreviewFragmentTest {
     }
 
     @Test
-    public void success_shouldDrawRoute() throws Exception {
+    public void success_shouldDrawFullRoute() throws Exception {
         fragment.createRouteToDestination();
-        Route route = new Route(getFixture("around_the_block"));
+        Route route = new Route(getFixture("under_hundred"));
         fragment.success(route);
         for (Location loc : route.getGeometry()) {
+            verify(path).addPoint(locationToGeoPoint(loc));
+        }
+    }
+
+    @Test
+    public void success_shouldDrawRecudedRoute() throws Exception {
+        fragment.createRouteToDestination();
+        Route route = new Route(getFixture("ny_to_vermont"));
+        fragment.success(route);
+
+        for (Location loc : reduceWithTolerance(route.getGeometry(), REDUCE_TOLERANCE)) {
             verify(path).addPoint(locationToGeoPoint(loc));
         }
     }

@@ -30,7 +30,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.oscim.core.GeoPoint;
 import org.oscim.layers.PathLayer;
 import org.oscim.map.TestViewport;
 import org.robolectric.Robolectric;
@@ -975,23 +974,6 @@ public class RouteFragmentTest {
         callback.getValue().success(newRoute);
         assertThat(fragment.pager.getAdapter().getCount())
                 .isEqualTo(newRoute.getRouteInstructions().size());
-    }
-
-    @Test
-    public void createRouteTo_shouldRedrawPath() throws Exception {
-        MapFragment mapFragmentMock = mock(MapFragment.class, Mockito.CALLS_REAL_METHODS);
-        mapFragmentMock.setAct(act);
-        fragment.setMapFragment(mapFragmentMock);
-        Location testLocation = getTestLocation(100.0, 100.0);
-        FragmentTestUtil.startFragment(fragment);
-        fragment.createRouteTo(testLocation);
-        verify(router).setCallback(callback.capture());
-        callback.getValue().success(new Route(MOCK_NY_TO_VT));
-        verify(path, Mockito.times(2)).clearPath();
-        for (Location location : fragment.getRoute().getGeometry()) {
-            verify(path).addPoint(
-                    new GeoPoint(location.getLatitude(), location.getLongitude()));
-        }
     }
 
     @Test

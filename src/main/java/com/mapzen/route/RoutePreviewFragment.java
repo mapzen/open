@@ -6,6 +6,7 @@ import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
+import com.mapzen.util.Logger;
 
 import org.oscim.android.canvas.AndroidGraphics;
 import org.oscim.core.BoundingBox;
@@ -28,7 +29,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -46,11 +47,13 @@ import static com.mapzen.osrm.Router.Type;
 import static com.mapzen.osrm.Router.Type.BIKING;
 import static com.mapzen.osrm.Router.Type.DRIVING;
 import static com.mapzen.osrm.Router.Type.WALKING;
+import static com.mapzen.util.DouglasPeuckerReducer.reduceWithTolerance;
 
 public class RoutePreviewFragment extends BaseFragment
         implements Router.Callback {
     public static final String TAG = RoutePreviewFragment.class.getSimpleName();
     public static final int ROUTE_ZOOM_LEVEL = 19;
+    public static final int REDUCE_TOLERANCE = 100;
     private SimpleFeature destination;
     private boolean reverse = false;
     private Type transportationMode = DRIVING;
@@ -232,25 +235,24 @@ public class RoutePreviewFragment extends BaseFragment
                     .commit();
         }
         act.hideLoadingIndicator();
-        ArrayList<Location> points = route.getGeometry();
+        List<Location> points = route.getGeometry();
+        long time = System.currentTimeMillis();
+        Logger.d("RoutePreviewFragment::success Geometry points before: " + points.size());
+        if (points.size() > 100) {
+            points = reduceWithTolerance(points, REDUCE_TOLERANCE);
+        }
+        Logger.d("Timing: " + String.valueOf(System.currentTimeMillis() - time));
+        Logger.d("RoutePreviewFragment::success Geometry points after: " + points.size());
         path.clearPath();
-        double minlat = points.get(0).getLatitude();
-        double minlon = points.get(0).getLongitude();
-        double maxlat = points.get(0).getLatitude();
-        double maxlon = points.get(0).getLongitude();
+        double minlat = Integer.MAX_VALUE;
+        double minlon = Integer.MAX_VALUE;
+        double maxlat = Integer.MIN_VALUE;
+        double maxlon = Integer.MIN_VALUE;
         for (Location loc : points) {
-            if (maxlat < loc.getLatitude()) {
-                maxlat = loc.getLatitude();
-            }
-            if (maxlon < loc.getLongitude()) {
-                maxlon = loc.getLongitude();
-            }
-            if (minlat > loc.getLatitude()) {
-                minlat = loc.getLatitude();
-            }
-            if (minlon > loc.getLongitude()) {
-                minlon = loc.getLongitude();
-            }
+            maxlat = Math.max(maxlat, loc.getLatitude());
+            maxlon = Math.max(maxlon, loc.getLongitude());
+            minlat = Math.min(minlat, loc.getLatitude());
+            minlon = Math.min(minlon, loc.getLongitude());
             path.addPoint(locationToGeoPoint(loc));
         }
 
@@ -318,6 +320,7 @@ public class RoutePreviewFragment extends BaseFragment
                 .addToBackStack(null)
                 .add(R.id.routes_container, routeFragment, RouteFragment.TAG)
                 .commit();
+        path.clearPath();
         getMapController().getMap().layers().remove(markers);
     }
 

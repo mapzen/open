@@ -60,7 +60,7 @@ public class AppModule {
         return new OAuthRequestFactory();
     }
 
-    @Provides @Singleton PathLayer providePathLayer() {
+    @Provides PathLayer providePathLayer() {
         return new PathLayer(MapController.getMapController().getMap(), Color.DKGRAY, 8);
     }
 
