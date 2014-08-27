@@ -586,10 +586,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             ArrayList<ContentValues> contentValueCollection) {
         try {
             act.getDb().beginTransaction();
-            act.getDb().setTransactionSuccessful();
             for (ContentValues values : contentValueCollection) {
                 insertIntoDb(table, nullHack, values);
             }
+            act.getDb().setTransactionSuccessful();
             act.getDb().endTransaction();
         } catch (IllegalStateException e) {
             BugSenseHandler.sendException(e);

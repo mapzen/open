@@ -82,13 +82,13 @@ public class DataUploadService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Logger.d("DataUploadService: onStartCommand");
-        String permissionResponse = getPermissionResponse();
-        if (!hasWritePermission(permissionResponse)) {
-            stopSelf();
-        }
         (new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
+                String permissionResponse = getPermissionResponse();
+                if (!hasWritePermission(permissionResponse)) {
+                    stopSelf();
+                }
                 Cursor cursor = null;
                 try {
                     cursor = app.getDb().query(
@@ -171,7 +171,7 @@ public class DataUploadService extends Service {
             String selectStatement = String.format(Locale.getDefault(),
                     "SELECT %s, %s, %s, %s, %s ", COLUMN_LAT, COLUMN_LNG, COLUMN_ALT, COLUMN_TIME,
                     COLUMN_SPEED);
-            Cursor cursor = app.getDb().rawQuery(selectStatement
+            String fullQuery = selectStatement
                     + "from " + TABLE_ROUTE_GROUP
                     + " inner join " + TABLE_LOCATIONS + " on "
                     + TABLE_ROUTE_GROUP + "." + COLUMN_ROUTE_ID
@@ -179,7 +179,9 @@ public class DataUploadService extends Service {
                     + TABLE_LOCATIONS + "." + COLUMN_ROUTE_ID
                     + " WHERE " + COLUMN_GROUP_ID + " = ? "
                     + "ORDER BY " + TABLE_LOCATIONS + "." + COLUMN_TIME
-                    + " ASC", new String[] { groupId });
+                    + " ASC";
+            Logger.d("full query: " + fullQuery);
+            Cursor cursor = app.getDb().rawQuery(fullQuery, new String[] { groupId });
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
                     .newInstance();
             DocumentBuilder documentBuilder = documentBuilderFactory
