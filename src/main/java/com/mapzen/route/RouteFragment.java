@@ -102,7 +102,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private ArrayList<Instruction> instructions;
     private RouteAdapter adapter;
     private Route route;
-    private String groupId;
+    protected String groupId;
     private LocationReceiver locationReceiver;
     private RouteLocationIndicator routeLocationIndicator;
     private SimpleFeature simpleFeature;
@@ -130,6 +130,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         fragment.setMapFragment(act.getMapFragment());
         fragment.setSimpleFeature(simpleFeature);
         fragment.setRouteLocationIndicator(new RouteLocationIndicator(act.getMap()));
+        fragment.groupId = UUID.randomUUID().toString();
         fragment.inject();
         return fragment;
     }
@@ -215,7 +216,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void createGroup() {
-        groupId = UUID.randomUUID().toString();
         ContentValues groupValue = new ContentValues();
         groupValue.put(COLUMN_TABLE_ID, groupId);
         groupValue.put(COLUMN_MSG, getGPXDescription());
