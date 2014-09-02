@@ -3,7 +3,6 @@ package com.mapzen.support;
 import com.mapzen.shadows.ShadowBugSenseHandler;
 import com.mapzen.shadows.ShadowGLMatrix;
 import com.mapzen.shadows.ShadowMapView;
-import com.mapzen.shadows.ShadowTextToSpeech;
 import com.mapzen.shadows.ShadowVectorTileLayer;
 
 import org.junit.runners.model.InitializationError;
@@ -60,7 +59,6 @@ public class MapzenTestRunner extends RobolectricTestRunner {
                 .addShadowClass(ShadowVectorTileLayer.class)
                 .addShadowClass(ShadowGLMatrix.class)
                 .addShadowClass(ShadowBugSenseHandler.class)
-                .addShadowClass(ShadowTextToSpeech.class)
                 .build();
     }
 
