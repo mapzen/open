@@ -1,13 +1,13 @@
 package com.mapzen.util;
 
 import com.mapzen.R;
-import com.mapzen.shadows.ShadowTextToSpeech;
 import com.mapzen.support.MapzenTestRunner;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowTextToSpeech;
 
 import android.app.Activity;
 import android.preference.PreferenceManager;
