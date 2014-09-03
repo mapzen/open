@@ -1,6 +1,5 @@
 package com.mapzen.route;
 
-import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.android.lost.LocationClient;
@@ -24,14 +23,10 @@ import com.bugsense.trace.BugSenseHandler;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.json.JSONObject;
-import org.oscim.core.BoundingBox;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 import org.oscim.event.Event;
-import org.oscim.layers.Layer;
-import org.oscim.layers.PathLayer;
 import org.oscim.map.Map;
-import org.oscim.map.ViewController;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
@@ -41,9 +36,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -57,7 +50,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -69,7 +61,6 @@ import butterknife.OnClick;
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.mapzen.MapController.geoPointToPair;
 import static com.mapzen.MapController.getMapController;
-import static com.mapzen.MapController.locationToGeoPoint;
 import static com.mapzen.MapController.locationToPair;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.core.MapzenLocation.Util.getDistancePointFromBearing;
@@ -118,7 +109,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private String routeId;
     private int pagerPositionWhenPaused = 0;
     private double currentXCor;
-    private AsyncTask<Void, Void, Void> activeTask = null;
+    private DrawPathTask activeTask = null;
 
     VoiceNavigationController voiceNavigationController;
     private MapzenNotificationCreator notificationCreator;
@@ -257,7 +248,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void onDetach() {
         super.onDetach();
         markReadyForUpload();
-        cleanupLines();
+        getMapController().clearLines();
         act.updateView();
         mapFragment.showLocationMarker();
         mapFragment.getMap().layers().remove(routeLocationIndicator);
@@ -274,7 +265,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public void createRouteTo(Location location) {
-        cleanupLines();
+        getMapController().clearLines();
         mapFragment.clearMarkers();
         mapFragment.updateMap();
         isRouting = true;
@@ -880,48 +871,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             if (activeTask != null) {
                 activeTask.cancel(true);
             }
-            activeTask = (new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... params) {
-                    final ArrayList<Location> locations = route.getGeometry();
-                    final ViewController viewPort = getMapController().getMap().viewport();
-                    if (isCancelled()) {
-                        Logger.d("Cancelled before starting");
-                        return null;
-                    }
-                    BoundingBox boundingBox = viewPort.getBBox();
-                    cleanupLines();
-
-                    long starttime = System.currentTimeMillis();
-                    PathLayer p = null;
-                    for (Location loc : locations) {
-                        if (isCancelled()) {
-                            Logger.d("Cancelled during iteration: index: "
-                                    + String.valueOf(locations.indexOf(loc)
-                                    + " of: " + String.valueOf(locations.size())));
-                            return null;
-                        }
-                        GeoPoint point = locationToGeoPoint(loc);
-                        if (boundingBox.contains(point)) {
-                            if (p == null) {
-                                p = new PathLayer(
-                                        MapController.getMapController().getMap(), Color.BLACK, 8);
-                                getMapController().getMap().layers().remove(routeLocationIndicator);
-                                getMapController().getMap().layers().add(p);
-                                getMapController().getMap().layers().add(routeLocationIndicator);
-                            }
-                            p.addPoint(point);
-                        } else {
-                            p = null;
-                        }
-                    }
-                    Logger.d("TIMING: " + (System.currentTimeMillis() - starttime));
-                    Logger.d("map is updated: map is updated" + e.toString());
-                    Logger.d("viewbox: " + viewPort.getBBox().toString());
-                    return null;
-                }
-            });
-            activeTask.execute();
+            activeTask = new DrawPathTask();
+            activeTask.execute(route.getGeometry());
         }
     };
 
@@ -934,17 +885,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (activeTask != null) {
             activeTask.cancel(true);
         }
-        cleanupLines();
+        getMapController().clearLines();
         mapFragment.updateMap();
-    }
-
-    private void cleanupLines() {
-        Iterator<Layer> laysersIt = getMapController().getMap().layers().iterator();
-        while (laysersIt.hasNext()) {
-            Layer l = laysersIt.next();
-            if (l.getClass().equals(PathLayer.class)) {
-                getMapController().getMap().layers().remove(l);
-            }
-        }
     }
 }
