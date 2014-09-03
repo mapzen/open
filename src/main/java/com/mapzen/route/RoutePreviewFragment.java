@@ -1,5 +1,6 @@
 package com.mapzen.route;
 
+import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
@@ -39,7 +40,6 @@ import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
 import static com.mapzen.MapController.geoPointToPair;
-import static com.mapzen.MapController.getMapController;
 import static com.mapzen.MapController.locationToGeoPoint;
 import static com.mapzen.MapController.locationToPair;
 import static com.mapzen.entity.SimpleFeature.NAME;
@@ -61,6 +61,7 @@ public class RoutePreviewFragment extends BaseFragment
 
     @Inject PathLayer path;
     @Inject ItemizedLayer<MarkerItem> markers;
+    @Inject MapController mapController;
 
     @Inject Router router;
     @InjectView(R.id.starting_point) TextView startingPointTextView;
@@ -93,8 +94,8 @@ public class RoutePreviewFragment extends BaseFragment
     @Override
     public void onDetach() {
         super.onDetach();
-        getMapController().getMap().layers().remove(markers);
-        getMapController().getMap().layers().remove(path);
+        mapController.getMap().layers().remove(markers);
+        mapController.getMap().layers().remove(path);
         mapFragment.updateMap();
         act.enableActionbar();
         act.showActionBar();
@@ -212,12 +213,12 @@ public class RoutePreviewFragment extends BaseFragment
     }
 
     private double[] getDestinationPoint() {
-        return reverse ? locationToPair(getMapController().getLocation()) :
+        return reverse ? locationToPair(mapController.getLocation()) :
                 geoPointToPair(destination.getGeoPoint());
     }
 
     private double[] getOriginPoint() {
-        return !reverse ? locationToPair(getMapController().getLocation()) :
+        return !reverse ? locationToPair(mapController.getLocation()) :
                 geoPointToPair(destination.getGeoPoint());
     }
 
@@ -257,21 +258,21 @@ public class RoutePreviewFragment extends BaseFragment
         }
 
         BoundingBox bbox = new BoundingBox(minlat, minlon, maxlat, maxlon);
-        int w = getMapController().getMap().getWidth();
-        int h = getMapController().getMap().getHeight();
+        int w = mapController.getMap().getWidth();
+        int h = mapController.getMap().getHeight();
         MapPosition position = new MapPosition();
         position.setByBoundingBox(bbox, w, h);
 
         position.setScale(position.getZoomScale() * 0.85);
 
-        getMapController().getMap().setMapPosition(position);
+        mapController.getMap().setMapPosition(position);
 
-        if (!getMapController().getMap().layers().contains(path)) {
-            getMapController().getMap().layers().add(path);
+        if (!mapController.getMap().layers().contains(path)) {
+            mapController.getMap().layers().add(path);
         }
 
-        if (!getMapController().getMap().layers().contains(markers)) {
-            getMapController().getMap().layers().add(markers);
+        if (!mapController.getMap().layers().contains(markers)) {
+            mapController.getMap().layers().add(markers);
         }
         markers.removeAllItems();
         markers.addItem(getMarkerItem(R.drawable.ic_a, points.get(0)));
@@ -321,7 +322,7 @@ public class RoutePreviewFragment extends BaseFragment
                 .add(R.id.routes_container, routeFragment, RouteFragment.TAG)
                 .commit();
         path.clearPath();
-        getMapController().getMap().layers().remove(markers);
+        mapController.getMap().layers().remove(markers);
     }
 
     private void hideFragmentContents() {

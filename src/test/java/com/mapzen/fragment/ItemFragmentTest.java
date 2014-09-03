@@ -51,15 +51,17 @@ public class ItemFragmentTest {
     private TestBaseActivity act;
     @Inject Router router;
     @Inject LocationClient locationClient;
+    @Inject MapController mapController;
 
     @Before
     public void setUp() throws Exception {
         ((TestMapzenApplication) Robolectric.application).inject(this);
         MockitoAnnotations.initMocks(this);
         act = initBaseActivity();
+        mapController.setActivity(act);
         initItemFragment();
         startFragment(itemFragment);
-        MapController.getMapController().setLocation(new Location(""));
+        mapController.setLocation(new Location(""));
     }
 
     private void initItemFragment() {

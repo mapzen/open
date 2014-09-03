@@ -1,5 +1,6 @@
 package com.mapzen.route;
 
+import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.android.lost.LocationClient;
@@ -60,7 +61,6 @@ import butterknife.OnClick;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.mapzen.MapController.geoPointToPair;
-import static com.mapzen.MapController.getMapController;
 import static com.mapzen.MapController.locationToPair;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.core.MapzenLocation.Util.getDistancePointFromBearing;
@@ -93,6 +93,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Inject LocationClient locationClient;
     @Inject Router router;
     @Inject RouteEngine routeEngine;
+    @Inject MapController mapController;
 
     @InjectView(R.id.routes) ViewPager pager;
     @InjectView(R.id.resume_button) ImageButton resume;
@@ -248,7 +249,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void onDetach() {
         super.onDetach();
         markReadyForUpload();
-        getMapController().clearLines();
+        mapController.clearLines();
         act.updateView();
         mapFragment.showLocationMarker();
         mapFragment.getMap().layers().remove(routeLocationIndicator);
@@ -265,7 +266,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public void createRouteTo(Location location) {
-        getMapController().clearLines();
+        mapController.clearLines();
         mapFragment.clearMarkers();
         mapFragment.updateMap();
         isRouting = true;
@@ -309,8 +310,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (location != null) {
             zoomController.setAverageSpeed(getAverageSpeed());
             zoomController.setCurrentSpeed(originalLocation.getSpeed());
-            getMapController().setZoomLevel(zoomController.getZoom());
-            getMapController().quarterOn(location, route.getCurrentRotationBearing());
+            mapController.setZoomLevel(zoomController.getZoom());
+            mapController.quarterOn(location, route.getCurrentRotationBearing());
             routeLocationIndicator.setPosition(location.getLatitude(), location.getLongitude());
             routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
             Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::manageMap: Corrected: "
@@ -449,7 +450,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             this.route = route;
             this.instructions = route.getRouteInstructions();
             storeRouteInDatabase(route.getRawRoute());
-            getMapController().setMapPerspectiveForInstruction(instructions.get(0));
+            mapController.setMapPerspectiveForInstruction(instructions.get(0));
             routeEngine.setRoute(route);
             routeEngine.setListener(this);
         } else {
@@ -513,7 +514,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onPageSelected(int i) {
         if (!autoPaging) {
-            getMapController().setMapPerspectiveForInstruction(instructions.get(i));
+            mapController.setMapPerspectiveForInstruction(instructions.get(i));
         } else {
             setCurrentPagerItemStyling(i);
         }
@@ -598,7 +599,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void resumeAutoPaging() {
         pager.setCurrentItem(pagerPositionWhenPaused);
         setCurrentPagerItemStyling(pagerPositionWhenPaused);
-        getMapController()
+        mapController
                 .setMapPerspectiveForInstruction(instructions.get(pagerPositionWhenPaused));
         resume.setVisibility(View.GONE);
         currentXCor = mapFragment.getMap().getMapPosition().getX();
@@ -871,21 +872,21 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             if (activeTask != null) {
                 activeTask.cancel(true);
             }
-            activeTask = new DrawPathTask();
+            activeTask = new DrawPathTask(app);
             activeTask.execute(route.getGeometry());
         }
     };
 
     private void setupLinedrawing() {
-        getMapController().getMap().events.bind(mapListener);
+        mapController.getMap().events.bind(mapListener);
     }
 
     private void teardownLinedrawing() {
-        getMapController().getMap().events.unbind(mapListener);
+        mapController.getMap().events.unbind(mapListener);
         if (activeTask != null) {
             activeTask.cancel(true);
         }
-        getMapController().clearLines();
+        mapController.clearLines();
         mapFragment.updateMap();
     }
 }

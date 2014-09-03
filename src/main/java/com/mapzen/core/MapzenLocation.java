@@ -16,7 +16,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
-import static com.mapzen.MapController.getMapController;
+import javax.inject.Inject;
 
 public final class MapzenLocation {
     public static final String KEY_LOCATION = "location";
@@ -60,14 +60,16 @@ public final class MapzenLocation {
 
     public static class Listener implements LocationListener {
         private MapzenApplication application;
+        @Inject MapController mapController;
 
         public Listener(MapzenApplication application) {
             this.application = application;
+            application.inject(this);
         }
 
         public void onLocationChanged(Location location) {
             if (application.shouldMoveMapToLocation()) {
-                getMapController().setLocation(location);
+                mapController.setLocation(location);
                 Intent findMe = new Intent(COM_MAPZEN_FIND_ME);
                 application.sendBroadcast(findMe);
             }
@@ -80,9 +82,11 @@ public final class MapzenLocation {
     public static class ConnectionCallbacks implements LocationClient.ConnectionCallbacks {
         private MapzenApplication application;
         private LocationClient locationClient;
+        @Inject MapController mapController;
 
         public ConnectionCallbacks(MapzenApplication application) {
             this.application = application;
+            application.inject(this);
         }
 
         public void setLocationClient(LocationClient locationClient) {
@@ -91,18 +95,18 @@ public final class MapzenLocation {
 
         @Override
         public void onConnected(Bundle bundle) {
-            getMapController().setZoomLevel(MapController.DEFAULT_ZOOM_LEVEL);
+            mapController.setZoomLevel(MapController.DEFAULT_ZOOM_LEVEL);
             final Location location = locationClient.getLastLocation();
             Logger.d("Last known location: " + location);
 
             if (location != null) {
-                getMapController().setLocation(location);
+                mapController.setLocation(location);
                 if (application.shouldMoveMapToLocation()) {
                     Intent findMe = new Intent(COM_MAPZEN_FIND_ME);
                     application.sendBroadcast(findMe);
                 }
             } else {
-                if (getMapController().getMap() != null) {
+                if (mapController.getMap() != null) {
                     Toast.makeText(application, application.getString(R.string.waiting),
                             Toast.LENGTH_LONG).show();
                 }

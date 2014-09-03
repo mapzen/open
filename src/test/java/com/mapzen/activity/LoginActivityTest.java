@@ -1,6 +1,8 @@
 package com.mapzen.activity;
 
 import android.content.Intent;
+
+import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
@@ -16,7 +18,6 @@ import org.robolectric.shadows.ShadowToast;
 import org.scribe.model.Token;
 
 import static com.mapzen.activity.LoginActivity.OSM_VERIFIER_KEY;
-import static com.mapzen.MapController.getMapController;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import android.net.Uri;
@@ -32,12 +33,13 @@ import static org.mockito.Mockito.mock;
 public class LoginActivityTest {
     private LoginActivity activity;
     @Inject LocationClient locationClient;
+    @Inject MapController mapController;
 
     @Before
     public void setUp() throws Exception {
         ((TestMapzenApplication) Robolectric.application).inject(this);
         activity = initLoginActivity();
-        getMapController().setActivity(new BaseActivity());
+        mapController.setActivity(new BaseActivity());
     }
 
     @Test
@@ -121,7 +123,7 @@ public class LoginActivityTest {
 
     @Test
     public void shouldNotDisplayLocationError() {
-        getMapController().setActivity(new BaseActivity());
+        mapController.setActivity(new BaseActivity());
         LocationClient mock = mock(LocationClient.class);
         Mockito.when(mock.getLastLocation()).thenReturn(null);
         assertThat(ShadowToast.getTextOfLatestToast()).isNull();

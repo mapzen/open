@@ -1,5 +1,7 @@
 package com.mapzen.route;
 
+import com.mapzen.MapController;
+import com.mapzen.MapzenApplication;
 import com.mapzen.util.Logger;
 import com.mapzen.util.RouteLocationIndicator;
 
@@ -14,14 +16,21 @@ import android.os.AsyncTask;
 
 import java.util.ArrayList;
 
-import static com.mapzen.MapController.getMapController;
+import javax.inject.Inject;
+
 import static com.mapzen.MapController.locationToGeoPoint;
 
 public class DrawPathTask extends AsyncTask<ArrayList<Location>, Void, Void> {
+    @Inject MapController mapController;
+
+    public DrawPathTask(MapzenApplication application) {
+        application.inject(this);
+    }
+
     @Override
     protected Void doInBackground(ArrayList<Location>... locs) {
         final ArrayList<Location> locations = locs[0];
-        final ViewController viewPort = getMapController().getMap().viewport();
+        final ViewController viewPort = mapController.getMap().viewport();
         if (isCancelled()) {
             Logger.d("Cancelled before starting");
             return null;
@@ -42,7 +51,7 @@ public class DrawPathTask extends AsyncTask<ArrayList<Location>, Void, Void> {
             if (boundingBox.contains(point)) {
                 if (p == null) {
                     p = new PathLayer(
-                            getMapController().getMap(), Color.BLACK, 8);
+                            mapController.getMap(), Color.BLACK, 8);
                     layers.add(p);
                 }
                 p.addPoint(point);
@@ -50,9 +59,9 @@ public class DrawPathTask extends AsyncTask<ArrayList<Location>, Void, Void> {
                 p = null;
             }
         }
-        getMapController().getMap().layers().addAll(layers);
-        getMapController().moveToTop(RouteLocationIndicator.class);
-        getMapController().clearLinesExcept(layers);
+        mapController.getMap().layers().addAll(layers);
+        mapController.moveToTop(RouteLocationIndicator.class);
+        mapController.clearLinesExcept(layers);
         Logger.d("TIMING: " + (System.currentTimeMillis() - starttime));
         Logger.d("viewbox: " + viewPort.getBBox().toString());
         return null;

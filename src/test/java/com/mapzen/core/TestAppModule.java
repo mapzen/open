@@ -1,5 +1,7 @@
 package com.mapzen.core;
 
+import com.mapzen.MapController;
+import com.mapzen.MapControllerTest;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.activity.BaseActivityTest;
 import com.mapzen.activity.InitialActivity;
@@ -11,12 +13,16 @@ import com.mapzen.adapters.PlaceArrayAdapterTest;
 import com.mapzen.fragment.ItemFragment;
 import com.mapzen.fragment.ItemFragmentTest;
 import com.mapzen.fragment.MapFragment;
+import com.mapzen.fragment.MapFragmentTest;
 import com.mapzen.osrm.Router;
+import com.mapzen.route.DrawPathTask;
 import com.mapzen.route.RouteFragment;
 import com.mapzen.route.RouteFragmentTest;
 import com.mapzen.route.RoutePreviewFragment;
 import com.mapzen.route.RoutePreviewFragmentTest;
 import com.mapzen.search.AutoCompleteAdapter;
+import com.mapzen.search.PagerResultsFragment;
+import com.mapzen.search.PagerResultsFragmentTest;
 import com.mapzen.support.TestBaseActivity;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -52,12 +58,22 @@ import static org.mockito.Mockito.mock;
                 ItemFragment.class,
                 ItemFragmentTest.class,
                 MapFragment.class,
+                MapFragmentTest.class,
                 RoutePreviewFragment.class,
                 RoutePreviewFragmentTest.class,
                 DataUploadService.class,
                 PlaceArrayAdapter.class,
                 PlaceArrayAdapterTest.class,
-                AutoCompleteAdapter.class
+                AutoCompleteAdapter.class,
+                MapzenLocation.class,
+                MapzenLocationTest.class,
+                MapController.class,
+                MapControllerTest.class,
+                DrawPathTask.class,
+                MapzenLocation.ConnectionCallbacks.class,
+                MapzenLocation.Listener.class,
+                PagerResultsFragment.class,
+                PagerResultsFragmentTest.class
         },
         complete = false
 )
@@ -92,5 +108,9 @@ public class TestAppModule {
 
     @Provides @Singleton Typeface provideTypeface() {
         return Typeface.createFromAsset(context.getAssets(), "fonts/RobotoCondensed-Light.ttf");
+    }
+
+    @Provides @Singleton MapController provideMapController() {
+        return MapController.getMapController();
     }
 }

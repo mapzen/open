@@ -54,7 +54,6 @@ import javax.inject.Inject;
 import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
-import static com.mapzen.MapController.getMapController;
 import static com.mapzen.search.SavedSearch.getSavedSearch;
 import static com.mapzen.support.TestHelper.getTestFeature;
 import static com.mapzen.support.TestHelper.initBaseActivity;
@@ -75,6 +74,7 @@ public class BaseActivityTest {
     private TestMenu menu;
     @Inject LocationClient locationClient;
     @Inject MixpanelAPI mixpanelAPI;
+    @Inject MapController mapController;
 
     @Before
     public void setUp() throws Exception {
@@ -87,7 +87,7 @@ public class BaseActivityTest {
     @After
     public void tearDown() {
         activity.finish();
-        getMapController().setActivity(new BaseActivity());
+        mapController.setActivity(new BaseActivity());
     }
 
     @Test
@@ -148,7 +148,7 @@ public class BaseActivityTest {
 
     @Test
     public void onCreate_shouldInitializeMapController() throws Exception {
-        assertThat(MapController.getMapController().getMap()).isNotNull();
+        assertThat(mapController.getMap()).isNotNull();
     }
 
     @Test
@@ -380,16 +380,16 @@ public class BaseActivityTest {
     public void onConnect_shouldUpdateMapController() throws Exception {
         Location expected = initLastLocation();
         invokeOnConnected();
-        Location actual = getMapController().getLocation();
+        Location actual = mapController.getLocation();
         assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     public void onConnect_shouldResetZoomLevel() throws Exception {
-        getMapController().setZoomLevel(1);
+        mapController.setZoomLevel(1);
         initLastLocation();
         invokeOnConnected();
-        assertThat(getMapController().getZoomLevel()).isEqualTo(MapController.DEFAULT_ZOOM_LEVEL);
+        assertThat(mapController.getZoomLevel()).isEqualTo(MapController.DEFAULT_ZOOM_LEVEL);
     }
 
     @Test

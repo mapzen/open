@@ -1,5 +1,6 @@
 package com.mapzen.search;
 
+import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.SearchViewAdapter;
@@ -35,6 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
@@ -43,7 +46,6 @@ import retrofit.RetrofitError;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 import static com.mapzen.MapController.DEFAULT_ZOOM_LEVEL;
-import static com.mapzen.MapController.getMapController;
 import static com.mapzen.android.Pelias.getPelias;
 import static com.mapzen.search.SavedSearch.getSavedSearch;
 
@@ -52,6 +54,7 @@ public class PagerResultsFragment extends BaseFragment {
     private List<ItemFragment> currentCollection = new ArrayList<ItemFragment>();
     private ArrayList<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
     private static final String PAGINATE_TEMPLATE = "Viewing %d of %d results";
+    @Inject MapController mapController;
 
     @InjectView(R.id.multi_result_header)
     View multiResultHeader;
@@ -71,6 +74,7 @@ public class PagerResultsFragment extends BaseFragment {
         PagerResultsFragment pagerResultsFragment = new PagerResultsFragment();
         pagerResultsFragment.setAct(act);
         pagerResultsFragment.setMapFragment(act.getMapFragment());
+        pagerResultsFragment.inject();
         return pagerResultsFragment;
     }
 
@@ -155,7 +159,7 @@ public class PagerResultsFragment extends BaseFragment {
 
             @Override
             public void onPageSelected(int i) {
-                centerOnPlace(i, getMapController().getZoomScale());
+                centerOnPlace(i, mapController.getZoomScale());
             }
 
             @Override

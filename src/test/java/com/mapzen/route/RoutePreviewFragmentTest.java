@@ -1,5 +1,6 @@
 package com.mapzen.route;
 
+import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
@@ -36,7 +37,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import static com.mapzen.MapController.getMapController;
 import static com.mapzen.MapController.locationToGeoPoint;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATE_VIEW;
 import static com.mapzen.entity.SimpleFeature.NAME;
@@ -60,6 +60,7 @@ public class RoutePreviewFragmentTest {
     @Inject Router router;
     @Inject PathLayer path;
     @Inject ItemizedLayer<MarkerItem> markers;
+    @Inject MapController mapController;
     @Captor
     @SuppressWarnings("unused")
     ArgumentCaptor<double[]> location;
@@ -179,7 +180,7 @@ public class RoutePreviewFragmentTest {
 
     @Test
     public void createRouteToDestination_shouldGetCurrentLocationFirst() throws Exception {
-        getMapController().setLocation(getTestLocation(22.22, 44.44));
+        mapController.setLocation(getTestLocation(22.22, 44.44));
         fragment.createRouteToDestination();
         verify(router, Mockito.times(2)).setLocation(location.capture());
         List<double[]> values = location.getAllValues();
@@ -189,7 +190,7 @@ public class RoutePreviewFragmentTest {
 
     @Test
     public void createRouteToDestination_shouldGetFeatureDestinationFirst() throws Exception {
-        getMapController().setLocation(getTestLocation(22.22, 44.44));
+        mapController.setLocation(getTestLocation(22.22, 44.44));
         fragment.reverse();
         verify(router, Mockito.times(2)).setLocation(location.capture());
         List<double[]> values = location.getAllValues();
@@ -201,7 +202,7 @@ public class RoutePreviewFragmentTest {
     public void success_shouldAddPathToMap() throws Exception {
         fragment.createRouteToDestination();
         fragment.success(new Route(getFixture("around_the_block")));
-        assertThat(getMapController().getMap().layers().contains(path)).isTrue();
+        assertThat(mapController.getMap().layers().contains(path)).isTrue();
     }
 
     @Test
@@ -209,7 +210,7 @@ public class RoutePreviewFragmentTest {
         fragment.createRouteToDestination();
         fragment.success(new Route(getFixture("around_the_block")));
         fragment.success(new Route(getFixture("around_the_block")));
-        assertThat(getMapController().getMap().layers().contains(path)).isTrue();
+        assertThat(mapController.getMap().layers().contains(path)).isTrue();
     }
 
     @Test
@@ -277,7 +278,7 @@ public class RoutePreviewFragmentTest {
     public void success_shouldAddMarkerLayer() throws Exception {
         fragment.createRouteToDestination();
         fragment.success(new Route(getFixture("around_the_block")));
-        assertThat(getMapController().getMap().layers().contains(markers)).isTrue();
+        assertThat(mapController.getMap().layers().contains(markers)).isTrue();
     }
 
     @Test
@@ -285,7 +286,7 @@ public class RoutePreviewFragmentTest {
         fragment.createRouteToDestination();
         fragment.success(new Route(getFixture("around_the_block")));
         fragment.success(new Route(getFixture("around_the_block")));
-        assertThat(getMapController().getMap().layers().contains(markers)).isTrue();
+        assertThat(mapController.getMap().layers().contains(markers)).isTrue();
     }
 
     @Test
@@ -342,7 +343,7 @@ public class RoutePreviewFragmentTest {
         fragment.success(testRoute);
         ImageButton startBtn = (ImageButton) fragment.getView().findViewById(R.id.routing_circle);
         startBtn.performClick();
-        assertThat(getMapController().getMap().layers().contains(markers)).isFalse();
+        assertThat(mapController.getMap().layers().contains(markers)).isFalse();
     }
 
     @Test
@@ -372,7 +373,7 @@ public class RoutePreviewFragmentTest {
         Route testRoute = new Route(getFixture("around_the_block"));
         fragment.success(testRoute);
         fragment.onDetach();
-        assertThat(getMapController().getMap().layers().contains(markers)).isFalse();
+        assertThat(mapController.getMap().layers().contains(markers)).isFalse();
     }
 
     @Test
@@ -381,7 +382,7 @@ public class RoutePreviewFragmentTest {
         Route testRoute = new Route(getFixture("around_the_block"));
         fragment.success(testRoute);
         fragment.onDetach();
-        assertThat(getMapController().getMap().layers().contains(path)).isFalse();
+        assertThat(mapController.getMap().layers().contains(path)).isFalse();
     }
 
     @Test
