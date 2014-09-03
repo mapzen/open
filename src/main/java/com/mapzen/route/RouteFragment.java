@@ -882,11 +882,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             }
             activeTask = (new AsyncTask<Void, Void, Void>() {
                 @Override
-                protected void onPreExecute() {
-                    super.onPreExecute();
-                }
-
-                @Override
                 protected Void doInBackground(Void... params) {
                     final ArrayList<Location> locations = route.getGeometry();
                     final ViewController viewPort = getMapController().getMap().viewport();
