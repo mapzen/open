@@ -238,7 +238,7 @@ public class RoutePreviewFragment extends BaseFragment
         List<Location> points = route.getGeometry();
         long time = System.currentTimeMillis();
         Logger.d("RoutePreviewFragment::success Geometry points before: " + points.size());
-        if (points.size() > 100) {
+        if (points.size() > REDUCE_TOLERANCE) {
             points = reduceWithTolerance(points, REDUCE_TOLERANCE);
         }
         Logger.d("Timing: " + String.valueOf(System.currentTimeMillis() - time));
