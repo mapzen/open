@@ -49,13 +49,6 @@ public final class MapController {
         return new double[] { point.getLatitude(), point.getLongitude() };
     }
 
-    public static Location geoPointToLocation(GeoPoint point) {
-        Location loc = new Location("foo");
-        loc.setLatitude(point.getLatitude());
-        loc.setLongitude(point.getLongitude());
-        return loc;
-    }
-
     private MapController() {
     }
 
