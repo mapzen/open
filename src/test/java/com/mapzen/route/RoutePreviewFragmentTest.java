@@ -237,7 +237,7 @@ public class RoutePreviewFragmentTest {
     }
 
     @Test
-    public void success_shouldDrawRecudedRoute() throws Exception {
+    public void success_shouldDrawReducedRoute() throws Exception {
         fragment.createRouteToDestination();
         Route route = new Route(getFixture("ny_to_vermont"));
         fragment.success(route);
