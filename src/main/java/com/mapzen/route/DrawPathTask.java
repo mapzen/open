@@ -27,8 +27,8 @@ public class DrawPathTask extends AsyncTask<ArrayList<Location>, Void, Void> {
             return null;
         }
         BoundingBox boundingBox = viewPort.getBBox();
-        getMapController().clearLines();
 
+        ArrayList<PathLayer> layers = new ArrayList<PathLayer>();
         long starttime = System.currentTimeMillis();
         PathLayer p = null;
         for (Location loc : locations) {
@@ -43,14 +43,16 @@ public class DrawPathTask extends AsyncTask<ArrayList<Location>, Void, Void> {
                 if (p == null) {
                     p = new PathLayer(
                             getMapController().getMap(), Color.BLACK, 8);
-                    getMapController().getMap().layers().add(p);
-                    getMapController().moveToTop(RouteLocationIndicator.class);
+                    layers.add(p);
                 }
                 p.addPoint(point);
             } else {
                 p = null;
             }
         }
+        getMapController().getMap().layers().addAll(layers);
+        getMapController().moveToTop(RouteLocationIndicator.class);
+        getMapController().clearLinesExcept(layers);
         Logger.d("TIMING: " + (System.currentTimeMillis() - starttime));
         Logger.d("viewbox: " + viewPort.getBBox().toString());
         return null;

@@ -15,6 +15,8 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 import org.oscim.map.ViewController;
 
+import java.util.ArrayList;
+
 import static android.content.Context.MODE_PRIVATE;
 
 public final class MapController {
@@ -74,6 +76,17 @@ public final class MapController {
                 map.layers().remove(layer);
             }
         }
+    }
+
+    public void clearLinesExcept(ArrayList<PathLayer> layers) {
+        for (Layer layer: map.layers()) {
+            if (layer.getClass().equals(PathLayer.class)) {
+                if (!layers.contains(layer)) {
+                    map.layers().remove(layer);
+                }
+            }
+        }
+
     }
 
     public void moveToTop(Class<?> klass) {
