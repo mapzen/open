@@ -90,6 +90,7 @@ import static com.mapzen.support.TestHelper.getTestLocation;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
 import static com.mapzen.support.TestHelper.initMapFragment;
+import static com.mapzen.util.DatabaseHelper.COLUMN_GROUP_ID;
 import static com.mapzen.util.DatabaseHelper.COLUMN_MSG;
 import static com.mapzen.util.DatabaseHelper.COLUMN_READY_FOR_UPLOAD;
 import static com.mapzen.util.DatabaseHelper.COLUMN_ROUTE_ID;
@@ -1101,12 +1102,17 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void storeRouteInDatabase_shouldCreateRouteGroupEntry() throws Exception {
+    public void newInstance_shouldCreateGroupId() throws Exception {
+        assertThat(fragment.groupId).isNotNull();
+    }
+
+    @Test
+    public void setRoute_shouldCreateRouteGroupEntry() throws Exception {
         FragmentTestUtil.startFragment(fragment);
-        fragment.storeRouteInDatabase(new JSONObject());
+        fragment.setRoute(new Route(MOCK_ROUTE_JSON));
         Cursor cursor = db.query(TABLE_ROUTE_GROUP, null,
-                COLUMN_ROUTE_ID + " = ?",
-                new String[] { fragment.getRouteId() }, null, null, null);
+                COLUMN_ROUTE_ID + " = ? AND " + COLUMN_GROUP_ID + " = ?",
+                new String[] { fragment.getRouteId(), fragment.groupId }, null, null, null);
         assertThat(cursor).hasCount(1);
     }
 
@@ -1339,13 +1345,10 @@ public class RouteFragmentTest {
 
     private void initTestFragment() throws Exception {
         // TODO make this call newInstance for consistency
-        fragment = new RouteFragment();
-        fragment.setSimpleFeature(getTestSimpleFeature());
-        fragment.setAct(act);
-        fragment.inject();
-        fragment.setMapFragment(initMapFragment(act));
+        initMapFragment(act);
+        fragment = RouteFragment.newInstance(act, getTestSimpleFeature());
         fragment.setRoute(new Route(MOCK_ROUTE_JSON));
-        fragment.setRouteLocationIndicator(new RouteLocationIndicator(act.getMap()));
+
         testInstructions = new ArrayList<Instruction>();
         testInstructions.add(getTestInstruction(0, 0));
         testInstructions.add(getTestInstruction(1, 1));
