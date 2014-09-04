@@ -1299,7 +1299,6 @@ public class RouteFragmentTest {
     }
 
     private void initTestFragment() throws Exception {
-        // TODO make this call newInstance for consistency
         initMapFragment(act);
         fragment = RouteFragment.newInstance(act, getTestSimpleFeature());
         fragment.setRoute(new Route(MOCK_ROUTE_JSON));
