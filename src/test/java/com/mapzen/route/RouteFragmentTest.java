@@ -797,26 +797,6 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void getAdvanceRadius_shouldBeConfigurable() {
-        setAdvanceRadiusPreference(R.string.settings_turn_driving_0to15_key, 100);
-        setAdvanceRadiusPreference(R.string.settings_turn_driving_15to25_key, 200);
-        setAdvanceRadiusPreference(R.string.settings_turn_driving_25to35_key, 300);
-        setAdvanceRadiusPreference(R.string.settings_turn_driving_35to50_key, 400);
-        setAdvanceRadiusPreference(R.string.settings_turn_driving_over50_key, 500);
-        setNumberOfLocationForAverageSpeed(1);
-
-        FragmentTestUtil.startFragment(fragment);
-        Location location = fragment.getRoute().getRouteInstructions().get(0).getLocation();
-        fragment.setInstructions(fragment.getRoute().getRouteInstructions());
-
-        assertAdvanceRadius(100, 10, location);
-        assertAdvanceRadius(200, 20, location);
-        assertAdvanceRadius(300, 30, location);
-        assertAdvanceRadius(400, 40, location);
-        assertAdvanceRadius(500, 50, location);
-    }
-
-    @Test
     public void onLocationChanged_finalInstructionShouldNotAdvance() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
@@ -1291,29 +1271,10 @@ public class RouteFragmentTest {
         assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).hasSize(2);
     }
 
-    private void loadMockAroundTheBlock() {
-        setAdvanceRadiusPreference(R.string.settings_turn_driving_0to15_key, 0);
-        fragment.createRouteTo(getTestLocation(100.0, 100.0));
-        verify(router).setCallback(callback.capture());
-        callback.getValue().success(new Route(MOCK_AROUND_THE_BLOCK));
-        FragmentTestUtil.startFragment(fragment);
-        fragment.onResume();
-    }
-
     private void loadAceHotelMockRoute() {
-        setAdvanceRadiusPreference(R.string.settings_turn_driving_0to15_key, 50);
         fragment.createRouteTo(getTestLocation(100.0, 100.0));
         verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(MOCK_ACE_HOTEL));
-        FragmentTestUtil.startFragment(fragment);
-        fragment.onResume();
-    }
-
-    private void loadMockRoute() {
-        setAdvanceRadiusPreference(R.string.settings_turn_driving_0to15_key, 0);
-        fragment.createRouteTo(getTestLocation(100.0, 100.0));
-        verify(router).setCallback(callback.capture());
-        callback.getValue().success(new Route(MOCK_ROUTE_JSON));
         FragmentTestUtil.startFragment(fragment);
         fragment.onResume();
     }
@@ -1337,14 +1298,7 @@ public class RouteFragmentTest {
         assertThat(getMapController().getZoomLevel()).isEqualTo(expected);
     }
 
-    private void assertAdvanceRadius(int expected, float milesPerHour, Location location) {
-        location.setSpeed(ZoomController.milesPerHourToMetersPerSecond(milesPerHour));
-        fragment.onLocationChanged(location);
-        assertThat(fragment.getAdvanceRadius()).isEqualTo(expected);
-    }
-
     private void initTestFragment() throws Exception {
-        // TODO make this call newInstance for consistency
         initMapFragment(act);
         fragment = RouteFragment.newInstance(act, getTestSimpleFeature());
         fragment.setRoute(new Route(MOCK_ROUTE_JSON));

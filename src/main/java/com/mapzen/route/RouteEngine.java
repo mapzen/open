@@ -9,7 +9,6 @@ import android.location.Location;
 public class RouteEngine {
     private Route route;
     private RouteListener listener;
-    private ZoomController zoomController;
     private Instruction nextInstruction;
     private int currentIndex = -1;
     private int closestDistance;
@@ -40,7 +39,7 @@ public class RouteEngine {
     private void checkExitRadius(Location snapLocation) {
         if (currentIndex > -1) {
             if (route.getRouteInstructions().get(currentIndex).getLocation()
-                    .distanceTo(snapLocation) > zoomController.getTurnRadius()) {
+                    .distanceTo(snapLocation) > ZoomController.DEFAULT_TURN_RADIUS) {
                 listener.onExitInstructionRadius(currentIndex);
                 currentIndex = -1;
             }
@@ -48,7 +47,7 @@ public class RouteEngine {
     }
 
     private void checkEnterRadius(int index) {
-        if (closestDistance < zoomController.getTurnRadius() &&
+        if (closestDistance < ZoomController.DEFAULT_TURN_RADIUS &&
                 !route.getSeenInstructions().contains(nextInstruction)) {
             listener.onEnterInstructionRadius(index);
             calculateDistanceToDestination();
@@ -96,10 +95,6 @@ public class RouteEngine {
 
     public void setListener(RouteListener listener) {
         this.listener = listener;
-    }
-
-    public void setZoomController(ZoomController zoomController) {
-        this.zoomController = zoomController;
     }
 
     public interface RouteListener {

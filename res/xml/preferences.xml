@@ -92,45 +92,6 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/settings_turn_title">
-
-        <com.mapzen.widget.EditIntPreference
-            android:defaultValue="@integer/turn_walking"
-            android:key="@string/settings_turn_walking_key"
-            android:title="@string/settings_turn_walking_title" />
-
-        <com.mapzen.widget.EditIntPreference
-            android:defaultValue="@integer/turn_biking"
-            android:key="@string/settings_turn_biking_key"
-            android:title="@string/settings_turn_biking_title" />
-
-        <com.mapzen.widget.EditIntPreference
-            android:defaultValue="@integer/turn_driving_0to15"
-            android:key="@string/settings_turn_driving_0to15_key"
-            android:title="@string/settings_turn_driving_0_to_15_title" />
-
-        <com.mapzen.widget.EditIntPreference
-            android:defaultValue="@integer/turn_driving_15to25"
-            android:key="@string/settings_turn_driving_15to25_key"
-            android:title="@string/settings_turn_driving_15_to_25_title" />
-
-        <com.mapzen.widget.EditIntPreference
-            android:defaultValue="@integer/turn_driving_25to35"
-            android:key="@string/settings_turn_driving_25to35_key"
-            android:title="@string/settings_turn_driving_25_to_35_title" />
-
-        <com.mapzen.widget.EditIntPreference
-            android:defaultValue="@integer/turn_driving_35to50"
-            android:key="@string/settings_turn_driving_35to50_key"
-            android:title="@string/settings_turn_driving_35_to_50_title" />
-
-        <com.mapzen.widget.EditIntPreference
-            android:defaultValue="@integer/turn_driving_over50"
-            android:key="@string/settings_turn_driving_over50_key"
-            android:title="@string/settings_turn_driving_over_50_title" />
-
-    </PreferenceCategory>
-
     <PreferenceCategory android:title="@string/settings_speed_title">
         <com.mapzen.widget.EditIntPreference
             android:defaultValue="@integer/number_of_locations_for_average_speed"
