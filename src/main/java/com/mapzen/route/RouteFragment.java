@@ -280,7 +280,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public int getAdvanceRadius() {
-        return zoomController.getTurnRadius();
+        return ZoomController.DEFAULT_TURN_RADIUS;
     }
 
     public void setInstructions(ArrayList<Instruction> instructions) {
@@ -329,27 +329,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         initZoomLevel(DrivingSpeed.MPH_OVER_50, R.string.settings_zoom_driving_over50_key,
                 R.integer.zoom_driving_over50);
 
-        initTurnRadius(DrivingSpeed.MPH_0_TO_15, R.string.settings_turn_driving_0to15_key,
-                R.integer.turn_driving_0to15);
-        initTurnRadius(DrivingSpeed.MPH_15_TO_25, R.string.settings_turn_driving_15to25_key,
-                R.integer.turn_driving_15to25);
-        initTurnRadius(DrivingSpeed.MPH_25_TO_35, R.string.settings_turn_driving_25to35_key,
-                R.integer.turn_driving_25to35);
-        initTurnRadius(DrivingSpeed.MPH_35_TO_50, R.string.settings_turn_driving_35to50_key,
-                R.integer.turn_driving_35to50);
-        initTurnRadius(DrivingSpeed.MPH_OVER_50, R.string.settings_turn_driving_over50_key,
-                R.integer.turn_driving_over50);
-
         return zoomController;
     }
 
     private void initZoomLevel(DrivingSpeed speed, int key, int defKey) {
         zoomController.setDrivingZoom(prefs.getInt(getString(key), res.getInteger(defKey)), speed);
-    }
-
-    private void initTurnRadius(DrivingSpeed speed, int key, int defKey) {
-        zoomController.setDrivingTurnRadius(prefs.getInt(getString(key),
-                res.getInteger(defKey)), speed);
     }
 
     public void onLocationChanged(Location location) {
@@ -463,7 +447,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             getMapController().setMapPerspectiveForInstruction(instructions.get(0));
             routeEngine.setRoute(route);
             routeEngine.setListener(this);
-            routeEngine.setZoomController(zoomController);
         } else {
             return false;
         }

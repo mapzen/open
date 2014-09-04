@@ -1,6 +1,5 @@
 package com.mapzen.route;
 
-import com.mapzen.helpers.ZoomController;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.support.MapzenTestRunner;
@@ -22,18 +21,14 @@ public class RouteEngineTest {
     private RouteEngine routeEngine;
     private Route route;
     private TestRouteListener listener;
-    private ZoomController zoomController;
 
     @Before
     public void setUp() throws Exception {
         route = new Route(MOCK_ACE_HOTEL);
         listener = new TestRouteListener();
-        zoomController = new ZoomController();
-
         routeEngine = new RouteEngine();
         routeEngine.setRoute(route);
         routeEngine.setListener(listener);
-        routeEngine.setZoomController(zoomController);
     }
 
     @Test
