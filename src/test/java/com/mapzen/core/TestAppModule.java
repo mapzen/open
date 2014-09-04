@@ -16,6 +16,7 @@ import com.mapzen.fragment.MapFragment;
 import com.mapzen.fragment.MapFragmentTest;
 import com.mapzen.osrm.Router;
 import com.mapzen.route.DrawPathTask;
+import com.mapzen.route.DrawPathTaskTest;
 import com.mapzen.route.RouteFragment;
 import com.mapzen.route.RouteFragmentTest;
 import com.mapzen.route.RoutePreviewFragment;
@@ -70,6 +71,7 @@ import static org.mockito.Mockito.mock;
                 MapController.class,
                 MapControllerTest.class,
                 DrawPathTask.class,
+                DrawPathTaskTest.class,
                 MapzenLocation.ConnectionCallbacks.class,
                 MapzenLocation.Listener.class,
                 PagerResultsFragment.class,

@@ -40,6 +40,7 @@ public class DrawPathTask extends AsyncTask<ArrayList<Location>, Void, Void> {
         ArrayList<PathLayer> layers = new ArrayList<PathLayer>();
         long starttime = System.currentTimeMillis();
         PathLayer p = null;
+        boolean prePointAdded = false;
         for (Location loc : locations) {
             if (isCancelled()) {
                 Logger.d("Cancelled during iteration: index: "
@@ -49,14 +50,26 @@ public class DrawPathTask extends AsyncTask<ArrayList<Location>, Void, Void> {
             }
             GeoPoint point = locationToGeoPoint(loc);
             if (boundingBox.contains(point)) {
+
                 if (p == null) {
                     p = new PathLayer(
                             mapController.getMap(), Color.BLACK, 8);
                     layers.add(p);
                 }
+                if (!prePointAdded) {
+                    int previousId = locations.indexOf(loc) - 1;
+                    if (previousId > 0) {
+                        p.addPoint(locationToGeoPoint(locations.get(previousId)));
+                    }
+                    prePointAdded = true;
+                }
                 p.addPoint(point);
             } else {
-                p = null;
+                prePointAdded = false;
+                if (p != null) {
+                    p.addPoint(locationToGeoPoint(loc));
+                    p = null;
+                }
             }
         }
         mapController.getMap().layers().addAll(layers);
