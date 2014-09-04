@@ -1271,26 +1271,10 @@ public class RouteFragmentTest {
         assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).hasSize(2);
     }
 
-    private void loadMockAroundTheBlock() {
-        fragment.createRouteTo(getTestLocation(100.0, 100.0));
-        verify(router).setCallback(callback.capture());
-        callback.getValue().success(new Route(MOCK_AROUND_THE_BLOCK));
-        FragmentTestUtil.startFragment(fragment);
-        fragment.onResume();
-    }
-
     private void loadAceHotelMockRoute() {
         fragment.createRouteTo(getTestLocation(100.0, 100.0));
         verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(MOCK_ACE_HOTEL));
-        FragmentTestUtil.startFragment(fragment);
-        fragment.onResume();
-    }
-
-    private void loadMockRoute() {
-        fragment.createRouteTo(getTestLocation(100.0, 100.0));
-        verify(router).setCallback(callback.capture());
-        callback.getValue().success(new Route(MOCK_ROUTE_JSON));
         FragmentTestUtil.startFragment(fragment);
         fragment.onResume();
     }
