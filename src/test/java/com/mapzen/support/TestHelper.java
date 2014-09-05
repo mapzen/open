@@ -149,6 +149,19 @@ public final class TestHelper {
         return new Instruction(jsonArray);
     }
 
+    public static Instruction getTestLastInstruction() {
+        final JSONArray jsonArray = new JSONArray();
+        jsonArray.put(15)                    // you have arrived
+                .put("")                     // street name
+                .put(0)                      // distance in meters
+                .put(0)                      // position
+                .put(0)                      // time in seconds
+                .put("0m")                   // length with unit
+                .put("N")                    // bearing
+                .put(0);                     // azimuth
+        return new Instruction(jsonArray);
+    }
+
     public static SimpleFeature getTestSimpleFeature() {
         SimpleFeature simpleFeature = new SimpleFeature();
         simpleFeature.setLat(1.0);

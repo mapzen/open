@@ -59,6 +59,17 @@ public class RouteEngineTest {
     }
 
     @Test
+    public void onEnterInstructionRadius_shouldNotFireForDestination() throws Exception {
+        route.addSeenInstruction(route.getRouteInstructions().get(0));
+        route.addSeenInstruction(route.getRouteInstructions().get(1));
+        route.addSeenInstruction(route.getRouteInstructions().get(2));
+        route.addSeenInstruction(route.getRouteInstructions().get(3));
+        route.addSeenInstruction(route.getRouteInstructions().get(4));
+        routeEngine.onLocationChanged(route.getRouteInstructions().get(5).getLocation());
+        assertThat(listener.enterIndex).isNotEqualTo(5);
+    }
+
+    @Test
     public void onExitInstructionRadius_shouldReturnIndex() throws Exception {
         routeEngine.onLocationChanged(route.getRouteInstructions().get(0).getLocation());
         routeEngine.onLocationChanged(route.getRouteInstructions().get(1).getLocation());
@@ -83,16 +94,6 @@ public class RouteEngineTest {
         routeEngine.onLocationChanged(route.getRouteInstructions().get(1).getLocation());
         assertThat(listener.distanceToDestination).isEqualTo(route.getTotalDistance() -
                 route.getRouteInstructions().get(0).getDistance());
-    }
-
-    @Test
-    public void onUpdateDistance_shouldReturnZeroAtDestination() throws Exception {
-        for (Instruction instruction : route.getRouteInstructions()) {
-            routeEngine.onLocationChanged(instruction.getLocation());
-        }
-
-        assertThat(listener.distanceToDestination).isEqualTo(0);
-        assertThat(listener.instructionDistance).isEqualTo(0);
     }
 
     @Test
@@ -122,6 +123,30 @@ public class RouteEngineTest {
         assertThat(listener.distanceToDestination).isEqualTo(expected);
     }
 
+    @Test
+    public void onRouteComplete_shouldTriggerAtDestination() throws Exception {
+        route.addSeenInstruction(route.getRouteInstructions().get(0));
+        route.addSeenInstruction(route.getRouteInstructions().get(1));
+        route.addSeenInstruction(route.getRouteInstructions().get(2));
+        route.addSeenInstruction(route.getRouteInstructions().get(3));
+        route.addSeenInstruction(route.getRouteInstructions().get(4));
+        routeEngine.onLocationChanged(route.getRouteInstructions().get(5).getLocation());
+        assertThat(listener.routeComplete).isTrue();
+    }
+
+    @Test
+    public void onRouteComplete_shouldOnlyTriggerOnce() throws Exception {
+        route.addSeenInstruction(route.getRouteInstructions().get(0));
+        route.addSeenInstruction(route.getRouteInstructions().get(1));
+        route.addSeenInstruction(route.getRouteInstructions().get(2));
+        route.addSeenInstruction(route.getRouteInstructions().get(3));
+        route.addSeenInstruction(route.getRouteInstructions().get(4));
+        routeEngine.onLocationChanged(route.getRouteInstructions().get(5).getLocation());
+        listener.routeComplete = false;
+        routeEngine.onLocationChanged(route.getRouteInstructions().get(5).getLocation());
+        assertThat(listener.routeComplete).isFalse();
+    }
+
     private static class TestRouteListener implements RouteEngine.RouteListener {
         private Location originalLocation;
         private Location snapLocation;
@@ -132,6 +157,7 @@ public class RouteEngineTest {
         private int closestDistance = -1;
         private int instructionDistance = -1;
         private int distanceToDestination = -1;
+        private boolean routeComplete = false;
 
         @Override
         public void onRecalculate(Location location) {
@@ -160,6 +186,11 @@ public class RouteEngineTest {
             this.closestDistance = closestDistance;
             this.instructionDistance = instructionDistance;
             this.distanceToDestination = distanceToDestination;
+        }
+
+        @Override
+        public void onRouteComplete() {
+            routeComplete = true;
         }
     }
 }

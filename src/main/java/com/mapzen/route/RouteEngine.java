@@ -7,12 +7,14 @@ import com.mapzen.osrm.Route;
 import android.location.Location;
 
 public class RouteEngine {
+    public static final int DESTINATION_RADIUS = 20;
     private Route route;
     private RouteListener listener;
     private Instruction nextInstruction;
     private int currentIndex = -1;
     private int closestDistance;
     private int distanceToDestination;
+    private boolean routeComplete;
 
     public void onLocationChanged(Location location) {
         final Location snapLocation = route.snapToRoute(location);
@@ -24,6 +26,13 @@ public class RouteEngine {
         }
 
         listener.onSnapLocation(location, snapLocation);
+
+        if (youHaveArrived(snapLocation)) {
+            routeComplete = true;
+            listener.onRouteComplete();
+            return;
+        }
+
         nextInstruction = route.getNextInstruction();
         if (nextInstruction == null) {
             return;
@@ -34,6 +43,22 @@ public class RouteEngine {
         checkExitRadius(snapLocation);
         checkEnterRadius(index);
         calculateDistance(snapLocation, index);
+    }
+
+    private boolean youHaveArrived(Location snapLocation) {
+        return getDistanceToDestination(snapLocation) < DESTINATION_RADIUS && !routeComplete;
+    }
+
+    private float getDistanceToDestination(Location snapLocation) {
+        final Location destination = getLocationForDestination();
+        return snapLocation.distanceTo(destination);
+    }
+
+    private Location getLocationForDestination() {
+        final int destinationIndex = route.getRouteInstructions().size() - 1;
+        final Instruction destinationInstruction =
+                route.getRouteInstructions().get(destinationIndex);
+        return destinationInstruction.getLocation();
     }
 
     private void checkExitRadius(Location snapLocation) {
@@ -49,7 +74,11 @@ public class RouteEngine {
     private void checkEnterRadius(int index) {
         if (closestDistance < ZoomController.DEFAULT_TURN_RADIUS &&
                 !route.getSeenInstructions().contains(nextInstruction)) {
-            listener.onEnterInstructionRadius(index);
+
+            if (index != route.getRouteInstructions().size() - 1) {
+                listener.onEnterInstructionRadius(index);
+            }
+
             calculateDistanceToDestination();
             route.addSeenInstruction(nextInstruction);
             currentIndex = index;
@@ -104,5 +133,6 @@ public class RouteEngine {
         public void onExitInstructionRadius(int index);
         public void onUpdateDistance(int closestDistance, int instructionDistance,
                 int distanceToDestination);
+        public void onRouteComplete();
     }
 }

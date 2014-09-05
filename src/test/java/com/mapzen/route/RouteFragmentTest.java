@@ -86,6 +86,7 @@ import static com.mapzen.support.TestHelper.MOCK_NY_TO_VT;
 import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
 import static com.mapzen.support.TestHelper.enableDebugMode;
 import static com.mapzen.support.TestHelper.getTestInstruction;
+import static com.mapzen.support.TestHelper.getTestLastInstruction;
 import static com.mapzen.support.TestHelper.getTestLocation;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
@@ -852,6 +853,39 @@ public class RouteFragmentTest {
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
         fragment.onExitInstructionRadius(1);
+    }
+
+    @Test
+    public void onRouteComplete_shouldAdvancePagerToFinalInstruction() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction());
+        instructions.add(getTestLastInstruction());
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onRouteComplete();
+        assertThat(fragment.pager).hasCurrentItem(1);
+    }
+
+    @Test
+    public void onRouteComplete_shouldAnnounceFinalInstruction() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction());
+        instructions.add(getTestLastInstruction());
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onRouteComplete();
+        assertLastSpokenText(getTestLastInstruction().getSimpleInstruction());
+    }
+
+    @Test
+    public void onRouteComplete_shouldSetZeroDistanceToDestination() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction());
+        instructions.add(getTestLastInstruction());
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onRouteComplete();
+        assertThat(fragment.distanceToDestination.getDistance()).isEqualTo(0);
     }
 
     @Test

@@ -363,9 +363,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onEnterInstructionRadius(int index) {
         voiceNavigationController.playInstruction(instructions.get(index));
-        if (index == instructions.size() - 1) {
-            pager.setCurrentItem(index);
-        }
     }
 
     @Override
@@ -421,6 +418,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     (TextView) view.findViewById(R.id.distance_instruction);
             currentInstructionDistance.setText(DistanceFormatter.format(instructionDistance, true));
         }
+    }
+
+    @Override
+    public void onRouteComplete() {
+        pager.setCurrentItem(instructions.size() - 1);
+        voiceNavigationController.playInstruction(instructions.get(instructions.size() - 1));
+        distanceToDestination.setDistance(0);
     }
 
     private View getViewForIndex(int index) {
