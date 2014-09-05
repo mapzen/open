@@ -65,7 +65,7 @@ public class RouteEngine {
         if (currentIndex > -1) {
             if (route.getRouteInstructions().get(currentIndex).getLocation()
                     .distanceTo(snapLocation) > ZoomController.DEFAULT_TURN_RADIUS) {
-                listener.onExitInstructionRadius(currentIndex);
+                listener.onInstructionComplete(currentIndex);
                 currentIndex = -1;
             }
         }
@@ -76,7 +76,7 @@ public class RouteEngine {
                 !route.getSeenInstructions().contains(nextInstruction)) {
 
             if (index != route.getRouteInstructions().size() - 1) {
-                listener.onEnterInstructionRadius(index);
+                listener.onApproachingInstruction(index);
             }
 
             calculateDistanceToDestination();
@@ -129,8 +129,8 @@ public class RouteEngine {
     public interface RouteListener {
         public void onRecalculate(Location location);
         public void onSnapLocation(Location originalLocation, Location snapLocation);
-        public void onEnterInstructionRadius(int index);
-        public void onExitInstructionRadius(int index);
+        public void onApproachingInstruction(int index);
+        public void onInstructionComplete(int index);
         public void onUpdateDistance(int closestDistance, int instructionDistance,
                 int distanceToDestination);
         public void onRouteComplete();

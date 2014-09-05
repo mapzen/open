@@ -810,7 +810,7 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onEnterInstructionRadius_shouldSpeakTurnInstruction() throws Exception {
+    public void onApproachingInstruction_shouldSpeakTurnInstruction() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 
         Instruction firstInstruction = getTestInstruction(0, 0);
@@ -823,12 +823,12 @@ public class RouteFragmentTest {
 
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
-        fragment.onEnterInstructionRadius(0);
+        fragment.onApproachingInstruction(0);
         assertLastSpokenText("Head on 19th Street");
     }
 
     @Test
-    public void onExitInstructionRadius_shouldSpeakContinueInstruction() throws Exception {
+    public void onInstructionComplete_shouldSpeakContinueInstruction() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 
         Instruction firstInstruction = getTestInstruction(0, 0);
@@ -841,18 +841,18 @@ public class RouteFragmentTest {
 
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
-        fragment.onExitInstructionRadius(0);
+        fragment.onInstructionComplete(0);
         assertLastSpokenText("Continue on 19th Street for 320 feet");
     }
 
     @Test
-    public void onExitInstructionRadius_shouldVerifyNextIndexIsWithinBounds() throws Exception {
+    public void onInstructionComplete_shouldVerifyNextIndexIsWithinBounds() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(0, 0));
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
-        fragment.onExitInstructionRadius(1);
+        fragment.onInstructionComplete(1);
     }
 
     @Test

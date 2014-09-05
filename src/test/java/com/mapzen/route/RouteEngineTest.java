@@ -52,28 +52,28 @@ public class RouteEngineTest {
     }
 
     @Test
-    public void onEnterInstructionRadius_shouldReturnIndex() throws Exception {
+    public void onApproachingInstruction_shouldReturnIndex() throws Exception {
         route.addSeenInstruction(route.getRouteInstructions().get(0));
         routeEngine.onLocationChanged(route.getRouteInstructions().get(1).getLocation());
-        assertThat(listener.enterIndex).isEqualTo(1);
+        assertThat(listener.approachIndex).isEqualTo(1);
     }
 
     @Test
-    public void onEnterInstructionRadius_shouldNotFireForDestination() throws Exception {
+    public void onApproachingInstruction_shouldNotFireForDestination() throws Exception {
         route.addSeenInstruction(route.getRouteInstructions().get(0));
         route.addSeenInstruction(route.getRouteInstructions().get(1));
         route.addSeenInstruction(route.getRouteInstructions().get(2));
         route.addSeenInstruction(route.getRouteInstructions().get(3));
         route.addSeenInstruction(route.getRouteInstructions().get(4));
         routeEngine.onLocationChanged(route.getRouteInstructions().get(5).getLocation());
-        assertThat(listener.enterIndex).isNotEqualTo(5);
+        assertThat(listener.approachIndex).isNotEqualTo(5);
     }
 
     @Test
-    public void onExitInstructionRadius_shouldReturnIndex() throws Exception {
+    public void onInstructionComplete_shouldReturnIndex() throws Exception {
         routeEngine.onLocationChanged(route.getRouteInstructions().get(0).getLocation());
         routeEngine.onLocationChanged(route.getRouteInstructions().get(1).getLocation());
-        assertThat(listener.exitIndex).isEqualTo(0);
+        assertThat(listener.completeIndex).isEqualTo(0);
     }
 
     @Test
@@ -152,8 +152,8 @@ public class RouteEngineTest {
         private Location snapLocation;
 
         private boolean recalculating = false;
-        private int enterIndex = -1;
-        private int exitIndex = -1;
+        private int approachIndex = -1;
+        private int completeIndex = -1;
         private int closestDistance = -1;
         private int instructionDistance = -1;
         private int distanceToDestination = -1;
@@ -171,13 +171,13 @@ public class RouteEngineTest {
         }
 
         @Override
-        public void onEnterInstructionRadius(int index) {
-            enterIndex = index;
+        public void onApproachingInstruction(int index) {
+            approachIndex = index;
         }
 
         @Override
-        public void onExitInstructionRadius(int index) {
-            exitIndex = index;
+        public void onInstructionComplete(int index) {
+            completeIndex = index;
         }
 
         @Override
