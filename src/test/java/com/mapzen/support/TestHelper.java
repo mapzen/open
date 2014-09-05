@@ -49,7 +49,7 @@ public final class TestHelper {
 
     public static final String MOCK_ROUTE_JSON = TestHelper.getFixture("basic_route");
     public static final String MOCK_NO_ROUTE_JSON = TestHelper.getFixture("no_route_found");
-    public static final String MOCK_NY_TO_VT = TestHelper.getFixture("ny_to_vermount");
+    public static final String MOCK_NY_TO_VT = TestHelper.getFixture("ny_to_vermont");
     public static final String MOCK_AROUND_THE_BLOCK = TestHelper.getFixture("around_the_block");
     public static final String MOCK_ACE_HOTEL = TestHelper.getFixture("ace_hotel");
 

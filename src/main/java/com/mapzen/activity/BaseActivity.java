@@ -60,7 +60,6 @@ import java.util.concurrent.Executors;
 import javax.inject.Inject;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static com.mapzen.MapController.getMapController;
 import static com.mapzen.search.SavedSearch.getSavedSearch;
 
 public class BaseActivity extends MapActivity {
@@ -77,6 +76,7 @@ public class BaseActivity extends MapActivity {
     private MapFragment mapFragment;
     private MapzenGPSPromptDialogFragment gpsPromptDialogFragment;
     @Inject MixpanelAPI mixpanelAPI;
+    @Inject MapController mapController;
 
     protected boolean enableActionbar = true;
 
@@ -439,7 +439,6 @@ public class BaseActivity extends MapActivity {
     }
 
     private void initMapController() {
-        MapController mapController = getMapController();
         mapController.setActivity(this);
     }
 

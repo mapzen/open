@@ -1,13 +1,17 @@
 package org.oscim.map;
 
 public class TestMap extends Map {
-    private TestViewport viewport;
+    private ViewController viewport;
     Animator mapAnimator;
 
     public TestMap() {
         super();
         this.viewport = new TestViewport();
         mapAnimator = new Animator(this);
+    }
+
+    public void setViewport(ViewController viewport) {
+        this.viewport = viewport;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.mapzen.fragment;
 
+import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.search.OnPoiClickListener;
@@ -42,8 +43,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import static com.mapzen.MapController.DEFAULT_ZOOM_LEVEL;
-import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.core.MapzenLocation.COM_MAPZEN_FIND_ME;
 import static org.oscim.layers.marker.ItemizedLayer.OnItemGestureListener;
@@ -62,6 +64,7 @@ public class MapFragment extends BaseFragment {
     private OnPoiClickListener onPoiClickListener;
     private FindMeReceiver findMeReceiver;
     private LocationReceiver locationReceiver;
+    @Inject MapController mapController;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -72,7 +75,7 @@ public class MapFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-        getMapController().saveLocation();
+        mapController.saveLocation();
         locationMarkerLayer.removeAllItems();
         poiMarkersLayer.removeAllItems();
         unregisterLocationReceivers();
@@ -81,7 +84,8 @@ public class MapFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        getMapController().restoreFromSavedLocation();
+        inject();
+        mapController.restoreFromSavedLocation();
         registerLocationReceivers();
         poiMarkersLayer.repopulate();
     }
@@ -190,7 +194,7 @@ public class MapFragment extends BaseFragment {
                     followMe = false;
                 }
 
-                getMapController().storeMapPosition(mapPosition);
+                mapController.storeMapPosition(mapPosition);
             }
         });
     }
@@ -229,7 +233,7 @@ public class MapFragment extends BaseFragment {
     }
 
     public GeoPoint getUserLocationPoint() {
-        Location userLocation = getMapController().getLocation();
+        Location userLocation = mapController.getLocation();
         return new GeoPoint(userLocation.getLatitude(), userLocation.getLongitude());
     }
 
@@ -245,16 +249,16 @@ public class MapFragment extends BaseFragment {
     private MapPosition getUserLocationPosition() {
         GeoPoint point = getUserLocationPoint();
         MapPosition mapPosition = new MapPosition(point.getLatitude(), point.getLongitude(),
-                getMapController().getZoomScale());
-        mapPosition.setBearing(getMapController().getMapPosition().getBearing());
-        mapPosition.setTilt(getMapController().getMapPosition().getTilt());
+                mapController.getZoomScale());
+        mapPosition.setBearing(mapController.getMapPosition().getBearing());
+        mapPosition.setTilt(mapController.getMapPosition().getTilt());
         return mapPosition;
     }
 
     public void findMe() {
-        if (getMapController().getLocation() != null) {
+        if (mapController.getLocation() != null) {
             addLocationDot();
-            getMapController().resetZoomAndPointNorth();
+            mapController.resetZoomAndPointNorth();
             if (followMe || !initialRelocateHappened) {
                 // TODO find ways to accomplish this without two flags ;(
                 initialRelocateHappened = true;

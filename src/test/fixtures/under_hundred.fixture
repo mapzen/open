@@ -1,0 +1,209 @@
+{
+    "hint_data": {
+        "locations": [
+            "_____9o3SADQrwIAMAIAAOgAAAAAAAAAAAAAAP____94pm0CgPWW-wAARAA",
+            "0JBIAP_____MVQEADgEAAKsBAAAAAAAAAAAAAP_____8p2wC0BqX-wAAAAA"
+        ],
+        "checksum": 2875622111
+    },
+    "route_name": [
+        "Manhattan Bridge",
+        "Manhattan Bridge"
+    ],
+    "via_indices": [
+        0,
+        97
+    ],
+    "found_alternative": false,
+    "route_summary": {
+        "end_point": "Garfield Place",
+        "start_point": "West 20th Street",
+        "total_time": 783,
+        "total_distance": 8645
+    },
+    "via_points": [
+        [
+            40.740471,
+            -73.992828
+        ],
+        [
+            40.675323,
+            -73.983276
+        ]
+    ],
+    "route_instructions": [
+        [
+            "10",
+            "West 20th Street",
+            182,
+            0,
+            58,
+            "181m",
+            "SE",
+            119
+        ],
+        [
+            "1",
+            "East 20th Street",
+            113,
+            1,
+            22,
+            "113m",
+            "SE",
+            119
+        ],
+        [
+            "3",
+            "Broadway",
+            236,
+            2,
+            25,
+            "235m",
+            "S",
+            191
+        ],
+        [
+            "1",
+            "Union Square West",
+            241,
+            5,
+            25,
+            "240m",
+            "SW",
+            209
+        ],
+        [
+            "7",
+            "East 14th Street",
+            436,
+            8,
+            38,
+            "435m",
+            "SE",
+            118
+        ],
+        [
+            "3",
+            "3rd Avenue",
+            474,
+            12,
+            44,
+            "473m",
+            "SW",
+            220
+        ],
+        [
+            "1",
+            "Cooper Square",
+            312,
+            18,
+            29,
+            "311m",
+            "SW",
+            209
+        ],
+        [
+            "1",
+            "The Bowery",
+            1283,
+            22,
+            118,
+            "1283m",
+            "S",
+            196
+        ],
+        [
+            "7",
+            "Manhattan Bridge",
+            2308,
+            36,
+            162,
+            "2307m",
+            "SE",
+            135
+        ],
+        [
+            "1",
+            "Flatbush Avenue",
+            153,
+            65,
+            14,
+            "152m",
+            "S",
+            161
+        ],
+        [
+            "1",
+            "Flatbush Avenue Extension",
+            833,
+            67,
+            67,
+            "832m",
+            "S",
+            159
+        ],
+        [
+            "1",
+            "Flatbush Avenue",
+            510,
+            75,
+            41,
+            "509m",
+            "SE",
+            139
+        ],
+        [
+            "2",
+            "4th Avenue",
+            1095,
+            79,
+            77,
+            "1094m",
+            "SW",
+            204
+        ],
+        [
+            "7",
+            "Carroll Street",
+            250,
+            93,
+            44,
+            "249m",
+            "SE",
+            115
+        ],
+        [
+            "3",
+            "5th Avenue",
+            71,
+            94,
+            8,
+            "71m",
+            "SW",
+            212
+        ],
+        [
+            "3",
+            "Garfield Place",
+            150,
+            95,
+            27,
+            "150m",
+            "NW",
+            302
+        ],
+        [
+            "15",
+            "",
+            0,
+            96,
+            0,
+            "0m",
+            "N",
+            0
+        ]
+    ],
+    "route_geometry": "ofrulA~fdclC|p@}tB~]whA`j@tJfj@tInj@nK|b@zXpg@h\\~h@j]fWwy@dUas@|]gfAbi@{bB~i@j^`g@b\\zg@x\\rc@rYzc@zY|b@fYbf@~[b`@h\\|`@tYpm@hTlj@xNlm@xPrn@tNti@vNtvAv^vZpIzl@pOfi@dP~u@|Ozf@bOl}@jYrhApe@rf@rV`]dWfa@{Xfa@{c@lk@}^lc@iTdc@uS~i@_Xfk@oWhYgNrj@yXr\\oPfw@i`@hd@aUdu@e\\ze@}Sj\\wNz[qNbo@}Xzl@yUd\\}Opc@iSn[gNvW}L`^wPne@iSrs@k[p[yNfaAqa@zfAmf@z_Aua@vZeKfs@_Zz]_Otd@kS||@q]v~@w\\|`@gPjeAib@blAwf@v|@u]bxA}aAz_@eXnk@k]zqAi}@|_@dRvf@dXvf@lY~f@|Zlf@jYnf@xYrf@zYtf@|Ytf@|Ynf@tYrf@vYze@~Zpg@zXlf@|Yr_A{cDx`@b[cl@`}A",
+    "status_message": "Found route between points",
+    "status": 0
+}

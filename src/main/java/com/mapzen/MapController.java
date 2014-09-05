@@ -5,6 +5,8 @@ import com.mapzen.osrm.Instruction;
 
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
+import org.oscim.layers.Layer;
+import org.oscim.layers.PathLayer;
 import org.oscim.map.Map;
 
 import android.content.SharedPreferences;
@@ -12,6 +14,8 @@ import android.location.Location;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 import org.oscim.map.ViewController;
+
+import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -64,6 +68,34 @@ public final class MapController {
 
     public Map getMap() {
         return map;
+    }
+
+    public void clearLines() {
+        for (Layer layer: map.layers()) {
+            if (layer.getClass().equals(PathLayer.class)) {
+                map.layers().remove(layer);
+            }
+        }
+    }
+
+    public void clearLinesExcept(ArrayList<PathLayer> layers) {
+        for (Layer layer: map.layers()) {
+            if (layer.getClass().equals(PathLayer.class)) {
+                if (!layers.contains(layer)) {
+                    map.layers().remove(layer);
+                }
+            }
+        }
+
+    }
+
+    public void moveToTop(Class<?> klass) {
+        for (Layer layer: map.layers()) {
+            if (layer.getClass().equals(klass)) {
+                map.layers().remove(layer);
+                map.layers().add(layer);
+            }
+        }
     }
 
     public Location getLocation() {

@@ -1,11 +1,13 @@
 package com.mapzen.route;
 
+import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
+import com.mapzen.util.Logger;
 
 import org.oscim.android.canvas.AndroidGraphics;
 import org.oscim.core.BoundingBox;
@@ -28,7 +30,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -38,7 +40,6 @@ import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
 import static com.mapzen.MapController.geoPointToPair;
-import static com.mapzen.MapController.getMapController;
 import static com.mapzen.MapController.locationToGeoPoint;
 import static com.mapzen.MapController.locationToPair;
 import static com.mapzen.entity.SimpleFeature.NAME;
@@ -46,11 +47,13 @@ import static com.mapzen.osrm.Router.Type;
 import static com.mapzen.osrm.Router.Type.BIKING;
 import static com.mapzen.osrm.Router.Type.DRIVING;
 import static com.mapzen.osrm.Router.Type.WALKING;
+import static com.mapzen.util.DouglasPeuckerReducer.reduceWithTolerance;
 
 public class RoutePreviewFragment extends BaseFragment
         implements Router.Callback {
     public static final String TAG = RoutePreviewFragment.class.getSimpleName();
     public static final int ROUTE_ZOOM_LEVEL = 19;
+    public static final int REDUCE_TOLERANCE = 100;
     private SimpleFeature destination;
     private boolean reverse = false;
     private Type transportationMode = DRIVING;
@@ -58,6 +61,7 @@ public class RoutePreviewFragment extends BaseFragment
 
     @Inject PathLayer path;
     @Inject ItemizedLayer<MarkerItem> markers;
+    @Inject MapController mapController;
 
     @Inject Router router;
     @InjectView(R.id.starting_point) TextView startingPointTextView;
@@ -90,8 +94,8 @@ public class RoutePreviewFragment extends BaseFragment
     @Override
     public void onDetach() {
         super.onDetach();
-        getMapController().getMap().layers().remove(markers);
-        getMapController().getMap().layers().remove(path);
+        mapController.getMap().layers().remove(markers);
+        mapController.getMap().layers().remove(path);
         mapFragment.updateMap();
         act.enableActionbar();
         act.showActionBar();
@@ -209,12 +213,12 @@ public class RoutePreviewFragment extends BaseFragment
     }
 
     private double[] getDestinationPoint() {
-        return reverse ? locationToPair(getMapController().getLocation()) :
+        return reverse ? locationToPair(mapController.getLocation()) :
                 geoPointToPair(destination.getGeoPoint());
     }
 
     private double[] getOriginPoint() {
-        return !reverse ? locationToPair(getMapController().getLocation()) :
+        return !reverse ? locationToPair(mapController.getLocation()) :
                 geoPointToPair(destination.getGeoPoint());
     }
 
@@ -232,44 +236,43 @@ public class RoutePreviewFragment extends BaseFragment
                     .commit();
         }
         act.hideLoadingIndicator();
-        ArrayList<Location> points = route.getGeometry();
+        List<Location> points = route.getGeometry();
+        long time = System.currentTimeMillis();
+        Logger.d("RoutePreviewFragment::success Geometry points before: " + points.size());
+        if (points.size() > REDUCE_TOLERANCE) {
+            points = reduceWithTolerance(points, REDUCE_TOLERANCE);
+        }
+        Logger.d("Timing: " + String.valueOf(System.currentTimeMillis() - time));
+        Logger.d("RoutePreviewFragment::success Geometry points after: " + points.size());
         path.clearPath();
-        double minlat = points.get(0).getLatitude();
-        double minlon = points.get(0).getLongitude();
-        double maxlat = points.get(0).getLatitude();
-        double maxlon = points.get(0).getLongitude();
+        double minlat = Integer.MAX_VALUE;
+        double minlon = Integer.MAX_VALUE;
+        double maxlat = Integer.MIN_VALUE;
+        double maxlon = Integer.MIN_VALUE;
         for (Location loc : points) {
-            if (maxlat < loc.getLatitude()) {
-                maxlat = loc.getLatitude();
-            }
-            if (maxlon < loc.getLongitude()) {
-                maxlon = loc.getLongitude();
-            }
-            if (minlat > loc.getLatitude()) {
-                minlat = loc.getLatitude();
-            }
-            if (minlon > loc.getLongitude()) {
-                minlon = loc.getLongitude();
-            }
+            maxlat = Math.max(maxlat, loc.getLatitude());
+            maxlon = Math.max(maxlon, loc.getLongitude());
+            minlat = Math.min(minlat, loc.getLatitude());
+            minlon = Math.min(minlon, loc.getLongitude());
             path.addPoint(locationToGeoPoint(loc));
         }
 
         BoundingBox bbox = new BoundingBox(minlat, minlon, maxlat, maxlon);
-        int w = getMapController().getMap().getWidth();
-        int h = getMapController().getMap().getHeight();
+        int w = mapController.getMap().getWidth();
+        int h = mapController.getMap().getHeight();
         MapPosition position = new MapPosition();
         position.setByBoundingBox(bbox, w, h);
 
         position.setScale(position.getZoomScale() * 0.85);
 
-        getMapController().getMap().setMapPosition(position);
+        mapController.getMap().setMapPosition(position);
 
-        if (!getMapController().getMap().layers().contains(path)) {
-            getMapController().getMap().layers().add(path);
+        if (!mapController.getMap().layers().contains(path)) {
+            mapController.getMap().layers().add(path);
         }
 
-        if (!getMapController().getMap().layers().contains(markers)) {
-            getMapController().getMap().layers().add(markers);
+        if (!mapController.getMap().layers().contains(markers)) {
+            mapController.getMap().layers().add(markers);
         }
         markers.removeAllItems();
         markers.addItem(getMarkerItem(R.drawable.ic_a, points.get(0)));
@@ -318,7 +321,8 @@ public class RoutePreviewFragment extends BaseFragment
                 .addToBackStack(null)
                 .add(R.id.routes_container, routeFragment, RouteFragment.TAG)
                 .commit();
-        getMapController().getMap().layers().remove(markers);
+        path.clearPath();
+        mapController.getMap().layers().remove(markers);
     }
 
     private void hideFragmentContents() {

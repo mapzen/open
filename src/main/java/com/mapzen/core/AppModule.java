@@ -7,10 +7,13 @@ import com.mapzen.activity.InitialActivity;
 import com.mapzen.activity.LoginActivity;
 import com.mapzen.adapters.PlaceArrayAdapter;
 import com.mapzen.fragment.ItemFragment;
+import com.mapzen.fragment.MapFragment;
 import com.mapzen.osrm.Router;
+import com.mapzen.route.DrawPathTask;
 import com.mapzen.route.RouteFragment;
 import com.mapzen.route.RoutePreviewFragment;
 import com.mapzen.search.AutoCompleteAdapter;
+import com.mapzen.search.PagerResultsFragment;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
@@ -40,7 +43,14 @@ import dagger.Provides;
                 RoutePreviewFragment.class,
                 DataUploadService.class,
                 PlaceArrayAdapter.class,
-                AutoCompleteAdapter.class
+                AutoCompleteAdapter.class,
+                MapzenLocation.class,
+                MapFragment.class,
+                MapController.class,
+                DrawPathTask.class,
+                MapzenLocation.ConnectionCallbacks.class,
+                MapzenLocation.Listener.class,
+                PagerResultsFragment.class
         },
         complete = false,
         library = true
@@ -60,7 +70,7 @@ public class AppModule {
         return new OAuthRequestFactory();
     }
 
-    @Provides @Singleton PathLayer providePathLayer() {
+    @Provides PathLayer providePathLayer() {
         return new PathLayer(MapController.getMapController().getMap(), Color.DKGRAY, 8);
     }
 
@@ -78,4 +88,8 @@ public class AppModule {
     @Provides @Singleton MixpanelAPI provideMixpanelApi() {
         return MixpanelAPI.getInstance(context, context.getString(R.string.mixpanel_token));
     }
+
+    @Provides @Singleton MapController provideMapController() {
+        return MapController.getMapController();
+   }
 }

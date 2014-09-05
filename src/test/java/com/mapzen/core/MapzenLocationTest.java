@@ -1,5 +1,6 @@
 package com.mapzen.core;
 
+import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
@@ -24,7 +25,8 @@ import android.preference.PreferenceManager;
 
 import java.util.List;
 
-import static com.mapzen.MapController.getMapController;
+import javax.inject.Inject;
+
 import static com.mapzen.core.MapzenLocation.KEY_LOCATION;
 import static com.mapzen.support.TestHelper.getTestLocation;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -36,11 +38,13 @@ import static org.mockito.Mockito.verify;
 public class MapzenLocationTest {
     private MapzenApplication application;
     private LocationListener listener;
+    @Inject MapController mapController;
 
     @Before
     public void setup() {
-        getMapController().setActivity(TestHelper.initBaseActivity());
         application = (MapzenApplication) Robolectric.application;
+        application.inject(this);
+        mapController.setActivity(TestHelper.initBaseActivity());
         listener = new MapzenLocation.Listener(application);
     }
 
@@ -48,7 +52,7 @@ public class MapzenLocationTest {
     public void onLocationChange_shouldUpdateMapController() throws Exception {
         Location expected = getTestLocation(111.1f, 222.2f);
         listener.onLocationChanged(expected);
-        Location actual = getMapController().getLocation();
+        Location actual = mapController.getLocation();
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -57,7 +61,7 @@ public class MapzenLocationTest {
         application.deactivateMoveMapToLocation();
         Location expected = getTestLocation(111.1f, 222.2f);
         listener.onLocationChanged(expected);
-        Location actual = getMapController().getLocation();
+        Location actual = mapController.getLocation();
         assertThat(actual).isNotEqualTo(expected);
     }
 

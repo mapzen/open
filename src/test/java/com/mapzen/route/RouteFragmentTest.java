@@ -1,5 +1,6 @@
 package com.mapzen.route;
 
+import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.TestMapzenApplication;
@@ -30,7 +31,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.oscim.core.GeoPoint;
 import org.oscim.layers.PathLayer;
 import org.oscim.map.TestViewport;
 import org.robolectric.Robolectric;
@@ -76,7 +76,6 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 
 import static com.mapzen.MapController.KEY_STORED_MAPPOSITION;
-import static com.mapzen.MapController.getMapController;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.core.MapzenLocation.KEY_LOCATION;
 import static com.mapzen.entity.SimpleFeature.NAME;
@@ -116,6 +115,7 @@ public class RouteFragmentTest {
     @Inject LocationClient locationClient;
     @Inject Router router;
     @Inject PathLayer path;
+    @Inject MapController mapController;
 
     private TestBaseActivity act;
     private RouteFragment fragment;
@@ -785,7 +785,7 @@ public class RouteFragmentTest {
         instructions.add(instruction);
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
-        getMapController().setMapPerspectiveForInstruction(instruction);
+        mapController.setMapPerspectiveForInstruction(instruction);
         assertThat(act.getMap().getMapPosition().getBearing()).isEqualTo(
                 instruction.getRotationBearing());
     }
@@ -975,23 +975,6 @@ public class RouteFragmentTest {
         callback.getValue().success(newRoute);
         assertThat(fragment.pager.getAdapter().getCount())
                 .isEqualTo(newRoute.getRouteInstructions().size());
-    }
-
-    @Test
-    public void createRouteTo_shouldRedrawPath() throws Exception {
-        MapFragment mapFragmentMock = mock(MapFragment.class, Mockito.CALLS_REAL_METHODS);
-        mapFragmentMock.setAct(act);
-        fragment.setMapFragment(mapFragmentMock);
-        Location testLocation = getTestLocation(100.0, 100.0);
-        FragmentTestUtil.startFragment(fragment);
-        fragment.createRouteTo(testLocation);
-        verify(router).setCallback(callback.capture());
-        callback.getValue().success(new Route(MOCK_NY_TO_VT));
-        verify(path, Mockito.times(2)).clearPath();
-        for (Location location : fragment.getRoute().getGeometry()) {
-            verify(path).addPoint(
-                    new GeoPoint(location.getLatitude(), location.getLongitude()));
-        }
     }
 
     @Test
@@ -1295,7 +1278,7 @@ public class RouteFragmentTest {
         location.setSpeed(ZoomController.milesPerHourToMetersPerSecond(milesPerHour));
         location.setTime(System.currentTimeMillis());
         fragment.onLocationChanged(location);
-        assertThat(getMapController().getZoomLevel()).isEqualTo(expected);
+        assertThat(mapController.getZoomLevel()).isEqualTo(expected);
     }
 
     private void initTestFragment() throws Exception {

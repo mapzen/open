@@ -1,5 +1,6 @@
 package com.mapzen.route;
 
+import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.android.lost.LocationClient;
@@ -24,7 +25,9 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
-import org.oscim.layers.PathLayer;
+import org.oscim.core.MapPosition;
+import org.oscim.event.Event;
+import org.oscim.map.Map;
 
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
@@ -58,8 +61,6 @@ import butterknife.OnClick;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.mapzen.MapController.geoPointToPair;
-import static com.mapzen.MapController.getMapController;
-import static com.mapzen.MapController.locationToGeoPoint;
 import static com.mapzen.MapController.locationToPair;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.core.MapzenLocation.Util.getDistancePointFromBearing;
@@ -88,11 +89,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public static final double MIN_CHANGE_FOR_SHOW_RESUME = .00000001;
     public static final String ROUTE_TAG = "route";
 
-    @Inject PathLayer path;
     @Inject ZoomController zoomController;
     @Inject LocationClient locationClient;
     @Inject Router router;
     @Inject RouteEngine routeEngine;
+    @Inject MapController mapController;
 
     @InjectView(R.id.routes) ViewPager pager;
     @InjectView(R.id.resume_button) ImageButton resume;
@@ -109,6 +110,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private String routeId;
     private int pagerPositionWhenPaused = 0;
     private double currentXCor;
+    private DrawPathTask activeTask = null;
 
     VoiceNavigationController voiceNavigationController;
     private MapzenNotificationCreator notificationCreator;
@@ -178,6 +180,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         } else {
             locationClient.setMockMode(false);
         }
+
         return rootView;
     }
 
@@ -230,20 +233,23 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.disableActionbar();
         act.hideActionBar();
         app.deactivateMoveMapToLocation();
+        setupLinedrawing();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        Logger.d("RouteFragment::onPause");
         act.unregisterReceiver(locationReceiver);
         app.activateMoveMapToLocation();
+        teardownLinedrawing();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         markReadyForUpload();
-        clearRoute();
+        mapController.clearLines();
         act.updateView();
         mapFragment.showLocationMarker();
         mapFragment.getMap().layers().remove(routeLocationIndicator);
@@ -260,7 +266,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public void createRouteTo(Location location) {
-        clearRoute();
+        mapController.clearLines();
         mapFragment.clearMarkers();
         mapFragment.updateMap();
         isRouting = true;
@@ -304,15 +310,15 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (location != null) {
             zoomController.setAverageSpeed(getAverageSpeed());
             zoomController.setCurrentSpeed(originalLocation.getSpeed());
-            getMapController().setZoomLevel(zoomController.getZoom());
-            getMapController().quarterOn(location, route.getCurrentRotationBearing());
+            mapController.setZoomLevel(zoomController.getZoom());
+            mapController.quarterOn(location, route.getCurrentRotationBearing());
             routeLocationIndicator.setPosition(location.getLatitude(), location.getLongitude());
             routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
-            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChange: Corrected: "
+            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::manageMap: Corrected: "
                     + location.toString());
         } else {
             Logger.logToDatabase(act, ROUTE_TAG,
-                    "RouteFragment::onLocationChange: Unable to Correct: location: "
+                    "RouteFragment::manageMap: Unable to Correct: location: "
                             + originalLocation.toString());
         }
     }
@@ -444,7 +450,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             this.route = route;
             this.instructions = route.getRouteInstructions();
             storeRouteInDatabase(route.getRawRoute());
-            getMapController().setMapPerspectiveForInstruction(instructions.get(0));
+            mapController.setMapPerspectiveForInstruction(instructions.get(0));
             routeEngine.setRoute(route);
             routeEngine.setListener(this);
         } else {
@@ -466,18 +472,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         insertIntoDb(TABLE_ROUTE_GROUP, null, routeGroupEntry);
     }
 
-    private void drawRoute() {
-        if (!getMapController().getMap().layers().contains(path)) {
-            getMapController().getMap().layers().add(path);
-        }
-        path.clearPath();
+    private void storeRoute() {
         if (route != null) {
             ArrayList<Location> geometry = route.getGeometry();
             ArrayList<ContentValues> databaseValues = new ArrayList<ContentValues>();
             for (int index = 0; index < geometry.size(); index++) {
                 Location location = geometry.get(index);
                 databaseValues.add(buildContentValues(location, index));
-                path.addPoint(locationToGeoPoint(location));
             }
             insertIntoDb(TABLE_ROUTE_GEOMETRY, null, databaseValues);
         }
@@ -497,11 +498,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return route;
     }
 
-    private void clearRoute() {
-        path.clearPath();
-        mapFragment.updateMap();
-    }
-
     @Override
     public void onInstructionSelected(int index) {
         pager.setCurrentItem(index, true);
@@ -518,7 +514,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onPageSelected(int i) {
         if (!autoPaging) {
-            getMapController().setMapPerspectiveForInstruction(instructions.get(i));
+            mapController.setMapPerspectiveForInstruction(instructions.get(i));
         } else {
             setCurrentPagerItemStyling(i);
         }
@@ -603,7 +599,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void resumeAutoPaging() {
         pager.setCurrentItem(pagerPositionWhenPaused);
         setCurrentPagerItemStyling(pagerPositionWhenPaused);
-        getMapController()
+        mapController
                 .setMapPerspectiveForInstruction(instructions.get(pagerPositionWhenPaused));
         resume.setVisibility(View.GONE);
         currentXCor = mapFragment.getMap().getMapPosition().getX();
@@ -641,7 +637,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     }
                 });
             }
-            drawRoute();
+            storeRoute();
         } else {
             Toast.makeText(act,
                     act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
@@ -868,5 +864,29 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         } else {
             return true;
         }
+    }
+
+    private Map.UpdateListener mapListener = new Map.UpdateListener() {
+        @Override
+        public void onMapEvent(final Event e, MapPosition mapPosition) {
+            if (activeTask != null) {
+                activeTask.cancel(true);
+            }
+            activeTask = new DrawPathTask(app);
+            activeTask.execute(route.getGeometry());
+        }
+    };
+
+    private void setupLinedrawing() {
+        mapController.getMap().events.bind(mapListener);
+    }
+
+    private void teardownLinedrawing() {
+        mapController.getMap().events.unbind(mapListener);
+        if (activeTask != null) {
+            activeTask.cancel(true);
+        }
+        mapController.clearLines();
+        mapFragment.updateMap();
     }
 }
