@@ -38,9 +38,16 @@ public class RouteEngineTest {
 
     @Test
     public void onRecalculate_shouldNotifyWhenLost() throws Exception {
-        Location location = getTestLocation(0, 0);
-        routeEngine.onLocationChanged(location);
+        routeEngine.onLocationChanged(getTestLocation(0, 0));
         assertThat(listener.recalculating).isTrue();
+    }
+
+    @Test
+    public void onRecalculate_shouldTriggerOnlyOnce() throws Exception {
+        routeEngine.onLocationChanged(getTestLocation(0, 0));
+        listener.recalculating = false;
+        routeEngine.onLocationChanged(getTestLocation(0, 0));
+        assertThat(listener.recalculating).isFalse();
     }
 
     @Test
@@ -52,21 +59,27 @@ public class RouteEngineTest {
     }
 
     @Test
-    public void onApproachingInstruction_shouldReturnIndex() throws Exception {
-        route.addSeenInstruction(route.getRouteInstructions().get(0));
+    public void onApproachInstruction_shouldReturnIndex() throws Exception {
+        routeEngine.onLocationChanged(route.getRouteInstructions().get(0).getLocation());
         routeEngine.onLocationChanged(route.getRouteInstructions().get(1).getLocation());
         assertThat(listener.approachIndex).isEqualTo(1);
     }
 
     @Test
-    public void onApproachingInstruction_shouldNotFireForDestination() throws Exception {
-        route.addSeenInstruction(route.getRouteInstructions().get(0));
-        route.addSeenInstruction(route.getRouteInstructions().get(1));
-        route.addSeenInstruction(route.getRouteInstructions().get(2));
-        route.addSeenInstruction(route.getRouteInstructions().get(3));
-        route.addSeenInstruction(route.getRouteInstructions().get(4));
+    public void onApproachInstruction_shouldNotFireForDestination() throws Exception {
+        routeEngine.onLocationChanged(route.getRouteInstructions().get(0).getLocation());
+        routeEngine.onLocationChanged(route.getRouteInstructions().get(1).getLocation());
+        routeEngine.onLocationChanged(route.getRouteInstructions().get(2).getLocation());
+        routeEngine.onLocationChanged(route.getRouteInstructions().get(3).getLocation());
+        routeEngine.onLocationChanged(route.getRouteInstructions().get(4).getLocation());
         routeEngine.onLocationChanged(route.getRouteInstructions().get(5).getLocation());
         assertThat(listener.approachIndex).isNotEqualTo(5);
+    }
+
+    @Test
+    public void onApproachInstruction_shouldFireAtStart() throws Exception {
+        routeEngine.onLocationChanged(route.getRouteInstructions().get(0).getLocation());
+        assertThat(listener.approachIndex).isEqualTo(0);
     }
 
     @Test
@@ -125,22 +138,12 @@ public class RouteEngineTest {
 
     @Test
     public void onRouteComplete_shouldTriggerAtDestination() throws Exception {
-        route.addSeenInstruction(route.getRouteInstructions().get(0));
-        route.addSeenInstruction(route.getRouteInstructions().get(1));
-        route.addSeenInstruction(route.getRouteInstructions().get(2));
-        route.addSeenInstruction(route.getRouteInstructions().get(3));
-        route.addSeenInstruction(route.getRouteInstructions().get(4));
         routeEngine.onLocationChanged(route.getRouteInstructions().get(5).getLocation());
         assertThat(listener.routeComplete).isTrue();
     }
 
     @Test
     public void onRouteComplete_shouldOnlyTriggerOnce() throws Exception {
-        route.addSeenInstruction(route.getRouteInstructions().get(0));
-        route.addSeenInstruction(route.getRouteInstructions().get(1));
-        route.addSeenInstruction(route.getRouteInstructions().get(2));
-        route.addSeenInstruction(route.getRouteInstructions().get(3));
-        route.addSeenInstruction(route.getRouteInstructions().get(4));
         routeEngine.onLocationChanged(route.getRouteInstructions().get(5).getLocation());
         listener.routeComplete = false;
         routeEngine.onLocationChanged(route.getRouteInstructions().get(5).getLocation());
@@ -171,7 +174,7 @@ public class RouteEngineTest {
         }
 
         @Override
-        public void onApproachingInstruction(int index) {
+        public void onApproachInstruction(int index) {
             approachIndex = index;
         }
 

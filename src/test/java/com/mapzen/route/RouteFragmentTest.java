@@ -810,7 +810,7 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onApproachingInstruction_shouldSpeakTurnInstruction() throws Exception {
+    public void onApproachInstruction_shouldSpeakTurnInstruction() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 
         Instruction firstInstruction = getTestInstruction(0, 0);
@@ -823,7 +823,7 @@ public class RouteFragmentTest {
 
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
-        fragment.onApproachingInstruction(0);
+        fragment.onApproachInstruction(0);
         assertLastSpokenText("Head on 19th Street");
     }
 
