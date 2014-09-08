@@ -6,7 +6,12 @@ import com.mapzen.osrm.Route;
 
 import android.location.Location;
 
-import static com.mapzen.route.RouteEngine.RouteState.*;
+import static com.mapzen.route.RouteEngine.RouteState.COMPLETE;
+import static com.mapzen.route.RouteEngine.RouteState.INSTRUCTION;
+import static com.mapzen.route.RouteEngine.RouteState.LOST;
+import static com.mapzen.route.RouteEngine.RouteState.POST_INSTRUCTION;
+import static com.mapzen.route.RouteEngine.RouteState.PRE_INSTRUCTION;
+import static com.mapzen.route.RouteEngine.RouteState.START;
 
 public class RouteEngine {
     public static final int DESTINATION_RADIUS = 20;
@@ -23,7 +28,7 @@ public class RouteEngine {
     private Route route;
     private RouteState routeState;
     private RouteListener listener;
-    private int currentIndex;
+    private int nextIndex;
     private int previousDistanceToNextInstruction;
     private Location location;
     private Location snapLocation;
@@ -33,16 +38,12 @@ public class RouteEngine {
             return;
         }
 
-        if (routeState == LOST) {
-            return;
-        }
-
         this.location = location;
         snapLocation();
 
         if (routeState == START) {
             listener.onApproachInstruction(0);
-            routeState=INSTRUCTION;
+            routeState = INSTRUCTION;
         }
 
         if (routeState == INSTRUCTION) {
@@ -52,19 +53,20 @@ public class RouteEngine {
         }
 
         if (routeState == POST_INSTRUCTION) {
-            listener.onInstructionComplete(currentIndex);
-            currentIndex++;
+            listener.onInstructionComplete(nextIndex);
+            nextIndex++;
             routeState = PRE_INSTRUCTION;
         }
 
         if (routeState == PRE_INSTRUCTION) {
             if (getDistanceToNextInstruction() < ZoomController.DEFAULT_TURN_RADIUS &&
-                    currentIndex != route.getRouteInstructions().size() - 1) {
-                listener.onApproachInstruction(currentIndex);
+                    nextIndex != route.getRouteInstructions().size() - 1) {
+                listener.onApproachInstruction(nextIndex);
                 routeState = INSTRUCTION;
             }
         }
 
+        listener.onUpdateDistance(getDistanceToNextInstruction(), getDistanceToDestination());
         previousDistanceToNextInstruction = getDistanceToNextInstruction();
     }
 
@@ -87,7 +89,7 @@ public class RouteEngine {
     }
 
     private Instruction getNextInstruction() {
-        return route.getRouteInstructions().get(currentIndex);
+        return route.getRouteInstructions().get(nextIndex);
     }
 
     private int getDistanceToNextInstruction() {
@@ -99,12 +101,31 @@ public class RouteEngine {
     }
 
     private boolean youHaveArrived() {
-        return snapLocation != null && getDistanceToDestination() < DESTINATION_RADIUS;
+        return snapLocation != null && snapLocation.distanceTo(
+                getLocationForDestination()) < DESTINATION_RADIUS;
     }
 
-    private float getDistanceToDestination() {
-        final Location destination = getLocationForDestination();
-        return snapLocation.distanceTo(destination);
+    private int getDistanceToDestination() {
+        if (snapLocation == null) {
+            return Integer.MAX_VALUE;
+        }
+
+        if (nextIndex == 0) {
+            return route.getTotalDistance();
+        }
+
+        // Start with total route distance.
+        float distanceToDestination = route.getTotalDistance();
+
+        // Subtract distance for each instruction seen up to and including the current instruction.
+        for (int i = 0; i < nextIndex; i++) {
+            distanceToDestination -= route.getRouteInstructions().get(i).getDistance();
+        }
+
+        // Add remaining distance to the next instruction.
+        distanceToDestination += getDistanceToNextInstruction();
+
+        return (int) Math.floor(distanceToDestination);
     }
 
     private Location getLocationForDestination() {
@@ -117,7 +138,7 @@ public class RouteEngine {
     public void setRoute(Route route) {
         this.route = route;
         routeState = START;
-        currentIndex = 0;
+        nextIndex = 0;
         previousDistanceToNextInstruction = 0;
     }
 
@@ -130,8 +151,7 @@ public class RouteEngine {
         public void onSnapLocation(Location originalLocation, Location snapLocation);
         public void onApproachInstruction(int index);
         public void onInstructionComplete(int index);
-        public void onUpdateDistance(int closestDistance, int instructionDistance,
-                int distanceToDestination);
+        public void onUpdateDistance(int distanceToNextInstruction, int distanceToDestination);
         public void onRouteComplete();
     }
 }

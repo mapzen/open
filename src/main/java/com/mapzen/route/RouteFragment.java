@@ -407,16 +407,16 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     @Override
-    public void onUpdateDistance(int closestDistance, int instructionDistance,
-            int distanceToDestination) {
-        debugView.setClosestDistance(closestDistance);
+    public void onUpdateDistance(int distanceToNextInstruction, int distanceToDestination) {
+        debugView.setClosestDistance(distanceToNextInstruction);
         this.distanceToDestination.setDistance(distanceToDestination);
 
         final View view = getViewForIndex(pager.getCurrentItem());
         if (view != null) {
             final TextView currentInstructionDistance =
                     (TextView) view.findViewById(R.id.distance_instruction);
-            currentInstructionDistance.setText(DistanceFormatter.format(instructionDistance, true));
+            currentInstructionDistance.setText(
+                    DistanceFormatter.format(distanceToNextInstruction, true));
         }
     }
 
