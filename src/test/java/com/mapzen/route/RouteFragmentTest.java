@@ -85,6 +85,7 @@ import static com.mapzen.support.TestHelper.MOCK_NY_TO_VT;
 import static com.mapzen.support.TestHelper.MOCK_ROUTE_JSON;
 import static com.mapzen.support.TestHelper.enableDebugMode;
 import static com.mapzen.support.TestHelper.getTestInstruction;
+import static com.mapzen.support.TestHelper.getTestLastInstruction;
 import static com.mapzen.support.TestHelper.getTestLocation;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initBaseActivityWithMenu;
@@ -809,7 +810,7 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onEnterInstructionRadius_shouldSpeakTurnInstruction() throws Exception {
+    public void onApproachInstruction_shouldSpeakTurnInstruction() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 
         Instruction firstInstruction = getTestInstruction(0, 0);
@@ -822,12 +823,12 @@ public class RouteFragmentTest {
 
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
-        fragment.onEnterInstructionRadius(0);
+        fragment.onApproachInstruction(0);
         assertLastSpokenText("Head on 19th Street");
     }
 
     @Test
-    public void onExitInstructionRadius_shouldSpeakContinueInstruction() throws Exception {
+    public void onInstructionComplete_shouldSpeakContinueInstruction() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 
         Instruction firstInstruction = getTestInstruction(0, 0);
@@ -840,18 +841,51 @@ public class RouteFragmentTest {
 
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
-        fragment.onExitInstructionRadius(0);
+        fragment.onInstructionComplete(0);
         assertLastSpokenText("Continue on 19th Street for 320 feet");
     }
 
     @Test
-    public void onExitInstructionRadius_shouldVerifyNextIndexIsWithinBounds() throws Exception {
+    public void onInstructionComplete_shouldVerifyNextIndexIsWithinBounds() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         instructions.add(getTestInstruction(0, 0));
         instructions.add(getTestInstruction(0, 0));
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
-        fragment.onExitInstructionRadius(1);
+        fragment.onInstructionComplete(1);
+    }
+
+    @Test
+    public void onRouteComplete_shouldAdvancePagerToFinalInstruction() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction());
+        instructions.add(getTestLastInstruction());
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onRouteComplete();
+        assertThat(fragment.pager).hasCurrentItem(1);
+    }
+
+    @Test
+    public void onRouteComplete_shouldAnnounceFinalInstruction() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction());
+        instructions.add(getTestLastInstruction());
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onRouteComplete();
+        assertLastSpokenText(getTestLastInstruction().getSimpleInstruction());
+    }
+
+    @Test
+    public void onRouteComplete_shouldSetZeroDistanceToDestination() throws Exception {
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(getTestInstruction());
+        instructions.add(getTestLastInstruction());
+        fragment.setInstructions(instructions);
+        FragmentTestUtil.startFragment(fragment);
+        fragment.onRouteComplete();
+        assertThat(fragment.distanceToDestination.getDistance()).isEqualTo(0);
     }
 
     @Test

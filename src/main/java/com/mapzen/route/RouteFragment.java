@@ -367,15 +367,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     @Override
-    public void onEnterInstructionRadius(int index) {
+    public void onApproachInstruction(int index) {
         voiceNavigationController.playInstruction(instructions.get(index));
-        if (index == instructions.size() - 1) {
-            pager.setCurrentItem(index);
-        }
     }
 
     @Override
-    public void onExitInstructionRadius(int index) {
+    public void onInstructionComplete(int index) {
         voiceNavigationController.playFlippedInstruction(instructions.get(index));
         if (isLastInstructionBeforeDestination(index)) {
             flipInstruction(index);
@@ -416,17 +413,24 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     @Override
-    public void onUpdateDistance(int closestDistance, int instructionDistance,
-            int distanceToDestination) {
-        debugView.setClosestDistance(closestDistance);
+    public void onUpdateDistance(int distanceToNextInstruction, int distanceToDestination) {
+        debugView.setClosestDistance(distanceToNextInstruction);
         this.distanceToDestination.setDistance(distanceToDestination);
 
         final View view = getViewForIndex(pager.getCurrentItem());
         if (view != null) {
             final TextView currentInstructionDistance =
                     (TextView) view.findViewById(R.id.distance_instruction);
-            currentInstructionDistance.setText(DistanceFormatter.format(instructionDistance, true));
+            currentInstructionDistance.setText(
+                    DistanceFormatter.format(distanceToNextInstruction, true));
         }
+    }
+
+    @Override
+    public void onRouteComplete() {
+        pager.setCurrentItem(instructions.size() - 1);
+        voiceNavigationController.playInstruction(instructions.get(instructions.size() - 1));
+        distanceToDestination.setDistance(0);
     }
 
     private View getViewForIndex(int index) {
