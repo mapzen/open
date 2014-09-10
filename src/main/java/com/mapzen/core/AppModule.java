@@ -44,6 +44,7 @@ import dagger.Provides;
                 DataUploadService.class,
                 PlaceArrayAdapter.class,
                 AutoCompleteAdapter.class,
+<<<<<<< HEAD
                 MapzenLocation.class,
                 MapFragment.class,
                 MapController.class,
@@ -51,6 +52,9 @@ import dagger.Provides;
                 MapzenLocation.ConnectionCallbacks.class,
                 MapzenLocation.Listener.class,
                 PagerResultsFragment.class
+=======
+                MapFragment.class
+>>>>>>> Download styles regularly
         },
         complete = false,
         library = true
@@ -91,5 +95,11 @@ public class AppModule {
 
     @Provides @Singleton MapController provideMapController() {
         return MapController.getMapController();
-   }
+    }
+
+    @Provides @Singleton StyleDownLoader provideStyleDownloader() {
+        StyleDownLoader styleDownLoader = new StyleDownLoader(context);
+        styleDownLoader.setHost("http://vector-styles.mapzen.com/");
+        return styleDownLoader;
+    }
 }

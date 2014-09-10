@@ -1,7 +1,9 @@
 package com.mapzen.fragment;
 
 import com.mapzen.R;
+import com.mapzen.TestMapzenApplication;
 import com.mapzen.activity.BaseActivity;
+import com.mapzen.core.StyleDownLoader;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.support.FakeMotionEvent;
 import com.mapzen.support.MapzenTestRunner;
@@ -9,6 +11,7 @@ import com.mapzen.support.MapzenTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.oscim.core.GeoPoint;
 import org.oscim.event.Gesture;
 import org.oscim.layers.marker.ItemizedLayer;
@@ -30,6 +33,8 @@ import android.preference.PreferenceManager;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.core.MapzenLocation.COM_MAPZEN_FIND_ME;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
@@ -44,9 +49,11 @@ public class MapFragmentTest {
     private MapFragment mapFragment;
     private TestPoiClickListener listener;
     private BaseActivity activity;
+    @Inject StyleDownLoader styleDownLoader;
 
     @Before
     public void setUp() throws Exception {
+        ((TestMapzenApplication) Robolectric.application).inject(this);
         activity = initBaseActivity();
         listener = new TestPoiClickListener();
         mapFragment = activity.getMapFragment();
@@ -270,6 +277,12 @@ public class MapFragmentTest {
         mapFragment.showProgress();
         mapFragment.hideProgress();
         assertThat(mapFragment.getView().findViewById(R.id.progress)).isNotVisible();
+    }
+
+    @Test
+    public void onActivityCreated_shouldDoStylesheetDownload() throws Exception {
+        FragmentTestUtil.startFragment(mapFragment);
+        Mockito.verify(styleDownLoader).download();
     }
 
     private void setTileSourceConfiguration(String source) {

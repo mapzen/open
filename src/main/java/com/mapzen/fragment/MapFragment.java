@@ -2,6 +2,7 @@ package com.mapzen.fragment;
 
 import com.mapzen.MapController;
 import com.mapzen.R;
+import com.mapzen.core.StyleDownLoader;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.util.IntentReceiver;
@@ -65,10 +66,13 @@ public class MapFragment extends BaseFragment {
     private FindMeReceiver findMeReceiver;
     private LocationReceiver locationReceiver;
     @Inject MapController mapController;
+    @Inject StyleDownLoader styleDownLoader;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        inject();
+        styleDownLoader.download();
         setupMap();
     }
 

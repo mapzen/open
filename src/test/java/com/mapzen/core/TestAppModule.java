@@ -115,4 +115,8 @@ public class TestAppModule {
     @Provides @Singleton MapController provideMapController() {
         return MapController.getMapController();
     }
+
+    @Provides @Singleton StyleDownLoader provideStyleDownloader() {
+        return Mockito.mock(StyleDownLoader.class);
+    }
 }

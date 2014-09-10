@@ -32,7 +32,8 @@ public class MapzenThemeTest {
         act = TestHelper.initBaseActivity();
         theme  = MapzenTheme.valueOf("MAPZEN");
         theme.setContext(act);
-        pathToFile = act.getExternalFilesDir(null).getAbsolutePath() + "/" + "styles/mapzen.xml";
+        pathToFile = act.getExternalFilesDir(null).getAbsolutePath()
+                + "/assets/" + "styles/mapzen.xml";
         Files.createParentDirs(new File(pathToFile));
     }
 

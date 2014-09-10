@@ -29,7 +29,7 @@ public enum MapzenTheme implements ThemeFile {
 
     @Override
     public InputStream getRenderThemeAsStream() {
-        String pathToFile = context.getExternalFilesDir(null).getAbsolutePath() + "/" + path;
+        String pathToFile = context.getExternalFilesDir(null).getAbsolutePath() + "/assets/" + path;
         File f = new File(pathToFile);
         InputStream value = null;
         if (f.exists()) {
