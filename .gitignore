@@ -18,3 +18,7 @@ tmp/
 *.*~
 *.apk
 res/values/secrets.xml
+
+assets/styles
+assets/textures
+assets/patterns
