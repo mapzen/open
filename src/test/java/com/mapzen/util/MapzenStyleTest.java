@@ -11,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.oscim.backend.AssetAdapter;
 import org.robolectric.annotation.Config;
 
 import java.io.ByteArrayInputStream;
@@ -22,16 +23,16 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
-public class MapzenThemeTest {
+public class MapzenStyleTest {
     BaseActivity act;
-    MapzenTheme theme;
+    MapzenStyle.Theme theme;
     String pathToFile;
 
     @Before
     public void setup() throws Exception {
         act = TestHelper.initBaseActivity();
-        theme  = MapzenTheme.valueOf("MAPZEN");
-        theme.setContext(act);
+        AssetAdapter.g = new MapzenStyle.MapzenAssetAdapter(act);
+        theme  = MapzenStyle.Theme.valueOf("MAPZEN");
         pathToFile = act.getExternalFilesDir(null).getAbsolutePath()
                 + "/assets/" + "styles/mapzen.xml";
         Files.createParentDirs(new File(pathToFile));
