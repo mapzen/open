@@ -388,6 +388,25 @@
                     </replacements>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>bash</executable>
+                    <arguments>
+                        <argument>scripts/download-styles.sh</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
