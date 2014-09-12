@@ -44,7 +44,6 @@ import dagger.Provides;
                 DataUploadService.class,
                 PlaceArrayAdapter.class,
                 AutoCompleteAdapter.class,
-<<<<<<< HEAD
                 MapzenLocation.class,
                 MapFragment.class,
                 MapController.class,
@@ -52,9 +51,6 @@ import dagger.Provides;
                 MapzenLocation.ConnectionCallbacks.class,
                 MapzenLocation.Listener.class,
                 PagerResultsFragment.class
-=======
-                MapFragment.class
->>>>>>> Download styles regularly
         },
         complete = false,
         library = true
