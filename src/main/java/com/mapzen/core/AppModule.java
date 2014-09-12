@@ -91,5 +91,11 @@ public class AppModule {
 
     @Provides @Singleton MapController provideMapController() {
         return MapController.getMapController();
-   }
+    }
+
+    @Provides @Singleton StyleDownLoader provideStyleDownloader() {
+        StyleDownLoader styleDownLoader = new StyleDownLoader(context);
+        styleDownLoader.setHost("http://vector-styles.mapzen.com/");
+        return styleDownLoader;
+    }
 }

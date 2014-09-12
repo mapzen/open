@@ -2,16 +2,18 @@ package com.mapzen.fragment;
 
 import com.mapzen.MapController;
 import com.mapzen.R;
+import com.mapzen.core.StyleDownLoader;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.util.IntentReceiver;
 import com.mapzen.util.Logger;
-import com.mapzen.util.MapzenTheme;
+import com.mapzen.util.MapzenStyle;
 import com.mapzen.util.PoiLayer;
 
 import com.squareup.okhttp.HttpResponseCache;
 
 import org.oscim.android.canvas.AndroidGraphics;
+import org.oscim.backend.AssetAdapter;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 import org.oscim.event.Event;
@@ -65,10 +67,14 @@ public class MapFragment extends BaseFragment {
     private FindMeReceiver findMeReceiver;
     private LocationReceiver locationReceiver;
     @Inject MapController mapController;
+    @Inject StyleDownLoader styleDownLoader;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        inject();
+        AssetAdapter.g = new MapzenStyle.MapzenAssetAdapter(act);
+        styleDownLoader.download();
         setupMap();
     }
 
@@ -147,7 +153,7 @@ public class MapFragment extends BaseFragment {
         });
     }
 
-    public void setTheme(MapzenTheme theme) {
+    public void setTheme(MapzenStyle.Theme theme) {
         IRenderTheme t = ThemeLoader.load(theme);
         baseLayer.setRenderTheme(t);
         MapRenderer.setBackgroundColor(t.getMapBackground());
@@ -184,9 +190,7 @@ public class MapFragment extends BaseFragment {
                 meMarkers, getDefaultMarkerSymbol(), null);
         getMap().layers().add(locationMarkerLayer);
 
-        MapzenTheme theme = MapzenTheme.MAPZEN;
-        theme.setContext(act);
-        setTheme(theme);
+        setTheme(MapzenStyle.Theme.MAPZEN);
         getMap().events.bind(new Map.UpdateListener() {
             @Override
             public void onMapEvent(Event e, MapPosition mapPosition) {
