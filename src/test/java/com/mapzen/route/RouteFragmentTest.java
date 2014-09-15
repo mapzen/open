@@ -515,7 +515,7 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         int numberOfReceivers =
                 app.getReceiversForIntent(new Intent(COM_MAPZEN_UPDATES_LOCATION)).size();
-        fragment.onPause();
+        fragment.onDetach();
         assertThat(app.getReceiversForIntent(
                 new Intent(COM_MAPZEN_UPDATES_LOCATION))).hasSize(numberOfReceivers - 1);
     }

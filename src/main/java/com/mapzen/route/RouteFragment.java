@@ -208,6 +208,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         createGroup();
+        initLocationReceiver();
         Location startPoint = route.getStartCoordinates();
         routeLocationIndicator.setPosition(startPoint.getLatitude(), startPoint.getLongitude());
         routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
@@ -226,7 +227,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onResume() {
         super.onResume();
-        initLocationReceiver();
         setupZoomController();
         act.disableActionbar();
         act.hideActionBar();
@@ -238,7 +238,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void onPause() {
         super.onPause();
         Logger.d("RouteFragment::onPause");
-        act.unregisterReceiver(locationReceiver);
         app.activateMoveMapToLocation();
         teardownLinedrawing();
     }
@@ -251,6 +250,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.updateView();
         mapFragment.showLocationMarker();
         mapFragment.getMap().layers().remove(routeLocationIndicator);
+        act.unregisterReceiver(locationReceiver);
         showLocateButton();
         locationClient.setMockMode(false);
     }
