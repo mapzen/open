@@ -86,7 +86,6 @@ public final class MapController {
                 }
             }
         }
-
     }
 
     public void moveToTop(Class<?> klass) {

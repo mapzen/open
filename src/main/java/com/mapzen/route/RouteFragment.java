@@ -116,7 +116,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private MapzenNotificationCreator notificationCreator;
 
     private boolean isRouting = false;
-    private boolean autoPaging = true;
+    private boolean isPaging = true;
 
     private SharedPreferences prefs;
     private Resources res;
@@ -308,10 +308,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (location != null) {
             zoomController.setAverageSpeed(getAverageSpeed());
             zoomController.setCurrentSpeed(originalLocation.getSpeed());
-            mapController.setZoomLevel(zoomController.getZoom());
-            mapController.quarterOn(location, route.getCurrentRotationBearing());
-            routeLocationIndicator.setPosition(location.getLatitude(), location.getLongitude());
+            if (isPaging) {
+                mapController.setZoomLevel(zoomController.getZoom());
+                mapController.quarterOn(location, route.getCurrentRotationBearing());
+            }
             routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
+            routeLocationIndicator.setPosition(location.getLatitude(), location.getLongitude());
+            mapFragment.updateMap();
             Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::manageMap: Corrected: "
                     + location.toString());
         } else {
@@ -341,7 +344,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public void onLocationChanged(Location location) {
-        if (!autoPaging || isRouting) {
+        if (isRouting) {
             return;
         }
 
@@ -405,23 +408,28 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void showInstruction(int index) {
-        final Instruction instruction = instructions.get(index);
-        pagerPositionWhenPaused = index;
-        Logger.logToDatabase(act, ROUTE_TAG, "paging to instruction: " + instruction.toString());
-        pager.setCurrentItem(index);
-        debugView.setClosestInstruction(instruction);
+        if (isPaging) {
+            final Instruction instruction = instructions.get(index);
+            pagerPositionWhenPaused = index;
+            Logger.logToDatabase(act, ROUTE_TAG,
+                    "paging to instruction: " + instruction.toString());
+            pager.setCurrentItem(index);
+            debugView.setClosestInstruction(instruction);
+        }
     }
 
     private void flipInstruction(int index) {
         final View view = getPagerViewForIndex(index);
         if (view != null) {
             TextView fullBefore = (TextView) view.findViewById(R.id.full_instruction);
-            TextView fullAfter = (TextView) view.findViewById(R.id.full_instruction_after_action);
+            TextView fullAfter =
+                    (TextView) view.findViewById(R.id.full_instruction_after_action);
             fullBefore.setVisibility(View.GONE);
             fullAfter.setVisibility(View.VISIBLE);
             ImageView turnIconBefore = (ImageView) view.findViewById(R.id.turn_icon);
             turnIconBefore.setVisibility(View.GONE);
-            ImageView turnIconAfter = (ImageView) view.findViewById(R.id.turn_icon_after_action);
+            ImageView turnIconAfter =
+                    (ImageView) view.findViewById(R.id.turn_icon_after_action);
             turnIconAfter.setVisibility(View.VISIBLE);
             setCurrentPagerItemStyling(index);
         }
@@ -544,7 +552,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @Override
     public void onPageSelected(int i) {
-        if (!autoPaging) {
+        if (!isPaging) {
             mapController.setMapPerspectiveForInstruction(instructions.get(i));
         } else {
             setCurrentPagerItemStyling(i);
@@ -618,10 +626,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public void turnAutoPageOff() {
-        if (autoPaging) {
+        if (isPaging) {
             pagerPositionWhenPaused = pager.getCurrentItem();
         }
-        autoPaging = false;
+        isPaging = false;
         resume.setVisibility(View.VISIBLE);
         voiceNavigationController.mute();
     }
@@ -633,7 +641,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         setPerspectiveForCurrentInstruction();
         resume.setVisibility(View.GONE);
         currentXCor = mapFragment.getMap().getMapPosition().getX();
-        autoPaging = true;
+        isPaging = true;
         voiceNavigationController.unmute();
     }
 
@@ -876,7 +884,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             if (event.getAction() == MotionEvent.ACTION_MOVE) {
                 if (oneFinger && enoughChange) {
                     turnAutoPageOff();
-                } else if (autoPaging) {
+                } else if (isPaging) {
                     currentXCor = mapFragment.getMap().getMapPosition().getX();
                     resume.setVisibility(View.GONE);
                 }
