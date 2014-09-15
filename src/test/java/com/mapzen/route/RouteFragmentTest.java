@@ -754,6 +754,19 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onInstructionComplete_shouldPreservePagerIndex() throws Exception {
+        loadAceHotelMockRoute();
+        simulateUserPagerTouch();
+        fragment.getRoute().addSeenInstruction(fragment.getRoute().getRouteInstructions().get(0));
+        fragment.onInstructionComplete(0);
+        fragment.onInstructionComplete(1);
+        fragment.onInstructionComplete(2);
+        fragment.onClickResume();
+        fragment.resumeAutoPaging();
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(3);
+    }
+
+    @Test
     public void onLocationChange_shouldAlwaysMoveRouteLocationIndicator()
             throws Exception {
         loadAceHotelMockRoute();

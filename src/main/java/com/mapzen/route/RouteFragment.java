@@ -415,6 +415,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     "paging to instruction: " + instruction.toString());
             pager.setCurrentItem(index);
             debugView.setClosestInstruction(instruction);
+        } else {
+            pagerPositionWhenPaused = index;
         }
     }
 
