@@ -546,7 +546,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void onPageScrolled(int i, float v, int i2) {
         if (pager.getCurrentItem() == pagerPositionWhenPaused) {
             setCurrentPagerItemStyling(pagerPositionWhenPaused);
-            if (!autoPaging) {
+            if (!isPaging) {
                 resumeAutoPaging();
             }
         }
