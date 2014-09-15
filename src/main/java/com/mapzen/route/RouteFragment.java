@@ -355,6 +355,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         createRouteTo(location);
         voiceNavigationController.recalculating();
         displayRecalculatePagerView();
+        distanceToDestination.setVisibility(View.INVISIBLE);
     }
 
     private void displayRecalculatePagerView() {
@@ -432,6 +433,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void onUpdateDistance(int distanceToNextInstruction, int distanceToDestination) {
         debugView.setClosestDistance(distanceToNextInstruction);
         this.distanceToDestination.setDistance(distanceToDestination);
+        this.distanceToDestination.setVisibility(View.VISIBLE);
 
         final View view = getPagerViewForIndex(pager.getCurrentItem());
         if (view != null) {
@@ -465,7 +467,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
     }
 
-    public boolean setRoute(Route route) {
+    public boolean setRoute(final Route route) {
         if (route.foundRoute()) {
             this.route = route;
             this.instructions = route.getRouteInstructions();
@@ -473,6 +475,15 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             mapController.setMapPerspectiveForInstruction(instructions.get(0));
             routeEngine.setRoute(route);
             routeEngine.setListener(this);
+            act.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (distanceToDestination != null) {
+                        distanceToDestination.setVisibility(View.VISIBLE);
+                        distanceToDestination.setDistance(route.getTotalDistance());
+                    }
+                }
+            });
         } else {
             return false;
         }

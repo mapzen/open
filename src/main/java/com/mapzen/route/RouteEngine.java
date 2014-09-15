@@ -41,6 +41,10 @@ public class RouteEngine {
         this.location = location;
         snapLocation();
 
+        if (routeState == LOST) {
+            return;
+        }
+
         if (routeState == START) {
             listener.onApproachInstruction(0);
             routeState = INSTRUCTION;

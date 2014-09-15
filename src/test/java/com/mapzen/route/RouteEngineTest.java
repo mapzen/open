@@ -135,6 +135,12 @@ public class RouteEngineTest {
     }
 
     @Test
+    public void onUpdateDistance_shouldNotFireWhenLost() throws Exception {
+        routeEngine.onLocationChanged(getTestLocation(0, 0));
+        assertThat(listener.distanceToDestination).isEqualTo(-1);
+    }
+
+    @Test
     public void onRouteComplete_shouldTriggerAtDestination() throws Exception {
         routeEngine.onLocationChanged(route.getRouteInstructions().get(5).getLocation());
         assertThat(listener.routeComplete).isTrue();
