@@ -31,8 +31,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.oscim.core.MapPosition;
 import org.oscim.layers.PathLayer;
+import org.oscim.map.TestMap;
 import org.oscim.map.TestViewport;
+import org.oscim.map.ViewController;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
@@ -992,6 +995,24 @@ public class RouteFragmentTest {
         fragment.turnAutoPageOff();
         fragment.resumeAutoPaging();
         assertThat(fragment.voiceNavigationController.isMuted()).isFalse();
+    }
+
+    @Test
+    public void resumeAutoPaging_shouldSetPerspectiveForCurrentInstruction() throws Exception {
+        loadAceHotelMockRoute();
+        fragment.turnAutoPageOff();
+        fragment.pager.setCurrentItem(1);
+        fragment.resumeAutoPaging();
+        assertThat(fragment.pager).hasCurrentItem(0);
+    }
+
+    @Test
+    public void onPageScrolled_shouldNotResumeAutoPagingIfAlreadyOn() throws Exception {
+        ViewController viewport = Mockito.mock(ViewController.class);
+        ((TestMap) mapController.getMap()).setViewport(viewport);
+        loadAceHotelMockRoute();
+        fragment.onPageScrolled(0, 0, 0);
+        Mockito.verify(viewport, Mockito.times(2)).setMapPosition(Mockito.any(MapPosition.class));
     }
 
     @Test
