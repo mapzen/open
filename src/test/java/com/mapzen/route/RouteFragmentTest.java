@@ -928,6 +928,29 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onRecalculate_shouldUpdateCurrentInstructionText() throws Exception {
+        loadAceHotelMockRoute();
+        fragment.onRecalculate(getTestLocation(111.0, 111.0));
+        View view = fragment.getPagerViewForIndex(0);
+
+        TextView before = (TextView) view.findViewById(R.id.full_instruction);
+        assertThat(before).hasText(app.getString(R.string.recalculating));
+
+        TextView after = (TextView) view.findViewById(R.id.full_instruction_after_action);
+        assertThat(after).hasText(app.getString(R.string.recalculating));
+    }
+
+    @Test
+    public void onRecalculate_shouldHideIconDistanceAndArrows() throws Exception {
+        loadAceHotelMockRoute();
+        fragment.onRecalculate(getTestLocation(111.0, 111.0));
+        View view = fragment.getPagerViewForIndex(0);
+        assertThat(view.findViewById(R.id.left_arrow)).isNotVisible();
+        assertThat(view.findViewById(R.id.turn_container)).isNotVisible();
+        assertThat(view.findViewById(R.id.right_arrow)).isNotVisible();
+    }
+
+    @Test
     public void turnAutoPageOff_shouldMuteVoiceNavigation() throws Exception {
         initTestFragment();
         FragmentTestUtil.startFragment(fragment);
