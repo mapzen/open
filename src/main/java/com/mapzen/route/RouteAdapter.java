@@ -20,11 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RouteAdapter extends PagerAdapter {
+    public static final String TAG_BASE = "Instruction_";
+
     private List<Instruction> instructions = new ArrayList<Instruction>();
     private Context context;
     private Instruction currentInstruction;
     private RouteFragment fragment;
-    public static final String TAG_BASE = "Instruction_";
 
     public RouteAdapter(Context context, List<Instruction> instructions, RouteFragment fragment) {
         this.context = context;

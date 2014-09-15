@@ -928,6 +928,56 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onRecalculate_shouldUpdateCurrentInstructionText() throws Exception {
+        loadAceHotelMockRoute();
+        fragment.onRecalculate(getTestLocation(111.0, 111.0));
+        View view = fragment.getPagerViewForIndex(0);
+
+        TextView before = (TextView) view.findViewById(R.id.full_instruction);
+        assertThat(before).hasText(app.getString(R.string.recalculating));
+
+        TextView after = (TextView) view.findViewById(R.id.full_instruction_after_action);
+        assertThat(after).hasText(app.getString(R.string.recalculating));
+    }
+
+    @Test
+    public void onRecalculate_shouldHideIconDistanceAndArrows() throws Exception {
+        loadAceHotelMockRoute();
+        fragment.onRecalculate(getTestLocation(111.0, 111.0));
+        View view = fragment.getPagerViewForIndex(0);
+        assertThat(view.findViewById(R.id.left_arrow)).isNotVisible();
+        assertThat(view.findViewById(R.id.turn_container)).isNotVisible();
+        assertThat(view.findViewById(R.id.right_arrow)).isNotVisible();
+    }
+
+    @Test
+    public void onRecalculate_shouldHideDistanceToDestination() throws Exception {
+        loadAceHotelMockRoute();
+        fragment.onRecalculate(getTestLocation(111.0, 111.0));
+        assertThat(fragment.distanceToDestination).isNotVisible();
+    }
+
+    @Test
+    public void onUpdateDistance_shouldShowDistanceToDestinationAfterReroute() throws Exception {
+        loadAceHotelMockRoute();
+        fragment.onRecalculate(getTestLocation(111.0, 111.0));
+        fragment.onUpdateDistance(0, 0);
+        assertThat(fragment.distanceToDestination).isVisible();
+    }
+
+    @Test
+    public void setRoute_shouldShowDistanceToDestinationAfterReroute() throws Exception {
+        loadAceHotelMockRoute();
+        fragment.onRecalculate(getTestLocation(111.0, 111.0));
+        Route route = new Route(MOCK_ACE_HOTEL);
+        fragment.setRoute(route);
+        Robolectric.runUiThreadTasks();
+        assertThat(fragment.distanceToDestination).isVisible();
+        assertThat(fragment.distanceToDestination.getDistance())
+                .isEqualTo(route.getTotalDistance());
+    }
+
+    @Test
     public void turnAutoPageOff_shouldMuteVoiceNavigation() throws Exception {
         initTestFragment();
         FragmentTestUtil.startFragment(fragment);
@@ -1332,13 +1382,6 @@ public class RouteFragmentTest {
                 act.getApplicationContext().NOTIFICATION_SERVICE);
         ShadowNotificationManager sManager = shadowOf(manager);
         return shadowOf(sManager.getAllNotifications().get(0));
-    }
-
-    private void setAdvanceRadiusPreference(int key, int value) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
-        SharedPreferences.Editor prefEditor = prefs.edit();
-        prefEditor.putInt(act.getString(key), value);
-        prefEditor.commit();
     }
 
     private void setNumberOfLocationForAverageSpeed(int value) {
