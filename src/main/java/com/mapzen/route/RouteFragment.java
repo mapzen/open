@@ -200,9 +200,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     @OnClick(R.id.resume_button)
-    @SuppressWarnings("unused")
     public void onClickResume() {
-        Instruction instruction = instructions.get(pager.getCurrentItem());
         resumeAutoPaging();
     }
 
@@ -537,8 +535,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onPageScrolled(int i, float v, int i2) {
         if (pager.getCurrentItem() == pagerPositionWhenPaused) {
-            onClickResume();
             setCurrentPagerItemStyling(pagerPositionWhenPaused);
+            if (!autoPaging) {
+                resumeAutoPaging();
+            }
         }
     }
 
@@ -630,12 +630,16 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void resumeAutoPaging() {
         pager.setCurrentItem(pagerPositionWhenPaused);
         setCurrentPagerItemStyling(pagerPositionWhenPaused);
-        mapController
-                .setMapPerspectiveForInstruction(instructions.get(pagerPositionWhenPaused));
+        setPerspectiveForCurrentInstruction();
         resume.setVisibility(View.GONE);
         currentXCor = mapFragment.getMap().getMapPosition().getX();
         autoPaging = true;
         voiceNavigationController.unmute();
+    }
+
+    private void setPerspectiveForCurrentInstruction() {
+        int current = pagerPositionWhenPaused > 0 ? pagerPositionWhenPaused - 1 : 0;
+        mapController.setMapPerspectiveForInstruction(instructions.get(current));
     }
 
     private class LocationReceiver extends BroadcastReceiver {
