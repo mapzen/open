@@ -1042,6 +1042,18 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onUpdateDistance_shouldUpdatePausedPositionAfterManualAdvance() throws Exception {
+        loadAceHotelMockRoute();
+        fragment.onInstructionComplete(0);
+        fragment.onInstructionComplete(1);
+        fragment.pager.setCurrentItem(3);
+        fragment.onUpdateDistance((int) DistanceFormatter.METERS_IN_ONE_MILE, 0);
+        View view = fragment.getPagerViewForIndex(2);
+        TextView textView = (TextView) view.findViewById(R.id.distance_instruction);
+        assertThat(textView).hasText("1 mi");
+    }
+
+    @Test
     public void setRoute_shouldShowDistanceToDestinationAfterReroute() throws Exception {
         loadAceHotelMockRoute();
         fragment.onRecalculate(getTestLocation(111.0, 111.0));

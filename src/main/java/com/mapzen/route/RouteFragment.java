@@ -443,7 +443,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         this.distanceToDestination.setDistance(distanceToDestination);
         this.distanceToDestination.setVisibility(View.VISIBLE);
 
-        final View view = getPagerViewForIndex(pager.getCurrentItem());
+        final View view = getPagerViewForIndex(pagerPositionWhenPaused);
         if (view != null) {
             final TextView currentInstructionDistance =
                     (TextView) view.findViewById(R.id.distance_instruction);
