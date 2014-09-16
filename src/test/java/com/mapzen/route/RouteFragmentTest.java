@@ -515,7 +515,7 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         int numberOfReceivers =
                 app.getReceiversForIntent(new Intent(COM_MAPZEN_UPDATES_LOCATION)).size();
-        fragment.onPause();
+        fragment.onDetach();
         assertThat(app.getReceiversForIntent(
                 new Intent(COM_MAPZEN_UPDATES_LOCATION))).hasSize(numberOfReceivers - 1);
     }
@@ -715,6 +715,79 @@ public class RouteFragmentTest {
         fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(0).getLocation());
         fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(1).getLocation());
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(1);
+    }
+
+    @Test
+    public void onLocationChange_shouldNotChangeUsersMap() throws Exception {
+        loadAceHotelMockRoute();
+        simulateUserPagerTouch();
+        double lat = fragment.getMapFragment().getMap().getMapPosition().getLatitude();
+        double lng = fragment.getMapFragment().getMap().getMapPosition().getLongitude();
+        fragment.getRoute().addSeenInstruction(fragment.getRoute().getRouteInstructions().get(0));
+        fragment.onLocationChanged(
+                fragment.getRoute().getRouteInstructions().get(1).getLocation());
+        fragment.onLocationChanged(
+                fragment.getRoute().getRouteInstructions().get(2).getLocation());
+        assertThat(lat).isEqualTo(
+                fragment.getMapFragment().getMap().getMapPosition().getLatitude());
+        assertThat(lng).isEqualTo(
+                fragment.getMapFragment().getMap().getMapPosition().getLongitude());
+    }
+
+    @Test
+    public void onLocationChange_shouldChangeUsersMap() throws Exception {
+        loadAceHotelMockRoute();
+        simulateUserPagerTouch();
+        double lat = fragment.getMapFragment().getMap().getMapPosition().getLatitude();
+        double lng = fragment.getMapFragment().getMap().getMapPosition().getLongitude();
+        fragment.getRoute().addSeenInstruction(
+                fragment.getRoute().getRouteInstructions().get(0));
+        fragment.onLocationChanged(
+                fragment.getRoute().getRouteInstructions().get(1).getLocation());
+        fragment.onClickResume();
+        fragment.onLocationChanged(
+                fragment.getRoute().getRouteInstructions().get(2).getLocation());
+        assertThat(lat).isNotEqualTo(
+                fragment.getMapFragment().getMap().getMapPosition().getLatitude());
+        assertThat(lng).isNotEqualTo(
+                fragment.getMapFragment().getMap().getMapPosition().getLongitude());
+    }
+
+    @Test
+    public void onInstructionComplete_shouldPreservePagerIndex() throws Exception {
+        loadAceHotelMockRoute();
+        simulateUserPagerTouch();
+        fragment.getRoute().addSeenInstruction(fragment.getRoute().getRouteInstructions().get(0));
+        fragment.onInstructionComplete(0);
+        fragment.onInstructionComplete(1);
+        fragment.onInstructionComplete(2);
+        fragment.onClickResume();
+        fragment.resumeAutoPaging();
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(3);
+    }
+
+    @Test
+    public void onLocationChange_shouldAlwaysMoveRouteLocationIndicator()
+            throws Exception {
+        loadAceHotelMockRoute();
+        RouteLocationIndicator routeLocationIndicator = Mockito.mock(RouteLocationIndicator.class);
+        fragment.setRouteLocationIndicator(routeLocationIndicator);
+        simulateUserPagerTouch();
+        Location loc = fragment.getRoute().getRouteInstructions().get(1).getLocation();
+        fragment.onLocationChanged(loc);
+        Mockito.verify(routeLocationIndicator).setPosition(loc.getLatitude(), loc.getLongitude());
+    }
+
+    @Test
+    public void onLocationChange_shouldAlwaysRotateRouteLocationIndicator()
+            throws Exception {
+        loadAceHotelMockRoute();
+        RouteLocationIndicator routeLocationIndicator = Mockito.mock(RouteLocationIndicator.class);
+        fragment.setRouteLocationIndicator(routeLocationIndicator);
+        simulateUserPagerTouch();
+        Location loc = fragment.getRoute().getRouteInstructions().get(1).getLocation();
+        fragment.onLocationChanged(loc);
+        Mockito.verify(routeLocationIndicator).setRotation(Mockito.anyFloat());
     }
 
     @Test
@@ -966,6 +1039,18 @@ public class RouteFragmentTest {
         fragment.onRecalculate(getTestLocation(111.0, 111.0));
         fragment.onUpdateDistance(0, 0);
         assertThat(fragment.distanceToDestination).isVisible();
+    }
+
+    @Test
+    public void onUpdateDistance_shouldUpdatePausedPositionAfterManualAdvance() throws Exception {
+        loadAceHotelMockRoute();
+        fragment.onInstructionComplete(0);
+        fragment.onInstructionComplete(1);
+        fragment.pager.setCurrentItem(3);
+        fragment.onUpdateDistance((int) DistanceFormatter.METERS_IN_ONE_MILE, 0);
+        View view = fragment.getPagerViewForIndex(2);
+        TextView textView = (TextView) view.findViewById(R.id.distance_instruction);
+        assertThat(textView).hasText("1 mi");
     }
 
     @Test

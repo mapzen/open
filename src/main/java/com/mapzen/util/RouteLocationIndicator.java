@@ -99,10 +99,6 @@ public class RouteLocationIndicator extends Layer {
                 return;
             }
 
-            if (!v.changed() && isReady()) {
-                return;
-            }
-
             setReady(true);
 
             int width = mMap.getWidth();
