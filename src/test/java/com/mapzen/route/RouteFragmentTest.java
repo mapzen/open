@@ -1105,7 +1105,6 @@ public class RouteFragmentTest {
         Location testLocation = getTestLocation(100.0, 100.0);
         FragmentTestUtil.startFragment(fragment);
         fragment.createRouteTo(testLocation);
-        assertThat(act.getMapFragment().getView().findViewById(R.id.map)).isNotVisible();
         assertThat(act.getMapFragment().getView().findViewById(R.id.progress)).isVisible();
     }
 

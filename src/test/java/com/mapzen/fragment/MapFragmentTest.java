@@ -250,13 +250,6 @@ public class MapFragmentTest {
     }
 
     @Test
-    public void showProgress_shouldHideMapView() throws Exception {
-        FragmentTestUtil.startFragment(mapFragment);
-        mapFragment.showProgress();
-        assertThat(mapFragment.getView().findViewById(R.id.map)).isNotVisible();
-    }
-
-    @Test
     public void showProgress_shouldShowProgressView() throws Exception {
         FragmentTestUtil.startFragment(mapFragment);
         mapFragment.showProgress();
@@ -264,11 +257,11 @@ public class MapFragmentTest {
     }
 
     @Test
-    public void hideProgress_shouldShowMapView() throws Exception {
+    public void showProgress_shouldDisableMap() throws Exception {
         FragmentTestUtil.startFragment(mapFragment);
+        mapFragment.getView().findViewById(R.id.map).setClickable(true);
         mapFragment.showProgress();
-        mapFragment.hideProgress();
-        assertThat(mapFragment.getView().findViewById(R.id.map)).isVisible();
+        assertThat(mapFragment.getView().findViewById(R.id.map)).isNotClickable();
     }
 
     @Test
@@ -277,6 +270,14 @@ public class MapFragmentTest {
         mapFragment.showProgress();
         mapFragment.hideProgress();
         assertThat(mapFragment.getView().findViewById(R.id.progress)).isNotVisible();
+    }
+
+    @Test
+    public void hideProgress_shouldEnableMap() throws Exception {
+        FragmentTestUtil.startFragment(mapFragment);
+        mapFragment.getView().findViewById(R.id.map).setClickable(false);
+        mapFragment.hideProgress();
+        assertThat(mapFragment.getView().findViewById(R.id.map)).isClickable();
     }
 
     @Test
