@@ -101,7 +101,6 @@ public class RoutePreviewFragmentTest {
     @Test
     public void setRouteTo_shouldShowLoadingDialog() throws Exception {
         fragment.createRouteToDestination();
-        assertThat(activity.getMapFragment().getView().findViewById(R.id.map)).isNotVisible();
         assertThat(activity.getMapFragment().getView().findViewById(R.id.progress)).isVisible();
     }
 

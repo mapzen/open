@@ -351,12 +351,10 @@ public class MapFragment extends BaseFragment {
     }
 
     public void showProgress() {
-        getView().findViewById(R.id.map).setVisibility(View.GONE);
         getView().findViewById(R.id.progress).setVisibility(View.VISIBLE);
     }
 
     public void hideProgress() {
-        getView().findViewById(R.id.map).setVisibility(View.VISIBLE);
         getView().findViewById(R.id.progress).setVisibility(View.GONE);
     }
 

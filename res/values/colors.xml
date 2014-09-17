@@ -21,4 +21,5 @@
     <color name="brown">#563630</color>
     <color name="transparent_white">#CCFFFFFF</color>
     <color name="transparent_gray">#CCCECECE</color>
+    <color name="transparent_light_gray">#66CECECE</color>
 </resources>
