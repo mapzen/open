@@ -213,7 +213,7 @@ public class DataUploadServiceTest {
         app.getDb().insert(TABLE_LOCATIONS, null, insertValues);
 
         String actual = getTextForXpath(groupId,
-                "//trk/trkseg/speed[position()=last()]/text()");
+                "//trk/trkseg/trkpt[position()=last()]/speed/text()");
 
         assertThat(actual).isEqualTo(expectedSpeed);
     }

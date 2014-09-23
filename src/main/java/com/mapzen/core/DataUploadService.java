@@ -243,8 +243,8 @@ public class DataUploadService extends Service {
 
         trkptElement.appendChild(elevationElement);
         trkptElement.appendChild(timeElement);
+        trkptElement.appendChild(speedElement);
         trksegElement.appendChild(trkptElement);
-        trksegElement.appendChild(speedElement);
     }
 
     private Element getRootElement(Document document) {
