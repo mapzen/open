@@ -121,7 +121,7 @@
         <dependency>
             <groupId>com.mapzen</groupId>
             <artifactId>on-the-road</artifactId>
-            <version>0.3-SNAPSHOT</version>
+            <version>0.4-SNAPSHOT</version>
         </dependency>
 
         <dependency>
