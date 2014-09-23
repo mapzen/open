@@ -262,9 +262,9 @@ public class MapFragment extends BaseFragment {
     public void findMe() {
         if (mapController.getLocation() != null) {
             addLocationDot();
-            mapController.resetZoomAndPointNorth();
             if (followMe || !initialRelocateHappened) {
                 // TODO find ways to accomplish this without two flags ;(
+                mapController.resetZoomAndPointNorth();
                 initialRelocateHappened = true;
                 getMap().setMapPosition(getUserLocationPosition());
             }

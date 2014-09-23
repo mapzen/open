@@ -584,6 +584,14 @@ public class BaseActivityTest {
         assertThat(activity.findViewById(R.id.attribution)).isVisible();
     }
 
+    @Test
+    public void locateButtonAction_shouldActivateMoveMapToLocation() throws Exception {
+        MapzenApplication app = (MapzenApplication) application;
+        app.deactivateMoveMapToLocation();
+        activity.locateButtonAction(activity.findViewById(R.id.locate_button));
+        assertThat(app.shouldMoveMapToLocation()).isTrue();
+    }
+
     private Location initLastLocation() {
         Location location = new Location(GPS_PROVIDER);
         location.setLatitude(1.0);

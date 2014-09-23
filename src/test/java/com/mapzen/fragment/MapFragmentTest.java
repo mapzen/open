@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.oscim.core.GeoPoint;
+import org.oscim.core.MapPosition;
 import org.oscim.event.Gesture;
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
@@ -284,6 +285,17 @@ public class MapFragmentTest {
     public void onActivityCreated_shouldDoStylesheetDownload() throws Exception {
         FragmentTestUtil.startFragment(mapFragment);
         Mockito.verify(styleDownLoader).download();
+    }
+
+    @Test
+    public void findMe_shouldNotResetZoomAndPointNorthAfterMapPositionEvent() throws Exception {
+        FragmentTestUtil.startFragment(mapFragment);
+        mapFragment.findMe();
+        MapPosition mapPosition = new MapPosition();
+        mapPosition.setZoomLevel(10);
+        activity.getMap().events.fire(Map.POSITION_EVENT, mapPosition);
+        mapFragment.findMe();
+        assertThat(mapFragment.mapController.getZoomLevel()).isEqualTo(10);
     }
 
     private void setTileSourceConfiguration(String source) {
