@@ -288,7 +288,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public void setInstructions(ArrayList<Instruction> instructions) {
-        Logger.d("instructions: " + instructions.toString());
+        Logger.d("instructions: " + instructions);
         this.instructions = instructions;
     }
 
@@ -733,7 +733,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public String getGPXDescription() {
-        if (instructions.size() >= 1) {
+        if (instructions != null && instructions.size() >= 1) {
             Instruction firstInstruction = instructions.get(0);
             String destination = simpleFeature.getFullLocationString();
             return new StringBuilder().append("Route between: ")

@@ -1443,6 +1443,13 @@ public class RouteFragmentTest {
         assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).hasSize(2);
     }
 
+    @Test
+    public void getGpxDescription_shouldReturnErrorMessageForNullInstructions() throws Exception {
+        loadAceHotelMockRoute();
+        fragment.setInstructions(null);
+        assertThat(fragment.getGPXDescription()).isEqualTo("Route without instructions");
+    }
+
     private void loadAceHotelMockRoute() {
         fragment.createRouteTo(getTestLocation(100.0, 100.0));
         verify(router).setCallback(callback.capture());
