@@ -527,6 +527,7 @@ public class BaseActivity extends MapActivity {
     }
 
     public void locateButtonAction(View view) {
+        app.activateMoveMapToLocation();
         mapFragment.centerOnCurrentLocation();
     }
 

@@ -145,7 +145,7 @@ public final class MapController {
     }
 
     public double getZoomLevel() {
-        return mapPosition.zoomLevel;
+        return mapPosition.getZoomLevel();
     }
 
     public void setZoomLevel(int zoomLevel) {
