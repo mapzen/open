@@ -1386,7 +1386,7 @@ public class RouteFragmentTest {
         boolean shouldExit = broadcastIntent.getExtras()
                 .getBoolean(MapzenNotificationCreator.EXIT_NAVIGATION);
         assertThat(shouldExit).isTrue();
-        assertThat(broadcastClassName).isEqualTo("com.mapzen.util.NotificationBroadcastReciever");
+        assertThat(broadcastClassName).isEqualTo("com.mapzen.util.NotificationBroadcastReceiver");
     }
 
     @Test

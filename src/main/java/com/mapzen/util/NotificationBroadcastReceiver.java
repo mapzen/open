@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import com.mapzen.activity.BaseActivity;
 
-public class NotificationBroadcastReciever extends BroadcastReceiver {
+public class NotificationBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getBooleanExtra(MapzenNotificationCreator.EXIT_NAVIGATION, false)) {

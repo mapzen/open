@@ -12,6 +12,7 @@ import android.support.v4.app.TaskStackBuilder;
 
 public class MapzenNotificationCreator {
     public static final String EXIT_NAVIGATION = "exit_navigation";
+
     private Activity baseActivity;
     private Notification.Builder builder;
     private Notification.BigTextStyle bigTextStyle;
@@ -40,7 +41,7 @@ public class MapzenNotificationCreator {
     }
 
     private void initExitNavigationIntent() {
-        exitNavigationIntent = new Intent(baseActivity, NotificationBroadcastReciever.class);
+        exitNavigationIntent = new Intent(baseActivity, NotificationBroadcastReceiver.class);
         exitNavigationIntent.putExtra(EXIT_NAVIGATION, true);
         pendingExitNavigationIntent = PendingIntent.getBroadcast(
                 baseActivity, 0, exitNavigationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
