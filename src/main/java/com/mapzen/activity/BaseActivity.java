@@ -13,7 +13,6 @@ import com.mapzen.search.AutoCompleteAdapter;
 import com.mapzen.search.OnPoiClickListener;
 import com.mapzen.search.PagerResultsFragment;
 import com.mapzen.search.SavedSearch;
-import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.DebugDataSubmitter;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenGPSPromptDialogFragment;
@@ -68,7 +67,7 @@ public class BaseActivity extends MapActivity {
     public static final String COM_MAPZEN_UPDATES_LOCATION = "com.mapzen.updates.location";
     public static final String
             DEBUG_DATA_ENDPOINT = "http://on-the-road.dev.mapzen.com/upload";
-    protected DatabaseHelper dbHelper;
+
     protected DebugDataSubmitter debugDataSubmitter;
     @Inject LocationClient locationClient;
     private Menu activityMenu;
