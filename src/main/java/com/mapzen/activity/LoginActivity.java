@@ -129,6 +129,7 @@ public class LoginActivity extends Activity {
 
     private void startBaseActivity() {
         Intent baseActivity = new Intent(this, BaseActivity.class);
+        baseActivity.setData(getIntent().getData());
         startActivity(baseActivity);
         finish();
     }
