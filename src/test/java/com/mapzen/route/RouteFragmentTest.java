@@ -1386,7 +1386,7 @@ public class RouteFragmentTest {
         boolean shouldExit = broadcastIntent.getExtras()
                 .getBoolean(MapzenNotificationCreator.EXIT_NAVIGATION);
         assertThat(shouldExit).isTrue();
-        assertThat(broadcastClassName).isEqualTo("com.mapzen.util.NotificationBroadcastReciever");
+        assertThat(broadcastClassName).isEqualTo("com.mapzen.util.NotificationBroadcastReceiver");
     }
 
     @Test
@@ -1441,6 +1441,13 @@ public class RouteFragmentTest {
         ShadowLocationManager shadowLocationManager = Robolectric.shadowOf((LocationManager)
                 application.getSystemService(Context.LOCATION_SERVICE));
         assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).hasSize(2);
+    }
+
+    @Test
+    public void getGpxDescription_shouldReturnErrorMessageForNullInstructions() throws Exception {
+        loadAceHotelMockRoute();
+        fragment.setInstructions(null);
+        assertThat(fragment.getGPXDescription()).isEqualTo("Route without instructions");
     }
 
     private void loadAceHotelMockRoute() {

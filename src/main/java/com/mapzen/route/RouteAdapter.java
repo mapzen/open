@@ -153,6 +153,10 @@ public class RouteAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
+        if (instructions == null) {
+            return 0;
+        }
+
         return instructions.size();
     }
 
