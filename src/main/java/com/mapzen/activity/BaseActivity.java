@@ -84,6 +84,8 @@ public class BaseActivity extends MapActivity {
 
     MenuItem searchMenuItem;
 
+    private boolean exitNavigationIntentReceived;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,8 +104,17 @@ public class BaseActivity extends MapActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         if (intent.getBooleanExtra(MapzenNotificationCreator.EXIT_NAVIGATION, false)) {
+            exitNavigationIntentReceived = true;
+        }
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if (exitNavigationIntentReceived) {
             getSupportFragmentManager().popBackStack(); // Pop RouteFragment
             getSupportFragmentManager().popBackStack(); // Pop RoutePreviewFragment
+            exitNavigationIntentReceived = false;
         }
     }
 

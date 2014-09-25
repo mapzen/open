@@ -591,7 +591,7 @@ public class BaseActivityTest {
     }
 
     @Test
-    public void onNewIntent_shouldPopRouteFragmentAndRoutePreviewFragment() throws Exception {
+    public void onPostResume_shouldPopRouteFragmentAndRoutePreviewFragment() throws Exception {
         FragmentManager fragmentManager = activity.getSupportFragmentManager();
         addFragmentToBackStack(RoutePreviewFragment.newInstance(activity, new SimpleFeature()),
                 RoutePreviewFragment.TAG);
@@ -601,6 +601,7 @@ public class BaseActivityTest {
         Intent intent = new Intent();
         intent.putExtra(MapzenNotificationCreator.EXIT_NAVIGATION, true);
         activity.onNewIntent(intent);
+        activity.onPostResume();
         assertThat(fragmentManager.findFragmentByTag(RouteFragment.TAG)).isNull();
         assertThat(fragmentManager.findFragmentByTag(RoutePreviewFragment.TAG)).isNull();
     }
