@@ -17,6 +17,7 @@ import com.mapzen.util.DatabaseHelper;
 import com.mapzen.util.DebugDataSubmitter;
 import com.mapzen.util.Logger;
 import com.mapzen.util.MapzenGPSPromptDialogFragment;
+import com.mapzen.util.MapzenNotificationCreator;
 
 import com.bugsense.trace.BugSenseHandler;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -97,6 +98,14 @@ public class BaseActivity extends MapActivity {
         initMapController();
         initAlarm();
         initSavedSearches();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (intent.getBooleanExtra(MapzenNotificationCreator.EXIT_NAVIGATION, false)) {
+            getSupportFragmentManager().popBackStack(); // Pop RouteFragment
+            getSupportFragmentManager().popBackStack(); // Pop RoutePreviewFragment
+        }
     }
 
     @Override

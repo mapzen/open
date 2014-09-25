@@ -8,10 +8,14 @@ import com.mapzen.android.gson.Feature;
 import com.mapzen.android.lost.LocationClient;
 import com.mapzen.core.MapzenLocation;
 import com.mapzen.core.SettingsFragment;
+import com.mapzen.entity.SimpleFeature;
+import com.mapzen.route.RouteFragment;
+import com.mapzen.route.RoutePreviewFragment;
 import com.mapzen.search.PagerResultsFragment;
 import com.mapzen.search.SavedSearch;
 import com.mapzen.support.MapzenTestRunner;
 import com.mapzen.support.TestBaseActivity;
+import com.mapzen.util.MapzenNotificationCreator;
 
 import com.google.common.io.Files;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -39,6 +43,8 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
@@ -582,6 +588,29 @@ public class BaseActivityTest {
         activity.hideLoadingIndicator();
         Robolectric.runUiThreadTasks();
         assertThat(activity.findViewById(R.id.attribution)).isVisible();
+    }
+
+    @Test
+    public void onNewIntent_shouldPopRouteFragmentAndRoutePreviewFragment() throws Exception {
+        FragmentManager fragmentManager = activity.getSupportFragmentManager();
+        addFragmentToBackStack(RoutePreviewFragment.newInstance(activity, new SimpleFeature()),
+                RoutePreviewFragment.TAG);
+        addFragmentToBackStack(RouteFragment.newInstance(activity, new SimpleFeature()),
+                RouteFragment.TAG);
+
+        Intent intent = new Intent();
+        intent.putExtra(MapzenNotificationCreator.EXIT_NAVIGATION, true);
+        activity.onNewIntent(intent);
+        assertThat(fragmentManager.findFragmentByTag(RouteFragment.TAG)).isNull();
+        assertThat(fragmentManager.findFragmentByTag(RoutePreviewFragment.TAG)).isNull();
+    }
+
+    private void addFragmentToBackStack(Fragment fragment, String tag) {
+        activity.getSupportFragmentManager()
+                .beginTransaction()
+                .add(fragment, tag)
+                .addToBackStack(null)
+                .commit();
     }
 
     @Test
