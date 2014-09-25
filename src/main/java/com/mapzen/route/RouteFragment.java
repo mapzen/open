@@ -191,8 +191,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void initNotificationCreator() {
         notificationCreator = new MapzenNotificationCreator(act);
-        notificationCreator.createNewNotification(simpleFeature.getMarker().title,
-                instructions.get(0).getFullInstruction());
+        if (instructions != null) {
+            notificationCreator.createNewNotification(simpleFeature.getMarker().title,
+                    instructions.get(0).getFullInstruction());
+        }
     }
 
     private void initSpeakerbox() {
@@ -209,12 +211,14 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         super.onCreate(savedInstanceState);
         createGroup();
         initLocationReceiver();
-        Location startPoint = route.getStartCoordinates();
-        routeLocationIndicator.setPosition(startPoint.getLatitude(), startPoint.getLongitude());
-        routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
-        mapFragment.getMap().layers().add(routeLocationIndicator);
-        mapFragment.hideLocationMarker();
-        mapFragment.getMap().viewport().setTilt(DEFAULT_ROUTING_TILT);
+        if (route != null) {
+            Location startPoint = route.getStartCoordinates();
+            routeLocationIndicator.setPosition(startPoint.getLatitude(), startPoint.getLongitude());
+            routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
+            mapFragment.getMap().layers().add(routeLocationIndicator);
+            mapFragment.hideLocationMarker();
+            mapFragment.getMap().viewport().setTilt(DEFAULT_ROUTING_TILT);
+        }
     }
 
     private void createGroup() {
