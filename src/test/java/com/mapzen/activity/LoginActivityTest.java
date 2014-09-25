@@ -25,6 +25,8 @@ import android.net.Uri;
 import javax.inject.Inject;
 
 import static com.mapzen.support.TestHelper.initLoginActivity;
+import static org.robolectric.Robolectric.buildActivity;
+import static org.robolectric.Robolectric.getShadowApplication;
 import static org.robolectric.Robolectric.shadowOf;
 import static org.mockito.Mockito.mock;
 
@@ -81,6 +83,28 @@ public class LoginActivityTest {
                 .getComponent().toString();
         assertThat(componentOpened)
                 .isEqualTo("ComponentInfo{com.mapzen/com.mapzen.activity.BaseActivity}");
+    }
+
+    @Test
+    public void shouldForwardGeoIntentDataToBaseActivityAfterLogin() throws Exception {
+        String data = "http://maps.example.com/";
+        Intent geoIntent = new Intent();
+        geoIntent.setData(Uri.parse(data));
+        LoginActivity activity = buildActivity(LoginActivity.class)
+                .withIntent(geoIntent)
+                .create()
+                .start()
+                .resume()
+                .visible()
+                .get();
+
+        Uri.Builder oauthTokenBuilder = new Uri.Builder();
+        oauthTokenBuilder.appendQueryParameter(OSM_VERIFIER_KEY, "Bogus verifier");
+        Uri oauthToken = oauthTokenBuilder.build();
+        Intent oauthIntent = new Intent();
+        oauthIntent.setData(oauthToken);
+        activity.onNewIntent(oauthIntent);
+        assertThat(getShadowApplication().getNextStartedActivity()).hasData(data);
     }
 
     @Test

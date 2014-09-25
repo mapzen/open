@@ -41,12 +41,14 @@ public class InitialActivity extends Activity {
 
     private void startBaseActivity() {
         Intent baseActivity = new Intent(this, BaseActivity.class);
+        baseActivity.setData(getIntent().getData());
         startActivity(baseActivity);
         finish();
     }
 
     private void startLoginActivity() {
         Intent loginActivity = new Intent(this, LoginActivity.class);
+        loginActivity.setData(getIntent().getData());
         startActivity(loginActivity);
         finish();
     }

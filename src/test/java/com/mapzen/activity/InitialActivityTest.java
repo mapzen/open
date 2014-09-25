@@ -16,6 +16,9 @@ import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.scribe.model.Token;
 
+import android.content.Intent;
+import android.net.Uri;
+
 import javax.inject.Inject;
 
 import static com.mapzen.support.TestHelper.initBaseActivity;
@@ -26,6 +29,8 @@ import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.refEq;
 import static org.robolectric.Robolectric.application;
+import static org.robolectric.Robolectric.buildActivity;
+import static org.robolectric.Robolectric.getShadowApplication;
 import static org.robolectric.Robolectric.shadowOf;
 
 @Config(emulateSdk = 18)
@@ -80,12 +85,34 @@ public class InitialActivityTest {
 
     @Test
     public void onPreviouslyLoggedIn_ShouldOpenBaseActivity() {
-        Token token = new Token("token", "fun");
-        baseActivity.setAccessToken(token);
+        simulateLogin();
         InitialActivity activity = initInitialActivity();
         String activityStarted = shadowOf(activity).getNextStartedActivity()
                 .getComponent().toString();
         Assertions.assertThat(activityStarted)
                 .isEqualTo("ComponentInfo{com.mapzen/com.mapzen.activity.BaseActivity}");
+    }
+
+    @Test
+    public void shouldForwardIntentDataToLoginActivity() throws Exception {
+        String data = "http://maps.example.com/";
+        Intent intent = new Intent();
+        intent.setData(Uri.parse(data));
+        buildActivity(InitialActivity.class).withIntent(intent).create();
+        assertThat(getShadowApplication().getNextStartedActivity()).hasData(data);
+    }
+
+    @Test
+    public void shouldForwardIntentDataToBaseActivity() throws Exception {
+        simulateLogin();
+        String data = "http://maps.example.com/";
+        Intent intent = new Intent();
+        intent.setData(Uri.parse(data));
+        buildActivity(InitialActivity.class).withIntent(intent).create();
+        assertThat(getShadowApplication().getNextStartedActivity()).hasData(data);
+    }
+
+    private void simulateLogin() {
+        baseActivity.setAccessToken(new Token("token", "fun"));
     }
 }
