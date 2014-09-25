@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="zoom_walking">19</integer>
-    <integer name="zoom_biking">18</integer>
-    <integer name="zoom_driving_0to15">17</integer>
-    <integer name="zoom_driving_15to25">16</integer>
-    <integer name="zoom_driving_25to35">15</integer>
-    <integer name="zoom_driving_35to50">14</integer>
-    <integer name="zoom_driving_over50">13</integer>
+    <integer name="zoom_biking">19</integer>
+    <integer name="zoom_driving_0to15">19</integer>
+    <integer name="zoom_driving_15to25">18</integer>
+    <integer name="zoom_driving_25to35">17</integer>
+    <integer name="zoom_driving_35to50">16</integer>
+    <integer name="zoom_driving_over50">15</integer>
 
-    <integer name="turn_walking">10</integer>
-    <integer name="turn_biking">20</integer>
-    <integer name="turn_driving_0to15">50</integer>
-    <integer name="turn_driving_15to25">100</integer>
-    <integer name="turn_driving_25to35">150</integer>
-    <integer name="turn_driving_35to50">200</integer>
-    <integer name="turn_driving_over50">300</integer>
-
-    <integer name="number_of_locations_for_average_speed">10</integer>
+    <integer name="number_of_locations_for_average_speed">3</integer>
 </resources>

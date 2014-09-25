@@ -28,8 +28,8 @@ public final class MapController {
     public static final String KEY_BEARING = "rotation";
 
     public static final int DEFAULT_ZOOM_LEVEL = 15;
-    public static final int ROUTE_ZOOM_LEVEL = 17;
     public static final String DEBUG_LOCATION = "fixed_debug_location";
+
     private static MapController mapController;
     private Map map;
     private Location location;
@@ -120,8 +120,9 @@ public final class MapController {
     public MapController quarterOn(Location location, double bearing) {
         ViewController v = map.viewport();
         Float tilt = map.getMapPosition().getTilt();
+        final int zoom = map.getMapPosition().getZoomLevel();
         MapPosition position = new MapPosition(location.getLatitude(), location.getLongitude(),
-                Math.pow(2, ROUTE_ZOOM_LEVEL));
+                Math.pow(2, zoom));
         v.setMapPosition(position);
         map.updateMap(true);
         float[] ext = new float[8];
@@ -166,12 +167,6 @@ public final class MapController {
 
     public void setRotation(float rotation) {
         map.viewport().setRotation(rotation);
-        map.updateMap(true);
-    }
-
-    public void setPosition(Location location) {
-        map.setMapPosition(location.getLatitude(), location.getLongitude(),
-                Math.pow(2, ROUTE_ZOOM_LEVEL));
         map.updateMap(true);
     }
 
