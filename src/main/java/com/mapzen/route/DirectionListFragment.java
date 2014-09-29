@@ -20,7 +20,7 @@ import com.mapzen.widget.DistanceView;
 
 import java.util.List;
 
-import static com.mapzen.entity.SimpleFeature.NAME;
+import static com.mapzen.entity.SimpleFeature.TEXT;
 
 public class DirectionListFragment extends ListFragment {
     public static final String TAG = DirectionListFragment.class.getSimpleName();
@@ -148,13 +148,13 @@ public class DirectionListFragment extends ListFragment {
 
     private void setOriginAndDestination() {
         if (reverse) {
-            startingPointTextView.setText(destination.getProperty(NAME));
+            startingPointTextView.setText(destination.getProperty(TEXT));
             destinationTextView.setText(getString(R.string.current_location));
             startLocationIcon.setVisibility(View.GONE);
             destinationLocationIcon.setVisibility(View.VISIBLE);
         } else {
             startingPointTextView.setText(getString(R.string.current_location));
-            destinationTextView.setText(destination.getProperty(NAME));
+            destinationTextView.setText(destination.getProperty(TEXT));
             startLocationIcon.setVisibility(View.VISIBLE);
             destinationLocationIcon.setVisibility(View.GONE);
         }

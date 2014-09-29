@@ -27,6 +27,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import static com.mapzen.entity.SimpleFeature.TEXT;
 import static com.mapzen.search.SavedSearch.getSavedSearch;
 import static com.mapzen.support.TestHelper.assertSpan;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
@@ -180,7 +181,7 @@ public class AutoCompleteAdapterTest {
         MatrixCursor cursor = (MatrixCursor) adapter.getCursor();
         cursor.moveToFirst();
         SimpleFeature simpleFeature = new SimpleFeature();
-        simpleFeature.setHint("New York, NY");
+        simpleFeature.setProperty(TEXT, "New York, NY");
         byte[] data = ParcelableUtil.marshall(simpleFeature);
         cursor.addRow(new Object[]{0, data});
         TextView textView = new TextView(application);

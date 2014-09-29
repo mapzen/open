@@ -111,7 +111,7 @@ public class PagerResultsFragmentTest {
     @Test
     public void executeSearchOnMap_shouldDismissProgressDialogOnError() throws Exception {
         fragment.executeSearchOnMap(new SearchView(app), "Empire State Building");
-        verify(peliasServiceMock).getSearch(eq("Empire State Building"), anyString(),
+        verify(peliasServiceMock).getSearch(eq("Empire State Building"), anyString(), anyString(),
                 peliasCallback.capture());
         peliasCallback.getValue().failure(RetrofitError.unexpectedError("", null));
         assertThat(act.getMapFragment().getView().findViewById(R.id.map)).isVisible();
@@ -121,8 +121,9 @@ public class PagerResultsFragmentTest {
     @Test
     public void executeSearchOnMap_shouldToastAnError() {
         fragment.executeSearchOnMap(new SearchView(app), "Empire State Building");
-        verify(peliasServiceMock).getSearch(eq("Empire State Building"), anyString(),
+        verify(peliasServiceMock).getSearch(eq("Empire State Building"), anyString(), anyString(),
                 peliasCallback.capture());
+
         peliasCallback.getValue().failure(RetrofitError.unexpectedError("", null));
         assertThat(getTextOfLatestToast()).isEqualTo(app.getString(R.string.generic_server_error));
         assertThat(ShadowToast.getLatestToast()).hasDuration(Toast.LENGTH_LONG);

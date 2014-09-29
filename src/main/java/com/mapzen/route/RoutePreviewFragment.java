@@ -42,7 +42,7 @@ import butterknife.OnClick;
 import static com.mapzen.MapController.geoPointToPair;
 import static com.mapzen.MapController.locationToGeoPoint;
 import static com.mapzen.MapController.locationToPair;
-import static com.mapzen.entity.SimpleFeature.NAME;
+import static com.mapzen.entity.SimpleFeature.TEXT;
 import static com.mapzen.osrm.Router.Type;
 import static com.mapzen.osrm.Router.Type.BIKING;
 import static com.mapzen.osrm.Router.Type.DRIVING;
@@ -119,12 +119,12 @@ public class RoutePreviewFragment extends BaseFragment
 
         if (!reverse) {
             startingPointTextView.setText(getString(R.string.current_location));
-            destinationTextView.setText(destination.getProperty(NAME));
+            destinationTextView.setText(destination.getProperty(TEXT));
             startLocationIcon.setVisibility(View.VISIBLE);
             destinationLocationIcon.setVisibility(View.GONE);
 
         } else {
-            startingPointTextView.setText(destination.getProperty(NAME));
+            startingPointTextView.setText(destination.getProperty(TEXT));
             destinationTextView.setText(getString(R.string.current_location));
             startLocationIcon.setVisibility(View.GONE);
             destinationLocationIcon.setVisibility(View.VISIBLE);

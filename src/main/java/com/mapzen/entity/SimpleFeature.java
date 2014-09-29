@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class SimpleFeature implements Parcelable {
-    public static final String NAME = "name";
+    public static final String TEXT = "text";
     public static final String TYPE = "type";
     public static final String COUNTRY_CODE = "country_code";
     public static final String COUNTRY_NAME = "country_name";
@@ -40,7 +40,7 @@ public class SimpleFeature implements Parcelable {
         SimpleFeature simpleFeature = new SimpleFeature();
         simpleFeature.setLat(in.readDouble());
         simpleFeature.setLon(in.readDouble());
-        simpleFeature.setProperty(NAME, in.readString());
+        simpleFeature.setProperty(TEXT, in.readString());
         simpleFeature.setProperty(TYPE, in.readString());
         simpleFeature.setProperty(COUNTRY_CODE, in.readString());
         simpleFeature.setProperty(COUNTRY_NAME, in.readString());
@@ -54,7 +54,7 @@ public class SimpleFeature implements Parcelable {
 
     public static SimpleFeature fromFeature(Feature feature) {
         SimpleFeature simpleFeature = new SimpleFeature();
-        simpleFeature.setProperty(NAME, feature.getProperties().getName());
+        simpleFeature.setProperty(TEXT, feature.getProperties().getText());
         simpleFeature.setProperty(ADMIN1_NAME, feature.getProperties().getAdmin1_name());
         simpleFeature.setProperty(ADMIN1_ABBR, feature.getProperties().getAdmin1_abbr());
         simpleFeature.setProperty(ADMIN0_ABBR, feature.getProperties().getAdmin0_abbr());
@@ -67,16 +67,16 @@ public class SimpleFeature implements Parcelable {
 
     @Override
     public String toString() {
-        return "'" + getProperty(NAME) + "'[" + getLat() + ", " + getLon() + "]";
+        return "'" + getProperty(TEXT) + "'[" + getLat() + ", " + getLon() + "]";
     }
 
     public String getFullLocationString() {
-        return " " + getProperty(NAME) + " [" + getLat() + ", " + getLon() + "]";
+        return " " + getProperty(TEXT) + " [" + getLat() + ", " + getLon() + "]";
     }
 
     public MarkerItem getMarker() {
         GeoPoint geoPoint = new GeoPoint(getLat(), getLon());
-        MarkerItem markerItem = new MarkerItem(this, getProperty(NAME),
+        MarkerItem markerItem = new MarkerItem(this, getProperty(TEXT),
                 "Current Location", geoPoint);
         return markerItem;
     }
@@ -94,7 +94,7 @@ public class SimpleFeature implements Parcelable {
     public void writeToParcel(Parcel out, int flags) {
         out.writeDouble(getLat());
         out.writeDouble(getLon());
-        out.writeString(getProperty(NAME));
+        out.writeString(getProperty(TEXT));
         out.writeString(getProperty(TYPE));
         out.writeString(getProperty(COUNTRY_CODE));
         out.writeString(getProperty(COUNTRY_NAME));
@@ -111,7 +111,7 @@ public class SimpleFeature implements Parcelable {
         return getLat() == other.getLat()
                 && getLon() == other.getLon()
                 && getHint() == other.getHint()
-                && getProperty(NAME).equals(other.getProperty(NAME));
+                && getProperty(TEXT).equals(other.getProperty(TEXT));
     }
 
     public int hashCode() {
@@ -159,7 +159,7 @@ public class SimpleFeature implements Parcelable {
     }
 
     public String getSingleLine() {
-        return getProperty(NAME) + ", " + getProperty(LOCAL_ADMIN) + ", " + getAbbr();
+        return getProperty(TEXT) + ", " + getProperty(LOCAL_ADMIN) + ", " + getAbbr();
     }
 
     public static class ViewHolder {
@@ -176,7 +176,7 @@ public class SimpleFeature implements Parcelable {
 
         public void setFromFeature(SimpleFeature simpleFeature) {
             if (simpleFeature != null) {
-                title.setText(simpleFeature.getProperty(NAME));
+                title.setText(simpleFeature.getProperty(TEXT));
                 address.setText(String.format(Locale.getDefault(), "%s, %s",
                         simpleFeature.getProperty(LOCAL_ADMIN), simpleFeature.getAbbr()));
             }

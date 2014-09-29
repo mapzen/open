@@ -1,5 +1,6 @@
 package com.mapzen.search;
 
+import com.mapzen.MapController;
 import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
@@ -15,6 +16,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Typeface;
+import android.location.Location;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -33,6 +35,9 @@ import retrofit.RetrofitError;
 
 import static com.mapzen.MapzenApplication.PELIAS_BLOB;
 import static com.mapzen.android.Pelias.getPelias;
+import static com.mapzen.entity.SimpleFeature.CREATOR;
+import static com.mapzen.entity.SimpleFeature.TEXT;
+import static com.mapzen.search.SavedSearch.SEARCH_TERM;
 import static com.mapzen.search.SavedSearch.getSavedSearch;
 
 public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQueryTextListener {
@@ -119,12 +124,12 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     @Override
     public void bindView(View view, Context c, Cursor cursor) {
         final TextView tv = (TextView) view;
-        if (cursor.getColumnName(1).equals(SavedSearch.SEARCH_TERM)) {
+        if (cursor.getColumnName(1).equals(SEARCH_TERM)) {
             tv.setText(cursor.getString(1));
         } else {
             final int blobIndex = cursor.getColumnIndex(PELIAS_BLOB);
             byte[] bytes = cursor.getBlob(blobIndex);
-            SimpleFeature simpleFeature = ParcelableUtil.unmarshall(bytes, SimpleFeature.CREATOR);
+            SimpleFeature simpleFeature = ParcelableUtil.unmarshall(bytes, CREATOR);
             tv.setTextColor(app.getResources().getColor(R.color.light_gray));
 
             final Highlighter highlighter = initAutoCompleteHighlighter(simpleFeature);
@@ -134,7 +139,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     }
 
     private Highlighter initAutoCompleteHighlighter(SimpleFeature simpleFeature) {
-        final Highlighter highlighter = new Highlighter(simpleFeature.getHint(),
+        final Highlighter highlighter = new Highlighter(simpleFeature.getProperty(TEXT),
                 app.getResources().getColor(R.color.red));
         final String query  = searchView.getQuery().toString().trim();
         final String[] terms = TextUtils.split(query, " ");
@@ -169,7 +174,9 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         Logger.d("search: term newText: " + newText);
         if (!newText.isEmpty()) {
             Logger.d("search: autocomplete starts");
-            getPelias().suggest(newText, getPeliasCallback());
+            Location location = MapController.getMapController().getLocation();
+            getPelias().suggest(newText, String.valueOf(location.getLatitude()),
+                    String.valueOf(location.getLongitude()), getPeliasCallback());
             Logger.d("search: autocomplete request enqueued");
         }
         return true;
