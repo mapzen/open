@@ -4,7 +4,7 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/teal_background">
+                android:background="@color/yellow_background">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/logo_top_margin"
             android:layout_gravity="center"
-            android:src="@drawable/ic_mapzen_logo_white"
+            android:src="@drawable/ic_open_logo"
             android:contentDescription="@string/logo_description"
             android:clickable="true" />
     </LinearLayout>
