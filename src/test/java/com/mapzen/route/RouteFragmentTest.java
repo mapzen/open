@@ -81,7 +81,7 @@ import javax.inject.Inject;
 import static com.mapzen.MapController.KEY_STORED_MAPPOSITION;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.core.MapzenLocation.KEY_LOCATION;
-import static com.mapzen.entity.SimpleFeature.NAME;
+import static com.mapzen.entity.SimpleFeature.TEXT;
 import static com.mapzen.support.TestHelper.MOCK_ACE_HOTEL;
 import static com.mapzen.support.TestHelper.MOCK_AROUND_THE_BLOCK;
 import static com.mapzen.support.TestHelper.MOCK_NY_TO_VT;
@@ -540,7 +540,7 @@ public class RouteFragmentTest {
         SimpleFeature simpleFeature = getTestSimpleFeature();
         TextView view = (TextView) fragment.getView().findViewById(R.id.destination_name);
         assertThat(view.getText()).isEqualTo(act
-                .getString(R.string.routing_to_text) + simpleFeature.getProperty(NAME));
+                .getString(R.string.routing_to_text) + simpleFeature.getProperty(TEXT));
         assertThat(view).hasEllipsize(TextUtils.TruncateAt.END);
         assertThat(view).hasMaxLines(1);
     }

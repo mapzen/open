@@ -39,7 +39,7 @@ import javax.inject.Inject;
 
 import static com.mapzen.MapController.locationToGeoPoint;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATE_VIEW;
-import static com.mapzen.entity.SimpleFeature.NAME;
+import static com.mapzen.entity.SimpleFeature.TEXT;
 import static com.mapzen.route.RoutePreviewFragment.REDUCE_TOLERANCE;
 import static com.mapzen.support.TestHelper.getFixture;
 import static com.mapzen.support.TestHelper.getTestLocation;
@@ -148,7 +148,7 @@ public class RoutePreviewFragmentTest {
         fragment.createRouteToDestination();
         fragment.success(new Route(getFixture("around_the_block")));
         assertThat(textView).isNotNull();
-        assertThat(textView).hasText(feature.getProperty(NAME));
+        assertThat(textView).hasText(feature.getProperty(TEXT));
     }
 
     @Test
@@ -174,7 +174,7 @@ public class RoutePreviewFragmentTest {
         fragment.getView().findViewById(R.id.route_reverse).performClick();
         fragment.success(new Route(getFixture("around_the_block")));
         assertThat(destination).hasText("Current Location");
-        assertThat(startingPoint).hasText(feature.getProperty(NAME));
+        assertThat(startingPoint).hasText(feature.getProperty(TEXT));
     }
 
     @Test

@@ -64,7 +64,7 @@ import static com.mapzen.MapController.geoPointToPair;
 import static com.mapzen.MapController.locationToPair;
 import static com.mapzen.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.core.MapzenLocation.Util.getDistancePointFromBearing;
-import static com.mapzen.entity.SimpleFeature.NAME;
+import static com.mapzen.entity.SimpleFeature.TEXT;
 import static com.mapzen.helpers.ZoomController.DrivingSpeed;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LAT;
 import static com.mapzen.util.DatabaseHelper.COLUMN_LNG;
@@ -146,7 +146,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         adapter = new RouteAdapter(act, instructions, fragment);
         TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
         destinationName.setText(getString(R.string.routing_to_text) + simpleFeature
-                .getProperty(NAME));
+                .getProperty(TEXT));
         if (route != null) {
             distanceToDestination.setDistance(route.getTotalDistance());
         }

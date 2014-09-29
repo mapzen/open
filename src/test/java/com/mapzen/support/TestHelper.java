@@ -39,7 +39,7 @@ import static android.location.LocationManager.GPS_PROVIDER;
 import static com.mapzen.entity.SimpleFeature.ADMIN1_ABBR;
 import static com.mapzen.entity.SimpleFeature.ADMIN1_NAME;
 import static com.mapzen.entity.SimpleFeature.LOCAL_ADMIN;
-import static com.mapzen.entity.SimpleFeature.NAME;
+import static com.mapzen.entity.SimpleFeature.TEXT;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.buildActivity;
@@ -166,7 +166,7 @@ public final class TestHelper {
         SimpleFeature simpleFeature = new SimpleFeature();
         simpleFeature.setLat(1.0);
         simpleFeature.setLon(1.0);
-        simpleFeature.setProperty(NAME, "Test SimpleFeature");
+        simpleFeature.setProperty(TEXT, "Test SimpleFeature");
         simpleFeature.setProperty(ADMIN1_NAME, "New York");
         simpleFeature.setProperty(ADMIN1_ABBR, "NY");
         simpleFeature.setProperty(LOCAL_ADMIN, "Manhattan");
@@ -177,7 +177,7 @@ public final class TestHelper {
     public static Feature getTestFeature() {
         Feature feature = new Feature();
         Properties properties = new Properties();
-        properties.setName("test");
+        properties.setText("test");
         properties.setAdmin0_name("test");
         properties.setAdmin0_abbr("test");
         feature.setProperties(properties);

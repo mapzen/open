@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import static com.mapzen.entity.SimpleFeature.TEXT;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
@@ -47,7 +48,7 @@ public class DirectionListFragmentTest {
         instructions.add(new TestInstruction("Second Instruction", 2, 2.345));
         instructions.add(new TestInstruction("Last Instruction", 15, 0));
         simpleFeature = new SimpleFeature();
-        simpleFeature.setProperty(SimpleFeature.NAME, TEST_LOCATION);
+        simpleFeature.setProperty(TEXT, TEST_LOCATION);
         listener = new TestListener();
         fragment = DirectionListFragment.newInstance(instructions, listener, simpleFeature, false);
         startFragment(fragment);

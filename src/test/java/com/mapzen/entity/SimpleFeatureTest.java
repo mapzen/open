@@ -13,7 +13,7 @@ import static com.mapzen.entity.SimpleFeature.ADMIN0_ABBR;
 import static com.mapzen.entity.SimpleFeature.ADMIN1_ABBR;
 import static com.mapzen.entity.SimpleFeature.ADMIN1_NAME;
 import static com.mapzen.entity.SimpleFeature.LOCAL_ADMIN;
-import static com.mapzen.entity.SimpleFeature.NAME;
+import static com.mapzen.entity.SimpleFeature.TEXT;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
@@ -37,7 +37,7 @@ public class SimpleFeatureTest {
         simpleFeature.setLat(expectedLat);
         simpleFeature.setLon(expectedLon);
         simpleFeature.setHint(expectedHint);
-        simpleFeature.setProperty(NAME, expectedTitle);
+        simpleFeature.setProperty(TEXT, expectedTitle);
         simpleFeature.setProperty(ADMIN1_ABBR, expectedAdmin1Abbr);
         simpleFeature.setProperty(ADMIN1_NAME, expectedAdmin1Name);
         simpleFeature.setProperty(ADMIN0_ABBR, expectedAdmin0Abbr);
@@ -76,7 +76,7 @@ public class SimpleFeatureTest {
         holder.setTitle(title);
         holder.setAddress(address);
         holder.setFromFeature(simpleFeature);
-        assertThat(title.getText().toString()).isEqualTo(simpleFeature.getProperty(NAME));
+        assertThat(title.getText().toString()).isEqualTo(simpleFeature.getProperty(TEXT));
     }
 
     @Test

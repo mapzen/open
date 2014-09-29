@@ -9,7 +9,6 @@ import com.mapzen.android.gson.Result;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.BaseFragment;
 import com.mapzen.fragment.ItemFragment;
-import com.mapzen.util.ApiHelper;
 import com.mapzen.util.Logger;
 
 import org.oscim.layers.marker.ItemizedLayer;
@@ -17,6 +16,7 @@ import org.oscim.layers.marker.MarkerItem;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -248,8 +248,9 @@ public class PagerResultsFragment extends BaseFragment {
         app.setCurrentSearchTerm(query);
         searchTermForCurrentResults = query;
         getSavedSearch().store(query);
-        getPelias().search(query, ApiHelper.getViewBox(mapFragment.getMap()),
-                getSearchCallback(view));
+        Location location = MapController.getMapController().getLocation();
+        getPelias().search(query, String.valueOf(location.getLatitude()),
+                String.valueOf(location.getLongitude()), getSearchCallback(view));
         return true;
     }
 
