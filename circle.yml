@@ -19,6 +19,10 @@ test:
     - mvn install -P jenkins -Dmixpanel.token=$MIXPANEL_TOKEN -Dosm_oauth.key=$OSM_AUTH_KEY -Dosm_oauth.secret=$OSM_AUTH_SECRET
 
 deployment:
+  all:
+    branch: /*/
+    commands:
+      - mvn s3-upload:s3-upload -P all -DbranchName=$CIRCLE_BRANCH -Ds3.accessKey=$S3_ACCESS_KEY -Ds3.secretKey=$S3_SECRET_KEY
   latest:
     branch: master
     commands:
