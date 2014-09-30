@@ -5,6 +5,7 @@
     <color name="destination_color">@color/red</color>
     <color name="destination_text_color">@android:color/white</color>
     <color name="teal_background">#6da1a5</color>
+    <color name="yellow_background">#e6ead2</color>
     <color name="button_red">#d46a5f</color>
     <color name="button_red_pressed">#ba4845</color>
     <color name="sign_up_text">#3b3b3b</color>
