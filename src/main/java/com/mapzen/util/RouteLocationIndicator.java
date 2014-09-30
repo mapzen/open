@@ -24,7 +24,8 @@ public class RouteLocationIndicator extends Layer {
     private float degrees = 0;
     private int visible;
     private LayerRenderer renderer;
-    private static final String VERTEX_SHADER = ""
+
+    public static final String VERTEX_SHADER = ""
             + "precision mediump float;"
             + "uniform float u_degree;"
             + "uniform mat4 u_mvp;"
@@ -39,7 +40,7 @@ public class RouteLocationIndicator extends Layer {
             + "    * 80.0, 0.0, 1.0);"
             + "}";
 
-    private static final String FRAGMENT_SHADER = ""
+    public static final String FRAGMENT_SHADER = ""
             + "precision mediump float;"
             + "void main() {"
             + "  gl_FragColor = vec4(0.828125, 0.390625, 0.359375, 1.0);"
