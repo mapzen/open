@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="application_name">Mapzen</string>
+    <string name="application_name">Open</string>
     <string name="search_title">Search</string>
     <string name="results_title">Search Results</string>
     <string name="route_description">Turn Icon</string>
@@ -91,7 +91,7 @@
     <string name="logo_description">Mapzen Logo</string>
     <string name="osm_logout">OpenStreetMap Logout</string>
     <string name="osm_login_title">Please Authorize</string>
-    <string name="osm_init_login">Continue with Open Street Map</string>
+    <string name="osm_init_login">Continue with OpenStreetMap</string>
     <string name="login_explanation">Sign up or log in with Open Street Map to get started.</string>
     <string name="motto">Start where you are.</string>
     <string name="login_error">Unable to log in. You can try to log in again by restarting the application.</string>
