@@ -465,7 +465,7 @@
                         <configuration>
                             <bucketName>android.mapzen.com</bucketName>
                             <source>target/${project.build.finalName}.apk</source>
-                            <destination>${branchName}${project.build.finalName}-${timestamp}.apk</destination>
+                            <destination>${branchName}-${project.build.finalName}-${timestamp}.apk</destination>
                             <accessKey>${s3.accessKey}</accessKey>
                             <secretKey>${s3.secretKey}</secretKey>
                         </configuration>
