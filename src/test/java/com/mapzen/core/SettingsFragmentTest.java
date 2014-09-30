@@ -183,12 +183,12 @@ public class SettingsFragmentTest {
     @Test
     public void shouldDisplayDefaultZoomValueAsSummary() throws Exception {
         assertThat(findPreferenceById(R.string.settings_zoom_walking_key)).hasSummary("19");
-        assertThat(findPreferenceById(R.string.settings_zoom_biking_key)).hasSummary("18");
-        assertThat(findPreferenceById(R.string.settings_zoom_driving_0to15_key)).hasSummary("17");
-        assertThat(findPreferenceById(R.string.settings_zoom_driving_15to25_key)).hasSummary("16");
-        assertThat(findPreferenceById(R.string.settings_zoom_driving_25to35_key)).hasSummary("15");
-        assertThat(findPreferenceById(R.string.settings_zoom_driving_35to50_key)).hasSummary("14");
-        assertThat(findPreferenceById(R.string.settings_zoom_driving_over50_key)).hasSummary("13");
+        assertThat(findPreferenceById(R.string.settings_zoom_biking_key)).hasSummary("19");
+        assertThat(findPreferenceById(R.string.settings_zoom_driving_0to15_key)).hasSummary("19");
+        assertThat(findPreferenceById(R.string.settings_zoom_driving_15to25_key)).hasSummary("18");
+        assertThat(findPreferenceById(R.string.settings_zoom_driving_25to35_key)).hasSummary("17");
+        assertThat(findPreferenceById(R.string.settings_zoom_driving_35to50_key)).hasSummary("16");
+        assertThat(findPreferenceById(R.string.settings_zoom_driving_over50_key)).hasSummary("15");
     }
 
     @Test
@@ -239,13 +239,13 @@ public class SettingsFragmentTest {
     @Test
     public void shouldInitDefaultValues() throws Exception {
         assertValue(R.string.settings_zoom_walking_key, 19);
-        assertValue(R.string.settings_zoom_biking_key, 18);
-        assertValue(R.string.settings_zoom_driving_0to15_key, 17);
-        assertValue(R.string.settings_zoom_driving_15to25_key, 16);
-        assertValue(R.string.settings_zoom_driving_25to35_key, 15);
-        assertValue(R.string.settings_zoom_driving_35to50_key, 14);
-        assertValue(R.string.settings_zoom_driving_over50_key, 13);
-        assertValue(R.string.settings_number_of_locations_for_average_speed_key, 10);
+        assertValue(R.string.settings_zoom_biking_key, 19);
+        assertValue(R.string.settings_zoom_driving_0to15_key, 19);
+        assertValue(R.string.settings_zoom_driving_15to25_key, 18);
+        assertValue(R.string.settings_zoom_driving_25to35_key, 17);
+        assertValue(R.string.settings_zoom_driving_35to50_key, 16);
+        assertValue(R.string.settings_zoom_driving_over50_key, 15);
+        assertValue(R.string.settings_number_of_locations_for_average_speed_key, 3);
     }
 
     private void assertValue(int id, int value) {

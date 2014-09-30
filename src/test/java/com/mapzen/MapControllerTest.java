@@ -24,12 +24,11 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.preference.PreferenceManager;
 
-import java.util.ArrayList;
-
 import javax.inject.Inject;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.mapzen.MapController.DEBUG_LOCATION;
+import static com.mapzen.MapController.DEFAULT_ZOOM_LEVEL;
 import static com.mapzen.MapController.KEY_BEARING;
 import static com.mapzen.MapController.KEY_LATITUDE;
 import static com.mapzen.MapController.KEY_LONGITUDE;
@@ -218,15 +217,12 @@ public class MapControllerTest {
 
     @Test
     public void setMapPerspectiveForInstruction_shouldSetMapPosition() throws Exception {
-        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction instruction = getTestInstruction(40.0, 100.0);
         Map map = controller.getMap();
         map.setMapPosition(new MapPosition(instruction.getLocation().getLatitude(),
-                instruction.getLocation().getLongitude(),
-                controller.ROUTE_ZOOM_LEVEL));
+                instruction.getLocation().getLongitude(), DEFAULT_ZOOM_LEVEL));
         double originalX =  map.getMapPosition().getX();
-                instructions.add(instruction);
-
+        controller.setZoomLevel(DEFAULT_ZOOM_LEVEL);
         controller.setMapPerspectiveForInstruction(instruction);
         double newX = map.getMapPosition().getX();
         assertThat(originalX - newX).isGreaterThan(0);
@@ -240,14 +236,6 @@ public class MapControllerTest {
         controller.setRotation(55f);
         assertThat(((TestViewport) controller.getMap().viewport()).getRotation())
                 .isEqualTo(55f);
-    }
-
-    @Test
-    public void setPosition_shouldSetRotation() throws Exception {
-        controller.setPosition(getTestLocation(33.3, 44.4));
-        MapPosition pos = controller.getMap().getMapPosition();
-        assertThat(Math.round(pos.getLatitude())).isEqualTo(Math.round(33.3));
-        assertThat(Math.round(pos.getLongitude())).isEqualTo(Math.round(44.4));
     }
 
     @Test
@@ -285,7 +273,7 @@ public class MapControllerTest {
 
     @Test
     public void saveLocation_shouldStoreCoordinates() {
-        controller.setPosition(getTestLocation(22.0, 44.0));
+        controller.getMap().setMapPosition(new MapPosition(22.0, 44.0, DEFAULT_ZOOM_LEVEL));
         controller.saveLocation();
         assertThat(getSavedMapPrefs().getInt(KEY_LATITUDE, 0)).isEqualTo((int) (22.0 * 1e6));
         assertThat(getSavedMapPrefs().getInt(KEY_LONGITUDE, 0)).isEqualTo((int) (44.0 * 1e6));
@@ -365,8 +353,7 @@ public class MapControllerTest {
         controller.setZoomLevel(3);
         assertThat(controller.getZoomLevel()).isEqualTo(3);
         controller.resetZoomAndPointNorth();
-        assertThat(controller.getZoomLevel())
-            .isEqualTo(MapController.DEFAULT_ZOOM_LEVEL);
+        assertThat(controller.getZoomLevel()).isEqualTo(DEFAULT_ZOOM_LEVEL);
     }
 
     @Test
@@ -390,6 +377,13 @@ public class MapControllerTest {
         controller.restoreFromSavedLocation();
         MapzenApplication app = ((MapzenApplication) Robolectric.application);
         assertThat(app.shouldMoveMapToLocation()).isFalse();
+    }
+
+    @Test
+    public void quarterOn_shouldMaintainCurrentZoomLevel() throws Exception {
+        controller.setZoomLevel(10);
+        controller.quarterOn(getTestLocation(0, 0), 0);
+        assertThat(controller.getMap().getMapPosition().getZoomLevel()).isEqualTo(10);
     }
 
     private SharedPreferences getSavedMapPrefs() {
@@ -422,5 +416,4 @@ public class MapControllerTest {
                 activity.getString(R.string.settings_fixed_location_key), fixedLocation);
         prefEditor.commit();
     }
-
 }
