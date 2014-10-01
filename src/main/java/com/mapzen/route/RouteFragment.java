@@ -390,7 +390,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @Override
     public void onApproachInstruction(int index) {
-        voiceNavigationController.playInstruction(instructions.get(index));
+        if (index < instructions.size() - 1) {
+            voiceNavigationController.playInstruction(instructions.get(index));
+        }
     }
 
     @Override

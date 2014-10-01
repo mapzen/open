@@ -896,6 +896,13 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onApproachInstruction_shouldNotAnnounceYouHaveArrivedEarly() throws Exception {
+        loadAceHotelMockRoute();
+        fragment.onApproachInstruction(fragment.getRoute().getRouteInstructions().size() - 1);
+        assertLastSpokenText(null);
+    }
+
+    @Test
     public void onInstructionComplete_shouldSpeakContinueInstruction() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 
