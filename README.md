@@ -8,7 +8,7 @@ This project is a simple mobile mapping application built using the Mapzen SDKs 
 
 * [Java 7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)
 * [Maven 3.1+](http://maven.apache.org/download.cgi)
-* [Android SDK](http://developer.android.com/sdk/index.html) (Platform-tools, Build-tools 19.0.3, API 19)
+* [Android SDK](http://developer.android.com/sdk/index.html) (Platform-tools, Support Repository, Build-tools 19.0.3, API 19)
 * `JAVA_HOME`, `M2_HOME`, and `ANDROID_HOME` environment variables
 
 ## Mapzen Android Demo
@@ -23,7 +23,9 @@ $ mvn clean install
 $ mvn android:deploy android:run
 ```
 
-**Note:** Additional packages must be installed to run `aapt` on Ubuntu 64-bit installations. Please see http://stackoverflow.com/questions/19523502/androids-aapt-not-running-on-64-bit-ubuntu-13-10-no-ia32-libs-how-can-i-fix for more information.
+**Note to OS X users:** You can install Maven using [Homebrew](http://brew.sh/) but you may receive an `Error: Could not find or load main class ...`. To fix this, set your `M2_HOME` to `/usr/local/Cellar/maven/[version]/libexec` (note the added 'libexec'). 
+
+**Note to Ubuntu users:** Additional packages must be installed to run `aapt` on Ubuntu 64-bit installations. Please see http://stackoverflow.com/questions/19523502/androids-aapt-not-running-on-64-bit-ubuntu-13-10-no-ia32-libs-how-can-i-fix for more information.
 
 ## Contributions
 We appreciate pull requests. Please run <code>$ mvn clean verify</code>
