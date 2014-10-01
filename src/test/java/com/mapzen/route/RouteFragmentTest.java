@@ -964,6 +964,13 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onRouteComplete_shouldHideFooter() throws Exception {
+        loadAceHotelMockRoute();
+        fragment.onRouteComplete();
+        assertThat(fragment.getView().findViewById(R.id.footer_wrapper)).isNotVisible();
+    }
+
+    @Test
     public void onPageSelected_shouldTurnMap() throws Exception {
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();

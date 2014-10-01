@@ -468,6 +468,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         pager.setCurrentItem(instructions.size() - 1);
         voiceNavigationController.playInstruction(instructions.get(instructions.size() - 1));
         distanceToDestination.setDistance(0);
+        footerWrapper.setVisibility(View.GONE);
     }
 
     public View getPagerViewForIndex(int index) {
