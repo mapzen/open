@@ -14,7 +14,7 @@
     <dimen name="login_text_bottom_padding">20dp</dimen>
     <dimen name="logo_top_margin">180dp</dimen>
     <dimen name="button_side_padding">20dp</dimen>
-    <dimen name="button_above_below_padding">10dp</dimen>
+    <dimen name="button_above_below_padding">20dp</dimen>
     <dimen name="motto_bottom_margin">110dp</dimen>
     <dimen name="button_font_size">10pt</dimen>
     <dimen name="motto_font_size">16pt</dimen>

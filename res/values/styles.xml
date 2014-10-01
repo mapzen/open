@@ -33,6 +33,7 @@
     <style name="MapzenTitleText" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
         <item name="android:textColor">@color/red</item>
         <item name="android:textSize">@dimen/medium</item>
+        <item name="android:fontFamily">sans-serif-light-condensed</item>
     </style>
 
     <style name="SearchResultsTitleText" parent="MapzenTitleText">
