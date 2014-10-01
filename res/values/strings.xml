@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="application_name">Open</string>
+    <string name="application_name">Open by Mapzen</string>
     <string name="search_title">Search</string>
     <string name="results_title">Search Results</string>
     <string name="route_description">Turn Icon</string>
@@ -88,11 +88,11 @@
     <string name="settings_number_of_locations_for_average_speed_title">Number of Location for average speed</string>
 
     <string name="toast_fixed_location_is_malformed">Your fixed location is malformed</string>
-    <string name="logo_description">Mapzen Logo</string>
+    <string name="logo_description">Open Logo</string>
     <string name="osm_logout">OpenStreetMap Logout</string>
     <string name="osm_login_title">Please Authorize</string>
     <string name="osm_init_login">Continue with OpenStreetMap</string>
-    <string name="login_explanation">Sign up or log in with Open Street Map to get started.</string>
+    <string name="login_explanation">Sign up or log in with OpenStreetMap to get started.</string>
     <string name="motto">Start where you are.</string>
     <string name="login_error">Unable to log in. You can try to log in again by restarting the application.</string>
 

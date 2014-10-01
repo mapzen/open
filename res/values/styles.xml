@@ -23,7 +23,7 @@
     <style name="ActionBar.Solid.Mapzen" parent="@android:style/Widget.Holo.Light.ActionBar.Solid">
         <item name="android:titleTextStyle">@style/MapzenTitleText</item>
         <item name="android:background">@color/transparent_white</item>
-        <item name="android:icon">@drawable/ic_mapzen_icon</item>
+        <item name="android:icon">@drawable/ic_open_icon</item>
     </style>
 
     <style name="ActionBar.Solid.Mapzen.SearchResults" parent="ActionBar.Solid.Mapzen">
