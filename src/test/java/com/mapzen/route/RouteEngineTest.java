@@ -4,6 +4,7 @@ import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 import com.mapzen.support.MapzenTestRunner;
 
+import org.fest.assertions.data.Offset;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,18 +53,17 @@ public class RouteEngineTest {
 
     @Test
     public void onApproachInstruction_shouldReturnIndex() throws Exception {
-        routeEngine.onLocationChanged(route.getRouteInstructions().get(0).getLocation());
-        routeEngine.onLocationChanged(route.getRouteInstructions().get(1).getLocation());
+        Location start = route.getRouteInstructions().get(0).getLocation();
+        routeEngine.onLocationChanged(start);
+        Location preLoc = getTestLocation(40.743486, -73.988273);
+        routeEngine.onLocationChanged(preLoc);
+        Location loc = route.getRouteInstructions().get(1).getLocation();
+        routeEngine.onLocationChanged(loc);
         assertThat(listener.approachIndex).isEqualTo(1);
     }
 
     @Test
     public void onApproachInstruction_shouldNotFireForDestination() throws Exception {
-        routeEngine.onLocationChanged(route.getRouteInstructions().get(0).getLocation());
-        routeEngine.onLocationChanged(route.getRouteInstructions().get(1).getLocation());
-        routeEngine.onLocationChanged(route.getRouteInstructions().get(2).getLocation());
-        routeEngine.onLocationChanged(route.getRouteInstructions().get(3).getLocation());
-        routeEngine.onLocationChanged(route.getRouteInstructions().get(4).getLocation());
         routeEngine.onLocationChanged(route.getRouteInstructions().get(5).getLocation());
         assertThat(listener.approachIndex).isNotEqualTo(5);
     }
@@ -78,33 +78,37 @@ public class RouteEngineTest {
     public void onInstructionComplete_shouldReturnIndex() throws Exception {
         routeEngine.onLocationChanged(route.getRouteInstructions().get(0).getLocation());
         routeEngine.onLocationChanged(route.getRouteInstructions().get(1).getLocation());
-        assertThat(listener.completeIndex).isEqualTo(0);
+        assertThat(listener.completeIndex).isEqualTo(1);
     }
 
     @Test
     public void onUpdateDistance_shouldReturnDistanceToNextInstruction() throws Exception {
         routeEngine.onLocationChanged(route.getRouteInstructions().get(0).getLocation());
-        assertThat(listener.distanceToNextInstruction).isEqualTo(0);
+        assertThat((double) listener.distanceToNextInstruction)
+                .isEqualTo(route.getRouteInstructions().get(0).getDistance(), Offset.offset(1.0));
     }
 
     @Test
     public void onUpdateDistance_shouldHaveFullDistanceToDestinationAtStart() throws Exception {
         routeEngine.onLocationChanged(route.getRouteInstructions().get(0).getLocation());
-        assertThat(listener.distanceToDestination).isEqualTo(route.getTotalDistance());
+        assertThat((double) listener.distanceToDestination)
+                .isEqualTo((double) route.getTotalDistance(), Offset.offset(1.0));
     }
 
     @Test
     public void onUpdateDistance_shouldHaveZeroDistanceToNextInstructionAtStart() throws Exception {
         routeEngine.onLocationChanged(route.getRouteInstructions().get(0).getLocation());
-        assertThat(listener.distanceToNextInstruction).isEqualTo(0);
+        assertThat((double) listener.distanceToNextInstruction)
+                .isEqualTo(route.getRouteInstructions().get(0).getDistance(), Offset.offset(1.0));
     }
 
     @Test
     public void onUpdateDistance_shouldCountdownDistanceToDestinationAtTurn() throws Exception {
         routeEngine.onLocationChanged(route.getRouteInstructions().get(0).getLocation());
         routeEngine.onLocationChanged(route.getRouteInstructions().get(1).getLocation());
-        assertThat(listener.distanceToDestination).isEqualTo(route.getTotalDistance() -
-                route.getRouteInstructions().get(0).getDistance());
+        assertThat((double) listener.distanceToDestination).isEqualTo((double)
+                (route.getTotalDistance() - route.getRouteInstructions().get(0).getDistance()),
+                Offset.offset(1.0));
     }
 
     @Test
@@ -113,9 +117,7 @@ public class RouteEngineTest {
         routeEngine.onLocationChanged(route.getRouteInstructions().get(0).getLocation());
         routeEngine.onLocationChanged(location);
 
-        Location snapLocation = route.snapToRoute(location);
-        Location nextInstruction = route.getRouteInstructions().get(1).getLocation();
-        int expected = (int) snapLocation.distanceTo(nextInstruction);
+        int expected = route.getDistanceToNextInstruction();
         assertThat(listener.distanceToNextInstruction).isEqualTo(expected);
     }
 
@@ -131,13 +133,14 @@ public class RouteEngineTest {
         int distanceToNextInstruction = (int) snapLocation.distanceTo(nextInstruction);
         int expected = route.getTotalDistance() - instruction.getDistance()
                 + distanceToNextInstruction;
-        assertThat(listener.distanceToDestination).isEqualTo(expected);
+        assertThat((double) listener.distanceToDestination).isEqualTo(expected, Offset.offset(2.0));
     }
 
     @Test
-    public void onUpdateDistance_shouldNotFireWhenLost() throws Exception {
+    public void onUpdateDistance_shouldFireWhenLost() throws Exception {
         routeEngine.onLocationChanged(getTestLocation(0, 0));
-        assertThat(listener.distanceToDestination).isEqualTo(-1);
+        assertThat((double) listener.distanceToDestination)
+                .isEqualTo(route.getTotalDistance(), Offset.offset(1.0));
     }
 
     @Test
@@ -148,6 +151,10 @@ public class RouteEngineTest {
 
     @Test
     public void onRouteComplete_shouldOnlyTriggerOnce() throws Exception {
+        routeEngine.onLocationChanged(route.getRouteInstructions().get(1).getLocation());
+        routeEngine.onLocationChanged(route.getRouteInstructions().get(2).getLocation());
+        routeEngine.onLocationChanged(route.getRouteInstructions().get(3).getLocation());
+        routeEngine.onLocationChanged(route.getRouteInstructions().get(4).getLocation());
         routeEngine.onLocationChanged(route.getRouteInstructions().get(5).getLocation());
         listener.routeComplete = false;
         routeEngine.onLocationChanged(route.getRouteInstructions().get(5).getLocation());

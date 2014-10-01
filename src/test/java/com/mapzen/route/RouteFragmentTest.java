@@ -578,11 +578,12 @@ public class RouteFragmentTest {
         loadAceHotelMockRoute();
         fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(0).getLocation());
         fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(1).getLocation());
+        int expected = fragment.pager.getCurrentItem();
         simulateUserPagerTouch();
         fragment.pager.setCurrentItem(0);
         simulateUserPagerTouch();
         fragment.getView().findViewById(R.id.resume_button).performClick();
-        assertThat(fragment.pager.getCurrentItem()).isEqualTo(1);
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(expected);
     }
 
     @Test
@@ -599,16 +600,16 @@ public class RouteFragmentTest {
     public void onClickResume_shouldStartAtPagerLocation() throws Exception {
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
-        route.addSeenInstruction(instructions.get(0));
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
         fragment.onLocationChanged(instructions.get(1).getLocation());
         fragment.onLocationChanged(instructions.get(2).getLocation());
+        int expected = fragment.pager.getCurrentItem();
         simulateUserPagerTouch();
         fragment.pager.setCurrentItem(0);
         ImageButton resume = (ImageButton) fragment.getView().findViewById(R.id.resume_button);
         resume.performClick();
-        assertThat(fragment.pager.getCurrentItem()).isEqualTo(2);
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(expected);
     }
 
     @Test
@@ -633,8 +634,6 @@ public class RouteFragmentTest {
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
         fragment.setInstructions(instructions);
-        route.addSeenInstruction(instructions.get(0));
-        route.addSeenInstruction(instructions.get(1));
         FragmentTestUtil.startFragment(fragment);
         int firstInstruction = fragment.pager.getCurrentItem();
         ImageButton rightArrow = (ImageButton) getInstructionView(firstInstruction)
@@ -714,7 +713,7 @@ public class RouteFragmentTest {
         loadAceHotelMockRoute();
         fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(0).getLocation());
         fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(1).getLocation());
-        assertThat(fragment.pager.getCurrentItem()).isEqualTo(1);
+        assertThat(fragment.pager.getCurrentItem()).isEqualTo(2);
     }
 
     @Test
@@ -762,7 +761,6 @@ public class RouteFragmentTest {
         fragment.onInstructionComplete(1);
         fragment.onInstructionComplete(2);
         fragment.onClickResume();
-        fragment.resumeAutoPaging();
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(3);
     }
 
@@ -806,10 +804,9 @@ public class RouteFragmentTest {
     public void onLocationChange_shouldAdvanceWhenUserHasResumed() throws Exception {
         loadAceHotelMockRoute();
         simulateUserPagerTouch();
-        fragment.getRoute().addSeenInstruction(fragment.getRoute().getRouteInstructions().get(0));
         fragment.onClickResume();
+        fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(0).getLocation());
         fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(1).getLocation());
-        fragment.onLocationChanged(fragment.getRoute().getRouteInstructions().get(2).getLocation());
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(2);
     }
 
@@ -829,9 +826,6 @@ public class RouteFragmentTest {
         fragment.onResume();
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
-        for (Instruction instruction : instructions) {
-            route.addSeenInstruction(instruction);
-        }
         fragment.onLocationChanged(instructions.get(0).getLocation());
         fragment.onLocationChanged(instructions.get(1).getLocation());
         fragment.onLocationChanged(instructions.get(2).getLocation());
@@ -840,8 +834,6 @@ public class RouteFragmentTest {
     @Test
     public void onLocationChanged_shouldNotAdvanceWhenDistanceEqualsTurnRadius() throws Exception {
         loadAceHotelMockRoute();
-        fragment.getRoute().addSeenInstruction(fragment.getRoute().getRouteInstructions().get(0));
-        fragment.getRoute().addSeenInstruction(fragment.getRoute().getRouteInstructions().get(1));
         fragment.pager.setCurrentItem(1);
         fragment.onLocationChanged(getTestLocation(40.743016, -73.987105)); // 50 meters away
         assertThat(fragment.pager).hasCurrentItem(1);
@@ -969,8 +961,6 @@ public class RouteFragmentTest {
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
         fragment.setInstructions(instructions);
-        route.addSeenInstruction(instructions.get(0));
-        route.addSeenInstruction(instructions.get(1));
         FragmentTestUtil.startFragment(fragment);
         simulateUserPagerTouch();
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
@@ -984,8 +974,6 @@ public class RouteFragmentTest {
         Route route = fragment.getRoute();
         ArrayList<Instruction> instructions = route.getRouteInstructions();
         fragment.setInstructions(instructions);
-        route.addSeenInstruction(instructions.get(0));
-        route.addSeenInstruction(instructions.get(1));
         FragmentTestUtil.startFragment(fragment);
         assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
         fragment.onPageSelected(2);
@@ -1039,18 +1027,6 @@ public class RouteFragmentTest {
         fragment.onRecalculate(getTestLocation(111.0, 111.0));
         fragment.onUpdateDistance(0, 0);
         assertThat(fragment.distanceToDestination).isVisible();
-    }
-
-    @Test
-    public void onUpdateDistance_shouldUpdatePausedPositionAfterManualAdvance() throws Exception {
-        loadAceHotelMockRoute();
-        fragment.onInstructionComplete(0);
-        fragment.onInstructionComplete(1);
-        fragment.pager.setCurrentItem(3);
-        fragment.onUpdateDistance((int) DistanceFormatter.METERS_IN_ONE_MILE, 0);
-        View view = fragment.getPagerViewForIndex(2);
-        TextView textView = (TextView) view.findViewById(R.id.distance_instruction);
-        assertThat(textView).hasText("1 mi");
     }
 
     @Test

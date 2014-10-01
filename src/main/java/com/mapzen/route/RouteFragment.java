@@ -395,11 +395,15 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @Override
     public void onInstructionComplete(int index) {
-        voiceNavigationController.playFlippedInstruction(instructions.get(index));
-        if (isLastInstructionBeforeDestination(index)) {
-            flipInstruction(index);
-        } else if (hasNextInstruction(index)) {
-            showInstruction(index + 1);
+        if (isPaging) {
+            voiceNavigationController.playFlippedInstruction(instructions.get(index));
+            if (isLastInstructionBeforeDestination(index)) {
+                flipInstruction(index);
+            } else if (hasNextInstruction(index)) {
+                showInstruction(index + 1);
+            }
+        } else {
+            pagerPositionWhenPaused = index + 1;
         }
     }
 
@@ -443,7 +447,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     @Override
     public void onUpdateDistance(int distanceToNextInstruction, int distanceToDestination) {
-        debugView.setClosestDistance(distanceToNextInstruction);
+        debugView.setClosestDistance(route.getCurrentInstruction().getLiveDistanceToNext());
         this.distanceToDestination.setDistance(distanceToDestination);
         this.distanceToDestination.setVisibility(View.VISIBLE);
 
@@ -452,7 +456,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             final TextView currentInstructionDistance =
                     (TextView) view.findViewById(R.id.distance_instruction);
             currentInstructionDistance.setText(
-                    DistanceFormatter.format(distanceToNextInstruction, true));
+                    DistanceFormatter.format(
+                            route.getCurrentInstruction().getLiveDistanceToNext(), true));
         }
     }
 
