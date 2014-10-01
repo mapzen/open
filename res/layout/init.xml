@@ -75,8 +75,8 @@
             android:layout_gravity="center"
             android:textAlignment="center"
             android:gravity="center"
-            android:textColor="@android:color/white"
-            android:fontFamily="sans-serif-thin"
+            android:textColor="@android:color/blue"
+            android:fontFamily="sans-serif-light"
             android:textSize="@dimen/motto_font_size"
             android:text="@string/motto" />
     </LinearLayout>
