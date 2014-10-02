@@ -2,7 +2,8 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/instruction_height">
+    android:layout_height="@dimen/instruction_height"
+    android:orientation="horizontal">
 
     <ImageButton
         android:id="@+id/left_arrow"
@@ -12,6 +13,15 @@
         android:layout_height="match_parent"
         android:paddingLeft="@dimen/arrow_padding"
         android:background="@android:color/transparent" />
+
+    <ImageView
+        android:id="@+id/destination_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center_vertical"
+        android:paddingLeft="@dimen/instruction_horizontal_padding"
+        android:src="@drawable/ic_route_destination"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/turn_container"
@@ -49,22 +59,23 @@
     <TextView
         android:id="@+id/full_instruction"
         android:layout_width="wrap_content"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:layout_weight="1"
         android:gravity="center"
         android:maxLines="2"
         android:fontFamily="sans-serif-condensed"
         android:textAlignment="center"
         android:textColor="@color/brown"
         android:textSize="@dimen/medium_2"
-        android:paddingLeft="@dimen/instruction_horizontal_padding"
-        android:layout_height="wrap_content" />
+        android:paddingLeft="@dimen/instruction_horizontal_padding" />
 
     <TextView
         android:id="@+id/full_instruction_after_action"
         android:layout_width="wrap_content"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:layout_weight="1"
         android:gravity="center"
         android:maxLines="2"
         android:fontFamily="sans-serif-condensed"
@@ -72,8 +83,44 @@
         android:textColor="@color/brown"
         android:textSize="@dimen/medium_2"
         android:paddingLeft="@dimen/instruction_horizontal_padding"
-        android:layout_height="wrap_content"
         android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/you_have_arrived"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/instruction_horizontal_padding"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-condensed"
+            android:lineSpacingMultiplier="0.75"
+            android:maxLines="1"
+            android:text="@string/you_have_arrived_at"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/medium" />
+
+        <TextView
+            android:id="@+id/destination_banner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-condensed"
+            android:lineSpacingMultiplier="0.85"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/medium_2" />
+    </LinearLayout>
 
     <ImageButton
         android:id="@+id/right_arrow"

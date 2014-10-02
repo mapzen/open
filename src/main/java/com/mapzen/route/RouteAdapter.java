@@ -5,7 +5,6 @@ import com.mapzen.osrm.Instruction;
 import com.mapzen.util.DisplayHelper;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v4.view.PagerAdapter;
 import android.text.Spannable;
@@ -26,11 +25,16 @@ public class RouteAdapter extends PagerAdapter {
     private Context context;
     private Instruction currentInstruction;
     private RouteFragment fragment;
+    private String destinationName;
 
     public RouteAdapter(Context context, List<Instruction> instructions, RouteFragment fragment) {
         this.context = context;
         this.instructions = instructions;
         this.fragment = fragment;
+    }
+
+    public void setDestinationName(String destinationName) {
+        this.destinationName = destinationName;
     }
 
     @Override
@@ -43,7 +47,6 @@ public class RouteAdapter extends PagerAdapter {
         currentInstruction = instructions.get(position);
         final View view = View.inflate(context, R.layout.instruction, null);
         setBackgroundColor(position, view);
-        setTextColor(position, view);
         setFullInstruction(view);
         setFullInstructionAfterAction(view);
         setTurnIcon(view);
@@ -53,7 +56,20 @@ public class RouteAdapter extends PagerAdapter {
         initArrowOnClickListeners(position, view);
         setTag(position, view);
         container.addView(view);
+        if (position == instructions.size() - 1) {
+            showDestinationView(view);
+        }
+
         return view;
+    }
+
+    private void showDestinationView(View view) {
+        view.findViewById(R.id.full_instruction).setVisibility(View.GONE);
+        view.findViewById(R.id.full_instruction_after_action).setVisibility(View.GONE);
+        view.findViewById(R.id.you_have_arrived).setVisibility(View.VISIBLE);
+        view.findViewById(R.id.turn_container).setVisibility(View.GONE);
+        view.findViewById(R.id.destination_icon).setVisibility(View.VISIBLE);
+        ((TextView) view.findViewById(R.id.destination_banner)).setText(destinationName);
     }
 
     private void setBackgroundColor(int position, View view) {
@@ -61,16 +77,6 @@ public class RouteAdapter extends PagerAdapter {
             view.setBackgroundColor(context.getResources().getColor(R.color.destination_color));
         } else {
             view.setBackgroundColor(context.getResources().getColor(R.color.transparent_gray));
-        }
-    }
-
-    private void setTextColor(int position, View view) {
-        final TextView fullInstruction = (TextView) view.findViewById(R.id.full_instruction);
-        if (position == instructions.size() - 1) {
-            fullInstruction.setTextColor(
-                    context.getResources().getColor(R.color.destination_text_color));
-        } else {
-            fullInstruction.setTextColor(Color.BLACK);
         }
     }
 
@@ -124,9 +130,8 @@ public class RouteAdapter extends PagerAdapter {
 
     private void setTurnIcon(View view) {
         final ImageView turnIcon = (ImageView) view.findViewById(R.id.turn_icon);
-            turnIcon.setImageResource(DisplayHelper.getRouteDrawable(context,
-                    currentInstruction.getTurnInstruction(), DisplayHelper.IconStyle.GRAY));
-
+        turnIcon.setImageResource(DisplayHelper.getRouteDrawable(context,
+                currentInstruction.getTurnInstruction(), DisplayHelper.IconStyle.GRAY));
     }
 
     private void setTurnIconAfterAction(View view) {

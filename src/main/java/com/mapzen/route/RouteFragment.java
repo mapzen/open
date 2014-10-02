@@ -144,6 +144,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         ButterKnife.inject(this, rootView);
         fragment = this;
         adapter = new RouteAdapter(act, instructions, fragment);
+        adapter.setDestinationName(simpleFeature.getProperty(TEXT));
         TextView destinationName = (TextView) rootView.findViewById(R.id.destination_name);
         destinationName.setText(getString(R.string.routing_to_text) + simpleFeature
                 .getProperty(TEXT));
@@ -674,7 +675,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     @Override
-    public void success(Route route) {
+    public void success(final Route route) {
         if (setRoute(route)) {
             act.hideLoadingIndicator();
             isRouting = false;
@@ -687,7 +688,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 act.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        pager.setAdapter(new RouteAdapter(act, instructions, fragment));
+                        final RouteAdapter adapter = new RouteAdapter(act, instructions, fragment);
+                        adapter.setDestinationName(simpleFeature.getProperty(TEXT));
+                        pager.setAdapter(adapter);
                         notificationCreator.createNewNotification(simpleFeature.getMarker().title,
                                 instructions.get(0).getFullInstruction());
                         setCurrentPagerItemStyling(0);
@@ -696,8 +699,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             }
             storeRoute();
         } else {
-            Toast.makeText(act,
-                    act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
+            Toast.makeText(act, act.getString(R.string.no_route_found), Toast.LENGTH_LONG).show();
         }
     }
 

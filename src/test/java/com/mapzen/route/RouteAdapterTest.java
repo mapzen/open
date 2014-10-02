@@ -15,11 +15,13 @@ import android.text.SpannedString;
 import android.text.style.StyleSpan;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import static com.mapzen.support.TestHelper.getTestInstruction;
+import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
 
@@ -79,11 +81,22 @@ public class RouteAdapterTest {
     }
 
     @Test
-    public void lastInstruction_shouldHaveDestinationTextColor() throws Exception {
+    public void lastInstruction_shouldHideFullInstruction() throws Exception {
         View view = (View) routeAdapter.instantiateItem(viewGroup, 1);
-        TextView tv = (TextView) view.findViewById(R.id.full_instruction);
-        int expectedColor = application.getResources().getColor(R.color.destination_text_color);
-        assertThat(tv.getCurrentTextColor()).isEqualTo(expectedColor);
+        assertThat(view.findViewById(R.id.full_instruction)).isNotVisible();
+    }
+
+    @Test
+    public void lastInstruction_shouldShowYouHaveArrived() throws Exception {
+        View view = (View) routeAdapter.instantiateItem(viewGroup, 1);
+        assertThat(view.findViewById(R.id.you_have_arrived)).isVisible();
+    }
+
+    @Test
+    public void lastInstruction_shouldHaveDestinationIcon() throws Exception {
+        View view = (View) routeAdapter.instantiateItem(viewGroup, 1);
+        assertThat(((ImageView) view.findViewById(R.id.turn_icon)).getDrawable())
+                .isEqualTo(application.getResources().getDrawable(R.drawable.ic_route_destination));
     }
 
     @Test
