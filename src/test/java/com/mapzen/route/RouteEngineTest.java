@@ -144,6 +144,14 @@ public class RouteEngineTest {
     }
 
     @Test
+    public void onUpdateDistance_shouldReturnZeroAtDestination() throws Exception {
+        int size = route.getRouteInstructions().size();
+        routeEngine.onLocationChanged(route.getRouteInstructions().get(size - 1).getLocation());
+        assertThat(listener.distanceToNextInstruction).isEqualTo(0);
+        assertThat(listener.distanceToDestination).isEqualTo(0);
+    }
+
+    @Test
     public void onRouteComplete_shouldTriggerAtDestination() throws Exception {
         routeEngine.onLocationChanged(route.getRouteInstructions().get(5).getLocation());
         assertThat(listener.routeComplete).isTrue();

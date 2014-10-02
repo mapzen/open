@@ -896,6 +896,13 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void onApproachInstruction_shouldNotAnnounceYouHaveArrivedEarly() throws Exception {
+        loadAceHotelMockRoute();
+        fragment.onApproachInstruction(fragment.getRoute().getRouteInstructions().size() - 1);
+        assertLastSpokenText(null);
+    }
+
+    @Test
     public void onInstructionComplete_shouldSpeakContinueInstruction() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
 
@@ -954,6 +961,13 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         fragment.onRouteComplete();
         assertThat(fragment.distanceToDestination.getDistance()).isEqualTo(0);
+    }
+
+    @Test
+    public void onRouteComplete_shouldHideFooter() throws Exception {
+        loadAceHotelMockRoute();
+        fragment.onRouteComplete();
+        assertThat(fragment.getView().findViewById(R.id.footer_wrapper)).isNotVisible();
     }
 
     @Test

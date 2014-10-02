@@ -45,8 +45,13 @@ public class RouteEngine {
 
         this.location = location;
         snapLocation();
-        listener.onUpdateDistance(route.getDistanceToNextInstruction(),
-                route.getRemainingDistanceToDestination());
+
+        if (routeState == COMPLETE) {
+            listener.onUpdateDistance(0, 0);
+        } else {
+            listener.onUpdateDistance(route.getDistanceToNextInstruction(),
+                    route.getRemainingDistanceToDestination());
+        }
 
         if (routeState == LOST) {
             return;
