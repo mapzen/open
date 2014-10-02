@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="application_name">Open</string>
+    <string name="application_name">OPEN</string>
     <string name="search_title">Search</string>
     <string name="results_title">Search Results</string>
     <string name="route_description">Turn Icon</string>
