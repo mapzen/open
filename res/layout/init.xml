@@ -75,7 +75,7 @@
             android:layout_gravity="center"
             android:textAlignment="center"
             android:gravity="center"
-            android:textColor="@android:color/blue"
+            android:textColor="@color/blue"
             android:fontFamily="sans-serif-light"
             android:textSize="@dimen/motto_font_size"
             android:text="@string/motto" />
