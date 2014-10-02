@@ -93,10 +93,9 @@ public class RouteAdapterTest {
     }
 
     @Test
-    public void lastInstruction_shouldHaveDestinationIcon() throws Exception {
+    public void lastInstruction_shouldShowDestinationIcon() throws Exception {
         View view = (View) routeAdapter.instantiateItem(viewGroup, 1);
-        assertThat(((ImageView) view.findViewById(R.id.turn_icon)).getDrawable())
-                .isEqualTo(application.getResources().getDrawable(R.drawable.ic_route_destination));
+        assertThat(view.findViewById(R.id.destination_icon)).isVisible();
     }
 
     @Test
