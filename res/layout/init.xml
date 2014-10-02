@@ -41,7 +41,7 @@
             android:textAlignment="center"
             android:gravity="center"
             android:textColor="@color/sign_up_text"
-            android:fontFamily="sans-serif-light"
+            android:fontFamily="sans-serif-condensed-light"
             android:textSize="10pt"
             android:text="@string/login_explanation" />
 
@@ -57,7 +57,7 @@
             android:layout_marginBottom="@dimen/login_text_bottom_padding"
             android:text="@string/osm_init_login"
             android:textColor="@android:color/white"
-            android:fontFamily="sans-serif"
+            android:fontFamily="sans-serif-condensed"
             android:background="@drawable/signin_button"
             android:textSize="@dimen/button_font_size" />
     </LinearLayout>
@@ -76,7 +76,7 @@
             android:textAlignment="center"
             android:gravity="center"
             android:textColor="@color/blue"
-            android:fontFamily="sans-serif-light"
+            android:fontFamily="sans-serif-condensed"
             android:textSize="@dimen/motto_font_size"
             android:text="@string/motto" />
     </LinearLayout>

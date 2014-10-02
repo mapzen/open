@@ -34,6 +34,7 @@
         <item name="android:textColor">@color/red</item>
         <item name="android:textSize">@dimen/medium</item>
         <item name="android:fontFamily">sans-serif-light-condensed</item>
+        <item name="android:paddingLeft">@dimen/routing_footer_left_padding</item>
     </style>
 
     <style name="SearchResultsTitleText" parent="MapzenTitleText">
