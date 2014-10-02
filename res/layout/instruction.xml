@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:paddingLeft="@dimen/arrow_padding"
-        android:background="@android:color/transparent" />
+        android:background="@color/transparent_white" />
 
     <LinearLayout
         android:id="@+id/turn_container"
@@ -55,7 +55,7 @@
         android:maxLines="2"
         android:fontFamily="sans-serif-condensed"
         android:textAlignment="center"
-        android:textColor="@color/brown"
+        android:textColor="@color/red"
         android:textSize="@dimen/medium_2"
         android:paddingLeft="@dimen/instruction_horizontal_padding"
         android:layout_height="wrap_content" />
