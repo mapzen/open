@@ -23,4 +23,5 @@
     <color name="transparent_white">#CCFFFFFF</color>
     <color name="transparent_gray">#CCCECECE</color>
     <color name="transparent_light_gray">#99CECECE</color>
+    <color name="transparent_blue">#E66ea0a4</color>
 </resources>

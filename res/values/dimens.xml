@@ -11,10 +11,10 @@
     <dimen name="icon_width">48dp</dimen>
     <dimen name="icon_height">48dp</dimen>
     <dimen name="route_resume_height">50dp</dimen>
-    <dimen name="logo_top_margin">60dp</dimen>
-    <dimen name="login_text_bottom_padding">60dp</dimen>
+    <dimen name="login_text_bottom_padding">20dp</dimen>
+    <dimen name="logo_top_margin">180dp</dimen>
     <dimen name="button_side_padding">20dp</dimen>
-    <dimen name="button_above_below_padding">10dp</dimen>
+    <dimen name="button_above_below_padding">20dp</dimen>
     <dimen name="motto_bottom_margin">110dp</dimen>
     <dimen name="button_font_size">10pt</dimen>
     <dimen name="motto_font_size">16pt</dimen>
