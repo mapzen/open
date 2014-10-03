@@ -31,6 +31,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 import org.oscim.layers.PathLayer;
 import org.oscim.map.TestMap;
@@ -127,6 +128,7 @@ public class RouteFragmentTest {
     private TestMenu menu;
     private ArrayList<Instruction> testInstructions;
     private SQLiteDatabase db;
+    private Location startLocation;
 
     @Captor
     @SuppressWarnings("unused")
@@ -145,6 +147,8 @@ public class RouteFragmentTest {
         initTestFragment();
         app = Robolectric.getShadowApplication();
         db = ((MapzenApplication) Robolectric.application).getDb();
+        GeoPoint start = fragment.getSimpleFeature().getGeoPoint();
+        startLocation = getTestLocation(start.getLatitude(), start.getLongitude());
     }
 
     @After
@@ -1187,9 +1191,11 @@ public class RouteFragmentTest {
         RouteFragment spyFragment = spy(fragment);
         spyFragment.setRoute(new Route(MOCK_AROUND_THE_BLOCK));
         FragmentTestUtil.startFragment(spyFragment);
+        spyFragment.onLocationChanged(startLocation);
         spyFragment.onLocationChanged(testLocation);
         verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(new JSONObject(MOCK_AROUND_THE_BLOCK)));
+        spyFragment.onLocationChanged(startLocation);
         spyFragment.onLocationChanged(testLocation);
         verify(spyFragment, Mockito.times(2)).createRouteTo(testLocation);
     }
@@ -1200,6 +1206,7 @@ public class RouteFragmentTest {
         RouteFragment spyFragment = spy(fragment);
         spyFragment.setRoute(new Route(MOCK_AROUND_THE_BLOCK));
         FragmentTestUtil.startFragment(spyFragment);
+        spyFragment.onLocationChanged(startLocation);
         spyFragment.onLocationChanged(testLocation);
         verify(router).setCallback(callback.capture());
         callback.getValue().failure(500);
