@@ -811,14 +811,6 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onLocationChange_shouldNotAdvance() throws Exception {
-        FragmentTestUtil.startFragment(fragment);
-        assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
-        fragment.onLocationChanged(getTestLocation(1, 0));
-        assertThat(fragment.pager.getCurrentItem()).isEqualTo(0);
-    }
-
-    @Test
     public void onLocationChange_shouldNotCrashIfClosestInstructionsAreExhausted()
             throws Exception {
         fragment.setRoute(new Route(MOCK_ROUTE_JSON));
