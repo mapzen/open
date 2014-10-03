@@ -38,13 +38,13 @@ public class RouteEngine {
             return;
         }
 
+        this.location = location;
+        snapLocation();
+
         if (routeState == START) {
             listener.onApproachInstruction(0);
             routeState = PRE_INSTRUCTION;
         }
-
-        this.location = location;
-        snapLocation();
 
         if (routeState == COMPLETE) {
             listener.onUpdateDistance(0, 0);
@@ -87,9 +87,11 @@ public class RouteEngine {
             listener.onRouteComplete();
         }
 
-        if (route.isLost()) {
-            routeState = LOST;
-            listener.onRecalculate(location);
+        if (routeState != START) {
+            if (route.isLost()) {
+                routeState = LOST;
+                listener.onRecalculate(location);
+            }
         }
     }
 

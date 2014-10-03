@@ -39,6 +39,7 @@ public class RouteEngineTest {
 
     @Test
     public void onRecalculate_shouldNotifyWhenLost() throws Exception {
+        routeEngine.onLocationChanged(route.getRouteInstructions().get(0).getLocation());
         routeEngine.onLocationChanged(getTestLocation(0, 0));
         assertThat(listener.recalculating).isTrue();
     }
@@ -155,6 +156,13 @@ public class RouteEngineTest {
     public void onRouteComplete_shouldTriggerAtDestination() throws Exception {
         routeEngine.onLocationChanged(route.getRouteInstructions().get(5).getLocation());
         assertThat(listener.routeComplete).isTrue();
+    }
+
+    @Test
+    public void onLocationChange_shouldNotBeLostIfItNeverSnapped() throws Exception {
+        Location loc = getTestLocation(0, 0);
+        routeEngine.onLocationChanged(loc);
+        assertThat(listener.recalculating).isFalse();
     }
 
     @Test
