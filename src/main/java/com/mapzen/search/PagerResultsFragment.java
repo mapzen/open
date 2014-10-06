@@ -11,6 +11,8 @@ import com.mapzen.fragment.BaseFragment;
 import com.mapzen.fragment.ItemFragment;
 import com.mapzen.util.Logger;
 
+import com.bugsense.trace.BugSenseHandler;
+
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 
@@ -190,8 +192,12 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     public void clearMap() {
-        mapFragment.clearMarkers();
-        mapFragment.updateMap();
+        try {
+            mapFragment.clearMarkers();
+            mapFragment.updateMap();
+        } catch (NullPointerException npe) {
+            BugSenseHandler.sendException(npe);
+        }
     }
 
     public void clearAll() {
