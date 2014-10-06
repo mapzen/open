@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:paddingLeft="@dimen/arrow_padding"
-        android:background="@color/transparent_white" />
+        android:background="@android:color/transparent" />
 
     <ImageView
         android:id="@+id/destination_icon"
