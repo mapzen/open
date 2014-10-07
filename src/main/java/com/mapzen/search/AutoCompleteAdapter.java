@@ -89,6 +89,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                 searchView.setQuery(tv.getText(), false);
                 mapFragment.clearMarkers();
                 mapFragment.updateMap();
+
                 if (simpleFeature != null) {
                     app.setCurrentSearchTerm(simpleFeature.getHint());
                     mapFragment.centerOn(simpleFeature);
@@ -103,8 +104,11 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                 } else {
                     searchView.setQuery(tv.getText().toString(), true);
                 }
+
+                act.getQueryAutoCompleteTextView(searchView).setSelection(0);
             }
         });
+
         parent.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -112,6 +116,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                 return false;
             }
         });
+
         return textView;
     }
 
@@ -157,6 +162,8 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
             searchView.clearFocus();
             return false;
         }
+
+        act.getQueryAutoCompleteTextView(searchView).setSelection(0);
         return act.executeSearchOnMap(query);
     }
 
@@ -209,6 +216,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     public void resetCursor() {
         swapCursor(new MatrixCursor(app.getColumns()));
     }
+
     public void loadSavedSearches() {
         changeCursor(getSavedSearch().getCursor());
     }
