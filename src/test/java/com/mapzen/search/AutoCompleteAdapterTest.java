@@ -26,7 +26,9 @@ import android.support.v4.app.FragmentManager;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import javax.inject.Inject;
@@ -139,13 +141,13 @@ public class AutoCompleteAdapterTest {
     }
 
     @Test
-    public void onQueryTestSubmit_shouldBeFalse() {
+    public void onQueryTextSubmit_shouldBeFalse() {
         assertThat(adapter.onQueryTextSubmit(baseActivity.getString(R.string.secret_phrase)))
                 .isFalse();
     }
 
     @Test
-    public void onQueryTestSubmit_shouldToggleDebugMode() {
+    public void onQueryTextSubmit_shouldToggleDebugMode() {
         Boolean debugMode = baseActivity.isInDebugMode();
         adapter.onQueryTextSubmit(baseActivity.getString(R.string.secret_phrase));
         assertThat(baseActivity.isInDebugMode()).isNotEqualTo(debugMode);
@@ -223,5 +225,28 @@ public class AutoCompleteAdapterTest {
         view.performClick();
         assertThat(((MapzenApplication) application).getCurrentSearchTerm())
                 .isEqualTo(simpleFeature.getHint());
+    }
+
+    @Test
+    public void onQueryTextSubmit_shouldSetSelection() throws Exception {
+        SearchView searchView = adapter.getSearchView();
+        EditText editText = (EditText) searchView.findViewById(application.getResources()
+                .getIdentifier("android:id/search_src_text", null, null));
+
+        searchView.setQuery("query", false);
+        editText.setSelection(1);
+        adapter.onQueryTextSubmit("query");
+        assertThat(editText).hasSelectionStart(0);
+    }
+
+    @Test
+    public void onClick_shouldSetSelection() throws Exception {
+        SearchView searchView = adapter.getSearchView();
+        EditText editText = (EditText) searchView.findViewById(application.getResources()
+                .getIdentifier("android:id/search_src_text", null, null));
+
+        view.setText("query");
+        view.performClick();
+        assertThat(editText).hasSelectionStart(0);
     }
 }
