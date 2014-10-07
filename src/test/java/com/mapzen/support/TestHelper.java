@@ -37,7 +37,7 @@ import java.util.concurrent.Executor;
 import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
 import static com.mapzen.entity.SimpleFeature.ADMIN1_ABBR;
-import static com.mapzen.entity.SimpleFeature.ADMIN1_NAME;
+import static com.mapzen.entity.SimpleFeature.ADMIN1;
 import static com.mapzen.entity.SimpleFeature.LOCAL_ADMIN;
 import static com.mapzen.entity.SimpleFeature.TEXT;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -167,7 +167,7 @@ public final class TestHelper {
         simpleFeature.setLat(1.0);
         simpleFeature.setLon(1.0);
         simpleFeature.setProperty(TEXT, "Test SimpleFeature");
-        simpleFeature.setProperty(ADMIN1_NAME, "New York");
+        simpleFeature.setProperty(ADMIN1, "New York");
         simpleFeature.setProperty(ADMIN1_ABBR, "NY");
         simpleFeature.setProperty(LOCAL_ADMIN, "Manhattan");
         simpleFeature.setHint("Test Hint");
@@ -178,8 +178,8 @@ public final class TestHelper {
         Feature feature = new Feature();
         Properties properties = new Properties();
         properties.setText("test");
-        properties.setAdmin0_name("test");
-        properties.setAdmin0_abbr("test");
+        properties.setAdmin0("test");
+        properties.setAlpha3("test");
         feature.setProperties(properties);
         Geometry geometry = new Geometry();
         List<Double> coordinates = new ArrayList<Double>();
