@@ -98,7 +98,7 @@ public class ItemFragmentTest {
     }
 
     @Test
-    public void start_shouldNotStartRoutePreviewFragment() throws Exception {
+    public void start_shouldPopRoutePreviewFragmentWhenFailure() throws Exception {
         itemFragment.startButton.performClick();
         Mockito.verify(router).setCallback(callback.capture());
         callback.getValue().failure(500);

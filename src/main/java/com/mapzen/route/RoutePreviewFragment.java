@@ -194,6 +194,7 @@ public class RoutePreviewFragment extends BaseFragment
     }
 
     public void createRouteToDestination() {
+        addFragment();
         mapFragment.clearMarkers();
         mapFragment.updateMap();
         act.showLoadingIndicator();
@@ -210,6 +211,15 @@ public class RoutePreviewFragment extends BaseFragment
             router.setBiking();
         }
         router.fetch();
+    }
+
+    private void addFragment() {
+        if (!isAdded()) {
+            act.getSupportFragmentManager().beginTransaction()
+                    .addToBackStack(null)
+                    .add(R.id.routes_preview_container, this, TAG)
+                    .commit();
+        }
     }
 
     private double[] getDestinationPoint() {
@@ -229,12 +239,6 @@ public class RoutePreviewFragment extends BaseFragment
     @Override
     public void success(Route route) {
         this.route = route;
-        if (!isAdded()) {
-            act.getSupportFragmentManager().beginTransaction()
-                    .addToBackStack(null)
-                    .add(R.id.routes_preview_container, this, TAG)
-                    .commit();
-        }
         act.hideLoadingIndicator();
         List<Location> points = route.getGeometry();
         long time = System.currentTimeMillis();
@@ -281,6 +285,7 @@ public class RoutePreviewFragment extends BaseFragment
 
     @Override
     public void failure(int statusCode) {
+        act.getSupportFragmentManager().popBackStack(); // Pop RoutePreviewFragment
         path.clearPath();
         onServerError(statusCode);
     }
