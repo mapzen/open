@@ -24,9 +24,15 @@ public class RouteLocationIndicator extends Layer {
     private float degrees = 0;
     private int visible;
     private LayerRenderer renderer;
-    private static final String VERTEX_SHADER = ""
+
+    public static final int MAX_SCALE = 80;
+    public static final int MIN_SCALE = 40;
+    public static final float SCALE_FACTOR = 4.0f;
+
+    public static final String VERTEX_SHADER = ""
             + "precision mediump float;"
             + "uniform float u_degree;"
+            + "uniform float u_scale;"
             + "uniform mat4 u_mvp;"
             + "attribute vec2 a_pos;"
             + "void main() {"
@@ -36,10 +42,10 @@ public class RouteLocationIndicator extends Layer {
             + "    vec2("
             + "      ( a_pos.x * angle.y + a_pos.y * angle.x ), "
             + "      ( a_pos.y * angle.y - a_pos.x * angle.x )) "
-            + "    * 80.0, 0.0, 1.0);"
+            + "    * u_scale, 0.0, 1.0);"
             + "}";
 
-    private static final String FRAGMENT_SHADER = ""
+    public static final String FRAGMENT_SHADER = ""
             + "precision mediump float;"
             + "void main() {"
             + "  gl_FragColor = vec4(0.828125, 0.390625, 0.359375, 1.0);"
@@ -75,6 +81,7 @@ public class RouteLocationIndicator extends Layer {
         private int vertexPosition;
         private int matrixPosition;
         private int rotation;
+        private int scale;
         private final Point indicatorPosition = new Point();
         private final Point screenPoint = new Point();
         private final Box bBox = new Box();
@@ -91,6 +98,7 @@ public class RouteLocationIndicator extends Layer {
                 vertexPosition = GL.glGetAttribLocation(shader, "a_pos");
                 matrixPosition = GL.glGetUniformLocation(shader, "u_mvp");
                 rotation = GL.glGetUniformLocation(shader, "u_degree");
+                scale = GL.glGetUniformLocation(shader, "u_scale");
                 initialized = true;
             }
 
@@ -167,6 +175,15 @@ public class RouteLocationIndicator extends Layer {
 
             GLState.enableVertexArrays(vertexPosition, -1);
             GL.glUniform1f(rotation, degrees);
+
+            float scaleValue = SCALE_FACTOR * v.pos.getZoomLevel();
+            if (scaleValue > MAX_SCALE) {
+                scaleValue = MAX_SCALE;
+            } else if (scaleValue < MIN_SCALE) {
+                scaleValue = MIN_SCALE;
+            }
+
+            GL.glUniform1f(scale, scaleValue);
 
             double x = indicatorPosition.x - v.pos.x;
             double y = indicatorPosition.y - v.pos.y;
