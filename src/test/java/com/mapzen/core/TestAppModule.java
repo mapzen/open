@@ -10,6 +10,7 @@ import com.mapzen.activity.LoginActivity;
 import com.mapzen.activity.LoginActivityTest;
 import com.mapzen.adapters.PlaceArrayAdapter;
 import com.mapzen.adapters.PlaceArrayAdapterTest;
+import com.mapzen.android.Pelias;
 import com.mapzen.fragment.ItemFragment;
 import com.mapzen.fragment.ItemFragmentTest;
 import com.mapzen.fragment.MapFragment;
@@ -22,6 +23,7 @@ import com.mapzen.route.RouteFragmentTest;
 import com.mapzen.route.RoutePreviewFragment;
 import com.mapzen.route.RoutePreviewFragmentTest;
 import com.mapzen.search.AutoCompleteAdapter;
+import com.mapzen.search.AutoCompleteAdapterTest;
 import com.mapzen.search.PagerResultsFragment;
 import com.mapzen.search.PagerResultsFragmentTest;
 import com.mapzen.support.TestBaseActivity;
@@ -66,6 +68,7 @@ import static org.mockito.Mockito.mock;
                 PlaceArrayAdapter.class,
                 PlaceArrayAdapterTest.class,
                 AutoCompleteAdapter.class,
+                AutoCompleteAdapterTest.class,
                 MapzenLocation.class,
                 MapzenLocationTest.class,
                 MapController.class,
@@ -114,6 +117,10 @@ public class TestAppModule {
 
     @Provides @Singleton MapController provideMapController() {
         return MapController.getMapController();
+    }
+
+    @Provides @Singleton Pelias providePelias() {
+        return Mockito.mock(Pelias.class);
     }
 
     @Provides @Singleton StyleDownLoader provideStyleDownloader() {

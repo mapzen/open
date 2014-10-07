@@ -4,6 +4,7 @@ import com.mapzen.MapController;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.SearchViewAdapter;
+import com.mapzen.android.Pelias;
 import com.mapzen.android.gson.Feature;
 import com.mapzen.android.gson.Result;
 import com.mapzen.entity.SimpleFeature;
@@ -18,7 +19,6 @@ import org.oscim.layers.marker.MarkerItem;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -48,7 +48,7 @@ import retrofit.RetrofitError;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 import static com.mapzen.MapController.DEFAULT_ZOOM_LEVEL;
-import static com.mapzen.android.Pelias.getPelias;
+import static com.mapzen.MapController.getMapController;
 import static com.mapzen.search.SavedSearch.getSavedSearch;
 
 public class PagerResultsFragment extends BaseFragment {
@@ -57,6 +57,7 @@ public class PagerResultsFragment extends BaseFragment {
     private ArrayList<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
     private static final String PAGINATE_TEMPLATE = "Viewing %d of %d results";
     @Inject MapController mapController;
+    @Inject Pelias pelias;
 
     @InjectView(R.id.multi_result_header)
     View multiResultHeader;
@@ -254,9 +255,10 @@ public class PagerResultsFragment extends BaseFragment {
         app.setCurrentSearchTerm(query);
         searchTermForCurrentResults = query;
         getSavedSearch().store(query);
-        Location location = MapController.getMapController().getLocation();
-        getPelias().search(query, String.valueOf(location.getLatitude()),
-                String.valueOf(location.getLongitude()), getSearchCallback(view));
+        Double lat = getMapController().getMap().getMapPosition().getLatitude();
+        Double lon = getMapController().getMap().getMapPosition().getLongitude();
+        pelias.search(query, String.valueOf(lat),
+                String.valueOf(lon), getSearchCallback(view));
         return true;
     }
 

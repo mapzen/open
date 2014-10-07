@@ -6,6 +6,7 @@ import com.mapzen.activity.BaseActivity;
 import com.mapzen.activity.InitialActivity;
 import com.mapzen.activity.LoginActivity;
 import com.mapzen.adapters.PlaceArrayAdapter;
+import com.mapzen.android.Pelias;
 import com.mapzen.fragment.ItemFragment;
 import com.mapzen.fragment.MapFragment;
 import com.mapzen.osrm.Router;
@@ -91,6 +92,10 @@ public class AppModule {
 
     @Provides @Singleton MapController provideMapController() {
         return MapController.getMapController();
+    }
+
+    @Provides @Singleton Pelias providePelias() {
+        return Pelias.getPelias();
     }
 
     @Provides @Singleton StyleDownLoader provideStyleDownloader() {

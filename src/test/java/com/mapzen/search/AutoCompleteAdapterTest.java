@@ -4,6 +4,7 @@ import com.mapzen.MapzenApplication;
 import com.mapzen.R;
 import com.mapzen.activity.BaseActivity;
 import com.mapzen.adapters.SearchViewAdapter;
+import com.mapzen.android.Pelias;
 import com.mapzen.entity.SimpleFeature;
 import com.mapzen.fragment.ItemFragment;
 import com.mapzen.support.DummyActivity;
@@ -14,6 +15,7 @@ import com.mapzen.util.ParcelableUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.oscim.core.MapPosition;
 import org.robolectric.annotation.Config;
 import org.robolectric.tester.android.database.TestCursor;
 import org.robolectric.util.ActivityController;
@@ -27,6 +29,11 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import javax.inject.Inject;
+
+import retrofit.Callback;
+
+import static com.mapzen.MapController.getMapController;
 import static com.mapzen.entity.SimpleFeature.TEXT;
 import static com.mapzen.search.SavedSearch.getSavedSearch;
 import static com.mapzen.support.TestHelper.assertSpan;
@@ -34,6 +41,9 @@ import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.support.TestHelper.initMapFragment;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.buildActivity;
 
@@ -45,9 +55,11 @@ public class AutoCompleteAdapterTest {
     private TextView view;
     private FragmentManager fragmentManager;
     private SimpleFeature simpleFeature;
+    @Inject Pelias pelias;
 
     @Before
     public void setUp() throws Exception {
+        ((MapzenApplication) application).inject(this);
         getSavedSearch().clear();
         ActivityController<DummyActivity> controller = buildActivity(DummyActivity.class);
         controller.create().start().resume();
@@ -112,6 +124,18 @@ public class AutoCompleteAdapterTest {
         baseActivity.executeSearchOnMap("query");
         adapter.onQueryTextChange("new query");
         assertThat(baseActivity.getSearchView().getSuggestionsAdapter()).isNotNull();
+    }
+
+    @Test
+    public void onQueryTextChange_shouldSendLatLonOfMapPosition() throws Exception {
+        MapPosition position = getMapController().getMapPosition();
+        double expectedLat = 10.0;
+        double expectedLon = 20.0;
+        position.setPosition(expectedLat, expectedLon);
+        getMapController().getMap().setMapPosition(position);
+        adapter.onQueryTextChange("new query");
+        verify(pelias).suggest(eq("new query"), eq(String.valueOf(position.getLatitude())),
+                eq(String.valueOf(position.getLongitude())), any(Callback.class));
     }
 
     @Test
