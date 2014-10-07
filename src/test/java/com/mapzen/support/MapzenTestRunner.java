@@ -3,6 +3,7 @@ package com.mapzen.support;
 import com.mapzen.shadows.ShadowBugSenseHandler;
 import com.mapzen.shadows.ShadowGLMatrix;
 import com.mapzen.shadows.ShadowGLShader;
+import com.mapzen.shadows.ShadowGLState;
 import com.mapzen.shadows.ShadowMapView;
 import com.mapzen.shadows.ShadowVectorTileLayer;
 
@@ -43,6 +44,7 @@ public class MapzenTestRunner extends RobolectricTestRunner {
                     "org.oscim.layers.tile.vector.VectorTileLayer",
                     "org.oscim.renderer.GLMatrix",
                     "org.oscim.renderer.GLShader",
+                    "org.oscim.renderer.GLState",
                     "com.bugsense.trace.BugSenseHandler"
             ));
 
@@ -61,6 +63,7 @@ public class MapzenTestRunner extends RobolectricTestRunner {
                 .addShadowClass(ShadowVectorTileLayer.class)
                 .addShadowClass(ShadowGLMatrix.class)
                 .addShadowClass(ShadowGLShader.class)
+                .addShadowClass(ShadowGLState.class)
                 .addShadowClass(ShadowBugSenseHandler.class)
                 .build();
     }
