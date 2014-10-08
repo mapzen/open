@@ -11,7 +11,7 @@ echo "Installing vtm"
 cd vtm
 git checkout updated
 
-cd vtm/vtm && ../gradlew clean install
+cd vtm && ../gradlew clean install
 
 echo "Installing vtm-android"
 cd ../vtm-android && ../gradlew clean install
