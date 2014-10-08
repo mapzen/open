@@ -82,7 +82,7 @@ public class LoginActivityTest {
         String componentOpened = shadowOf(activity).getNextStartedActivity()
                 .getComponent().toString();
         assertThat(componentOpened)
-                .isEqualTo("ComponentInfo{com.mapzen/com.mapzen.activity.BaseActivity}");
+                .isEqualTo("ComponentInfo{com.mapzen.open/com.mapzen.open.activity.BaseActivity}");
     }
 
     @Test
@@ -115,7 +115,7 @@ public class LoginActivityTest {
         String activityStarted = shadowOf(activity).getNextStartedActivity()
                 .getComponent().toString();
         assertThat(activityStarted)
-                .isEqualTo("ComponentInfo{com.mapzen/com.mapzen.activity.BaseActivity}");
+                .isEqualTo("ComponentInfo{com.mapzen.open/com.mapzen.open.activity.BaseActivity}");
         assertThat(((MapzenApplication) activity.getApplication()).wasForceLoggedIn()).isTrue();
     }
 
@@ -135,7 +135,7 @@ public class LoginActivityTest {
         String activityStarted = shadowOf(activity).getNextStartedActivity()
                 .getComponent().toString();
         assertThat(activityStarted)
-                .isEqualTo("ComponentInfo{com.mapzen/com.mapzen.activity.BaseActivity}");
+                .isEqualTo("ComponentInfo{com.mapzen.open/com.mapzen.open.activity.BaseActivity}");
     }
 
     @Test

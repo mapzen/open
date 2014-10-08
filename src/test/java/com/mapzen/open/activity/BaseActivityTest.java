@@ -286,7 +286,7 @@ public class BaseActivityTest {
         activity.onOptionsItemSelected(menuItem);
         Intent serviceIntent = Robolectric.getShadowApplication().peekNextStartedService();
         String serviceStarted = serviceIntent.getComponent().getClassName();
-        assertThat(serviceStarted).isEqualTo("com.mapzen.core.DataUploadService");
+        assertThat(serviceStarted).isEqualTo("com.mapzen.open.core.DataUploadService");
     }
 
     @Test
