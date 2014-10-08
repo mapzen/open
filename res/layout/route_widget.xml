@@ -33,7 +33,7 @@
             android:background="@android:color/transparent"
             android:visibility="gone" />
 
-        <com.mapzen.widget.DebugView
+        <com.mapzen.open.widget.DebugView
                 android:id="@+id/debugging"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/debug_view_height"
@@ -66,7 +66,7 @@
             android:background="@color/transparent_white"
             android:orientation="vertical">
 
-            <com.mapzen.widget.DistanceView
+            <com.mapzen.open.widget.DistanceView
                 android:id="@+id/destination_distance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

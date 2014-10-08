@@ -5,7 +5,7 @@
 
     <fragment
         android:id="@+id/map_fragment"
-        class="com.mapzen.fragment.MapFragment"
+        class="com.mapzen.open.fragment.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
