@@ -64,7 +64,7 @@ public class SimpleFeature implements Parcelable {
         simpleFeature.setProperty(LOCAL_ADMIN, feature.getProperties().getLocalAdmin());
         simpleFeature.setProperty(NEIGHBORHOOD, feature.getProperties().getNeighborhood());
         simpleFeature.setProperty(LOCALITY, feature.getProperties().getLocality());
-        simpleFeature.setProperty(ADMIN2, feature.getProperties().getLocality());
+        simpleFeature.setProperty(ADMIN2, feature.getProperties().getAdmin2());
         simpleFeature.setLon(feature.getGeometry().getCoordinates().get(0));
         simpleFeature.setLat(feature.getGeometry().getCoordinates().get(1));
         simpleFeature.setHint(feature.getProperties().getText());
