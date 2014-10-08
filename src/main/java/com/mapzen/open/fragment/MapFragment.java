@@ -8,7 +8,6 @@ import com.mapzen.open.search.OnPoiClickListener;
 import com.mapzen.open.util.IntentReceiver;
 import com.mapzen.open.util.Logger;
 import com.mapzen.open.util.MapzenStyle;
-import com.mapzen.open.util.PoiLayer;
 
 import com.squareup.okhttp.HttpResponseCache;
 
