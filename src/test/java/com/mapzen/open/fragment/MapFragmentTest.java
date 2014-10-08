@@ -8,6 +8,10 @@ import com.mapzen.open.search.OnPoiClickListener;
 import com.mapzen.open.support.FakeMotionEvent;
 import com.mapzen.open.support.MapzenTestRunner;
 
+import com.squareup.okhttp.HttpResponseCache;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.OkResponseCache;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -215,8 +219,16 @@ public class MapFragmentTest {
         Map map = mapFragment.getMap();
         TileLayer baseLayer = field("mBaseLayer").ofType(TileLayer.class).in(map).get();
         UrlTileSource tileSource =
-                (UrlTileSource) field("mTileSource").ofType(TileSource.class).in(baseLayer).get();
-        assertThat(tileSource.getResponseCache().getMaxSize()).isEqualTo(MapFragment.CACHE_SIZE);
+                (UrlTileSource) field("mTileSource").
+                        ofType(TileSource.class).in(baseLayer).get();
+        HttpEngine.Factory engine = field("mHttpFactory").
+                ofType(HttpEngine.Factory.class).in(tileSource).get();
+        OkHttpClient client = field("mClient").ofType(OkHttpClient.class).in(engine).get();
+
+        HttpResponseCache cache =
+                (HttpResponseCache) field("responseCache").
+                        ofType(OkResponseCache.class).in(client).get();
+        assertThat(cache.getMaxSize()).isEqualTo(MapFragment.CACHE_SIZE);
     }
 
     @Test
@@ -224,9 +236,17 @@ public class MapFragmentTest {
         Map map = mapFragment.getMap();
         TileLayer baseLayer = field("mBaseLayer").ofType(TileLayer.class).in(map).get();
         UrlTileSource tileSource =
-                (UrlTileSource) field("mTileSource").ofType(TileSource.class).in(baseLayer).get();
-        assertThat(tileSource.getResponseCache().getDirectory().getAbsolutePath())
-                .isEqualTo(activity.getExternalCacheDir().getAbsolutePath() + "/tile-cache");
+                (UrlTileSource) field("mTileSource").
+                        ofType(TileSource.class).in(baseLayer).get();
+        HttpEngine.Factory engine = field("mHttpFactory").
+                ofType(HttpEngine.Factory.class).in(tileSource).get();
+        OkHttpClient client = field("mClient").ofType(OkHttpClient.class).in(engine).get();
+
+        HttpResponseCache cache =
+                (HttpResponseCache) field("responseCache").
+                        ofType(OkResponseCache.class).in(client).get();
+        assertThat(cache.getDirectory().getAbsolutePath()).
+                isEqualTo(activity.getExternalCacheDir().getAbsolutePath() + "/tile-cache");
     }
 
     @Test

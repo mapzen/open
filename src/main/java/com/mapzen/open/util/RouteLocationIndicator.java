@@ -118,8 +118,8 @@ public class RouteLocationIndicator extends Layer {
             double y = location.y;
 
             if (!bBox.contains(location)) {
-                x = FastMath.clamp(x, bBox.minX, bBox.maxX);
-                y = FastMath.clamp(y, bBox.minY, bBox.maxY);
+                x = FastMath.clamp(x, bBox.xmin, bBox.xmax);
+                y = FastMath.clamp(y, bBox.ymin, bBox.ymax);
             }
 
             v.toScreenPoint(x, y, screenPoint);

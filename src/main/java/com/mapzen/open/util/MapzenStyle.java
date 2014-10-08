@@ -25,7 +25,7 @@ public class MapzenStyle {
 
         @Override
         public InputStream getRenderThemeAsStream() {
-            return AssetAdapter.g.openFileAsStream(path);
+            return AssetAdapter.readFileAsStream(path);
         }
 
     }

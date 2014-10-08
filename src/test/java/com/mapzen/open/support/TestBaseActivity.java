@@ -3,6 +3,8 @@ package com.mapzen.open.support;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.android.lost.LocationClient;
 
+import org.mockito.Mockito;
+import org.oscim.android.MapView;
 import org.oscim.map.Map;
 import org.oscim.map.TestMap;
 
@@ -26,10 +28,19 @@ public class TestBaseActivity extends BaseActivity {
         return actionBar;
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MapView mapView = Mockito.mock(MapView.class);
+        Mockito.when(mapView.map()).thenReturn(new TestMap());
+        registerMapView(mapView);
         actionBar.show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
