@@ -271,6 +271,14 @@
                         <argLine>-noverify -Xms512m -Xmx1024m -XX:MaxPermSize=256m</argLine>
                     </configuration>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
 
