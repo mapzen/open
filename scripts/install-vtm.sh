@@ -8,6 +8,9 @@
 git clone --recursive https://github.com/mapzen/vtm.git
 
 echo "Installing vtm"
+cd vtm
+git checkout updated
+
 cd vtm/vtm && ../gradlew clean install
 
 echo "Installing vtm-android"
