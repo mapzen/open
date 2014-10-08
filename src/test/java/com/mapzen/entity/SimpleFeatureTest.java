@@ -9,10 +9,13 @@ import org.robolectric.annotation.Config;
 import android.os.Parcel;
 import android.widget.TextView;
 
-import static com.mapzen.entity.SimpleFeature.ADMIN0_ABBR;
 import static com.mapzen.entity.SimpleFeature.ADMIN1_ABBR;
-import static com.mapzen.entity.SimpleFeature.ADMIN1_NAME;
+import static com.mapzen.entity.SimpleFeature.ADMIN1;
+import static com.mapzen.entity.SimpleFeature.ADMIN2;
+import static com.mapzen.entity.SimpleFeature.ALPHA3;
+import static com.mapzen.entity.SimpleFeature.LOCALITY;
 import static com.mapzen.entity.SimpleFeature.LOCAL_ADMIN;
+import static com.mapzen.entity.SimpleFeature.NEIGHBORHOOD;
 import static com.mapzen.entity.SimpleFeature.TEXT;
 import static com.mapzen.support.TestHelper.getTestSimpleFeature;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -39,8 +42,8 @@ public class SimpleFeatureTest {
         simpleFeature.setHint(expectedHint);
         simpleFeature.setProperty(TEXT, expectedTitle);
         simpleFeature.setProperty(ADMIN1_ABBR, expectedAdmin1Abbr);
-        simpleFeature.setProperty(ADMIN1_NAME, expectedAdmin1Name);
-        simpleFeature.setProperty(ADMIN0_ABBR, expectedAdmin0Abbr);
+        simpleFeature.setProperty(ADMIN1, expectedAdmin1Name);
+        simpleFeature.setProperty(ALPHA3, expectedAdmin0Abbr);
         simpleFeature.setProperty(LOCAL_ADMIN, expectedLocality);
     }
 
@@ -101,24 +104,97 @@ public class SimpleFeatureTest {
         simpleFeature.setProperty(ADMIN1_ABBR, null);
         holder.setFromFeature(simpleFeature);
         assertThat(address.getText().toString()).doesNotContain("null");
-        assertThat(address.getText().toString()).contains(expectedAdmin0Abbr);
-        assertThat(address.getText().toString()).contains(expectedLocality);
-    }
-
-    @Test
-    public void getAbbr_shouldReturnAdmin1() throws Exception {
-       assertThat(simpleFeature.getAbbr()).isEqualTo(simpleFeature.getProperty(ADMIN1_ABBR));
-    }
-
-    @Test
-    public void getAbbr_shouldReturnAdmin0() throws Exception {
-        simpleFeature.setProperty(ADMIN1_ABBR, null);
-        assertThat(simpleFeature.getAbbr()).isEqualTo(simpleFeature.getProperty(ADMIN0_ABBR));
+        assertThat(address.getText().toString()).contains(simpleFeature.getCity());
+        assertThat(address.getText().toString()).contains(simpleFeature.getAdmin());
     }
 
     @Test
     public void getSingleLine_shouldReturnNameLocalityAndAbbreviation() throws Exception {
         assertThat(simpleFeature.getSingleLine()).isEqualTo(expectedTitle + ", " + expectedLocality
-                + ", " + simpleFeature.getAbbr());
+                + ", " + simpleFeature.getAdmin());
+    }
+
+    @Test
+    public void getAdmin_shouldReturnBlankStringIfNoUsefulPropertyFound() throws Exception {
+        simpleFeature.setProperty(ADMIN1_ABBR, null);
+        simpleFeature.setProperty(ADMIN1, null);
+        simpleFeature.setProperty(ALPHA3, null);
+        assertThat(simpleFeature.getAdmin()).isEmpty();
+    }
+
+    @Test
+    public void getAdmin_shouldPreferAdmin1Abbr() throws Exception {
+        String expected = "expected";
+        simpleFeature.setProperty(ADMIN1_ABBR, expected);
+        simpleFeature.setProperty(ADMIN1, "bla");
+        simpleFeature.setProperty(ALPHA3, "bla");
+        assertThat(simpleFeature.getAdmin()).isEqualTo(expected);
+    }
+
+    @Test
+    public void getAdmin_shouldPickAdmin1IfAbbrIsNotAvailable() throws Exception {
+        String expected = "expected";
+        simpleFeature.setProperty(ADMIN1_ABBR, null);
+        simpleFeature.setProperty(ADMIN1, expected);
+        simpleFeature.setProperty(ALPHA3, "bla");
+        assertThat(simpleFeature.getAdmin()).isEqualTo(expected);
+    }
+
+    @Test
+    public void getAdmin_shouldPickAlpha3IfAsLastOption() throws Exception {
+        String expected = "expected";
+        simpleFeature.setProperty(ADMIN1_ABBR, null);
+        simpleFeature.setProperty(ADMIN1, null);
+        simpleFeature.setProperty(ALPHA3, expected);
+        assertThat(simpleFeature.getAdmin()).isEqualTo(expected);
+    }
+
+    @Test
+    public void getCity_shouldReturnBlankStringIfNoUsefulPropertyFound() throws Exception {
+        simpleFeature.setProperty(LOCAL_ADMIN, null);
+        simpleFeature.setProperty(LOCALITY, null);
+        simpleFeature.setProperty(NEIGHBORHOOD, null);
+        simpleFeature.setProperty(ADMIN2, null);
+        assertThat(simpleFeature.getCity()).isEmpty();
+    }
+
+    @Test
+    public void getCity_shouldPreferLocalAdmin() throws Exception {
+        String expected = "expected";
+        simpleFeature.setProperty(LOCAL_ADMIN, expected);
+        simpleFeature.setProperty(LOCALITY, "bla");
+        simpleFeature.setProperty(NEIGHBORHOOD, "bla");
+        simpleFeature.setProperty(ADMIN2, "bla");
+        assertThat(simpleFeature.getCity()).isEqualTo(expected);
+    }
+
+    @Test
+    public void getCity_shouldFallBackToLocality() throws Exception {
+        String expected = "expected";
+        simpleFeature.setProperty(LOCAL_ADMIN, null);
+        simpleFeature.setProperty(LOCALITY, expected);
+        simpleFeature.setProperty(NEIGHBORHOOD, "bla");
+        simpleFeature.setProperty(ADMIN2, "bla");
+        assertThat(simpleFeature.getCity()).isEqualTo(expected);
+    }
+
+    @Test
+    public void getCity_shouldFallBackToAdmin2() throws Exception {
+        String expected = "expected";
+        simpleFeature.setProperty(LOCAL_ADMIN, null);
+        simpleFeature.setProperty(LOCALITY, null);
+        simpleFeature.setProperty(NEIGHBORHOOD, null);
+        simpleFeature.setProperty(ADMIN2, expected);
+        assertThat(simpleFeature.getCity()).isEqualTo(expected);
+    }
+
+    @Test
+    public void getCity_shouldFallBackToNeighborhood() throws Exception {
+        String expected = "expected";
+        simpleFeature.setProperty(LOCAL_ADMIN, null);
+        simpleFeature.setProperty(LOCALITY, null);
+        simpleFeature.setProperty(NEIGHBORHOOD, expected);
+        simpleFeature.setProperty(ADMIN2, "bla");
+        assertThat(simpleFeature.getCity()).isEqualTo(expected);
     }
 }
