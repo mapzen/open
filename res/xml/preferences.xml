@@ -44,7 +44,7 @@
             android:summary="@string/settings_mock_gpx_filename_summary"
             android:title="@string/settings_mock_gpx_filename_title" />
 
-        <com.mapzen.widget.EditIntPreference
+        <com.mapzen.open.widget.EditIntPreference
             android:defaultValue="1000"
             android:inputType="number"
             android:key="@string/settings_location_update_interval_key"
@@ -55,37 +55,37 @@
 
     <PreferenceCategory android:title="@string/settings_zoom_title">
 
-        <com.mapzen.widget.EditIntPreference
+        <com.mapzen.open.widget.EditIntPreference
             android:defaultValue="@integer/zoom_walking"
             android:key="@string/settings_zoom_walking_key"
             android:title="@string/settings_zoom_walking_title" />
 
-        <com.mapzen.widget.EditIntPreference
+        <com.mapzen.open.widget.EditIntPreference
             android:defaultValue="@integer/zoom_biking"
             android:key="@string/settings_zoom_biking_key"
             android:title="@string/settings_zoom_biking_title" />
 
-        <com.mapzen.widget.EditIntPreference
+        <com.mapzen.open.widget.EditIntPreference
             android:defaultValue="@integer/zoom_driving_0to15"
             android:key="@string/settings_zoom_driving_0to15_key"
             android:title="@string/settings_zoom_driving_0_to_15_title" />
 
-        <com.mapzen.widget.EditIntPreference
+        <com.mapzen.open.widget.EditIntPreference
             android:defaultValue="@integer/zoom_driving_15to25"
             android:key="@string/settings_zoom_driving_15to25_key"
             android:title="@string/settings_zoom_driving_15_to_25_title" />
 
-        <com.mapzen.widget.EditIntPreference
+        <com.mapzen.open.widget.EditIntPreference
             android:defaultValue="@integer/zoom_driving_25to35"
             android:key="@string/settings_zoom_driving_25to35_key"
             android:title="@string/settings_zoom_driving_25_to_35_title" />
 
-        <com.mapzen.widget.EditIntPreference
+        <com.mapzen.open.widget.EditIntPreference
             android:defaultValue="@integer/zoom_driving_35to50"
             android:key="@string/settings_zoom_driving_35to50_key"
             android:title="@string/settings_zoom_driving_35_to_50_title" />
 
-        <com.mapzen.widget.EditIntPreference
+        <com.mapzen.open.widget.EditIntPreference
             android:defaultValue="@integer/zoom_driving_over50"
             android:key="@string/settings_zoom_driving_over50_key"
             android:title="@string/settings_zoom_driving_over_50_title" />
@@ -93,7 +93,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/settings_speed_title">
-        <com.mapzen.widget.EditIntPreference
+        <com.mapzen.open.widget.EditIntPreference
             android:defaultValue="@integer/number_of_locations_for_average_speed"
             android:key="@string/settings_number_of_locations_for_average_speed_key"
             android:title="@string/settings_number_of_locations_for_average_speed_title" />

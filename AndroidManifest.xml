@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mapzen"
+    package="com.mapzen.open"
     android:versionCode="3"
     android:versionName="0.3-DEVELOPMENT"
     android:installLocation="preferExternal">
@@ -17,7 +17,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name="com.mapzen.MapzenApplication"
+        android:name=".MapzenApplication"
         android:allowBackup="true"
         android:label="@string/application_name"
         android:icon="@drawable/ic_launcher"
@@ -67,7 +67,7 @@
             android:name=".search.ListResultsActivity"
             android:label="@string/results_title"
             android:theme="@style/Theme.Mapzen.SearchResults" />
-        <service android:name="com.mapzen.core.DataUploadService"
+        <service android:name=".core.DataUploadService"
             android:exported="false"
             android:enabled="true" >
         </service>
