@@ -14,7 +14,6 @@ import com.mapzen.open.util.DatabaseHelper;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
-import org.oscim.android.MapView;
 import org.robolectric.shadows.ShadowLocationManager;
 import org.robolectric.tester.android.view.TestMenu;
 
@@ -68,8 +67,8 @@ public final class TestHelper {
                 .resume()
                 .visible()
                 .get();
+
         activity.onCreateOptionsMenu(menu);
-        activity.registerMapView(new MapView(activity));
         activity.setDebugDataExecutor(new ImmediateExecutor());
         return activity;
     }

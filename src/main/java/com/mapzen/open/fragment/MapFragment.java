@@ -8,7 +8,6 @@ import com.mapzen.open.search.OnPoiClickListener;
 import com.mapzen.open.util.IntentReceiver;
 import com.mapzen.open.util.Logger;
 import com.mapzen.open.util.MapzenStyle;
-import com.mapzen.open.util.PoiLayer;
 
 import com.squareup.okhttp.HttpResponseCache;
 
@@ -73,7 +72,7 @@ public class MapFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         inject();
-        AssetAdapter.g = new MapzenStyle.MapzenAssetAdapter(act);
+        AssetAdapter.init(new MapzenStyle.MapzenAssetAdapter(act));
         styleDownLoader.download();
         setupMap();
     }
@@ -172,12 +171,11 @@ public class MapFragment extends BaseFragment {
 
     private void setupMap() {
         final OSciMap4TileSource tileSource = new OSciMap4TileSource(getTileBaseSource());
-        setTileCache(tileSource);
-        tileSource.setHttpEngine(new OkHttpEngine.OkHttpFactory());
+
+        tileSource.setHttpEngine(new OkHttpEngine.OkHttpFactory(getTileCache()));
         baseLayer = getMap().setBaseMap(tileSource);
 
         getMap().layers().add(new BuildingLayer(getMap(), baseLayer));
-        getMap().layers().add(new PoiLayer(getMap(), baseLayer, act));
 
         highlightMarker = getHighlightMarkerSymbol();
 
@@ -203,19 +201,20 @@ public class MapFragment extends BaseFragment {
         });
     }
 
-    private void setTileCache(OSciMap4TileSource tileSource) {
+    private HttpResponseCache getTileCache() {
+        HttpResponseCache cache = null;
         try {
             File cacheDir = new File(act.getExternalCacheDir().getAbsolutePath()
                     + "/tile-cache");
             int cacheSize = CACHE_SIZE;
-            HttpResponseCache cache = new HttpResponseCache(cacheDir, cacheSize);
-            tileSource.setResponseCache(cache);
+            cache = new HttpResponseCache(cacheDir, cacheSize);
             Logger.d("cache hit count: " + String.valueOf(cache.getHitCount()));
             Logger.d("cache info max size: " + String.valueOf(cache.getMaxSize()));
             Logger.d("cache info size: " + String.valueOf(cache.getSize()));
         } catch (IOException e) {
             Logger.e("cant attach a cache");
         }
+        return cache;
     }
 
     public Map getMap() {

@@ -31,7 +31,7 @@ public class MapzenStyleTest {
     @Before
     public void setup() throws Exception {
         act = TestHelper.initBaseActivity();
-        AssetAdapter.g = new MapzenStyle.MapzenAssetAdapter(act);
+        AssetAdapter.init(new MapzenStyle.MapzenAssetAdapter(act));
         theme  = MapzenStyle.Theme.valueOf("MAPZEN");
         pathToFile = act.getExternalFilesDir(null).getAbsolutePath()
                 + "/assets/" + "styles/mapzen.xml";
