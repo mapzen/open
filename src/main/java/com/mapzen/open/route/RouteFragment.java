@@ -361,7 +361,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         createRouteTo(location);
         voiceNavigationController.recalculating();
         displayRecalculatePagerView();
-        distanceToDestination.setVisibility(View.INVISIBLE);
+        footerWrapper.setVisibility(View.INVISIBLE);
     }
 
     private void displayRecalculatePagerView() {
@@ -499,9 +499,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             act.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (distanceToDestination != null) {
-                        distanceToDestination.setVisibility(View.VISIBLE);
-                        distanceToDestination.setDistance(route.getTotalDistance());
+                    if (footerWrapper != null) {
+                        footerWrapper.setVisibility(View.VISIBLE);
                     }
                 }
             });

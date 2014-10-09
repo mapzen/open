@@ -1025,10 +1025,10 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onRecalculate_shouldHideDistanceToDestination() throws Exception {
+    public void onRecalculate_shouldHideRouteFooter() throws Exception {
         loadAceHotelMockRoute();
         fragment.onRecalculate(getTestLocation(111.0, 111.0));
-        assertThat(fragment.distanceToDestination).isNotVisible();
+        assertThat(fragment.footerWrapper).isNotVisible();
     }
 
     @Test
@@ -1040,15 +1040,13 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void setRoute_shouldShowDistanceToDestinationAfterReroute() throws Exception {
+    public void setRoute_shouldShowRouteFooterAfterReroute() throws Exception {
         loadAceHotelMockRoute();
         fragment.onRecalculate(getTestLocation(111.0, 111.0));
         Route route = new Route(MOCK_ACE_HOTEL);
         fragment.setRoute(route);
         Robolectric.runUiThreadTasks();
-        assertThat(fragment.distanceToDestination).isVisible();
-        assertThat(fragment.distanceToDestination.getDistance())
-                .isEqualTo(route.getTotalDistance());
+        assertThat(fragment.footerWrapper).isVisible();
     }
 
     @Test
