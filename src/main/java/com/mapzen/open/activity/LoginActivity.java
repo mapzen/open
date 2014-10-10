@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -33,6 +34,7 @@ public class LoginActivity extends Activity {
 
     @InjectView(R.id.splash) RelativeLayout splash;
     @InjectView(R.id.login_layout) LinearLayout loginLayout;
+    @InjectView(R.id.view_pager) ViewPager viewPager;
 
     private MapzenApplication app;
     private Token requestToken = null;
@@ -51,6 +53,7 @@ public class LoginActivity extends Activity {
         View rootView = getWindow().getDecorView().getRootView();
         clickCount = 0;
         ButterKnife.inject(this, rootView);
+        viewPager.setAdapter(new LoginAdapter(this));
         loadAnimations();
         animateViewTransitions();
     }

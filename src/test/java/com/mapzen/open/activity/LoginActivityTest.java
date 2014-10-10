@@ -175,4 +175,9 @@ public class LoginActivityTest {
         Robolectric.shadowOf(activity.loginLayout.getAnimation()).invokeEnd();
         assertThat(activity.loginLayout).isVisible();
     }
+
+    @Test
+    public void loginFlowShouldHaveViewPagerWithCountThree() throws Exception {
+        assertThat(activity.viewPager.getAdapter()).hasCount(3);
+    }
 }
