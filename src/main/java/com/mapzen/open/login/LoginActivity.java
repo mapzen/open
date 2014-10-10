@@ -37,7 +37,7 @@ public class LoginActivity extends Activity {
 
     private MapzenApplication app;
     private Token requestToken = null;
-    private Animation fadeIn,fadeOut;
+    private Animation fadeIn, fadeOut;
     private Verifier verifier;
     private int clickCount;
 
