@@ -45,7 +45,7 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         app = (MapzenApplication) getApplication();
         app.inject(this);
-        setContentView(R.layout.init);
+        setContentView(R.layout.activity_login);
         View rootView = getWindow().getDecorView().getRootView();
         clickCount = 0;
         ButterKnife.inject(this, rootView);
