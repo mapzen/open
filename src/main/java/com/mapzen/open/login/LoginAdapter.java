@@ -13,13 +13,13 @@ public class LoginAdapter extends PagerAdapter {
     }
 
     @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView((View) object);
+    public Object instantiateItem(ViewGroup container, int position) {
+        return new View(context);
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
-        return new View(context);
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        container.removeView((View) object);
     }
 
     @Override
