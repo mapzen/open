@@ -30,6 +30,20 @@
     <string name="no_network">Network connection unavailable</string>
     <string name="you_have_arrived_at">You have arrived at</string>
 
+    <!--Login-->
+    <string name="login_page_two_title">Hi, you just opened Open.</string>
+    <string name="login_page_two_body">Open is a search and navigation app built on open source software and open data. One of those open data sources we’re using is OpenStreetMap. This is not an OSM editor app, but we’re asking users to log in using an OpenStreetMap account.</string>
+    <string name="login_page_three_title">No tracking. Just tracing.</string>
+    <string name="login_page_three_body">Once you’ve logged into your OSM account, you’ll be given the option to let Open collect GPS traces from your phone when it’s in Navigation Mode. Other than this optional collection, Open doesn’t log any of your location data. (Seriously. Nothing.)</string>
+    <string name="login_page_three_learn_more">Learn more</string>
+    <string name="login_page_four_body">Sign up or log in with OpenStreetMap to get started.</string>
+    <string name="login_page_four_button">Continue with OpenStreetMap</string>
+    <string name="toast_fixed_location_is_malformed">Your fixed location is malformed</string>
+    <string name="logo_description">Open Logo</string>
+    <string name="osm_logout">OpenStreetMap Logout</string>
+    <string name="osm_login_title">Please Authorize</string>
+    <string name="login_error">Unable to log in. You can try to log in again by restarting the application.</string>
+
     <!--Settings-->
 
     <string name="settings">Settings</string>
@@ -86,15 +100,6 @@
     <string name="settings_speed_title">Average Speed</string>
     <string name="settings_number_of_locations_for_average_speed_key">number_of_locations_for_average_speed</string>
     <string name="settings_number_of_locations_for_average_speed_title">Number of Location for average speed</string>
-
-    <string name="toast_fixed_location_is_malformed">Your fixed location is malformed</string>
-    <string name="logo_description">Open Logo</string>
-    <string name="osm_logout">OpenStreetMap Logout</string>
-    <string name="osm_login_title">Please Authorize</string>
-    <string name="osm_init_login">Continue with OpenStreetMap</string>
-    <string name="login_explanation">Sign up or log in with OpenStreetMap to get started.</string>
-    <string name="motto">Start where you are.</string>
-    <string name="login_error">Unable to log in. You can try to log in again by restarting the application.</string>
 
     <!--Debug Strings-->
 

@@ -8,10 +8,13 @@ import com.mapzen.open.shadows.ShadowMapView;
 import com.mapzen.open.shadows.ShadowVectorTileLayer;
 
 import org.junit.runners.model.InitializationError;
+import org.robolectric.AndroidManifest;
+import org.robolectric.MapzenAndroidManifest;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.bytecode.ClassInfo;
 import org.robolectric.bytecode.Setup;
 import org.robolectric.bytecode.ShadowMap;
+import org.robolectric.res.FsFile;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -85,5 +88,20 @@ public class MapzenTestRunner extends RobolectricTestRunner {
             return CUSTOM_SHADOW_TARGETS.contains(classInfo.getName())
                     || super.shouldInstrument(classInfo);
         }
+    }
+
+    /**
+     * Uses custom manifest as workaround to maintain backward compatibility with library projects
+     * that do not yet include the <code>&lt;application/&gt;</code> tag in AndroidManifest.xml.
+     * <p />
+     * See https://github.com/robolectric/robolectric/pull/1309 for more info.
+     */
+    @Override
+    protected AndroidManifest createAppManifest(FsFile manifestFile,
+            FsFile resDir, FsFile assetsDir) {
+        AndroidManifest manifest = new MapzenAndroidManifest(manifestFile, resDir, assetsDir);
+        String packageName = System.getProperty("android.package");
+        manifest.setPackageName(packageName);
+        return manifest;
     }
 }

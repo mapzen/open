@@ -29,7 +29,7 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
-                android:name=".activity.LoginActivity"
+                android:name=".login.LoginActivity"
                 android:launchMode="singleTask"
                 android:theme="@style/Theme.Mapzen.NoActionBar"
                 android:screenOrientation="portrait">

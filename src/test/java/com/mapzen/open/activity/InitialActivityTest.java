@@ -80,7 +80,7 @@ public class InitialActivityTest {
         String activityStarted = shadowOf(activity).getNextStartedActivity()
                 .getComponent().toString();
         Assertions.assertThat(activityStarted)
-                .isEqualTo("ComponentInfo{com.mapzen.open/com.mapzen.open.activity.LoginActivity}");
+                .isEqualTo("ComponentInfo{com.mapzen.open/com.mapzen.open.login.LoginActivity}");
     }
 
     @Test

@@ -3,7 +3,7 @@ package com.mapzen.open.support;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.activity.InitialActivity;
-import com.mapzen.open.activity.LoginActivity;
+import com.mapzen.open.login.LoginActivity;
 import com.mapzen.android.gson.Feature;
 import com.mapzen.android.gson.Geometry;
 import com.mapzen.android.gson.Properties;
