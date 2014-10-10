@@ -1,4 +1,4 @@
-package com.mapzen.open.activity;
+package com.mapzen.open.login;
 
 import android.content.Intent;
 
@@ -7,6 +7,7 @@ import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.TestMapzenApplication;
 import com.mapzen.android.lost.LocationClient;
+import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.support.MapzenTestRunner;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +18,6 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 import org.scribe.model.Token;
 
-import static com.mapzen.open.activity.LoginActivity.OSM_VERIFIER_KEY;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import android.net.Uri;
@@ -74,7 +74,7 @@ public class LoginActivityTest {
     @Test
     public void shouldStartBaseActivityOnTokenReturn() {
         Uri.Builder oauthTokenBuilder = new Uri.Builder();
-        oauthTokenBuilder.appendQueryParameter(OSM_VERIFIER_KEY, "Bogus verifier");
+        oauthTokenBuilder.appendQueryParameter(LoginActivity.OSM_VERIFIER_KEY, "Bogus verifier");
         Uri oauthToken = oauthTokenBuilder.build();
         Intent intent = new Intent();
         intent.setData(oauthToken);
@@ -99,7 +99,7 @@ public class LoginActivityTest {
                 .get();
 
         Uri.Builder oauthTokenBuilder = new Uri.Builder();
-        oauthTokenBuilder.appendQueryParameter(OSM_VERIFIER_KEY, "Bogus verifier");
+        oauthTokenBuilder.appendQueryParameter(LoginActivity.OSM_VERIFIER_KEY, "Bogus verifier");
         Uri oauthToken = oauthTokenBuilder.build();
         Intent oauthIntent = new Intent();
         oauthIntent.setData(oauthToken);

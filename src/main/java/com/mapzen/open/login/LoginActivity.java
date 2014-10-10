@@ -1,8 +1,9 @@
-package com.mapzen.open.activity;
+package com.mapzen.open.login;
 
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.android.lost.LocationClient;
+import com.mapzen.open.activity.BaseActivity;
 
 import org.scribe.model.Token;
 import org.scribe.model.Verifier;

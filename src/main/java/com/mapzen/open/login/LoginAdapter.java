@@ -1,4 +1,4 @@
-package com.mapzen.open.activity;
+package com.mapzen.open.login;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
