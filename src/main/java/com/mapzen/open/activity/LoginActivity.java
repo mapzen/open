@@ -18,8 +18,8 @@ import android.os.Handler;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import javax.inject.Inject;
@@ -31,13 +31,15 @@ import butterknife.OnClick;
 public class LoginActivity extends Activity {
     public static final String OSM_VERIFIER_KEY = "oauth_verifier";
 
-    @InjectView(R.id.log_in_button) Button logIn;
+    @InjectView(R.id.splash) RelativeLayout splash;
+    @InjectView(R.id.login_layout) LinearLayout loginLayout;
+
     private MapzenApplication app;
     private Token requestToken = null;
-    private Handler delayButtonHandler;
-    private Animation fadeIn, fadeInSlow, fadeOut;
+    private Animation fadeIn,fadeOut;
     private Verifier verifier;
     private int clickCount;
+
     @Inject LocationClient locationClient;
 
     @Override
@@ -74,7 +76,7 @@ public class LoginActivity extends Activity {
         }
     }
 
-    @OnClick(R.id.log_in_button)
+    @OnClick(R.id.login_button)
     @SuppressWarnings("unused")
     protected void onClickLogIn() {
         loginRoutine();
@@ -159,8 +161,7 @@ public class LoginActivity extends Activity {
 
     private void animateViewTransitions() {
         fadeOutMotto();
-        delayButtonHandler = new Handler();
-        delayButtonHandler.postDelayed(new Runnable() {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 fadeInLoginView();
@@ -169,19 +170,17 @@ public class LoginActivity extends Activity {
     }
 
     private void fadeOutMotto() {
-        findViewById(R.id.motto).startAnimation(fadeOut);
-        findViewById(R.id.motto).setVisibility(LinearLayout.INVISIBLE);
+        splash.startAnimation(fadeOut);
+        splash.setVisibility(View.INVISIBLE);
     }
 
     private void fadeInLoginView() {
-        findViewById(R.id.login_explanation).startAnimation(fadeIn);
-        findViewById(R.id.log_in_button).startAnimation(fadeInSlow);
-        findViewById(R.id.login_layout).setVisibility(LinearLayout.VISIBLE);
+        loginLayout.startAnimation(fadeIn);
+        loginLayout.setVisibility(View.VISIBLE);
     }
 
     private void loadAnimations() {
         fadeIn = AnimationUtils.loadAnimation(this, R.anim.fadein);
-        fadeInSlow = AnimationUtils.loadAnimation(this, R.anim.fadeinslow);
         fadeOut = AnimationUtils.loadAnimation(this, R.anim.fadeout);
     }
 

@@ -1,27 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@color/yellow_background">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/splash"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/logo"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/logo_top_margin"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_open_logo"
-            android:contentDescription="@string/logo_description"
-            android:clickable="true" />
-    </LinearLayout>
+            android:layout_centerHorizontal="true"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/logo_top_margin"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_open_logo"
+                android:contentDescription="@string/logo_description"
+                android:clickable="true" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/motto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:paddingBottom="@dimen/motto_bottom_margin">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:textColor="@color/blue"
+                android:fontFamily="sans-serif-condensed"
+                android:textSize="@dimen/motto_font_size"
+                android:text="@string/motto" />
+        </LinearLayout>
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/login_layout"
@@ -46,7 +70,7 @@
             android:text="@string/login_explanation" />
 
         <Button
-            android:id="@+id/log_in_button"
+            android:id="@+id/login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/button_side_padding"
@@ -60,25 +84,6 @@
             android:fontFamily="sans-serif-condensed"
             android:background="@drawable/signin_button"
             android:textSize="@dimen/button_font_size" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/motto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:paddingBottom="@dimen/motto_bottom_margin">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textAlignment="center"
-            android:gravity="center"
-            android:textColor="@color/blue"
-            android:fontFamily="sans-serif-condensed"
-            android:textSize="@dimen/motto_font_size"
-            android:text="@string/motto" />
     </LinearLayout>
 
 </RelativeLayout>

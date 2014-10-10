@@ -163,4 +163,16 @@ public class LoginActivityTest {
         activity.onPause();
         assertThat(locationClient.isConnected()).isFalse();
     }
+
+    @Test
+    public void shouldFadeOutSplashScreen() throws Exception {
+        Robolectric.shadowOf(activity.splash.getAnimation()).invokeEnd();
+        assertThat(activity.splash).isNotVisible();
+    }
+
+    @Test
+    public void shouldFadeInLoginFlow() throws Exception {
+        Robolectric.shadowOf(activity.loginLayout.getAnimation()).invokeEnd();
+        assertThat(activity.loginLayout).isVisible();
+    }
 }
