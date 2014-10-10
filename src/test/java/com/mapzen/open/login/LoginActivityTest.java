@@ -171,9 +171,9 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void shouldFadeInLoginFlow() throws Exception {
-        Robolectric.shadowOf(activity.loginLayout.getAnimation()).invokeEnd();
-        assertThat(activity.loginLayout).isVisible();
+    public void shouldFadeInViewPager() throws Exception {
+        Robolectric.shadowOf(activity.viewPager.getAnimation()).invokeEnd();
+        assertThat(activity.viewPager).isVisible();
     }
 
     @Test

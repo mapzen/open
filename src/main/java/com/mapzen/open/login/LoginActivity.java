@@ -20,7 +20,6 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -34,7 +33,6 @@ public class LoginActivity extends Activity {
     public static final String OSM_VERIFIER_KEY = "oauth_verifier";
 
     @InjectView(R.id.splash) RelativeLayout splash;
-    @InjectView(R.id.login_layout) LinearLayout loginLayout;
     @InjectView(R.id.view_pager) ViewPager viewPager;
 
     private MapzenApplication app;
@@ -78,12 +76,6 @@ public class LoginActivity extends Activity {
             setAccessToken(intent);
             startBaseActivity();
         }
-    }
-
-    @OnClick(R.id.login_button)
-    @SuppressWarnings("unused")
-    protected void onClickLogIn() {
-        loginRoutine();
     }
 
     @OnClick(R.id.logo)
@@ -179,8 +171,8 @@ public class LoginActivity extends Activity {
     }
 
     private void fadeInLoginView() {
-        loginLayout.startAnimation(fadeIn);
-        loginLayout.setVisibility(View.VISIBLE);
+        viewPager.startAnimation(fadeIn);
+        viewPager.setVisibility(View.VISIBLE);
     }
 
     private void loadAnimations() {

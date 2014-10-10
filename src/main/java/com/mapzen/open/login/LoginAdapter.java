@@ -1,5 +1,7 @@
 package com.mapzen.open.login;
 
+import com.mapzen.open.R;
+
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
@@ -14,7 +16,9 @@ public class LoginAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        return new View(context);
+        final View view = View.inflate(context, R.layout.login_item, null);
+        container.addView(view);
+        return view;
     }
 
     @Override
