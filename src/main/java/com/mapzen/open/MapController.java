@@ -156,9 +156,10 @@ public final class MapController {
         }
     }
 
-    public void resetZoomAndPointNorth() {
+    public void resetMapForUser() {
         setZoomLevel(DEFAULT_ZOOM_LEVEL);
         mapPosition.setBearing(0.0f);
+        mapPosition.setTilt(0.0f);
     }
 
     public void setMapPerspectiveForInstruction(Instruction instruction) {

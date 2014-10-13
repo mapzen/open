@@ -263,7 +263,7 @@ public class MapFragment extends BaseFragment {
             addLocationDot();
             if (followMe || !initialRelocateHappened) {
                 // TODO find ways to accomplish this without two flags ;(
-                mapController.resetZoomAndPointNorth();
+                mapController.resetMapForUser();
                 initialRelocateHappened = true;
                 getMap().setMapPosition(getUserLocationPosition());
             }
