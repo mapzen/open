@@ -15,7 +15,10 @@ import com.mapzen.open.search.PagerResultsFragment;
 import com.mapzen.open.search.SavedSearch;
 import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.support.TestBaseActivity;
+import com.mapzen.open.support.TestHelper;
 import com.mapzen.open.util.MapzenNotificationCreator;
+import com.mapzen.osrm.Instruction;
+import com.mapzen.osrm.Route;
 
 import com.google.common.io.Files;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -23,10 +26,13 @@ import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAlarmManager;
@@ -66,6 +72,7 @@ import static com.mapzen.open.support.TestHelper.initBaseActivity;
 import static com.mapzen.open.support.TestHelper.initBaseActivityWithMenu;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Robolectric.application;
@@ -595,7 +602,10 @@ public class BaseActivityTest {
         FragmentManager fragmentManager = activity.getSupportFragmentManager();
         addFragmentToBackStack(RoutePreviewFragment.newInstance(activity, new SimpleFeature()),
                 RoutePreviewFragment.TAG);
-        addFragmentToBackStack(RouteFragment.newInstance(activity, new SimpleFeature()),
+        RouteFragment routeFragment = RouteFragment.newInstance(activity, new SimpleFeature());
+        routeFragment.setRoute(getRouteMock());
+
+        addFragmentToBackStack(routeFragment,
                 RouteFragment.TAG);
 
         Intent intent = new Intent();
@@ -637,4 +647,16 @@ public class BaseActivityTest {
         connectionCallbacks.setLocationClient(locationClient);
         connectionCallbacks.onConnected(new Bundle());
     }
+
+    private Route getRouteMock() throws JSONException {
+        Route route = mock(Route.class);
+        Mockito.when(route.foundRoute()).thenReturn(true);
+        Mockito.when(route.getRawRoute()).thenReturn(new JSONObject("{}"));
+        ArrayList<Instruction> instructions = new ArrayList<Instruction>();
+        instructions.add(TestHelper.getTestInstruction());
+        Mockito.when(route.getRouteInstructions()).thenReturn(instructions);
+        Mockito.when(route.getStartCoordinates()).thenReturn(TestHelper.getTestLocation(0, 0));
+        return route;
+    }
+
 }

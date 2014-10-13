@@ -61,6 +61,7 @@ import butterknife.OnClick;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static com.mapzen.open.MapController.geoPointToPair;
+import static com.mapzen.open.MapController.getMapController;
 import static com.mapzen.open.MapController.locationToPair;
 import static com.mapzen.open.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.open.core.MapzenLocation.Util.getDistancePointFromBearing;
@@ -218,7 +219,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
             mapFragment.getMap().layers().add(routeLocationIndicator);
             mapFragment.hideLocationMarker();
-            mapFragment.getMap().viewport().setTilt(DEFAULT_ROUTING_TILT);
         }
     }
 
@@ -237,6 +237,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.hideActionBar();
         app.deactivateMoveMapToLocation();
         setupLinedrawing();
+        initMapPosition();
+    }
+
+    private void initMapPosition() {
+        manageMap(route.getStartCoordinates(), route.getStartCoordinates());
+        getMapController().getMap().viewport().setTilt(DEFAULT_ROUTING_TILT);
     }
 
     @Override
@@ -320,12 +326,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
             routeLocationIndicator.setPosition(location.getLatitude(), location.getLongitude());
             mapFragment.updateMap();
-            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::manageMap: Corrected: "
-                    + location.toString());
-        } else {
-            Logger.logToDatabase(act, ROUTE_TAG,
-                    "RouteFragment::manageMap: Unable to Correct: location: "
-                            + originalLocation.toString());
         }
     }
 

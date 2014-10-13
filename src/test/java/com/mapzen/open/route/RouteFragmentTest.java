@@ -105,6 +105,7 @@ import static com.mapzen.open.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
 import static com.mapzen.open.util.DatabaseHelper.TABLE_ROUTE_GROUP;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -121,6 +122,7 @@ public class RouteFragmentTest {
     @Inject Router router;
     @Inject PathLayer path;
     @Inject MapController mapController;
+    @Inject ZoomController zoomController;
 
     private TestBaseActivity act;
     private RouteFragment fragment;
@@ -456,7 +458,7 @@ public class RouteFragmentTest {
         RouteLocationIndicator mockLocationIndicator = mock(RouteLocationIndicator.class);
         fragment.setRouteLocationIndicator(mockLocationIndicator);
         FragmentTestUtil.startFragment(fragment);
-        verify(mockLocationIndicator).setPosition(
+        verify(mockLocationIndicator, atLeastOnce()).setPosition(
                 fragment.getRoute().getStartCoordinates().getLatitude(),
                 fragment.getRoute().getStartCoordinates().getLongitude());
     }
@@ -466,7 +468,7 @@ public class RouteFragmentTest {
         RouteLocationIndicator mockLocationIndicator = mock(RouteLocationIndicator.class);
         fragment.setRouteLocationIndicator(mockLocationIndicator);
         FragmentTestUtil.startFragment(fragment);
-        verify(mockLocationIndicator).setRotation(
+        verify(mockLocationIndicator, atLeastOnce()).setRotation(
                 (float) fragment.getRoute().getCurrentRotationBearing());
     }
 
@@ -689,6 +691,19 @@ public class RouteFragmentTest {
     public void onResume_shouldDeactivateActivitiesMapUpdates() throws Exception {
         FragmentTestUtil.startFragment(fragment);
         assertThat(((MapzenApplication) application).shouldMoveMapToLocation()).isFalse();
+    }
+
+    @Test
+    public void onResume_shouldSetDefaultRouteZoom() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        assertThat(mapController.getZoomLevel()).isEqualTo(zoomController.getZoom());
+    }
+
+    @Test
+    public void onResume_shouldSetDefaultRouteTilt() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
+        TestViewport viewport = (TestViewport) act.getMap().viewport();
+        assertThat(viewport.getTilt()).isEqualTo(RouteFragment.DEFAULT_ROUTING_TILT);
     }
 
     @Test
@@ -1081,7 +1096,7 @@ public class RouteFragmentTest {
         ((TestMap) mapController.getMap()).setViewport(viewport);
         loadAceHotelMockRoute();
         fragment.onPageScrolled(0, 0, 0);
-        Mockito.verify(viewport, Mockito.times(2)).setMapPosition(Mockito.any(MapPosition.class));
+        Mockito.verify(viewport, atLeast(2)).setMapPosition(Mockito.any(MapPosition.class));
     }
 
     @Test
