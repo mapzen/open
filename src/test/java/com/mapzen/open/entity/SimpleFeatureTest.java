@@ -1,5 +1,7 @@
 package com.mapzen.open.entity;
 
+import com.mapzen.open.support.MapzenTestRunner;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +24,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
 
 @Config(emulateSdk = 18)
-@RunWith(RobolectricTestRunner.class)
+@RunWith(MapzenTestRunner.class)
 public class SimpleFeatureTest {
     SimpleFeature simpleFeature = new SimpleFeature();
     double expectedLat = Double.parseDouble("51.4993491");

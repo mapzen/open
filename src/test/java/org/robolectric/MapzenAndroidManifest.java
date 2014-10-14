@@ -143,6 +143,7 @@ public class MapzenAndroidManifest extends AndroidManifest {
     }
   }
 
+  @Override
   public void parseAndroidManifest() {
     if (manifestIsParsed) {
       return;
