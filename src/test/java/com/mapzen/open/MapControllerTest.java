@@ -349,19 +349,28 @@ public class MapControllerTest {
     }
 
     @Test
-    public void resetZoomAndPointNorth_shouldSetDefaultZoom() {
+    public void resetMapForUser_shouldSetDefaultZoom() {
         controller.setZoomLevel(3);
         assertThat(controller.getZoomLevel()).isEqualTo(3);
-        controller.resetZoomAndPointNorth();
+        controller.resetMapForUser();
         assertThat(controller.getZoomLevel()).isEqualTo(DEFAULT_ZOOM_LEVEL);
     }
 
     @Test
-    public void resetZoomAndPointNorth_shouldSetZeroBearing() {
+    public void resetMapForUser_shouldSetZeroBearing() {
         controller.getMapPosition().setBearing(1.0f);
         assertThat(controller.getMapPosition().getBearing()).isEqualTo(1.0f);
-        controller.resetZoomAndPointNorth();
+        controller.resetMapForUser();
         assertThat(controller.getMapPosition().getBearing()).isEqualTo(0.0f);
+    }
+
+    @Test
+    public void resetMapForUser_shouldSetZeroTilt() {
+        controller.getMapPosition().setBearing(1.0f);
+        controller.getMapPosition().setTilt(1.0f);
+        assertThat(controller.getMapPosition().getTilt()).isEqualTo(1.0f);
+        controller.resetMapForUser();
+        assertThat(controller.getMapPosition().getTilt()).isEqualTo(0.0f);
     }
 
     @Test
