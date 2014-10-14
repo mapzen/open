@@ -8,6 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class LoginAdapter extends PagerAdapter {
+    public static final int[] LAYOUTS = {
+            R.layout.login_page_2,
+            R.layout.login_page_3,
+            R.layout.login_page_4 };
+
+    public static final int PAGE_2 = 0;
+    public static final int PAGE_3 = 1;
+    public static final int PAGE_4 = 2;
+
     private Context context;
 
     public LoginAdapter(Context context) {
@@ -16,7 +25,7 @@ public class LoginAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        final View view = View.inflate(context, R.layout.login_item, null);
+        final View view = View.inflate(context, LAYOUTS[position], null);
         container.addView(view);
         return view;
     }
@@ -28,7 +37,7 @@ public class LoginAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return LAYOUTS.length;
     }
 
     @Override

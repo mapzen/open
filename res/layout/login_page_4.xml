@@ -17,11 +17,10 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical"
-        android:visibility="invisible">
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/login_explanation"
+            android:id="@+id/body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="@dimen/login_text_bottom_padding"
@@ -31,7 +30,7 @@
             android:textColor="@color/sign_up_text"
             android:fontFamily="sans-serif-condensed-light"
             android:textSize="10pt"
-            android:text="@string/login_explanation" />
+            android:text="@string/login_page_four_body" />
 
         <Button
             android:id="@+id/login_button"
@@ -43,7 +42,7 @@
             android:paddingBottom="@dimen/button_above_below_padding"
             android:layout_gravity="center"
             android:layout_marginBottom="@dimen/login_text_bottom_padding"
-            android:text="@string/osm_init_login"
+            android:text="@string/login_page_four_button"
             android:textColor="@android:color/white"
             android:fontFamily="sans-serif-condensed"
             android:background="@drawable/signin_button"

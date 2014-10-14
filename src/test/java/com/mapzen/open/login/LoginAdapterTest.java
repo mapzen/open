@@ -10,8 +10,13 @@ import org.robolectric.annotation.Config;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
+import static com.mapzen.open.login.LoginAdapter.PAGE_2;
+import static com.mapzen.open.login.LoginAdapter.PAGE_3;
+import static com.mapzen.open.login.LoginAdapter.PAGE_4;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
@@ -39,12 +44,6 @@ public class LoginAdapterTest {
     }
 
     @Test
-    public void instantiateItem_shouldHaveAppLogo() throws Exception {
-        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), 0);
-        assertThat(view.findViewById(R.id.logo)).isNotNull();
-    }
-
-    @Test
     public void destroyItem_shouldRemoveViewFromContainer() throws Exception {
         View view = new View(application);
         ViewGroup container = new FrameLayout(application);
@@ -62,5 +61,66 @@ public class LoginAdapterTest {
     public void isViewFromObject_shouldReturnTrueIfSame() throws Exception {
         View view = new View(application);
         assertThat(loginAdapter.isViewFromObject(view, view)).isTrue();
+    }
+
+    @Test
+    public void instantiateItem_pageTwoShouldHaveLogo() throws Exception {
+        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_2);
+        assertThat(view.findViewById(R.id.logo)).isNotNull();
+    }
+
+    @Test
+    public void instantiateItem_pageTwoShouldHaveTitle() throws Exception {
+        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_2);
+        TextView intro = (TextView) view.findViewById(R.id.title);
+        assertThat(intro).hasText(R.string.login_page_two_title);
+    }
+
+    @Test
+    public void instantiateItem_pageTwoShouldHaveBody() throws Exception {
+        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_2);
+        TextView body = (TextView) view.findViewById(R.id.body);
+        assertThat(body).hasText(R.string.login_page_two_body);
+    }
+
+    @Test
+    public void instantiateItem_pageThreeShouldHaveLogo() throws Exception {
+        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_3);
+        assertThat(view.findViewById(R.id.logo)).isNotNull();
+    }
+
+    @Test
+    public void instantiateItem_pageThreeShouldHaveTitle() throws Exception {
+        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_3);
+        TextView intro = (TextView) view.findViewById(R.id.title);
+        assertThat(intro).hasText(R.string.login_page_three_title);
+    }
+
+    @Test
+    public void instantiateItem_pageThreeShouldHaveBody() throws Exception {
+        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_3);
+        TextView body = (TextView) view.findViewById(R.id.body);
+        assertThat(body).hasText(R.string.login_page_three_body);
+    }
+
+    @Test
+    public void instantiateItem_pageThreeShouldHaveLearnMoreLink() throws Exception {
+        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_3);
+        TextView learnMore = (TextView) view.findViewById(R.id.learn_more);
+        assertThat(learnMore).hasText(R.string.login_page_three_learn_more);
+    }
+
+    @Test
+    public void instantiateItem_pageFourShouldHaveBody() throws Exception {
+        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_4);
+        TextView body = (TextView) view.findViewById(R.id.body);
+        assertThat(body).hasText(R.string.login_page_four_body);
+    }
+
+    @Test
+    public void instantiateItem_pageFourShouldHaveLoginButton() throws Exception {
+        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_4);
+        Button loginButton = (Button) view.findViewById(R.id.login_button);
+        assertThat(loginButton).hasText(R.string.login_page_four_button);
     }
 }

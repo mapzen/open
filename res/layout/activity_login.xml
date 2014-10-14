@@ -5,21 +5,9 @@
     android:layout_height="match_parent"
     android:background="@color/yellow_background">
 
-    <RelativeLayout
+    <include
         android:id="@+id/splash"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ImageView
-            android:id="@+id/logo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:contentDescription="@string/logo_description"
-            android:src="@drawable/ic_open_logo" />
-
-    </RelativeLayout>
+        layout="@layout/login_page_1" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/view_pager"
