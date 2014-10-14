@@ -82,9 +82,11 @@ public class LoginActivity extends Activity {
 
     @OnClick(R.id.logo)
     protected void onClickLogo() {
-        clickCount++;
-        if (clickCount == 3) {
-            forceLogin();
+        if (getResources().getBoolean(R.bool.allow_login_force)) {
+            clickCount++;
+            if (clickCount == 3) {
+                forceLogin();
+            }
         }
     }
 
