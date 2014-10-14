@@ -5,6 +5,8 @@ import com.mapzen.open.R;
 import com.mapzen.android.lost.LocationClient;
 import com.mapzen.open.activity.BaseActivity;
 
+import com.viewpagerindicator.CirclePageIndicator;
+
 import org.scribe.model.Token;
 import org.scribe.model.Verifier;
 
@@ -34,6 +36,7 @@ public class LoginActivity extends Activity {
 
     @InjectView(R.id.splash) RelativeLayout splash;
     @InjectView(R.id.view_pager) ViewPager viewPager;
+    @InjectView(R.id.view_pager_indicator) CirclePageIndicator viewPagerIndicator;
 
     private MapzenApplication app;
     private Token requestToken = null;
@@ -53,6 +56,7 @@ public class LoginActivity extends Activity {
         clickCount = 0;
         ButterKnife.inject(this, rootView);
         viewPager.setAdapter(new LoginAdapter(this));
+        viewPagerIndicator.setViewPager(viewPager);
         loadAnimations();
         animateViewTransitions();
     }
@@ -173,6 +177,8 @@ public class LoginActivity extends Activity {
     private void fadeInLoginView() {
         viewPager.startAnimation(fadeIn);
         viewPager.setVisibility(View.VISIBLE);
+        viewPagerIndicator.startAnimation(fadeIn);
+        viewPagerIndicator.setVisibility(View.VISIBLE);
     }
 
     private void loadAnimations() {
