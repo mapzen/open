@@ -6,8 +6,10 @@ import com.mapzen.open.support.MapzenTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -122,5 +124,15 @@ public class LoginAdapterTest {
         View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_4);
         Button loginButton = (Button) view.findViewById(R.id.login_button);
         assertThat(loginButton).hasText(R.string.login_page_four_button);
+    }
+
+    @Test
+    public void instantiateItem_learnMoreLinkShouldStartBrowserWithWebsite() throws Exception {
+        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_3);
+        TextView learnMore = (TextView) view.findViewById(R.id.learn_more);
+        learnMore.performClick();
+        Intent next = Robolectric.getShadowApplication().getNextStartedActivity();
+        assertThat(next).hasAction(Intent.ACTION_VIEW);
+        assertThat(next).hasData("https://mapzen.com");
     }
 }
