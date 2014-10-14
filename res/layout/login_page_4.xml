@@ -17,31 +17,25 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/login_text_bottom_padding"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/login_text_bottom_padding"
-            android:layout_gravity="center"
-            android:textAlignment="center"
-            android:gravity="center"
-            android:textColor="@color/sign_up_text"
-            android:fontFamily="sans-serif-condensed-light"
-            android:textSize="10pt"
-            android:text="@string/login_page_four_body" />
+            android:text="@string/login_page_four_body"
+            style="@style/LoginBody" />
 
         <Button
             android:id="@+id/login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:paddingLeft="@dimen/button_side_padding"
             android:paddingRight="@dimen/button_side_padding"
             android:paddingTop="@dimen/button_above_below_padding"
             android:paddingBottom="@dimen/button_above_below_padding"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/login_text_bottom_padding"
             android:text="@string/login_page_four_button"
             android:textColor="@android:color/white"
             android:fontFamily="sans-serif-condensed"
