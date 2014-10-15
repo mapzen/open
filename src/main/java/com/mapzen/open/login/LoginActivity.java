@@ -1,8 +1,11 @@
-package com.mapzen.open.activity;
+package com.mapzen.open.login;
 
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.android.lost.LocationClient;
+import com.mapzen.open.activity.BaseActivity;
+
+import com.viewpagerindicator.CirclePageIndicator;
 
 import org.scribe.model.Token;
 import org.scribe.model.Verifier;
@@ -15,29 +18,30 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends Activity implements LoginAdapter.LoginListener {
     public static final String OSM_VERIFIER_KEY = "oauth_verifier";
 
-    @InjectView(R.id.log_in_button) Button logIn;
+    @InjectView(R.id.splash) RelativeLayout splash;
+    @InjectView(R.id.view_pager) ViewPager viewPager;
+    @InjectView(R.id.view_pager_indicator) CirclePageIndicator viewPagerIndicator;
+
     private MapzenApplication app;
     private Token requestToken = null;
-    private Handler delayButtonHandler;
-    private Animation fadeIn, fadeInSlow, fadeOut;
+    private Animation fadeIn, fadeOut;
     private Verifier verifier;
-    private int clickCount;
+
     @Inject LocationClient locationClient;
 
     @Override
@@ -45,12 +49,19 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         app = (MapzenApplication) getApplication();
         app.inject(this);
-        setContentView(R.layout.init);
+        setContentView(R.layout.activity_login);
         View rootView = getWindow().getDecorView().getRootView();
-        clickCount = 0;
         ButterKnife.inject(this, rootView);
+        initViewPager();
         loadAnimations();
         animateViewTransitions();
+    }
+
+    private void initViewPager() {
+        final LoginAdapter loginAdapter = new LoginAdapter(this);
+        loginAdapter.setLoginListener(this);
+        viewPager.setAdapter(loginAdapter);
+        viewPagerIndicator.setViewPager(viewPager);
     }
 
     @Override
@@ -71,22 +82,6 @@ public class LoginActivity extends Activity {
         if (intent.getData() != null) {
             setAccessToken(intent);
             startBaseActivity();
-        }
-    }
-
-    @OnClick(R.id.log_in_button)
-    @SuppressWarnings("unused")
-    protected void onClickLogIn() {
-        loginRoutine();
-    }
-
-    @OnClick(R.id.logo)
-    protected void onClickLogo() {
-        if (getResources().getBoolean(R.bool.allow_login_force)) {
-            clickCount++;
-            if (clickCount == 3) {
-                forceLogin();
-            }
         }
     }
 
@@ -161,8 +156,7 @@ public class LoginActivity extends Activity {
 
     private void animateViewTransitions() {
         fadeOutMotto();
-        delayButtonHandler = new Handler();
-        delayButtonHandler.postDelayed(new Runnable() {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 fadeInLoginView();
@@ -171,19 +165,19 @@ public class LoginActivity extends Activity {
     }
 
     private void fadeOutMotto() {
-        findViewById(R.id.motto).startAnimation(fadeOut);
-        findViewById(R.id.motto).setVisibility(LinearLayout.INVISIBLE);
+        splash.startAnimation(fadeOut);
+        splash.setVisibility(View.INVISIBLE);
     }
 
     private void fadeInLoginView() {
-        findViewById(R.id.login_explanation).startAnimation(fadeIn);
-        findViewById(R.id.log_in_button).startAnimation(fadeInSlow);
-        findViewById(R.id.login_layout).setVisibility(LinearLayout.VISIBLE);
+        viewPager.startAnimation(fadeIn);
+        viewPager.setVisibility(View.VISIBLE);
+        viewPagerIndicator.startAnimation(fadeIn);
+        viewPagerIndicator.setVisibility(View.VISIBLE);
     }
 
     private void loadAnimations() {
         fadeIn = AnimationUtils.loadAnimation(this, R.anim.fadein);
-        fadeInSlow = AnimationUtils.loadAnimation(this, R.anim.fadeinslow);
         fadeOut = AnimationUtils.loadAnimation(this, R.anim.fadeout);
     }
 
@@ -191,5 +185,15 @@ public class LoginActivity extends Activity {
         Toast.makeText(getApplicationContext(), getString(R.string.login_error),
                 Toast.LENGTH_LONG).show();
         startBaseActivity();
+    }
+
+    @Override
+    public void doLogin() {
+        loginRoutine();
+    }
+
+    @Override
+    public void doForceLogin() {
+        forceLogin();
     }
 }

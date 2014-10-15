@@ -4,7 +4,7 @@ import com.mapzen.open.MapController;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.activity.InitialActivity;
-import com.mapzen.open.activity.LoginActivity;
+import com.mapzen.open.login.LoginActivity;
 import com.mapzen.open.adapters.PlaceArrayAdapter;
 import com.mapzen.android.Pelias;
 import com.mapzen.open.fragment.ItemFragment;

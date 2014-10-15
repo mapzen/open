@@ -1,4 +1,4 @@
-package com.mapzen.open.activity;
+package com.mapzen.open.login;
 
 import android.content.Intent;
 
@@ -7,6 +7,7 @@ import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.TestMapzenApplication;
 import com.mapzen.android.lost.LocationClient;
+import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.support.MapzenTestRunner;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +18,6 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 import org.scribe.model.Token;
 
-import static com.mapzen.open.activity.LoginActivity.OSM_VERIFIER_KEY;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import android.net.Uri;
@@ -74,7 +74,7 @@ public class LoginActivityTest {
     @Test
     public void shouldStartBaseActivityOnTokenReturn() {
         Uri.Builder oauthTokenBuilder = new Uri.Builder();
-        oauthTokenBuilder.appendQueryParameter(OSM_VERIFIER_KEY, "Bogus verifier");
+        oauthTokenBuilder.appendQueryParameter(LoginActivity.OSM_VERIFIER_KEY, "Bogus verifier");
         Uri oauthToken = oauthTokenBuilder.build();
         Intent intent = new Intent();
         intent.setData(oauthToken);
@@ -99,7 +99,7 @@ public class LoginActivityTest {
                 .get();
 
         Uri.Builder oauthTokenBuilder = new Uri.Builder();
-        oauthTokenBuilder.appendQueryParameter(OSM_VERIFIER_KEY, "Bogus verifier");
+        oauthTokenBuilder.appendQueryParameter(LoginActivity.OSM_VERIFIER_KEY, "Bogus verifier");
         Uri oauthToken = oauthTokenBuilder.build();
         Intent oauthIntent = new Intent();
         oauthIntent.setData(oauthToken);
@@ -108,25 +108,13 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void shouldForceLoginOnTripleLogoTap() {
-        for (int i = 0; i < 3; i++) {
-            activity.onClickLogo();
-        }
+    public void doForceLogin_shouldForceLogin() {
+        activity.doForceLogin();
         String activityStarted = shadowOf(activity).getNextStartedActivity()
                 .getComponent().toString();
         assertThat(activityStarted)
                 .isEqualTo("ComponentInfo{com.mapzen.open/com.mapzen.open.activity.BaseActivity}");
         assertThat(((MapzenApplication) activity.getApplication()).wasForceLoggedIn()).isTrue();
-    }
-
-    @Test
-    public void shouldNotForceLoginOnDoubleLogoTap() {
-        for (int i = 0; i < 2; i++) {
-            activity.onClickLogo();
-        }
-        Intent intent = shadowOf(activity).getNextStartedActivity();
-        assertThat(intent).isNull();
-        assertThat(((MapzenApplication) activity.getApplication()).wasForceLoggedIn()).isFalse();
     }
 
     @Test
@@ -162,5 +150,28 @@ public class LoginActivityTest {
     public void onPause_shouldDisConnectLocationClient() {
         activity.onPause();
         assertThat(locationClient.isConnected()).isFalse();
+    }
+
+    @Test
+    public void shouldFadeOutSplashScreen() throws Exception {
+        Robolectric.shadowOf(activity.splash.getAnimation()).invokeEnd();
+        assertThat(activity.splash).isNotVisible();
+    }
+
+    @Test
+    public void shouldFadeInViewPager() throws Exception {
+        Robolectric.shadowOf(activity.viewPager.getAnimation()).invokeEnd();
+        assertThat(activity.viewPager).isVisible();
+    }
+
+    @Test
+    public void shouldFadeInViewPagerIndicator() throws Exception {
+        Robolectric.shadowOf(activity.viewPagerIndicator.getAnimation()).invokeEnd();
+        assertThat(activity.viewPagerIndicator).isVisible();
+    }
+
+    @Test
+    public void loginFlowShouldHaveViewPagerWithCountThree() throws Exception {
+        assertThat(activity.viewPager.getAdapter()).hasCount(3);
     }
 }

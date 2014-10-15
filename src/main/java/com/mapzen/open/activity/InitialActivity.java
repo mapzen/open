@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.mapzen.open.MapzenApplication;
+import com.mapzen.open.login.LoginActivity;
 import com.mapzen.open.util.MixpanelHelper;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
