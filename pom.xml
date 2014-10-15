@@ -430,82 +430,6 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
-                        <groupId>com.bazaarvoice.maven.plugins</groupId>
-                        <artifactId>s3-upload-maven-plugin</artifactId>
-                        <version>1.2</version>
-                        <configuration>
-                            <bucketName>android.mapzen.com</bucketName>
-                            <source>target/${project.build.finalName}.apk</source>
-                            <destination>latest.apk</destination>
-                            <accessKey>${s3.accessKey}</accessKey>
-                            <secretKey>${s3.secretKey}</secretKey>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <phase>deploy</phase>
-                                <goals>
-                                    <goal>s3-upload</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>all</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.bazaarvoice.maven.plugins</groupId>
-                        <artifactId>s3-upload-maven-plugin</artifactId>
-                        <version>1.2</version>
-                        <configuration>
-                            <bucketName>android.mapzen.com</bucketName>
-                            <source>target/${project.build.finalName}.apk</source>
-                            <destination>${branchName}-${project.build.finalName}-${timestamp}.apk</destination>
-                            <accessKey>${s3.accessKey}</accessKey>
-                            <secretKey>${s3.secretKey}</secretKey>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <phase>deploy</phase>
-                                <goals>
-                                    <goal>s3-upload</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>s3All</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.bazaarvoice.maven.plugins</groupId>
-                        <artifactId>s3-upload-maven-plugin</artifactId>
-                        <version>1.2</version>
-                        <configuration>
-                            <bucketName>android.mapzen.com</bucketName>
-                            <source>target/${project.build.finalName}.apk</source>
-                            <destination>${project.build.finalName}-${timestamp}.apk</destination>
-                            <accessKey>${s3.accessKey}</accessKey>
-                            <secretKey>${s3.secretKey}</secretKey>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <phase>deploy</phase>
-                                <goals>
-                                    <goal>s3-upload</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -531,24 +455,23 @@
                     </plugin>
 
                     <plugin>
-                        <groupId>com.bazaarvoice.maven.plugins</groupId>
-                        <artifactId>s3-upload-maven-plugin</artifactId>
-                        <version>1.2</version>
-                        <configuration>
-                            <bucketName>android.mapzen.com</bucketName>
-                            <source>target/${project.build.finalName}.apk</source>
-                            <destination>${project.build.finalName}.apk</destination>
-                            <accessKey>${s3.accessKey}</accessKey>
-                            <secretKey>${s3.secretKey}</secretKey>
-                        </configuration>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.2.1</version>
                         <executions>
                             <execution>
-                                <phase>deploy</phase>
+                                <phase>initialize</phase>
                                 <goals>
-                                    <goal>s3-upload</goal>
+                                    <goal>exec</goal>
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <executable>bash</executable>
+                            <arguments>
+                                <argument>scripts/production-values.sh</argument>
+                            </arguments>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

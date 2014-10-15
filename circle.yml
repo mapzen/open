@@ -12,7 +12,7 @@ dependencies:
     - echo y | android update sdk --all --no-ui --force --filter "build-tools-20.0.0,platform-tools,android-19"
     - sed -i /gen-external/d project.properties
     - sed -i s/reference.2/reference.1/g project.properties
-    - ./install-dependencies.sh
+    - scripts/install-dependencies.sh
     - sudo apt-get update; sudo apt-get install s3cmd 
     - printf "[default]\naccess_key = $S3_ACCESS_KEY\n secret_key = $S3_SECRET_KEY" > ~/.s3cfg
     - git clone https://github.com/mapzen/apk-s3-lister.git; cd apk-s3-lister; ./upload.sh 
@@ -25,9 +25,9 @@ deployment:
   all:
     branch: /^(?!master).*$/
     commands:
-      - mvn s3-upload:s3-upload -P all -DbranchName=$CIRCLE_BRANCH -Ds3.accessKey=$S3_ACCESS_KEY -Ds3.secretKey=$S3_SECRET_KEY
+      - s3cmd put target/*.apk s3://android.mapzen.com/development/$CIRCLE_BRANCH-$CIRCLE_BUILD_NUM.apk
   latest:
     branch: master
     commands:
-      - mvn s3-upload:s3-upload -P jenkins -Ds3.accessKey=$S3_ACCESS_KEY -Ds3.secretKey=$S3_SECRET_KEY
-      - mvn s3-upload:s3-upload -P s3All -Ds3.accessKey=$S3_ACCESS_KEY -Ds3.secretKey=$S3_SECRET_KEY
+      - s3cmd put target/*.apk s3://android.mapzen.com/latest.apk 
+      - s3cmd put target/*.apk s3://android.mapzen.com/snapshots/master-$CIRCLE_BUILD_NUM.apk
