@@ -5,4 +5,4 @@
 # Usage:
 #   install-dependencies.sh
 
-for file in scripts/*.sh; do bash $file; done
+for file in scripts/dependency/*.sh; do bash $file; done

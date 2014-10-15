@@ -469,7 +469,7 @@
                         <configuration>
                             <executable>bash</executable>
                             <arguments>
-                                <argument>scripts/flip-release-values.sh</argument>
+                                <argument>scripts/production-values.sh</argument>
                             </arguments>
                         </configuration>
                     </plugin>
