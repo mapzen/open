@@ -32,6 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginBottom="@dimen/login_button_bottom_margin"
             android:paddingLeft="@dimen/button_side_padding"
             android:paddingRight="@dimen/button_side_padding"
             android:paddingTop="@dimen/button_above_below_padding"

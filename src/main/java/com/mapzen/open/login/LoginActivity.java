@@ -55,12 +55,16 @@ public class LoginActivity extends Activity implements LoginAdapter.LoginListene
         View rootView = getWindow().getDecorView().getRootView();
         clickCount = 0;
         ButterKnife.inject(this, rootView);
+        initViewPager();
+        loadAnimations();
+        animateViewTransitions();
+    }
+
+    private void initViewPager() {
         final LoginAdapter loginAdapter = new LoginAdapter(this);
         loginAdapter.setLoginListener(this);
         viewPager.setAdapter(loginAdapter);
         viewPagerIndicator.setViewPager(viewPager);
-        loadAnimations();
-        animateViewTransitions();
     }
 
     @Override

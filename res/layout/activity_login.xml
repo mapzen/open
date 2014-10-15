@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/yellow_background">
@@ -18,9 +19,15 @@
     <com.viewpagerindicator.CirclePageIndicator
         android:id="@+id/view_pager_indicator"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/vpi_height"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/default_margin"
-        android:visibility="gone" />
+        android:layout_marginBottom="@dimen/vpi_margin_bottom"
+        android:padding="@dimen/vpi_padding"
+        android:visibility="gone"
+        app:fillColor="@color/vpi_fill_color"
+        app:pageColor="@color/vpi_page_color"
+        app:strokeColor="@color/vpi_stroke_color"
+        app:radius="@dimen/vpi_radius"
+        app:strokeWidth="@dimen/vpi_stroke_width" />
 
 </RelativeLayout>
