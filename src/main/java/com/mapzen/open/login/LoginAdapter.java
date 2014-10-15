@@ -20,6 +20,7 @@ public class LoginAdapter extends PagerAdapter {
     public static final int PAGE_4 = 2;
 
     private Context context;
+    private LoginListener loginListener;
 
     public LoginAdapter(Context context) {
         this.context = context;
@@ -40,6 +41,15 @@ public class LoginAdapter extends PagerAdapter {
                     context.startActivity(intent);
                 }
             });
+        } else if (position == PAGE_4) {
+            view.findViewById(R.id.login_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (loginListener != null) {
+                        loginListener.doLogin();
+                    }
+                }
+            });
         }
 
         return view;
@@ -58,5 +68,13 @@ public class LoginAdapter extends PagerAdapter {
     @Override
     public boolean isViewFromObject(View view, Object object) {
         return view == object;
+    }
+
+    public void setLoginListener(LoginListener loginListener) {
+        this.loginListener = loginListener;
+    }
+
+    public interface LoginListener {
+        public void doLogin();
     }
 }

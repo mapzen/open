@@ -135,4 +135,23 @@ public class LoginAdapterTest {
         assertThat(next).hasAction(Intent.ACTION_VIEW);
         assertThat(next).hasData("https://mapzen.com");
     }
+
+    @Test
+    public void instantiateItem_loginButtonShouldInvokeCallback() throws Exception {
+        TestLoginListener listener = new TestLoginListener();
+        loginAdapter.setLoginListener(listener);
+        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_4);
+        Button loginButton = (Button) view.findViewById(R.id.login_button);
+        loginButton.performClick();
+        assertThat(listener.done).isTrue();
+    }
+
+    private class TestLoginListener implements LoginAdapter.LoginListener {
+        private boolean done;
+
+        @Override
+        public void doLogin() {
+            done = true;
+        }
+    }
 }

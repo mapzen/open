@@ -31,7 +31,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends Activity implements LoginAdapter.LoginListener {
     public static final String OSM_VERIFIER_KEY = "oauth_verifier";
 
     @InjectView(R.id.splash) RelativeLayout splash;
@@ -55,7 +55,9 @@ public class LoginActivity extends Activity {
         View rootView = getWindow().getDecorView().getRootView();
         clickCount = 0;
         ButterKnife.inject(this, rootView);
-        viewPager.setAdapter(new LoginAdapter(this));
+        final LoginAdapter loginAdapter = new LoginAdapter(this);
+        loginAdapter.setLoginListener(this);
+        viewPager.setAdapter(loginAdapter);
         viewPagerIndicator.setViewPager(viewPager);
         loadAnimations();
         animateViewTransitions();
@@ -190,5 +192,10 @@ public class LoginActivity extends Activity {
         Toast.makeText(getApplicationContext(), getString(R.string.login_error),
                 Toast.LENGTH_LONG).show();
         startBaseActivity();
+    }
+
+    @Override
+    public void doLogin() {
+        loginRoutine();
     }
 }
