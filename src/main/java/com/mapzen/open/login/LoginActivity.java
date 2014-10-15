@@ -29,7 +29,6 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 
 public class LoginActivity extends Activity implements LoginAdapter.LoginListener {
     public static final String OSM_VERIFIER_KEY = "oauth_verifier";
@@ -42,7 +41,6 @@ public class LoginActivity extends Activity implements LoginAdapter.LoginListene
     private Token requestToken = null;
     private Animation fadeIn, fadeOut;
     private Verifier verifier;
-    private int clickCount;
 
     @Inject LocationClient locationClient;
 
@@ -53,7 +51,6 @@ public class LoginActivity extends Activity implements LoginAdapter.LoginListene
         app.inject(this);
         setContentView(R.layout.activity_login);
         View rootView = getWindow().getDecorView().getRootView();
-        clickCount = 0;
         ButterKnife.inject(this, rootView);
         initViewPager();
         loadAnimations();
@@ -85,16 +82,6 @@ public class LoginActivity extends Activity implements LoginAdapter.LoginListene
         if (intent.getData() != null) {
             setAccessToken(intent);
             startBaseActivity();
-        }
-    }
-
-    @OnClick(R.id.logo)
-    protected void onClickLogo() {
-        if (getResources().getBoolean(R.bool.allow_login_force)) {
-            clickCount++;
-            if (clickCount == 3) {
-                forceLogin();
-            }
         }
     }
 
@@ -203,5 +190,10 @@ public class LoginActivity extends Activity implements LoginAdapter.LoginListene
     @Override
     public void doLogin() {
         loginRoutine();
+    }
+
+    @Override
+    public void doForceLogin() {
+        forceLogin();
     }
 }

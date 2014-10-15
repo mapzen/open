@@ -21,6 +21,7 @@ public class LoginAdapter extends PagerAdapter {
 
     private Context context;
     private LoginListener loginListener;
+    private int clickCount;
 
     public LoginAdapter(Context context) {
         this.context = context;
@@ -30,29 +31,51 @@ public class LoginAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         final View view = View.inflate(context, LAYOUTS[position], null);
         container.addView(view);
-
         if (position == PAGE_3) {
-            view.findViewById(R.id.learn_more).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final Intent intent = new Intent();
-                    intent.setAction(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse("https://mapzen.com"));
-                    context.startActivity(intent);
-                }
-            });
+            initLearnMoreListener(view);
         } else if (position == PAGE_4) {
-            view.findViewById(R.id.login_button).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (loginListener != null) {
-                        loginListener.doLogin();
-                    }
-                }
-            });
+            initLoginButtonListener(view);
+            initLogoClickListener(view);
         }
 
         return view;
+    }
+
+    private void initLearnMoreListener(View view) {
+        view.findViewById(R.id.learn_more).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://mapzen.com"));
+                context.startActivity(intent);
+            }
+        });
+    }
+
+    private void initLoginButtonListener(View view) {
+        view.findViewById(R.id.login_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (loginListener != null) {
+                    loginListener.doLogin();
+                }
+            }
+        });
+    }
+
+    private void initLogoClickListener(View view) {
+        view.findViewById(R.id.logo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (context.getResources().getBoolean(R.bool.allow_login_force)) {
+                    clickCount++;
+                    if (clickCount == 3 && loginListener != null) {
+                        loginListener.doForceLogin();
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -76,5 +99,6 @@ public class LoginAdapter extends PagerAdapter {
 
     public interface LoginListener {
         public void doLogin();
+        public void doForceLogin();
     }
 }

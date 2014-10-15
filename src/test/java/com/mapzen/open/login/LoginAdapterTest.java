@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import static com.mapzen.open.login.LoginAdapter.PAGE_2;
@@ -143,15 +144,44 @@ public class LoginAdapterTest {
         View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_4);
         Button loginButton = (Button) view.findViewById(R.id.login_button);
         loginButton.performClick();
-        assertThat(listener.done).isTrue();
+        assertThat(listener.login).isTrue();
+    }
+
+    @Test
+    public void instantiateItem_tripleClickLogoShouldForceLogin() throws Exception {
+        TestLoginListener listener = new TestLoginListener();
+        loginAdapter.setLoginListener(listener);
+        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_4);
+        ImageView logo = (ImageView) view.findViewById(R.id.logo);
+        logo.performClick();
+        logo.performClick();
+        logo.performClick();
+        assertThat(listener.forceLogin).isTrue();
+    }
+
+    @Test
+    public void instantiateItem_doubleClickLogoShouldNotForceLogin() throws Exception {
+        TestLoginListener listener = new TestLoginListener();
+        loginAdapter.setLoginListener(listener);
+        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_4);
+        ImageView logo = (ImageView) view.findViewById(R.id.logo);
+        logo.performClick();
+        logo.performClick();
+        assertThat(listener.forceLogin).isFalse();
     }
 
     private class TestLoginListener implements LoginAdapter.LoginListener {
-        private boolean done;
+        private boolean login;
+        private boolean forceLogin;
 
         @Override
         public void doLogin() {
-            done = true;
+            login = true;
+        }
+
+        @Override
+        public void doForceLogin() {
+            forceLogin = true;
         }
     }
 }

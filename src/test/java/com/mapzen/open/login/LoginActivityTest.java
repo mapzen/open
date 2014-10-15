@@ -108,25 +108,13 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void shouldForceLoginOnTripleLogoTap() {
-        for (int i = 0; i < 3; i++) {
-            activity.onClickLogo();
-        }
+    public void doForceLogin_shouldForceLogin() {
+        activity.doForceLogin();
         String activityStarted = shadowOf(activity).getNextStartedActivity()
                 .getComponent().toString();
         assertThat(activityStarted)
                 .isEqualTo("ComponentInfo{com.mapzen.open/com.mapzen.open.activity.BaseActivity}");
         assertThat(((MapzenApplication) activity.getApplication()).wasForceLoggedIn()).isTrue();
-    }
-
-    @Test
-    public void shouldNotForceLoginOnDoubleLogoTap() {
-        for (int i = 0; i < 2; i++) {
-            activity.onClickLogo();
-        }
-        Intent intent = shadowOf(activity).getNextStartedActivity();
-        assertThat(intent).isNull();
-        assertThat(((MapzenApplication) activity.getApplication()).wasForceLoggedIn()).isFalse();
     }
 
     @Test
