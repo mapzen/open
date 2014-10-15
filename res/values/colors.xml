@@ -21,7 +21,8 @@
     <color name="dark_gray">#444444</color>
     <color name="brown">#563630</color>
     <color name="dark_brown">#44231e</color>
-    <color name="transparent_white">#CCFFFFFF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="transparent_white">#D9FFFFFF</color>
     <color name="transparent_gray">#CCCECECE</color>
     <color name="transparent_light_gray">#99CECECE</color>
     <color name="transparent_blue">#E66ea0a4</color>
