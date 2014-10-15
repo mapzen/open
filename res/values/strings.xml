@@ -26,7 +26,7 @@
     <string name="to_text">To:</string>
     <string name="routing_to_text">To\u0020</string>
     <string name="search_hint_icon_spacer">"   "</string>
-    <string name="osm_attribution">© OpenStreetMap</string>
+    <string name="osm_attribution">Map data © OpenStreetMap</string>
     <string name="no_network">Network connection unavailable</string>
     <string name="you_have_arrived_at">You have arrived at</string>
 
