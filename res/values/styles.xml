@@ -65,7 +65,7 @@
         <item name="android:fontFamily">sans-serif-condensed-light</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@color/red</item>
-        <item name="android:textSize">@dimen/big</item>
+        <item name="android:textSize">@dimen/medium_2</item>
     </style>
 
     <style name="LoginBody" parent="@android:style/Widget.TextView">
