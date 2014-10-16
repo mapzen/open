@@ -6,5 +6,6 @@
     android:drawablePadding="4dp"
     android:padding="@dimen/default_padding_list_item"
     android:singleLine="true"
-    android:textColor="@color/red"
+    android:fontFamily="sans-serif-condensed"
+    android:textColor="@color/blue"
     android:textSize="@dimen/medium" />
