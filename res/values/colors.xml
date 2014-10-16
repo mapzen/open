@@ -28,8 +28,8 @@
     <color name="transparent_blue">#E66ea0a4</color>
 
     <!-- ViewPagerIndicator -->
-    <color name="vpi_fill_color">@color/light_gray</color>
+    <color name="vpi_fill_color">@color/blue</color>
     <color name="vpi_page_color">@android:color/transparent</color>
-    <color name="vpi_stroke_color">@color/light_gray</color>
+    <color name="vpi_stroke_color">@color/blue</color>
 
 </resources>
