@@ -23,3 +23,6 @@ assets/styles
 assets/textures
 assets/patterns
 manifest*
+
+*.swp
+*.swo
