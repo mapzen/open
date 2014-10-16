@@ -3,7 +3,7 @@
     package="com.mapzen.open"
     android:versionCode="0"
     android:versionName="DEVELOPMENT"
-    android:installLocation="preferExternal">
+    android:installLocation="internalOnly">
 
     <uses-sdk
         android:minSdkVersion="17"
