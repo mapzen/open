@@ -60,7 +60,7 @@ public class LoginActivityTest {
         activity.openLoginPage(testToken);
         String urlOpened = shadowOf(activity).getNextStartedActivity().getDataString();
         assertThat(urlOpened)
-                .contains("http://www.openstreetmap.org/oauth/authorize?oauth_token=");
+                .contains("https://www.openstreetmap.org/oauth/authorize?oauth_token=");
     }
 
     @Test

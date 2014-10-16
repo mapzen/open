@@ -5,7 +5,7 @@ import org.scribe.model.Token;
 
 public class OSMApi extends DefaultApi10a {
 
-    public static final String BASE_URL = "http://www.openstreetmap.org";
+    public static final String BASE_URL = "https://www.openstreetmap.org";
     private static final String OAUTH_URL = BASE_URL + "/oauth/";
     private static final String AUTHORIZATION_URL = OAUTH_URL + "authorize?oauth_token=%s";
     public static final String CREATE_GPX = "/api/0.6/gpx/create";
