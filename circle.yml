@@ -21,7 +21,7 @@ test:
 
 deployment:
   all:
-    branch: /^(?!master).*$/
+    branch: /^(?!master|production).*$/
     commands:
       - s3cmd put target/*.apk s3://android.mapzen.com/development/$CIRCLE_BRANCH-$CIRCLE_BUILD_NUM.apk
   latest:
