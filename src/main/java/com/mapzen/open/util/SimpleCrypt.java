@@ -2,14 +2,18 @@ package com.mapzen.open.util;
 
 import android.util.Base64;
 
-import java.security.SecureRandom;
+import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.KeySpec;
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.spec.SecretKeySpec;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.PBEParameterSpec;
 
 public class SimpleCrypt {
-    private SecretKeySpec sks;
+    private Cipher ecipher, dcipher;
+
     static {
         try {
             System.loadLibrary("leyndo");
@@ -20,42 +24,54 @@ public class SimpleCrypt {
         }
     }
 
-    public SimpleCrypt() {
-        try {
-            SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
-            sr.setSeed(getSalt().getBytes());
-            KeyGenerator kg = KeyGenerator.getInstance("AES");
-            kg.init(128, sr);
-            sks = new SecretKeySpec((kg.generateKey()).getEncoded(), "AES");
-        } catch (Exception e) {
-            Logger.e("encryption failure: " + e.getMessage());
+    public native String getSalt();
+    public char[] getSaltMix() {
+        if ("Dalvik".equals(System.getProperty("java.vm.name"))) {
+            return getSalt().toCharArray();
+        } else {
+            return "testSecrets".toCharArray();
         }
     }
 
-    public native String getSalt();
-
-    public String encode(String phrase) {
-        byte[] encodedBytes = null;
+    public SimpleCrypt() {
+        byte[] salt = {
+                (byte) 0xA9, (byte) 0x9B, (byte) 0xC8, (byte) 0x32,
+                (byte) 0x56, (byte) 0x34, (byte) 0xE3, (byte) 0x03
+        };
+        int iterationCount = 19;
         try {
-            Cipher c = Cipher.getInstance("AES");
-            c.init(Cipher.ENCRYPT_MODE, sks);
-            encodedBytes = c.doFinal(phrase.getBytes());
+            KeySpec keySpec = new PBEKeySpec(getSaltMix(), salt, iterationCount);
+            SecretKey key =
+                    SecretKeyFactory.getInstance("PBEWithMD5AndDES").generateSecret(keySpec);
+            ecipher = Cipher.getInstance(key.getAlgorithm());
+            dcipher = Cipher.getInstance(key.getAlgorithm());
+            AlgorithmParameterSpec paramSpec = new PBEParameterSpec(salt, iterationCount);
+            ecipher.init(Cipher.ENCRYPT_MODE, key, paramSpec);
+            dcipher.init(Cipher.DECRYPT_MODE, key, paramSpec);
         } catch (Exception e) {
-            Logger.e("encryption failure: " + e.getMessage());
+            Logger.e("SimpleCrypt error: " + e.getMessage());
         }
-        return Base64.encodeToString(encodedBytes, Base64.DEFAULT);
+    }
+
+    public String encode(String str) {
+        try {
+            byte[] utf8 = str.getBytes("UTF8");
+            byte[] enc = ecipher.doFinal(utf8);
+            return Base64.encodeToString(enc, Base64.DEFAULT);
+        } catch (Exception e) {
+            Logger.e("encoding error: " + e.getMessage());
+        }
+        return null;
     }
 
     public String decode(String gargle) {
         byte[] encodedBytes = Base64.decode(gargle, Base64.DEFAULT);
-        byte[] decodedBytes = null;
         try {
-            Cipher c = Cipher.getInstance("AES");
-            c.init(Cipher.DECRYPT_MODE, sks);
-            decodedBytes = c.doFinal(encodedBytes);
+            byte[] utf8 = dcipher.doFinal(encodedBytes);
+            return new String(utf8, "UTF8");
         } catch (Exception e) {
-            Logger.e("encryption failure: " + e.getMessage());
+            Logger.e("decoding error: " + e.getMessage());
         }
-        return new String(decodedBytes);
+        return null;
     }
 }
