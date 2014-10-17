@@ -100,7 +100,7 @@ public class DirectionListFragmentTest {
         TextView instruction = (TextView) view.findViewById(R.id.simple_instruction);
         DistanceView distance = (DistanceView) view.findViewById(R.id.distance);
 
-        assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_locate_active));
+        assertThat(icon.getDrawable()).isEqualTo(res.getDrawable(R.drawable.ic_locate));
         assertThat(instruction).hasText("Current Location");
         assertThat(distance).isEmpty();
     }
