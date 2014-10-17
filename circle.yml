@@ -29,3 +29,7 @@ deployment:
     commands:
       - s3cmd put target/*.apk s3://android.mapzen.com/latest.apk 
       - s3cmd put target/*.apk s3://android.mapzen.com/snapshots/master-$CIRCLE_BUILD_NUM.apk
+  release:
+    branch: production
+    commands:
+      - mvn clean release:clean release:prepare -DdryRun=true -DignoreSnapshots=true --batch-mode
