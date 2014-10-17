@@ -9,6 +9,7 @@ out/
 .idea/
 *.iml
 classes
+gen/
 
 # Mac
 .DS_Store
