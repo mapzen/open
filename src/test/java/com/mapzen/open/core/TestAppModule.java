@@ -2,6 +2,9 @@ package com.mapzen.open.core;
 
 import com.mapzen.open.MapController;
 import com.mapzen.open.MapControllerTest;
+import com.mapzen.open.MapzenApplication;
+import com.mapzen.open.MapzenApplicationTest;
+import com.mapzen.open.TestMapzenApplication;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.activity.BaseActivityTest;
 import com.mapzen.open.activity.InitialActivity;
@@ -15,6 +18,7 @@ import com.mapzen.open.fragment.ItemFragment;
 import com.mapzen.open.fragment.ItemFragmentTest;
 import com.mapzen.open.fragment.MapFragment;
 import com.mapzen.open.fragment.MapFragmentTest;
+import com.mapzen.open.util.SimpleCrypt;
 import com.mapzen.osrm.Router;
 import com.mapzen.open.route.DrawPathTask;
 import com.mapzen.open.route.DrawPathTaskTest;
@@ -44,8 +48,10 @@ import dagger.Module;
 import dagger.Provides;
 
 import static com.mapzen.osrm.Router.getRouter;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @Module(
         injects = {
@@ -78,7 +84,10 @@ import static org.mockito.Mockito.mock;
                 MapzenLocation.ConnectionCallbacks.class,
                 MapzenLocation.Listener.class,
                 PagerResultsFragment.class,
-                PagerResultsFragmentTest.class
+                PagerResultsFragmentTest.class,
+                MapzenApplication.class,
+                MapzenApplicationTest.class,
+                TestMapzenApplication.class
         },
         complete = false
 )
@@ -125,5 +134,12 @@ public class TestAppModule {
 
     @Provides @Singleton StyleDownLoader provideStyleDownloader() {
         return Mockito.mock(StyleDownLoader.class);
+    }
+
+    @Provides @Singleton SimpleCrypt provideSimpleCrypt() {
+        SimpleCrypt simpleCrypt = mock(SimpleCrypt.class);
+        when(simpleCrypt.encode(anyString())).thenReturn("stuff");
+        when(simpleCrypt.decode(anyString())).thenReturn("stuff");
+        return simpleCrypt;
     }
 }
