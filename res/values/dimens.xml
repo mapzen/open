@@ -48,9 +48,9 @@
 
     <!-- ViewPagerIndicator -->
     <dimen name="vpi_height">16dp</dimen>
-    <dimen name="vpi_radius">4dp</dimen>
+    <dimen name="vpi_radius">3dp</dimen>
     <dimen name="vpi_stroke_width">1dp</dimen>
-    <dimen name="vpi_padding">15dp</dimen>
-    <dimen name="vpi_margin_bottom">15dp</dimen>
+    <dimen name="vpi_padding">8dp</dimen>
+    <dimen name="vpi_margin_bottom">16dp</dimen>
 
 </resources>

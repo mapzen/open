@@ -64,7 +64,8 @@
         <item name="android:gravity">center_horizontal</item>
         <item name="android:fontFamily">sans-serif-condensed-light</item>
         <item name="android:textColor">@color/red</item>
-        <item name="android:textSize">@dimen/medium_2</item>
+        <item name="android:textSize">@dimen/big</item>
+        <item name="android:paddingBottom">@dimen/button_above_below_padding</item>
     </style>
 
     <style name="LoginBody" parent="@android:style/Widget.TextView">
