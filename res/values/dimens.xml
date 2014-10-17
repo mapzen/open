@@ -13,7 +13,7 @@
     <dimen name="route_resume_height">50dp</dimen>
     <dimen name="login_text_bottom_padding">32dp</dimen>
     <dimen name="logo_top_margin">180dp</dimen>
-    <dimen name="button_side_padding">16dp</dimen>
+    <dimen name="button_side_padding">20dp</dimen>
     <dimen name="button_above_below_padding">8dp</dimen>
     <dimen name="button_font_size">10pt</dimen>
     <dimen name="result_pager_height">75dp</dimen>
@@ -32,12 +32,13 @@
     <dimen name="routing_footer_left_padding">10dp</dimen>
     <dimen name="circle_bottom_padding">15dp</dimen>
     <dimen name="default_padding_list_item">12dp</dimen>
-    <dimen name="login_title_margin_vertical">16dp</dimen>
-    <dimen name="login_body_margin_vertical">16dp</dimen>
+    <dimen name="login_title_margin_vertical">12dp</dimen>
+    <dimen name="login_body_margin_vertical">12dp</dimen>
     <dimen name="login_padding_horizontal">24dp</dimen>
     <dimen name="login_button_bottom_margin">16dp</dimen>
 
     <!-- fonts -->
+    <dimen name="big">48sp</dimen>
     <dimen name="big">32sp</dimen>
     <dimen name="medium_2">28sp</dimen>
     <dimen name="medium">21sp</dimen>
