@@ -18,7 +18,7 @@ Install and run Mapzen demo application.
 ```bash
 $ git clone https://github.com/mapzen/mapzen-android-demo.git
 $ cd mapzen-android-demo
-$ ./install-dependencies.sh
+$ ./scripts/install-dependencies.sh
 $ mvn clean install
 $ mvn android:deploy android:run
 ```
