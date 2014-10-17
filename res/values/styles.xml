@@ -63,10 +63,10 @@
         <!-- <item name="android:layout_marginTop">@dimen/login_title_margin_vertical</item> -->
         <item name="android:gravity">center_horizontal</item>
         <item name="android:fontFamily">sans-serif-condensed-light</item>
-        <!-- <item name="android:textAllCaps">true</item> -->
+        <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@color/red</item>
         <item name="android:textSize">@dimen/medium_2</item>
-        <item name="android:paddingBottom">@dimen/button_above_below_padding</item>
+        <!-- <item name="android:paddingBottom">@dimen/button_above_below_padding</item> -->
     </style>
 
     <style name="LoginBody" parent="@android:style/Widget.TextView">
