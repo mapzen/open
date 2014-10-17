@@ -32,4 +32,5 @@ deployment:
   release:
     branch: production
     commands:
+      - git reset --hard
       - mvn clean release:clean release:prepare -DdryRun=true -DignoreSnapshots=true --batch-mode
