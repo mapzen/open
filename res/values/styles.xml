@@ -76,7 +76,7 @@
         <item name="android:fontFamily">sans-serif-condensed-light</item>
         <item name="android:textColor">@color/dark_gray</item>
         <item name="android:textColor">@color/sign_up_text</item>
-        <item name="android:textSize">@dimen/small_2</item>
+        <item name="android:textSize">@dimen/small</item>
         <item name="android:lineSpacingMultiplier">1.1</item>
     </style>
 
