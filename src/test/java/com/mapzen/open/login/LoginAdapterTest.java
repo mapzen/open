@@ -148,7 +148,7 @@ public class LoginAdapterTest {
     }
 
     @Test
-    public void instantiateItem_tripleClickLogoShouldForceLogin() throws Exception {
+    public void instantiateItem_tripleClickLogoShouldForceLoginIfDebug() throws Exception {
         TestLoginListener listener = new TestLoginListener();
         loginAdapter.setLoginListener(listener);
         View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_4);
@@ -156,7 +156,25 @@ public class LoginAdapterTest {
         logo.performClick();
         logo.performClick();
         logo.performClick();
-        assertThat(listener.forceLogin).isTrue();
+
+        if (Robolectric.application.getResources().getBoolean(R.bool.allow_login_force)) {
+            assertThat(listener.forceLogin).isTrue();
+        }
+    }
+
+    @Test
+    public void instantiateItem_tripleClickLogoShouldNotForceLoginIfRelease() throws Exception {
+        TestLoginListener listener = new TestLoginListener();
+        loginAdapter.setLoginListener(listener);
+        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_4);
+        ImageView logo = (ImageView) view.findViewById(R.id.logo);
+        logo.performClick();
+        logo.performClick();
+        logo.performClick();
+
+        if (!Robolectric.application.getResources().getBoolean(R.bool.allow_login_force)) {
+            assertThat(listener.forceLogin).isFalse();
+        }
     }
 
     @Test

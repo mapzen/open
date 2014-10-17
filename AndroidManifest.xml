@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mapzen.open"
     android:versionCode="6"
-    android:versionName="1.0.0-DEVELOPMENT"
+    android:versionName="0.6.0-DEVELOPMENT"
     android:installLocation="preferExternal">
 
     <uses-sdk
