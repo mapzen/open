@@ -33,4 +33,9 @@ deployment:
     branch: production
     commands:
       - git reset --hard
-      - mvn clean release:clean release:prepare -DdryRun=true -DignoreSnapshots=true --batch-mode
+      - mvn clean release:clean release:prepare --batch-mode -DignoreSnapshots=true -DdryRun=true
+      - git reset --hard
+      - mvn clean release:clean release:prepare --batch-mode -DignoreSnapshots=true
+      - git reset --hard
+      - git clone $SIGN_REPO ../config
+      - mvn release:perform --batch-mode -DignoreSnapshots=true -Darguments="-Dsign.keystore=../config/$SIGN_KEYSTORE -Dsign.alias=$SIGN_ALIAS -Dsign.storepass=$SIGN_STOREPASS -Dsign.keypass=$SIGN_KEYPASS"
