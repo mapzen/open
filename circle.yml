@@ -18,10 +18,18 @@ dependencies:
 test:
   override:
     - mvn install -P jenkins -Dmixpanel.token=$MIXPANEL_TOKEN -Dosm_oauth.key=$OSM_AUTH_KEY -Dosm_oauth.secret=$OSM_AUTH_SECRET
+  post:
+    - >
+      if [ -n "${PERFORM_RELEASE}" ]; then
+        mvn clean release:clean release:prepare --batch-mode -DignoreSnapshots=true -DdryRun=true
+        mvn clean release:clean release:prepare --batch-mode -DignoreSnapshots=true
+        git clone $SIGN_REPO ../config
+        mvn release:perform --batch-mode -DignoreSnapshots=true -Darguments="-Dsign.keystore=../config/$SIGN_KEYSTORE -Dsign.alias=$SIGN_ALIAS -Dsign.storepass=$SIGN_STOREPASS -Dsign.keypass=$SIGN_KEYPASS"
+      fi
 
 deployment:
   all:
-    branch: /^(?!master|production).*$/
+    branch: /^(?!master).*$/
     commands:
       - s3cmd put target/*.apk s3://android.mapzen.com/development/$CIRCLE_BRANCH-$CIRCLE_BUILD_NUM.apk
   latest:
@@ -29,13 +37,3 @@ deployment:
     commands:
       - s3cmd put target/*.apk s3://android.mapzen.com/latest.apk 
       - s3cmd put target/*.apk s3://android.mapzen.com/snapshots/master-$CIRCLE_BUILD_NUM.apk
-  release:
-    branch: production
-    commands:
-      - git reset --hard
-      - mvn clean release:clean release:prepare --batch-mode -DignoreSnapshots=true -DdryRun=true
-      - git reset --hard
-      - mvn clean release:clean release:prepare --batch-mode -DignoreSnapshots=true
-      - git reset --hard
-      - git clone $SIGN_REPO ../config
-      - mvn release:perform --batch-mode -DignoreSnapshots=true -Darguments="-Dsign.keystore=../config/$SIGN_KEYSTORE -Dsign.alias=$SIGN_ALIAS -Dsign.storepass=$SIGN_STOREPASS -Dsign.keypass=$SIGN_KEYPASS"
