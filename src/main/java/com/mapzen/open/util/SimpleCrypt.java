@@ -12,6 +12,7 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
 public class SimpleCrypt {
+    private static String defaultSalt = "default";
     private Cipher ecipher, dcipher;
 
     static {
@@ -29,8 +30,14 @@ public class SimpleCrypt {
         if ("Dalvik".equals(System.getProperty("java.vm.name"))) {
             return getSalt().toCharArray();
         } else {
-            return "testSecrets".toCharArray();
+            return defaultSalt.toCharArray();
         }
+    }
+
+    public static SimpleCrypt withSpecialSalt(String specialSalt) {
+        SimpleCrypt.defaultSalt = specialSalt;
+        SimpleCrypt simpleCrypt = new SimpleCrypt();
+        return simpleCrypt;
     }
 
     public SimpleCrypt() {

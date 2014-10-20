@@ -19,7 +19,7 @@ public class SimpleCryptTest {
 
     @Test
     public void shouldBeSymmetric() throws Exception {
-        SimpleCrypt simpleCrypt = new SimpleCrypt();
+        SimpleCrypt simpleCrypt = SimpleCrypt.withSpecialSalt("for-testing");
         String expected = "hello this is a regular string";
         String encoded = simpleCrypt.encode(expected);
         assertThat(simpleCrypt.decode(encoded)).isEqualTo(expected);
