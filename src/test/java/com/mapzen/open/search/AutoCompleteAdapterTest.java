@@ -136,7 +136,7 @@ public class AutoCompleteAdapterTest {
         position.setPosition(expectedLat, expectedLon);
         getMapController().getMap().setMapPosition(position);
         adapter.onQueryTextChange("new query");
-        verify(pelias).suggest(eq("new query"), eq(String.valueOf(position.getLatitude())),
+        verify(pelias).search(eq("new query"), eq(String.valueOf(position.getLatitude())),
                 eq(String.valueOf(position.getLongitude())), any(Callback.class));
     }
 

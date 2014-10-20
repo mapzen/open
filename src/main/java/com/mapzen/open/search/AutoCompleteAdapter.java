@@ -183,7 +183,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
             Logger.d("search: autocomplete starts");
             Double lat = getMapController().getMap().getMapPosition().getLatitude();
             Double lon = getMapController().getMap().getMapPosition().getLongitude();
-            pelias.suggest(newText, String.valueOf(lat),
+            pelias.search(newText, String.valueOf(lat),
                     String.valueOf(lon), getPeliasCallback());
             Logger.d("search: autocomplete request enqueued");
         }
