@@ -1,4 +1,6 @@
 machine:
+  ruby:
+    version: jruby-1.7.12
   pre:
     - curl -O http://apache.osuosl.org/maven/maven-3/3.1.1/binaries/apache-maven-3.1.1-bin.tar.gz && tar xvf apache-maven-3.1.1-bin.tar.gz -C ~/.m2
   environment:
