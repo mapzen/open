@@ -7,7 +7,7 @@ if [ -z ${CIRCLE_TOKEN} ]
 fi
 
 trigger_build_url=https://circleci.com/api/v1/project/mapzen/mapzen-android-demo/tree/master?circle-token=${CIRCLE_TOKEN}
-echo Triggering release build via $trigger_build_url
+echo Triggering release build via https://circleci.com/api/v1/project/mapzen/mapzen-android-demo/tree/master?circle-token=CIRCLE_TOKEN
 
 post_data=$(cat <<EOF
 {
