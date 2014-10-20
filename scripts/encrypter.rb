@@ -4,4 +4,3 @@ special_salt = ARGV[0]
 to_encode = ARGV[1]
 simple_crypt = com.mapzen.open.util.SimpleCrypt.withSpecialSalt(special_salt)
 puts simple_crypt.encode(to_encode)
-
