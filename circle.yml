@@ -29,3 +29,10 @@ deployment:
     commands:
       - s3cmd put target/*.apk s3://android.mapzen.com/latest.apk 
       - s3cmd put target/*.apk s3://android.mapzen.com/snapshots/master-$CIRCLE_BUILD_NUM.apk
+  release:
+    branch: master
+    commands:
+      ->
+        if [ -n "${PERFORM_RELEASE}" ]; then
+          s3cmd put target/*.apk s3://android.mapzen.com/releases/
+        fi
