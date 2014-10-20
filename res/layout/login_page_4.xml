@@ -10,7 +10,8 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:contentDescription="@string/logo_description"
-        android:src="@drawable/ic_open_logo" />
+        android:src="@drawable/ic_open_logo"
+        android:paddingBottom="@dimen/login_text_bottom_padding" />
 
     <LinearLayout
         android:layout_width="wrap_content"

@@ -24,7 +24,7 @@
     <dimen name="instruction_horizontal_padding">10dp</dimen>
     <dimen name="route_preview_top_padding">15dp</dimen>
     <dimen name="route_preview_border_margin">30dp</dimen>
-    <dimen name="location_divider_padding">10dp</dimen>
+    <dimen name="location_divider_padding">1dp</dimen>
     <dimen name="parallax_offset">110dp</dimen>
     <dimen name="resume_padding">15dp</dimen>
     <dimen name="drag_area_height">20dp</dimen>
@@ -40,7 +40,7 @@
     <!-- fonts -->
     <dimen name="big">48sp</dimen>
     <dimen name="big">32sp</dimen>
-    <dimen name="medium_2">28sp</dimen>
+    <dimen name="medium_2">24sp</dimen>
     <dimen name="medium">21sp</dimen>
     <dimen name="small_2">18sp</dimen>
     <dimen name="small">15sp</dimen>
