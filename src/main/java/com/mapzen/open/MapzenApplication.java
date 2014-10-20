@@ -59,10 +59,10 @@ public class MapzenApplication extends Application {
         db.enableWriteAheadLogging();
         osmOauthService = new ServiceBuilder()
                 .provider(OSMApi.class)
-                .apiKey(getString(R.string.osm_key))
+                .apiKey(simpleCrypt.decode(getString(R.string.osm_key)))
                 .debug()
                 .callback("mapzen://oauth-login/mapzen.com")
-                .apiSecret(getString(R.string.osm_secret)).build();
+                .apiSecret(simpleCrypt.decode(getString(R.string.osm_secret))).build();
     }
 
     public SQLiteDatabase getDb() {
