@@ -11,5 +11,5 @@ if [ -z ${PERFORM_RELEASE} ]
     git clone $SIGN_REPO ~/android-config
     scripts/production-values.sh
     mvn release:perform --batch-mode -DignoreSnapshots=true -Darguments="-Dmaven.test.skip=true -Dmixpanel.token=$MIXPANEL_TOKEN -Dosm_oauth.key=$OSM_AUTH_KEY -Dosm_oauth.secret=$OSM_AUTH_SECRET"
-    /usr/lib/jvm/jdk1.7.0/bin/jarsigner -verbose -keystore ~/android-config/mapzen.keystore -storepass "$SIGN_STOREPASS" -keypass "$SIGN_KEYPASS" target/*.apk mapzen_prod
+    /usr/lib/jvm/jdk1.7.0/bin/jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ~/android-config/mapzen.keystore -storepass "$SIGN_STOREPASS" -keypass "$SIGN_KEYPASS" target/*.ap_ mapzen_prod
 fi
