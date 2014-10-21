@@ -1,14 +1,16 @@
-Mapzen Android Release Checklist
+Open by Mapzen Release Checklist
 ================================
 
-Run the following commands to create the release:
+1. Perform a dry run of the release to verify everything works.
 
-```bash
-$ mvn clean release:clean release:prepare -DignoreSnapshots=true -DdryRun=true
-$ mvn clean release:clean release:prepare -DignoreSnapshots=true
-$ mvn release:perform -DignoreSnapshots=true
-```
+        $ mvn clean release:clean release:prepare -DignoreSnapshots=true -DdryRun=true
 
-* Verify new commits have been pushed to GitHub.
-* Verify Circle CI build has completed successfully.
-* Verify the new release is available on Amazon S3.
+2. Prepare release by creating tag and pushing release commits to GitHub.
+
+        $ mvn clean release:clean release:prepare -DignoreSnapshots=true
+
+3. Perform release build on Circle CI.
+
+        $ ./scripts/perform-release.sh [TAG]
+
+4. Download production APK from the "Releases" section on http://android.mapzen.com/.

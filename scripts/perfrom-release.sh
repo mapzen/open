@@ -1,12 +1,18 @@
 #!/bin/bash
 
-if [ -z ${CIRCLE_TOKEN} ]
+if [ -z "$1" ]
   then
-    echo "[ERROR] Please set CIRCLE_TOKEN environment variable and rerun."
+    echo "[ERROR] Release tag must be specified as an argument."
     exit 1
 fi
 
-trigger_build_url=https://circleci.com/api/v1/project/mapzen/mapzen-android-demo/tree/master?circle-token=${CIRCLE_TOKEN}
+if [ -z ${CIRCLE_TOKEN} ]
+  then
+    echo "[ERROR] CIRCLE_TOKEN environment variable is not set."
+    exit 1
+fi
+
+trigger_build_url=https://circleci.com/api/v1/project/mapzen/mapzen-android-demo/tree/open-0.6.9?circle-token=${CIRCLE_TOKEN}
 
 post_data=$(cat <<EOF
 {
