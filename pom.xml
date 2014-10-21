@@ -482,44 +482,35 @@
                                     <goal>manifest-update</goal>
                                 </goals>
                             </execution>
-                            <execution>
-                                <id>alignApk</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>zipalign</goal>
-                                </goals>
-                            </execution>
                         </executions>
                     </plugin>
+                </plugins>
+            </build>
+        </profile>
 
+        <profile>
+            <id>zipalign</id>
+            <build>
+                <plugins>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
                         <version>1.2.1</version>
-                        <executions>
-                            <execution>
-                                <id>zipalign</id>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <phase>install</phase>
-                                <configuration>
-                                    <executable>${env.ANDROID_HOME}/build-tools/20.0.0/zipalign</executable>
-                                    <arguments>
-                                        <argument>-f</argument>
-                                        <argument>-v</argument>
-                                        <argument>4</argument>
-                                        <argument>target/${project.build.finalName}.apk</argument>
-                                        <argument>target/${project.build.finalName}-signed-aligned.apk</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
+                        <configuration>
+                            <executable>${env.ANDROID_HOME}/build-tools/20.0.0/zipalign</executable>
+                            <arguments>
+                                <argument>-f</argument>
+                                <argument>-v</argument>
+                                <argument>4</argument>
+                                <argument>target/${project.build.finalName}.ap_</argument>
+                                <argument>target/${project.build.finalName}.apk</argument>
+                            </arguments>
+                        </configuration>
                     </plugin>
-
                 </plugins>
             </build>
         </profile>
+
     </profiles>
 
 </project>
