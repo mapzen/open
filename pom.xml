@@ -453,6 +453,7 @@
         <profile>
             <id>release</id>
             <build>
+                <finalName>${project.build.finalName}-unsigned.apk</finalName>
                 <plugins>
                     <plugin>
                         <groupId>com.jayway.maven.plugins.android.generation2</groupId>
@@ -490,7 +491,7 @@
                                 <argument>-f</argument>
                                 <argument>-v</argument>
                                 <argument>4</argument>
-                                <argument>target/${project.build.finalName}.apk</argument>
+                                <argument>target/${project.build.finalName}-unsigned.apk</argument>
                                 <argument>target/${project.build.finalName}.apk</argument>
                             </arguments>
                         </configuration>
