@@ -15,5 +15,4 @@ if [ -z ${PERFORM_RELEASE} ]
     /usr/lib/jvm/jdk1.7.0/bin/jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ~/android-config/mapzen.keystore -storepass "$SIGN_STOREPASS" -keypass "$SIGN_KEYPASS" target/*.apk mapzen_prod
     mvn exec:exec -P zipalign
     rm target/*-unsigned.apk
->>>>>>> moving scripts to scripts folder
 fi
