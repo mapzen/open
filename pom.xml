@@ -490,7 +490,7 @@
                                 <argument>-f</argument>
                                 <argument>-v</argument>
                                 <argument>4</argument>
-                                <argument>target/${project.build.finalName}.ap_</argument>
+                                <argument>target/${project.build.finalName}.apk</argument>
                                 <argument>target/${project.build.finalName}.apk</argument>
                             </arguments>
                         </configuration>
