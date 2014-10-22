@@ -453,7 +453,7 @@
         <profile>
             <id>release</id>
             <build>
-                <finalName>${artifactId}-${version}-unsigned.apk</finalName>
+                <finalName>${artifactId}-${version}-unsigned</finalName>
                 <plugins>
                     <plugin>
                         <groupId>com.jayway.maven.plugins.android.generation2</groupId>
