@@ -4,6 +4,7 @@ import com.mapzen.open.core.CommonModule;
 import com.mapzen.open.core.AppModule;
 import com.mapzen.open.core.OSMApi;
 import com.mapzen.open.util.DatabaseHelper;
+import com.mapzen.open.util.SimpleCrypt;
 
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.Token;
@@ -16,6 +17,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.Arrays;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import dagger.ObjectGraph;
 
@@ -44,20 +47,22 @@ public class MapzenApplication extends Application {
     private String currentSearchTerm = "";
     private SQLiteDatabase db;
     private OAuthService osmOauthService;
+    @Inject SimpleCrypt simpleCrypt;
 
     @Override
     public void onCreate() {
         super.onCreate();
         graph = ObjectGraph.create(getModules().toArray());
+        inject(this);
         DatabaseHelper databaseHelper = new DatabaseHelper(this);
         db = databaseHelper.getWritableDatabase();
         db.enableWriteAheadLogging();
         osmOauthService = new ServiceBuilder()
                 .provider(OSMApi.class)
-                .apiKey(getString(R.string.osm_key))
+                .apiKey(simpleCrypt.decode(getString(R.string.osm_key)))
                 .debug()
                 .callback("mapzen://oauth-login/mapzen.com")
-                .apiSecret(getString(R.string.osm_secret)).build();
+                .apiSecret(simpleCrypt.decode(getString(R.string.osm_secret))).build();
     }
 
     public SQLiteDatabase getDb() {
@@ -80,7 +85,8 @@ public class MapzenApplication extends Application {
         Token accessToken = null;
         SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
         if (!prefs.getString("token", "").isEmpty()) {
-            accessToken = new Token(prefs.getString("token", ""), prefs.getString("secret", ""));
+            accessToken = new Token(simpleCrypt.decode(prefs.getString("token", "")),
+                    simpleCrypt.decode(prefs.getString("secret", "")));
         }
         return accessToken;
     }
@@ -118,8 +124,8 @@ public class MapzenApplication extends Application {
     public void setAccessToken(Token accessToken) {
         SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("token", accessToken.getToken());
-        editor.putString("secret", accessToken.getSecret());
+        editor.putString("token", simpleCrypt.encode(accessToken.getToken()));
+        editor.putString("secret", simpleCrypt.encode(accessToken.getSecret()));
         editor.commit();
     }
 }

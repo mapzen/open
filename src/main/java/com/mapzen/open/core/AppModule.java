@@ -1,6 +1,7 @@
 package com.mapzen.open.core;
 
 import com.mapzen.open.MapController;
+import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.activity.InitialActivity;
@@ -9,6 +10,7 @@ import com.mapzen.open.adapters.PlaceArrayAdapter;
 import com.mapzen.android.Pelias;
 import com.mapzen.open.fragment.ItemFragment;
 import com.mapzen.open.fragment.MapFragment;
+import com.mapzen.open.util.SimpleCrypt;
 import com.mapzen.osrm.Router;
 import com.mapzen.open.route.DrawPathTask;
 import com.mapzen.open.route.RouteFragment;
@@ -51,7 +53,8 @@ import dagger.Provides;
                 DrawPathTask.class,
                 MapzenLocation.ConnectionCallbacks.class,
                 MapzenLocation.Listener.class,
-                PagerResultsFragment.class
+                PagerResultsFragment.class,
+                MapzenApplication.class
         },
         complete = false,
         library = true
@@ -102,5 +105,9 @@ public class AppModule {
         StyleDownLoader styleDownLoader = new StyleDownLoader(context);
         styleDownLoader.setHost("http://vector-styles.mapzen.com/");
         return styleDownLoader;
+    }
+
+    @Provides @Singleton SimpleCrypt provideSimpleCrypt() {
+        return new SimpleCrypt();
     }
 }

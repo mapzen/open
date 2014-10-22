@@ -3,13 +3,12 @@
     package="com.mapzen.open"
     android:versionCode="0"
     android:versionName="DEVELOPMENT"
-    android:installLocation="preferExternal">
+    android:installLocation="internalOnly">
 
     <uses-sdk
         android:minSdkVersion="17"
         android:targetSdkVersion="19" />
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />

@@ -3,6 +3,7 @@ package com.mapzen.open;
 import android.app.Activity;
 
 import com.mapzen.open.support.MapzenTestRunner;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
