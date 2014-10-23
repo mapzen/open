@@ -2,6 +2,7 @@ package com.mapzen.open.search;
 
 import com.mapzen.open.support.MapzenTestRunner;
 
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,19 +21,21 @@ import static org.fest.assertions.api.Assertions.assertThat;
 @RunWith(MapzenTestRunner.class)
 public class SavedSearchTest {
     SavedSearch savedSearch;
+    JSONObject payload;
 
     @Before
     public void setUp() throws Exception {
         savedSearch = new SavedSearch();
         savedSearch.clear();
+        payload = new JSONObject("{\"key\":\"value\"}");
     }
 
     @Test
     public void store_shouldStoreThingsAtTop() throws Exception {
         savedSearch.store("search1");
-        savedSearch.store("search2");
+        savedSearch.store("search2", payload);
         savedSearch.store("expected");
-        assertThat(savedSearch.get(2).next()).isEqualTo("expected");
+        assertThat(savedSearch.get(2).next().getTerm()).isEqualTo("expected");
     }
 
     @Test
@@ -49,16 +52,16 @@ public class SavedSearchTest {
         for (int i = 0; i < MAX_ENTRIES; i++) {
             savedSearch.store(String.valueOf(i));
         }
-        Iterator<String> it = savedSearch.get(MAX_ENTRIES);
+        Iterator<SavedSearch.Member> it = savedSearch.get(MAX_ENTRIES);
         while (it.hasNext()) {
-            assertThat(it.next()).isNotEqualTo("search1");
+            assertThat(it.next().getTerm()).isNotEqualTo("search1");
         }
     }
 
     @Test
     public void store_shouldNotStoreExistingTerms() throws Exception {
         savedSearch.store("expected");
-        savedSearch.store("search1");
+        savedSearch.store("search1", payload);
         savedSearch.store("search2");
         savedSearch.store("expected");
         assertThat(countTerms(savedSearch.get(MAX_ENTRIES))).isEqualTo(3);
@@ -69,14 +72,14 @@ public class SavedSearchTest {
         savedSearch.store("expected");
         savedSearch.store("search1");
         savedSearch.store("search2");
-        savedSearch.store("expected");
-        assertThat(savedSearch.get(1).next()).isEqualTo("expected");
+        savedSearch.store("expected", payload);
+        assertThat(savedSearch.get(1).next().getTerm()).isEqualTo("expected");
     }
 
     @Test
     public void get_shouldReturnDefaultNumberOfTerms() throws Exception {
         savedSearch.store("search1");
-        savedSearch.store("search2");
+        savedSearch.store("search2", payload);
         savedSearch.store("search3");
         savedSearch.store("search4");
         assertThat(countTerms(savedSearch.get())).isEqualTo(DEFAULT_SIZE);
@@ -85,7 +88,7 @@ public class SavedSearchTest {
     @Test
     public void get_shouldReturnRequestedNumberOfTerms() throws Exception {
         savedSearch.store("search1");
-        savedSearch.store("search2");
+        savedSearch.store("search2", payload);
         savedSearch.store("search3");
         assertThat(countTerms(savedSearch.get(1))).isEqualTo(1);
     }
@@ -103,7 +106,7 @@ public class SavedSearchTest {
     @Test
     public void isEmpty_shouldBeFalse() {
         savedSearch.store("search1");
-        savedSearch.store("search2");
+        savedSearch.store("search2", payload);
         savedSearch.store("search3");
         assertThat(savedSearch.isEmpty()).isFalse();
     }
@@ -111,7 +114,7 @@ public class SavedSearchTest {
     @Test
     public void clearShouldEmptyCollection() throws Exception {
         savedSearch.store("search1");
-        savedSearch.store("search2");
+        savedSearch.store("search2", payload);
         savedSearch.store("search3");
         savedSearch.clear();
         assertThat(savedSearch.get().hasNext()).isFalse();
@@ -120,16 +123,16 @@ public class SavedSearchTest {
     @Test
     public void shouldBeSerializable() throws Exception {
         savedSearch.store("search1");
-        savedSearch.store("search2");
+        savedSearch.store("search2", payload);
         savedSearch.store("expected");
         String serialized = savedSearch.serialize();
         savedSearch.clear();
         assertThat(savedSearch.get().hasNext()).isFalse();
         savedSearch.deserialize(serialized);
-        Iterator<String> it = savedSearch.get();
-        assertThat(it.next()).isEqualTo("expected");
-        assertThat(it.next()).isEqualTo("search2");
-        assertThat(it.next()).isEqualTo("search1");
+        Iterator<SavedSearch.Member> it = savedSearch.get();
+        assertThat(it.next().getTerm()).isEqualTo("expected");
+        assertThat(it.next().getTerm()).isEqualTo("search2");
+        assertThat(it.next().getTerm()).isEqualTo("search1");
     }
 
     @Test
@@ -138,14 +141,14 @@ public class SavedSearchTest {
         savedSearch.clear();
         assertThat(savedSearch.get().hasNext()).isFalse();
         savedSearch.deserialize(serialized);
-        Iterator<String> it = savedSearch.get();
+        Iterator<SavedSearch.Member> it = savedSearch.get();
         assertThat(it.hasNext()).isFalse();
     }
 
     @Test
     public void getCursor_shouldReturnCursorWithSavedSearchTerms() throws Exception {
         savedSearch.store("saved query 1");
-        savedSearch.store("saved query 2");
+        savedSearch.store("saved query 2", payload);
         savedSearch.store("saved query 3");
         Cursor cursor = savedSearch.getCursor();
         assertThat(cursor).hasCount(3);
@@ -157,7 +160,7 @@ public class SavedSearchTest {
         assertThat(cursor.getString(1)).isEqualTo("saved query 1");
     }
 
-    private int countTerms(Iterator<String> results) {
+    private int countTerms(Iterator<SavedSearch.Member> results) {
         int count = 0;
         while (results.hasNext()) {
             results.next();

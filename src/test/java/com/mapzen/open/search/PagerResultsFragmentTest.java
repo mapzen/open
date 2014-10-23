@@ -152,7 +152,7 @@ public class PagerResultsFragmentTest {
     @Test
     public void executeSearchOnMap_shouldSaveSearchTerm() {
         fragment.executeSearchOnMap(new SearchView(app), "Some fantastic term");
-        assertThat(savedSearch.get().next()).isEqualTo("Some fantastic term");
+        assertThat(savedSearch.get().next().getTerm()).isEqualTo("Some fantastic term");
     }
 
     @Test

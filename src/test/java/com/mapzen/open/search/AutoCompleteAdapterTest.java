@@ -101,7 +101,7 @@ public class AutoCompleteAdapterTest {
     public void onClick_shouldSaveTerm() throws Exception {
         view.setText("saved term");
         view.performClick();
-        assertThat(savedSearch.get().next()).isEqualTo("saved term");
+        assertThat(savedSearch.get().next().getTerm()).isEqualTo("saved term");
     }
 
     @Test
