@@ -10,7 +10,6 @@ import com.mapzen.open.adapters.PlaceArrayAdapter;
 import com.mapzen.android.Pelias;
 import com.mapzen.open.fragment.ItemFragment;
 import com.mapzen.open.fragment.MapFragment;
-import com.mapzen.open.search.SavedSearch;
 import com.mapzen.open.util.SimpleCrypt;
 import com.mapzen.osrm.Router;
 import com.mapzen.open.route.DrawPathTask;
@@ -110,9 +109,5 @@ public class AppModule {
 
     @Provides @Singleton SimpleCrypt provideSimpleCrypt() {
         return new SimpleCrypt();
-    }
-
-    @Provides @Singleton SavedSearch provideSavedSearch() {
-        return new SavedSearch();
     }
 }
