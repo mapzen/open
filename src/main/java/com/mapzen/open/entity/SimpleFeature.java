@@ -15,6 +15,7 @@ import java.util.Locale;
 public class SimpleFeature implements Parcelable {
     public static final String TEXT = "text";
     public static final String TYPE = "type";
+    public static final String ID = "id";
     public static final String ALPHA3 = "alpha3";
     public static final String LOCALITY = "locality";
     public static final String NEIGHBORHOOD = "neighborhood";
@@ -44,6 +45,7 @@ public class SimpleFeature implements Parcelable {
         simpleFeature.setLon(in.readDouble());
         simpleFeature.setProperty(TEXT, in.readString());
         simpleFeature.setProperty(TYPE, in.readString());
+        simpleFeature.setProperty(ID, in.readString());
         simpleFeature.setProperty(ALPHA3, in.readString());
         simpleFeature.setProperty(COUNTRY_NAME, in.readString());
         simpleFeature.setProperty(ADMIN1_ABBR, in.readString());
@@ -59,6 +61,8 @@ public class SimpleFeature implements Parcelable {
     public static SimpleFeature fromFeature(Feature feature) {
         SimpleFeature simpleFeature = new SimpleFeature();
         simpleFeature.setProperty(TEXT, feature.getProperties().getText());
+        simpleFeature.setProperty(TYPE, feature.getProperties().getType());
+        simpleFeature.setProperty(ID, feature.getProperties().getId());
         simpleFeature.setProperty(ADMIN1, feature.getProperties().getAdmin1());
         simpleFeature.setProperty(ADMIN1_ABBR, feature.getProperties().getAdmin1Abbr());
         simpleFeature.setProperty(LOCAL_ADMIN, feature.getProperties().getLocalAdmin());
@@ -102,6 +106,7 @@ public class SimpleFeature implements Parcelable {
         out.writeDouble(getLon());
         out.writeString(getProperty(TEXT));
         out.writeString(getProperty(TYPE));
+        out.writeString(getProperty(ID));
         out.writeString(getProperty(ALPHA3));
         out.writeString(getProperty(COUNTRY_NAME));
         out.writeString(getProperty(ADMIN1_ABBR));

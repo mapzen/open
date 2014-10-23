@@ -2,23 +2,12 @@ package com.mapzen.open.search;
 
 import com.mapzen.open.util.Logger;
 
-import com.google.gson.JsonArray;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.os.Parcel;
-import android.util.Base64;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -153,7 +142,7 @@ public final class SavedSearch {
                 store.add(new Member(term, payload));
             }
         } catch (JSONException e) {
-
+            Logger.e(e.getMessage());
         }
     }
 
