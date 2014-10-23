@@ -41,7 +41,6 @@ import static com.mapzen.open.MapzenApplication.PELIAS_BLOB;
 import static com.mapzen.open.entity.SimpleFeature.CREATOR;
 import static com.mapzen.open.entity.SimpleFeature.TEXT;
 import static com.mapzen.open.search.SavedSearch.SEARCH_TERM;
-import static com.mapzen.open.search.SavedSearch.getSavedSearch;
 import static com.mapzen.open.util.MixpanelHelper.Event.PELIAS_SUGGEST;
 import static com.mapzen.open.util.MixpanelHelper.Payload.PELIAS_TERM;
 import static com.mapzen.open.util.MixpanelHelper.Payload.fromHashMap;
@@ -56,6 +55,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     @Inject Typeface typeface;
     @Inject Pelias pelias;
     @Inject MixpanelAPI mixpanelApi;
+    @Inject SavedSearch savedSearch;
 
     public AutoCompleteAdapter(Context context, BaseActivity act, String[] columns,
             FragmentManager fragmentManager) {
@@ -90,7 +90,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
             public void onClick(View view) {
                 TextView tv = (TextView) view;
                 SimpleFeature simpleFeature = (SimpleFeature) tv.getTag();
-                getSavedSearch().store(tv.getText().toString());
+                savedSearch.store(tv.getText().toString());
                 app.setCurrentSearchTerm("");
                 searchView.setQuery("", false);
                 searchView.clearFocus();
@@ -234,6 +234,6 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     }
 
     public void loadSavedSearches() {
-        changeCursor(getSavedSearch().getCursor());
+        changeCursor(savedSearch.getCursor());
     }
 }

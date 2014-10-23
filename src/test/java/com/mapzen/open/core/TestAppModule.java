@@ -18,6 +18,7 @@ import com.mapzen.open.fragment.ItemFragment;
 import com.mapzen.open.fragment.ItemFragmentTest;
 import com.mapzen.open.fragment.MapFragment;
 import com.mapzen.open.fragment.MapFragmentTest;
+import com.mapzen.open.search.SavedSearch;
 import com.mapzen.open.util.SimpleCrypt;
 import com.mapzen.osrm.Router;
 import com.mapzen.open.route.DrawPathTask;
@@ -141,5 +142,9 @@ public class TestAppModule {
         when(simpleCrypt.encode(anyString())).thenReturn("stuff");
         when(simpleCrypt.decode(anyString())).thenReturn("stuff");
         return simpleCrypt;
+    }
+
+    @Provides @Singleton SavedSearch provideSavedSearch() {
+        return new SavedSearch();
     }
 }

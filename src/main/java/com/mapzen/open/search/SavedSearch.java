@@ -26,22 +26,10 @@ public final class SavedSearch {
             _ID, SEARCH_TERM
     };
 
-    private static SavedSearch instance;
     private LinkedList<String> store = new LinkedList<String>();
 
-    static {
-        instance = new SavedSearch();
-    }
-
-    public static SavedSearch getSavedSearch() {
-        return instance;
-    }
-
     public int store(String term) {
-        if (store.size() >= MAX_ENTRIES) {
-            store.removeLast();
-        }
-
+        truncate();
         store.remove(term);
         store.addFirst(term);
         return 0;
@@ -103,4 +91,11 @@ public final class SavedSearch {
 
         return cursor;
     }
+
+    private void truncate() {
+        if (store.size() >= MAX_ENTRIES) {
+            store.removeLast();
+        }
+    }
+
 }

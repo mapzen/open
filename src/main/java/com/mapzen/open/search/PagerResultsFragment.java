@@ -51,7 +51,6 @@ import retrofit.RetrofitError;
 import static android.content.Context.CONNECTIVITY_SERVICE;
 import static com.mapzen.open.MapController.DEFAULT_ZOOM_LEVEL;
 import static com.mapzen.open.MapController.getMapController;
-import static com.mapzen.open.search.SavedSearch.getSavedSearch;
 import static com.mapzen.open.util.MixpanelHelper.Event.PELIAS_SEARCH;
 import static com.mapzen.open.util.MixpanelHelper.Payload.PELIAS_TERM;
 import static com.mapzen.open.util.MixpanelHelper.Payload.fromHashMap;
@@ -64,6 +63,7 @@ public class PagerResultsFragment extends BaseFragment {
     @Inject MapController mapController;
     @Inject Pelias pelias;
     @Inject MixpanelAPI mixpanelApi;
+    @Inject SavedSearch savedSearch;
 
     @InjectView(R.id.multi_result_header)
     View multiResultHeader;
@@ -260,7 +260,7 @@ public class PagerResultsFragment extends BaseFragment {
         act.showLoadingIndicator();
         app.setCurrentSearchTerm(query);
         searchTermForCurrentResults = query;
-        getSavedSearch().store(query);
+        savedSearch.store(query);
         trackSearch(query);
         Double lat = getMapController().getMap().getMapPosition().getLatitude();
         Double lon = getMapController().getMap().getMapPosition().getLongitude();

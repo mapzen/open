@@ -45,7 +45,6 @@ import retrofit.RetrofitError;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 import static com.mapzen.open.MapController.getMapController;
-import static com.mapzen.open.search.SavedSearch.getSavedSearch;
 import static com.mapzen.open.support.TestHelper.getTestFeature;
 import static com.mapzen.open.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.open.support.TestHelper.initBaseActivityWithMenu;
@@ -76,6 +75,7 @@ public class PagerResultsFragmentTest {
     private TestMenu menu;
     @Inject Pelias pelias;
     @Inject MixpanelAPI mixpanelAPI;
+    @Inject SavedSearch savedSearch;
 
     @Before
     public void setUp() throws Exception {
@@ -152,7 +152,7 @@ public class PagerResultsFragmentTest {
     @Test
     public void executeSearchOnMap_shouldSaveSearchTerm() {
         fragment.executeSearchOnMap(new SearchView(app), "Some fantastic term");
-        assertThat(getSavedSearch().get().next()).isEqualTo("Some fantastic term");
+        assertThat(savedSearch.get().next()).isEqualTo("Some fantastic term");
     }
 
     @Test
@@ -243,10 +243,10 @@ public class PagerResultsFragmentTest {
 
     @Test
     public void onClickCloseButton_shouldLoadSavedSearches() throws Exception {
-        getSavedSearch().clear();
-        getSavedSearch().store("saved query 1");
-        getSavedSearch().store("saved query 2");
-        getSavedSearch().store("saved query 3");
+        savedSearch.clear();
+        savedSearch.store("saved query 1");
+        savedSearch.store("saved query 2");
+        savedSearch.store("saved query 3");
         ImageView closeButton = (ImageView) act.getSearchView().findViewById(act.getResources()
                 .getIdentifier("android:id/search_close_btn", null, null));
         closeButton.performClick();

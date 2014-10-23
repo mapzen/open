@@ -66,7 +66,6 @@ import javax.inject.Inject;
 import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
-import static com.mapzen.open.search.SavedSearch.getSavedSearch;
 import static com.mapzen.open.support.TestHelper.getTestFeature;
 import static com.mapzen.open.support.TestHelper.initBaseActivity;
 import static com.mapzen.open.support.TestHelper.initBaseActivityWithMenu;
@@ -88,13 +87,14 @@ public class BaseActivityTest {
     @Inject LocationClient locationClient;
     @Inject MixpanelAPI mixpanelAPI;
     @Inject MapController mapController;
+    @Inject SavedSearch savedSearch;
 
     @Before
     public void setUp() throws Exception {
         ((TestMapzenApplication) Robolectric.application).inject(this);
         menu = new TestMenu();
         activity = initBaseActivityWithMenu(menu);
-        getSavedSearch().clear();
+        savedSearch.clear();
     }
 
     @After
@@ -177,24 +177,24 @@ public class BaseActivityTest {
 
     @Test
     public void onCreate_shouldInitializeSavedSearches() throws Exception {
-        getSavedSearch().store("expected");
+        savedSearch.store("expected");
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(SavedSearch.TAG, getSavedSearch().serialize());
+        editor.putString(SavedSearch.TAG, savedSearch.serialize());
         editor.commit();
-        getSavedSearch().clear();
+        savedSearch.clear();
         initBaseActivity();
-        assertThat(getSavedSearch().get().next()).isEqualTo("expected");
+        assertThat(savedSearch.get().next()).isEqualTo("expected");
     }
 
     @Test
     public void onPause_shouldPersistSavedSearches() throws Exception {
-        getSavedSearch().store("expected");
+        savedSearch.store("expected");
         activity.onPause();
-        getSavedSearch().clear();
+        savedSearch.clear();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        getSavedSearch().deserialize(prefs.getString(SavedSearch.TAG, ""));
-        assertThat(getSavedSearch().get().next()).isEqualTo("expected");
+        savedSearch.deserialize(prefs.getString(SavedSearch.TAG, ""));
+        assertThat(savedSearch.get().next()).isEqualTo("expected");
     }
 
     @Test
@@ -413,10 +413,10 @@ public class BaseActivityTest {
 
     @Test
     public void shouldDisplaySavedSearchTermsOnFocus() throws Exception {
-        getSavedSearch().clear();
-        getSavedSearch().store("saved query 1");
-        getSavedSearch().store("saved query 2");
-        getSavedSearch().store("saved query 3");
+        savedSearch.clear();
+        savedSearch.store("saved query 1");
+        savedSearch.store("saved query 2");
+        savedSearch.store("saved query 3");
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         final AutoCompleteTextView autoCompleteTextView =
                 (AutoCompleteTextView) searchView.findViewById(searchView.getContext()
