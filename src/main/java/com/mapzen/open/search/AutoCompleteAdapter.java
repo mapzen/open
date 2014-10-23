@@ -181,6 +181,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
 
         Logger.d("onQueryTextChange: text" + newText);
         if (newText.length() < AUTOCOMPLETE_THRESHOLD) {
+            loadSavedSearches();
             Logger.d("search: newText shorter than 3 "
                     + "was:" + String.valueOf(newText.length()));
             return true;
