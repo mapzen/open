@@ -8,10 +8,13 @@ import java.util.HashMap;
 public abstract class MixpanelHelper {
     public static class Event {
         public static final String INITIAL_LAUNCH = "initial-launch";
+        public static final String PELIAS_SUGGEST = "pelias-suggest";
+        public static final String PELIAS_SEARCH = "pelias-search";
     }
 
     public static class Payload {
         public static final String LOGGED_IN_KEY = "logged_in";
+        public static final String PELIAS_TERM = "pelias_term";
         public static JSONObject fromHashMap(HashMap<String, Object> hashMap) {
             JSONObject payload = new JSONObject();
             try {

@@ -12,6 +12,8 @@ import com.mapzen.open.util.Highlighter;
 import com.mapzen.open.util.Logger;
 import com.mapzen.open.util.ParcelableUtil;
 
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -27,6 +29,8 @@ import android.widget.CursorAdapter;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import java.util.HashMap;
+
 import javax.inject.Inject;
 
 import retrofit.Callback;
@@ -38,6 +42,9 @@ import static com.mapzen.open.entity.SimpleFeature.CREATOR;
 import static com.mapzen.open.entity.SimpleFeature.TEXT;
 import static com.mapzen.open.search.SavedSearch.SEARCH_TERM;
 import static com.mapzen.open.search.SavedSearch.getSavedSearch;
+import static com.mapzen.open.util.MixpanelHelper.Event.PELIAS_SUGGEST;
+import static com.mapzen.open.util.MixpanelHelper.Payload.PELIAS_TERM;
+import static com.mapzen.open.util.MixpanelHelper.Payload.fromHashMap;
 
 public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQueryTextListener {
     public static final int AUTOCOMPLETE_THRESHOLD = 3;
@@ -48,6 +55,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     private FragmentManager fragmentManager;
     @Inject Typeface typeface;
     @Inject Pelias pelias;
+    @Inject MixpanelAPI mixpanelApi;
 
     public AutoCompleteAdapter(Context context, BaseActivity act, String[] columns,
             FragmentManager fragmentManager) {
@@ -183,11 +191,18 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
             Logger.d("search: autocomplete starts");
             Double lat = getMapController().getMap().getMapPosition().getLatitude();
             Double lon = getMapController().getMap().getMapPosition().getLongitude();
+            trackSuggest(newText);
             pelias.suggest(newText, String.valueOf(lat),
                     String.valueOf(lon), getPeliasCallback());
             Logger.d("search: autocomplete request enqueued");
         }
         return true;
+    }
+
+    private void trackSuggest(String newText) {
+        HashMap<String, Object> payload = new HashMap<String, Object>();
+        payload.put(PELIAS_TERM, newText);
+        mixpanelApi.track(PELIAS_SUGGEST, fromHashMap(payload));
     }
 
     private Callback<Result> getPeliasCallback() {

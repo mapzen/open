@@ -12,6 +12,9 @@ import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.support.TestHelper;
 import com.mapzen.open.util.ParcelableUtil;
 
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,10 +44,15 @@ import static com.mapzen.open.search.SavedSearch.getSavedSearch;
 import static com.mapzen.open.support.TestHelper.assertSpan;
 import static com.mapzen.open.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.open.support.TestHelper.initMapFragment;
+import static com.mapzen.open.util.MixpanelHelper.Event.PELIAS_SUGGEST;
+import static com.mapzen.open.util.MixpanelHelper.Payload.PELIAS_TERM;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.refEq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.buildActivity;
@@ -58,6 +66,7 @@ public class AutoCompleteAdapterTest {
     private FragmentManager fragmentManager;
     private SimpleFeature simpleFeature;
     @Inject Pelias pelias;
+    @Inject MixpanelAPI mixpanelAPI;
 
     @Before
     public void setUp() throws Exception {
@@ -126,6 +135,21 @@ public class AutoCompleteAdapterTest {
         baseActivity.executeSearchOnMap("query");
         adapter.onQueryTextChange("new query");
         assertThat(baseActivity.getSearchView().getSuggestionsAdapter()).isNotNull();
+    }
+
+    @Test
+    public void onQueryTextChange_shouldNotTrackInMixpanel() throws Exception {
+        adapter.onQueryTextChange("ne");
+        verify(mixpanelAPI, never()).track(anyString(), any(JSONObject.class));
+    }
+
+    @Test
+    public void onQueryTextChange_shouldTrackInMixpanel() throws Exception {
+        String term = "new";
+        adapter.onQueryTextChange(term);
+        JSONObject expectedPayload = new JSONObject();
+        expectedPayload.put(PELIAS_TERM, term);
+        verify(mixpanelAPI).track(eq(PELIAS_SUGGEST), refEq(expectedPayload));
     }
 
     @Test
