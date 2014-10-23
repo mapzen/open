@@ -9,6 +9,9 @@ import com.mapzen.android.gson.Result;
 import com.mapzen.open.entity.SimpleFeature;
 import com.mapzen.open.support.MapzenTestRunner;
 
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,9 +50,12 @@ import static com.mapzen.open.support.TestHelper.getTestFeature;
 import static com.mapzen.open.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.open.support.TestHelper.initBaseActivityWithMenu;
 import static com.mapzen.open.support.TestHelper.initMapFragment;
+import static com.mapzen.open.util.MixpanelHelper.Event.PELIAS_SEARCH;
+import static com.mapzen.open.util.MixpanelHelper.Payload.PELIAS_TERM;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.refEq;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
@@ -69,6 +75,7 @@ public class PagerResultsFragmentTest {
     private BaseActivity act;
     private TestMenu menu;
     @Inject Pelias pelias;
+    @Inject MixpanelAPI mixpanelAPI;
 
     @Before
     public void setUp() throws Exception {
@@ -110,6 +117,15 @@ public class PagerResultsFragmentTest {
     public void shouldInjectViewAllButton() throws Exception {
         assertThat(fragment.viewAll).isNotNull();
         assertThat(fragment.viewAll).hasText(act.getString(R.string.view_all));
+    }
+
+    @Test
+    public void executeSearchOnMap_shouldTrackInMixpanel() throws Exception {
+        String term = "Empire State Building";
+        fragment.executeSearchOnMap(new SearchView(app), term);
+        JSONObject expectedPayload = new JSONObject();
+        expectedPayload.put(PELIAS_TERM, term);
+        verify(mixpanelAPI).track(eq(PELIAS_SEARCH), refEq(expectedPayload));
     }
 
     @Test

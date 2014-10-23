@@ -13,6 +13,7 @@ import com.mapzen.open.fragment.ItemFragment;
 import com.mapzen.open.util.Logger;
 
 import com.bugsense.trace.BugSenseHandler;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
@@ -35,6 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -50,6 +52,9 @@ import static android.content.Context.CONNECTIVITY_SERVICE;
 import static com.mapzen.open.MapController.DEFAULT_ZOOM_LEVEL;
 import static com.mapzen.open.MapController.getMapController;
 import static com.mapzen.open.search.SavedSearch.getSavedSearch;
+import static com.mapzen.open.util.MixpanelHelper.Event.PELIAS_SEARCH;
+import static com.mapzen.open.util.MixpanelHelper.Payload.PELIAS_TERM;
+import static com.mapzen.open.util.MixpanelHelper.Payload.fromHashMap;
 
 public class PagerResultsFragment extends BaseFragment {
     public static final String TAG = PagerResultsFragment.class.getSimpleName();
@@ -58,6 +63,7 @@ public class PagerResultsFragment extends BaseFragment {
     private static final String PAGINATE_TEMPLATE = "Viewing %d of %d results";
     @Inject MapController mapController;
     @Inject Pelias pelias;
+    @Inject MixpanelAPI mixpanelApi;
 
     @InjectView(R.id.multi_result_header)
     View multiResultHeader;
@@ -255,11 +261,18 @@ public class PagerResultsFragment extends BaseFragment {
         app.setCurrentSearchTerm(query);
         searchTermForCurrentResults = query;
         getSavedSearch().store(query);
+        trackSearch(query);
         Double lat = getMapController().getMap().getMapPosition().getLatitude();
         Double lon = getMapController().getMap().getMapPosition().getLongitude();
         pelias.search(query, String.valueOf(lat),
                 String.valueOf(lon), getSearchCallback(view));
         return true;
+    }
+
+    private void trackSearch(String newText) {
+        HashMap<String, Object> payload = new HashMap<String, Object>();
+        payload.put(PELIAS_TERM, newText);
+        mixpanelApi.track(PELIAS_SEARCH, fromHashMap(payload));
     }
 
     private boolean isConnected() {
