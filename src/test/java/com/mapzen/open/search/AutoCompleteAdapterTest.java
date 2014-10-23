@@ -138,6 +138,15 @@ public class AutoCompleteAdapterTest {
     }
 
     @Test
+    public void onQueryTextChange_shouldShowSavedSearches() throws Exception {
+        getSavedSearch().store("saved query 1");
+        adapter.onQueryTextChange("");
+        Cursor cursor = adapter.getCursor();
+        cursor.moveToFirst();
+        assertThat(cursor.getString(1)).isEqualTo("saved query 1");
+    }
+
+    @Test
     public void onQueryTextChange_shouldNotTrackInMixpanel() throws Exception {
         adapter.onQueryTextChange("ne");
         verify(mixpanelAPI, never()).track(anyString(), any(JSONObject.class));
