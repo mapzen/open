@@ -4,6 +4,7 @@ import com.mapzen.open.MapzenApplication;
 import com.mapzen.android.lost.LocationClient;
 import com.mapzen.helpers.ZoomController;
 import com.mapzen.open.route.RouteEngine;
+import com.mapzen.open.search.SavedSearch;
 
 import android.content.Context;
 
@@ -42,5 +43,9 @@ public class CommonModule {
      */
     @Provides @Singleton @ForApplication Context provideApplicationContext() {
         return application;
+    }
+
+    @Provides @Singleton SavedSearch provideSavedSearch() {
+        return new SavedSearch();
     }
 }

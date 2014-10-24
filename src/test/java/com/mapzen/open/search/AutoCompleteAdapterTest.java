@@ -40,7 +40,6 @@ import retrofit.Callback;
 
 import static com.mapzen.open.MapController.getMapController;
 import static com.mapzen.open.entity.SimpleFeature.TEXT;
-import static com.mapzen.open.search.SavedSearch.getSavedSearch;
 import static com.mapzen.open.support.TestHelper.assertSpan;
 import static com.mapzen.open.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.open.support.TestHelper.initMapFragment;
@@ -67,11 +66,12 @@ public class AutoCompleteAdapterTest {
     private SimpleFeature simpleFeature;
     @Inject Pelias pelias;
     @Inject MixpanelAPI mixpanelAPI;
+    @Inject SavedSearch savedSearch;
 
     @Before
     public void setUp() throws Exception {
         ((MapzenApplication) application).inject(this);
-        getSavedSearch().clear();
+        savedSearch.clear();
         ActivityController<DummyActivity> controller = buildActivity(DummyActivity.class);
         controller.create().start().resume();
         fragmentManager = controller.get().getSupportFragmentManager();
@@ -101,7 +101,7 @@ public class AutoCompleteAdapterTest {
     public void onClick_shouldSaveTerm() throws Exception {
         view.setText("saved term");
         view.performClick();
-        assertThat(getSavedSearch().get().next()).isEqualTo("saved term");
+        assertThat(savedSearch.get().next().getTerm()).isEqualTo("saved term");
     }
 
     @Test
@@ -139,7 +139,7 @@ public class AutoCompleteAdapterTest {
 
     @Test
     public void onQueryTextChange_shouldShowSavedSearches() throws Exception {
-        getSavedSearch().store("saved query 1");
+        savedSearch.store("saved query 1");
         adapter.onQueryTextChange("");
         Cursor cursor = adapter.getCursor();
         cursor.moveToFirst();
@@ -188,9 +188,9 @@ public class AutoCompleteAdapterTest {
 
     @Test
     public void loadSavedSearches_shouldChangeCursor() throws Exception {
-        getSavedSearch().store("saved query 1");
-        getSavedSearch().store("saved query 2");
-        getSavedSearch().store("saved query 3");
+        savedSearch.store("saved query 1");
+        savedSearch.store("saved query 2");
+        savedSearch.store("saved query 3");
         adapter.loadSavedSearches();
         Cursor cursor = adapter.getCursor();
         cursor.moveToFirst();
@@ -203,9 +203,9 @@ public class AutoCompleteAdapterTest {
 
     @Test
     public void loadSavedSearches_shouldDisplayTerms() throws Exception {
-        getSavedSearch().store("saved query 1");
-        getSavedSearch().store("saved query 2");
-        getSavedSearch().store("saved query 3");
+        savedSearch.store("saved query 1");
+        savedSearch.store("saved query 2");
+        savedSearch.store("saved query 3");
         adapter.loadSavedSearches();
         TextView tv1 = new TextView(application);
         TextView tv2 = new TextView(application);
@@ -224,7 +224,7 @@ public class AutoCompleteAdapterTest {
 
     @Test
     public void onClick_shouldExecuteSavedSearch() throws Exception {
-        getSavedSearch().store("saved query");
+        savedSearch.store("saved query");
         adapter.loadSavedSearches();
         Cursor cursor = adapter.getCursor();
         cursor.moveToFirst();

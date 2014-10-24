@@ -60,7 +60,6 @@ import java.util.concurrent.Executors;
 import javax.inject.Inject;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static com.mapzen.open.search.SavedSearch.getSavedSearch;
 
 public class BaseActivity extends MapActivity {
     public static final String COM_MAPZEN_UPDATE_VIEW = "com.mapzen.updates.view";
@@ -77,6 +76,7 @@ public class BaseActivity extends MapActivity {
     private MapzenGPSPromptDialogFragment gpsPromptDialogFragment;
     @Inject MixpanelAPI mixpanelAPI;
     @Inject MapController mapController;
+    @Inject SavedSearch savedSearch;
 
     protected boolean enableActionbar = true;
 
@@ -535,13 +535,13 @@ public class BaseActivity extends MapActivity {
 
     private void initSavedSearches() {
         SharedPreferences prefs = getDefaultSharedPreferences(this);
-        getSavedSearch().deserialize(prefs.getString(SavedSearch.TAG, ""));
+        savedSearch.deserialize(prefs.getString(SavedSearch.TAG, ""));
     }
 
     private void persistSavedSearches() {
         SharedPreferences prefs = getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(SavedSearch.TAG, getSavedSearch().serialize());
+        editor.putString(SavedSearch.TAG, savedSearch.serialize());
         editor.commit();
     }
 
