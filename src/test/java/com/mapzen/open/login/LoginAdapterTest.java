@@ -66,12 +66,6 @@ public class LoginAdapterTest {
     }
 
     @Test
-    public void instantiateItem_pageTwoShouldHaveLogo() throws Exception {
-        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_2);
-        assertThat(view.findViewById(R.id.logo)).isNotNull();
-    }
-
-    @Test
     public void instantiateItem_pageTwoShouldHaveTitle() throws Exception {
         View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_2);
         TextView intro = (TextView) view.findViewById(R.id.title);
@@ -83,12 +77,6 @@ public class LoginAdapterTest {
         View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_2);
         TextView body = (TextView) view.findViewById(R.id.body);
         assertThat(body).hasText(R.string.login_page_two_body);
-    }
-
-    @Test
-    public void instantiateItem_pageThreeShouldHaveLogo() throws Exception {
-        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_3);
-        assertThat(view.findViewById(R.id.logo)).isNotNull();
     }
 
     @Test

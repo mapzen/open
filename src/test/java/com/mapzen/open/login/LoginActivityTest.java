@@ -142,18 +142,6 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void shouldFadeInViewPager() throws Exception {
-        Robolectric.shadowOf(activity.viewPager.getAnimation()).invokeEnd();
-        assertThat(activity.viewPager).isVisible();
-    }
-
-    @Test
-    public void shouldFadeInViewPagerIndicator() throws Exception {
-        Robolectric.shadowOf(activity.viewPagerIndicator.getAnimation()).invokeEnd();
-        assertThat(activity.viewPagerIndicator).isVisible();
-    }
-
-    @Test
     public void loginFlowShouldHaveViewPagerWithCountThree() throws Exception {
         assertThat(activity.viewPager.getAdapter()).hasCount(3);
     }
