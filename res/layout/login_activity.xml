@@ -8,13 +8,13 @@
 
     <include
         android:id="@+id/splash"
-        layout="@layout/login_page_1" />
+        layout="@layout/login_header" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <com.viewpagerindicator.CirclePageIndicator
         android:id="@+id/view_pager_indicator"
@@ -23,7 +23,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="@dimen/vpi_margin_bottom"
         android:padding="@dimen/vpi_padding"
-        android:visibility="gone"
+        android:visibility="visible"
         app:fillColor="@color/vpi_fill_color"
         app:pageColor="@color/vpi_page_color"
         app:strokeColor="@color/vpi_stroke_color"

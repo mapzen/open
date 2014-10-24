@@ -11,18 +11,12 @@ import org.scribe.model.Token;
 import org.scribe.model.Verifier;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import javax.inject.Inject;
@@ -33,13 +27,11 @@ import butterknife.InjectView;
 public class LoginActivity extends Activity implements LoginAdapter.LoginListener {
     public static final String OSM_VERIFIER_KEY = "oauth_verifier";
 
-    @InjectView(R.id.splash) RelativeLayout splash;
     @InjectView(R.id.view_pager) ViewPager viewPager;
     @InjectView(R.id.view_pager_indicator) CirclePageIndicator viewPagerIndicator;
 
     private MapzenApplication app;
     private Token requestToken = null;
-    private Animation fadeIn, fadeOut;
     private Verifier verifier;
 
     @Inject LocationClient locationClient;
@@ -49,12 +41,10 @@ public class LoginActivity extends Activity implements LoginAdapter.LoginListene
         super.onCreate(savedInstanceState);
         app = (MapzenApplication) getApplication();
         app.inject(this);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.login_activity);
         View rootView = getWindow().getDecorView().getRootView();
         ButterKnife.inject(this, rootView);
         initViewPager();
-        loadAnimations();
-        animateViewTransitions();
     }
 
     private void initViewPager() {
@@ -83,14 +73,6 @@ public class LoginActivity extends Activity implements LoginAdapter.LoginListene
             setAccessToken(intent);
             startBaseActivity();
         }
-    }
-
-    private void forceLogin() {
-        SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("forced_login", true);
-        editor.commit();
-        startBaseActivity();
     }
 
     public void loginRoutine() {
@@ -154,33 +136,6 @@ public class LoginActivity extends Activity implements LoginAdapter.LoginListene
         requestToken = token;
     }
 
-    private void animateViewTransitions() {
-        fadeOutMotto();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                fadeInLoginView();
-            }
-        }, 2000);
-    }
-
-    private void fadeOutMotto() {
-        splash.startAnimation(fadeOut);
-        splash.setVisibility(View.INVISIBLE);
-    }
-
-    private void fadeInLoginView() {
-        viewPager.startAnimation(fadeIn);
-        viewPager.setVisibility(View.VISIBLE);
-        viewPagerIndicator.startAnimation(fadeIn);
-        viewPagerIndicator.setVisibility(View.VISIBLE);
-    }
-
-    private void loadAnimations() {
-        fadeIn = AnimationUtils.loadAnimation(this, R.anim.fadein);
-        fadeOut = AnimationUtils.loadAnimation(this, R.anim.fadeout);
-    }
-
     protected void unableToLogInAction() {
         Toast.makeText(getApplicationContext(), getString(R.string.login_error),
                 Toast.LENGTH_LONG).show();
@@ -190,10 +145,5 @@ public class LoginActivity extends Activity implements LoginAdapter.LoginListene
     @Override
     public void doLogin() {
         loginRoutine();
-    }
-
-    @Override
-    public void doForceLogin() {
-        forceLogin();
     }
 }

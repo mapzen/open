@@ -82,6 +82,7 @@
         <item name="android:textColor">@color/red</item>
         <item name="android:clickable">true</item>
         <item name="android:paddingBottom">@dimen/button_above_below_padding</item>
+
     </style>
 
 </resources>

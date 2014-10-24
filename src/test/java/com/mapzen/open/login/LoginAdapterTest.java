@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import static com.mapzen.open.login.LoginAdapter.PAGE_2;
@@ -67,12 +66,6 @@ public class LoginAdapterTest {
     }
 
     @Test
-    public void instantiateItem_pageTwoShouldHaveLogo() throws Exception {
-        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_2);
-        assertThat(view.findViewById(R.id.logo)).isNotNull();
-    }
-
-    @Test
     public void instantiateItem_pageTwoShouldHaveTitle() throws Exception {
         View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_2);
         TextView intro = (TextView) view.findViewById(R.id.title);
@@ -84,12 +77,6 @@ public class LoginAdapterTest {
         View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_2);
         TextView body = (TextView) view.findViewById(R.id.body);
         assertThat(body).hasText(R.string.login_page_two_body);
-    }
-
-    @Test
-    public void instantiateItem_pageThreeShouldHaveLogo() throws Exception {
-        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_3);
-        assertThat(view.findViewById(R.id.logo)).isNotNull();
     }
 
     @Test
@@ -147,59 +134,12 @@ public class LoginAdapterTest {
         assertThat(listener.login).isTrue();
     }
 
-    @Test
-    public void instantiateItem_tripleClickLogoShouldForceLoginIfDebug() throws Exception {
-        TestLoginListener listener = new TestLoginListener();
-        loginAdapter.setLoginListener(listener);
-        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_4);
-        ImageView logo = (ImageView) view.findViewById(R.id.logo);
-        logo.performClick();
-        logo.performClick();
-        logo.performClick();
-
-        if (Robolectric.application.getResources().getBoolean(R.bool.allow_login_force)) {
-            assertThat(listener.forceLogin).isTrue();
-        }
-    }
-
-    @Test
-    public void instantiateItem_tripleClickLogoShouldNotForceLoginIfRelease() throws Exception {
-        TestLoginListener listener = new TestLoginListener();
-        loginAdapter.setLoginListener(listener);
-        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_4);
-        ImageView logo = (ImageView) view.findViewById(R.id.logo);
-        logo.performClick();
-        logo.performClick();
-        logo.performClick();
-
-        if (!Robolectric.application.getResources().getBoolean(R.bool.allow_login_force)) {
-            assertThat(listener.forceLogin).isFalse();
-        }
-    }
-
-    @Test
-    public void instantiateItem_doubleClickLogoShouldNotForceLogin() throws Exception {
-        TestLoginListener listener = new TestLoginListener();
-        loginAdapter.setLoginListener(listener);
-        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_4);
-        ImageView logo = (ImageView) view.findViewById(R.id.logo);
-        logo.performClick();
-        logo.performClick();
-        assertThat(listener.forceLogin).isFalse();
-    }
-
     private class TestLoginListener implements LoginAdapter.LoginListener {
         private boolean login;
-        private boolean forceLogin;
 
         @Override
         public void doLogin() {
             login = true;
-        }
-
-        @Override
-        public void doForceLogin() {
-            forceLogin = true;
         }
     }
 }

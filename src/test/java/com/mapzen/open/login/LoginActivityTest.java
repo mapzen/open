@@ -3,7 +3,6 @@ package com.mapzen.open.login;
 import android.content.Intent;
 
 import com.mapzen.open.MapController;
-import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.TestMapzenApplication;
 import com.mapzen.android.lost.LocationClient;
@@ -108,16 +107,6 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void doForceLogin_shouldForceLogin() {
-        activity.doForceLogin();
-        String activityStarted = shadowOf(activity).getNextStartedActivity()
-                .getComponent().toString();
-        assertThat(activityStarted)
-                .isEqualTo("ComponentInfo{com.mapzen.open/com.mapzen.open.activity.BaseActivity}");
-        assertThat(((MapzenApplication) activity.getApplication()).wasForceLoggedIn()).isTrue();
-    }
-
-    @Test
     public void shouldShowMapOnLoginError() {
         activity.unableToLogInAction();
         String activityStarted = shadowOf(activity).getNextStartedActivity()
@@ -150,24 +139,6 @@ public class LoginActivityTest {
     public void onPause_shouldDisConnectLocationClient() {
         activity.onPause();
         assertThat(locationClient.isConnected()).isFalse();
-    }
-
-    @Test
-    public void shouldFadeOutSplashScreen() throws Exception {
-        Robolectric.shadowOf(activity.splash.getAnimation()).invokeEnd();
-        assertThat(activity.splash).isNotVisible();
-    }
-
-    @Test
-    public void shouldFadeInViewPager() throws Exception {
-        Robolectric.shadowOf(activity.viewPager.getAnimation()).invokeEnd();
-        assertThat(activity.viewPager).isVisible();
-    }
-
-    @Test
-    public void shouldFadeInViewPagerIndicator() throws Exception {
-        Robolectric.shadowOf(activity.viewPagerIndicator.getAnimation()).invokeEnd();
-        assertThat(activity.viewPagerIndicator).isVisible();
     }
 
     @Test
