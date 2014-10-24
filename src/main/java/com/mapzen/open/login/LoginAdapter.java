@@ -21,7 +21,6 @@ public class LoginAdapter extends PagerAdapter {
 
     private Context context;
     private LoginListener loginListener;
-    private int clickCount;
 
     public LoginAdapter(Context context) {
         this.context = context;
@@ -35,7 +34,7 @@ public class LoginAdapter extends PagerAdapter {
             initLearnMoreListener(view);
         } else if (position == PAGE_4) {
             initLoginButtonListener(view);
-            initLogoClickListener(view);
+            //initLogoClickListener(view);
         }
 
         return view;
@@ -64,20 +63,6 @@ public class LoginAdapter extends PagerAdapter {
         });
     }
 
-    private void initLogoClickListener(View view) {
-        view.findViewById(R.id.logo).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (context.getResources().getBoolean(R.bool.allow_login_force)) {
-                    clickCount++;
-                    if (clickCount == 3 && loginListener != null) {
-                        loginListener.doForceLogin();
-                    }
-                }
-            }
-        });
-    }
-
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((View) object);
@@ -99,6 +84,5 @@ public class LoginAdapter extends PagerAdapter {
 
     public interface LoginListener {
         public void doLogin();
-        public void doForceLogin();
     }
 }

@@ -108,16 +108,6 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void doForceLogin_shouldForceLogin() {
-        activity.doForceLogin();
-        String activityStarted = shadowOf(activity).getNextStartedActivity()
-                .getComponent().toString();
-        assertThat(activityStarted)
-                .isEqualTo("ComponentInfo{com.mapzen.open/com.mapzen.open.activity.BaseActivity}");
-        assertThat(((MapzenApplication) activity.getApplication()).wasForceLoggedIn()).isTrue();
-    }
-
-    @Test
     public void shouldShowMapOnLoginError() {
         activity.unableToLogInAction();
         String activityStarted = shadowOf(activity).getNextStartedActivity()
@@ -150,12 +140,6 @@ public class LoginActivityTest {
     public void onPause_shouldDisConnectLocationClient() {
         activity.onPause();
         assertThat(locationClient.isConnected()).isFalse();
-    }
-
-    @Test
-    public void shouldFadeOutSplashScreen() throws Exception {
-        Robolectric.shadowOf(activity.splash.getAnimation()).invokeEnd();
-        assertThat(activity.splash).isNotVisible();
     }
 
     @Test

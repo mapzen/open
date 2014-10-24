@@ -14,7 +14,7 @@
     <dimen name="login_text_bottom_padding">32dp</dimen>
     <dimen name="logo_top_margin">180dp</dimen>
     <dimen name="button_side_padding">20dp</dimen>
-    <dimen name="button_above_below_padding">8dp</dimen>
+    <dimen name="button_above_below_padding">14dp</dimen>
     <dimen name="button_font_size">10pt</dimen>
     <dimen name="result_pager_height">75dp</dimen>
     <dimen name="instruction_height">84dp</dimen>
@@ -47,10 +47,10 @@
     <dimen name="tiny">9sp</dimen>
 
     <!-- ViewPagerIndicator -->
-    <dimen name="vpi_height">16dp</dimen>
-    <dimen name="vpi_radius">3dp</dimen>
+    <dimen name="vpi_height">26dp</dimen>
+    <dimen name="vpi_radius">6dp</dimen>
     <dimen name="vpi_stroke_width">1dp</dimen>
-    <dimen name="vpi_padding">8dp</dimen>
-    <dimen name="vpi_margin_bottom">16dp</dimen>
+    <dimen name="vpi_padding">12dp</dimen>
+    <dimen name="vpi_margin_bottom">22dp</dimen>
 
 </resources>
