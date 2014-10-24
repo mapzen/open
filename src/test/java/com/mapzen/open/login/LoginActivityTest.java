@@ -3,7 +3,6 @@ package com.mapzen.open.login;
 import android.content.Intent;
 
 import com.mapzen.open.MapController;
-import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.TestMapzenApplication;
 import com.mapzen.android.lost.LocationClient;
