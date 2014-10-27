@@ -184,7 +184,7 @@ public class BaseActivityTest {
         editor.commit();
         savedSearch.clear();
         initBaseActivity();
-        assertThat(savedSearch.get().next().getTerm()).isEqualTo("expected");
+        assertThat(savedSearch.getIterator().next().getTerm()).isEqualTo("expected");
     }
 
     @Test
@@ -194,7 +194,7 @@ public class BaseActivityTest {
         savedSearch.clear();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         savedSearch.deserialize(prefs.getString(SavedSearch.TAG, ""));
-        assertThat(savedSearch.get().next().getTerm()).isEqualTo("expected");
+        assertThat(savedSearch.getIterator().next().getTerm()).isEqualTo("expected");
     }
 
     @Test

@@ -9,4 +9,6 @@
     <integer name="zoom_driving_over50">15</integer>
 
     <integer name="number_of_locations_for_average_speed">3</integer>
+
+    <integer name="pelias_doc_store">6656</integer>
 </resources>

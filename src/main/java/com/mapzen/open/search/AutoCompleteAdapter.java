@@ -18,6 +18,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.graphics.Typeface;
+import android.os.Parcel;
 import android.support.v4.app.FragmentManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -92,16 +93,24 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TextView tv = (TextView) view;
+                final TextView tv = (TextView) view;
                 SimpleFeature simpleFeature = (SimpleFeature) tv.getTag();
-                savedSearch.store(tv.getText().toString());
-                app.setCurrentSearchTerm("");
-                searchView.setQuery("", false);
-                searchView.clearFocus();
-                searchView.setQuery(tv.getText(), false);
-                mapFragment.clearMarkers();
-                mapFragment.updateMap();
+                if (simpleFeature == null) {
+                    int simpleFeatureId = (Integer) tv.getTag(R.integer.pelias_doc_store);
+                    Parcel payload = savedSearch.get(simpleFeatureId).getPayload();
+                    if (payload != null) {
+                        simpleFeature = SimpleFeature.readFromParcel(payload);
+                    }
+                }
+
                 if (simpleFeature != null) {
+                    savedSearch.store(tv.getText().toString(), simpleFeature.toParcel());
+                    app.setCurrentSearchTerm("");
+                    searchView.setQuery("", false);
+                    searchView.clearFocus();
+                    searchView.setQuery(tv.getText(), false);
+                    mapFragment.clearMarkers();
+                    mapFragment.updateMap();
                     app.setCurrentSearchTerm(simpleFeature.getHint());
                     mapFragment.centerOn(simpleFeature);
                     final PagerResultsFragment pagerResultsFragment =
@@ -115,7 +124,6 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                     String peliasType = simpleFeature.getProperty(TYPE);
                     long peliasId = Long.parseLong(simpleFeature.getProperty(ID).split(":")[0]);
                     pelias.doc(peliasType, peliasId, new Callback<Result>() {
-
                         @Override
                         public void success(Result result, Response response) {
                             List<Feature> features = result.getFeatures();
@@ -131,7 +139,6 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                             Logger.e("failed to retreive a document" + retrofitError.toString());
                         }
                     });
-
                 } else {
                     searchView.setQuery(tv.getText().toString(), true);
                 }
@@ -162,6 +169,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         final TextView tv = (TextView) view;
         if (cursor.getColumnName(1).equals(SEARCH_TERM)) {
             tv.setText(cursor.getString(1));
+            tv.setTag(R.integer.pelias_doc_store, cursor.getInt(0));
         } else {
             final int blobIndex = cursor.getColumnIndex(PELIAS_BLOB);
             byte[] bytes = cursor.getBlob(blobIndex);
