@@ -2,116 +2,115 @@
 <resources>
 
     <string name="application_name">OPEN</string>
-    <string name="search_title">Search</string>
-    <string name="results_title">Search Results</string>
+    <string name="search_title">Búsqueda</string>
+    <string name="results_title">Resultados de búsqueda</string>
     <string name="route_description">Turn Icon</string>
-    <string name="route_resume_button">Resume</string>
-    <string name="view_all">VIEW ALL</string>
-    <string name="no_route_found">No Route Found</string>
-    <string name="current_location">Current Location</string>
-    <string name="generic_server_error">An error occurred</string>
-    <string name="progress_dialog_title">Loading</string>
-    <string name="gps_dialog_title">GPS Disabled</string>
-    <string name="gps_dialog_message">The GPS on your device is disabled. Would you like to enable it for improved location accuracy?</string>
-    <string name="gps_positive_button">Yes</string>
-    <string name="gps_negative_button">Dismiss</string>
-    <string name="start">Start</string>
-    <string name="view">View</string>
-    <string name="overflow_menu">More</string>
-    <string name="route_steps_menu_option">Step-by-step list</string>
-    <string name="waiting">Waiting for location</string>
-    <string name="recalculating">Recalculating</string>
-    <string name="upload_traces">Upload GPS Traces</string>
-    <string name="from_text">From:</string>
-    <string name="to_text">To:</string>
-    <string name="routing_to_text">To\u0020</string>
+    <string name="route_resume_button">Retomar</string>
+    <string name="view_all">VER TODOS</string>
+    <string name="no_route_found">No se encontró ruta</string>
+    <string name="current_location">Ubicación actual</string>
+    <string name="generic_server_error">A ocurrido un error</string>
+    <string name="progress_dialog_title">Cargando</string>
+    <string name="gps_dialog_title">GPS Deshabilitado</string>
+    <string name="gps_dialog_message">El GPS en su dispositivo esta deshabilitado. ¿Desea habilitarlo para obtener una ubicación más precisa?</string>
+    <string name="gps_positive_button">Si</string>
+    <string name="gps_negative_button">Cancelar</string>
+    <string name="start">Comenzar</string>
+    <string name="view">Ver</string>
+    <string name="overflow_menu">Más</string>
+    <string name="route_steps_menu_option">Lista paso a paso</string>
+    <string name="waiting">Esperando ubicación</string>
+    <string name="recalculating">Recalculando</string>
+    <string name="upload_traces">Actualizando GPS Traces</string>
+    <string name="from_text">Desde:</string>
+    <string name="to_text">hacia:</string>
+    <string name="routing_to_text">hacia\u0020</string>
     <string name="search_hint_icon_spacer">"   "</string>
     <string name="osm_attribution">Map data © OpenStreetMap</string>
-    <string name="no_network">Network connection unavailable</string>
-    <string name="you_have_arrived_at">You have arrived at</string>
+    <string name="no_network">No hay conexión de red disponible</string>
+    <string name="you_have_arrived_at">Usted a arribado a</string>
 
     <!--Login-->
-    <string name="login_page_two_title">Hi,\nyou just opened Open.</string>
-    <string name="login_page_two_body">Open is a search and navigation app built on open source software and open data. One of those open data sources we’re using is OpenStreetMap. This is not an OSM editor app, but we’re asking users to log in using an OpenStreetMap account.</string>
-    <string name="login_page_three_title">No tracking.\nJust tracing.</string>
-    <string name="login_page_three_body">Once you’ve logged into your OSM account, you’ll be given the option to let Open collect GPS traces from your phone when it’s in Navigation Mode. Other than this optional collection, Open doesn’t log any of your location data. (Seriously. Nothing.)</string>
-    <string name="login_page_three_learn_more">Learn more</string>
-    <string name="login_page_four_body">Sign up or log in with OpenStreetMap to get started.</string>
-    <string name="login_page_four_button">Continue with OpenStreetMap</string>
-    <string name="toast_fixed_location_is_malformed">Your fixed location is malformed</string>
+    <string name="login_page_two_title">Hola,\nusted acaba de abrir Open.</string>
+    <string name="login_page_two_body">Open es una applicación de busqueda y navegacion que utiliza código abierto (Open Source) y bases de datos públicas (Open Data). Una de esas bases de datos abiertas es OpenStreetMap. Si bien esta no es una herramienta para editar mapas OSM, le pediomos a los usuarios entrar a su cuenta de OpenStreetMap.</string>
+    <string name="login_page_three_body">Una vez que haya ingresado a su cuenta de OSM, usted podrá elegir si desea o no proveer a Open con información sobre sus rutas en Modo Navegación. Más allá de eso Open no guardará ningún tipo de información (En serio. Absolutamente Nada.)</string>
+    <string name="login_page_three_learn_more">Leer más</string>
+    <string name="login_page_four_body">Cree o ingrese su cuenta de OpenStreerMap para comenza.</string>
+    <string name="login_page_four_button">Continúe con OpenStreetMap</string>
+    <string name="toast_fixed_location_is_malformed">Su posición fija está corrupta</string>
     <string name="logo_description">Open Logo</string>
-    <string name="osm_logout">OpenStreetMap Logout</string>
-    <string name="osm_login_title">Please Authorize</string>
-    <string name="login_error">Unable to log in. You can try to log in again by restarting the application.</string>
+    <string name="osm_logout">Cerrar la sesión de OpenStreetMap</string>
+    <string name="osm_login_title">Por favor de su autorización</string>
+    <string name="login_error">No se ha podido iniciar la sesión. Usted puede intentar de nuevo reiniciando la aplicación.</string>
 
     <!--Settings-->
 
-    <string name="settings">Settings</string>
-    <string name="submit_data">Submit data</string>
-    <string name="settings_debug_mode">Debug Mode</string>
-    <string name="settings_debug_mode_summary">This will keep application in debug mode and location will be stored</string>
-    <string name="settings_debug_title">Debugging</string>
+    <string name="settings">Configuración</string>
+    <string name="submit_data">Enviar datos</string>
+    <string name="settings_debug_mode">Modo de depuración</string>
+    <string name="settings_debug_mode_summary">Esto mantendra la aplicación en modo de depuración y su ubicación será almacenada</string>
+    <string name="settings_debug_title">Depurando</string>
     <string name="settings_key_debug">checkbox_debug</string>
     <string name="settings_key_mapsource">edittext_mapsource</string>
     <string name="settings_default_mapsource">http://vector.mapzen.com/osm/all</string>
-    <string name="settings_mapsource_dialog_title">Configure Map Tile source</string>
-    <string name="settings_mapsource">Configure Tile server</string>
-    <string name="settings_mapsource_summary">Restart required! And possibly flushing caches.</string>
+    <string name="settings_mapsource_dialog_title">Configure la fuente del mapa (Map Tile)</string>
+    <string name="settings_mapsource">Configure el servidor de mapas (Tile server)</string>
+    <string name="settings_mapsource_summary">Se requiere reiniciar! Esto posiblemente limpiará la información en memoria caché.</string>
     <string name="settings_voice_navigation_key">checkbox_voice_navigation</string>
-    <string name="settings_voice_navigation_summary">Enable voice navigation</string>
-    <string name="settings_voice_navigation_title">Voice navigation</string>
+    <string name="settings_voice_navigation_summary">Habilitar navegación por voz</string>
+    <string name="settings_voice_navigation_title">Navegación de voz</string>
     <string name="settings_key_enable_fixed_location">checkbox_preset_location</string>
-    <string name="settings_enable_fixed_location_summary">Enable fixed preset location</string>
-    <string name="settings_enable_fixed_location_title">Fixed location</string>
-    <string name="settings_fixed_location_dialog_title">Set Fixed Location (lat, lng)</string>
+    <string name="settings_enable_fixed_location_summary">Habilitar ubicación fija preestablecida</string>
+    <string name="settings_enable_fixed_location_title">Ubicación fija</string>
+    <string name="settings_fixed_location_dialog_title">Establecer ubicación fija(lat, lng)</string>
     <string name="settings_fixed_location_default_value">40.7443, -73.9903</string>
     <string name="settings_fixed_location_key">edittext_fixed_location</string>
-    <string name="settings_fixed_location_summary">Set fixed debug location</string>
-    <string name="settings_fixed_location_title">Debug location</string>
+    <string name="settings_fixed_location_summary">Establecer depuración para ubicación fija</string>
+    <string name="settings_fixed_location_title">Ubicación de depuración</string>
     <string name="settings_mock_gpx_key">checkbox_mock_gpx</string>
     <string name="settings_mock_gpx_title">GPX trace mode</string>
     <string name="settings_mock_gpx_summary">Replay mock locations via GPX trace file</string>
     <string name="settings_mock_gpx_filename_default_value">lost.gpx</string>
     <string name="settings_mock_gpx_filename_key">edittext_mock_gpx</string>
-    <string name="settings_mock_gpx_filename_summary">Copy file to root folder of external media (SD card)</string>
-    <string name="settings_mock_gpx_filename_title">GPX file</string>
+    <string name="settings_mock_gpx_filename_summary">Copie el archivo a la carpeta raíz de su tarjeta SD.</string>
+    <string name="settings_mock_gpx_filename_title">Archivo GPX</string>
     <string name="settings_location_update_interval_key">settings_location_update_interval</string>
-    <string name="settings_location_update_interval_title">Location update interval</string>
-    <string name="settings_location_update_interval_summary">ms between location updates (restart required)</string>
+    <string name="settings_location_update_interval_title">Intervalo de acutalización de ubicación</string>
+    <string name="settings_location_update_interval_summary">ms entre actualización de ubicación (requiere reiniciar)</string>
 
     <!--Zoom Settings-->
 
-    <string name="settings_zoom_title">Zoom</string>
+    <string name="settings_zoom_title">Ampliar</string>
     <string name="settings_zoom_walking_key">zoom_walking</string>
-    <string name="settings_zoom_walking_title">Walking</string>
+    <string name="settings_zoom_walking_title">Caminando</string>
     <string name="settings_zoom_biking_key">zoom_biking</string>
-    <string name="settings_zoom_biking_title">Biking</string>
+    <string name="settings_zoom_biking_title">En bicicleta</string>
     <string name="settings_zoom_driving_0to15_key">zoom_driving_0_to_15</string>
-    <string name="settings_zoom_driving_0_to_15_title">Driving 0–15 Mph</string>
+    <string name="settings_zoom_driving_0_to_15_title">Conduciendo entre 0–25 km/h</string>
     <string name="settings_zoom_driving_15to25_key">zoom_driving_15_to_25</string>
-    <string name="settings_zoom_driving_15_to_25_title">Driving 15–25 Mph</string>
+    <string name="settings_zoom_driving_15_to_25_title">Conduciendo entre 25–40 km/h</string>
     <string name="settings_zoom_driving_25to35_key">zoom_driving_25_to_35</string>
-    <string name="settings_zoom_driving_25_to_35_title">Driving 25–35 Mph</string>
+    <string name="settings_zoom_driving_25_to_35_title">Conduciendo entre 40–56 km/h</string>
     <string name="settings_zoom_driving_35to50_key">zoom_driving_35_to_50</string>
-    <string name="settings_zoom_driving_35_to_50_title">Driving 35–50 Mph</string>
+    <string name="settings_zoom_driving_35_to_50_title">Conduciendo entre 56–80 km/h</string>
     <string name="settings_zoom_driving_over50_key">zoom_driving_over_50</string>
-    <string name="settings_zoom_driving_over_50_title">Driving 50+ Mph</string>
+    <string name="settings_zoom_driving_over_50_title">Conduciendo a más de 80 km/h</string>
 
-    <string name="settings_speed_title">Average Speed</string>
+    <string name="settings_speed_title">velocidad Promedio</string>
     <string name="settings_number_of_locations_for_average_speed_key">number_of_locations_for_average_speed</string>
-    <string name="settings_number_of_locations_for_average_speed_title">Number of Location for average speed</string>
+    <string name="settings_number_of_locations_for_average_speed_title">Número de posiciones por velocidad promedio</string>
 
     <!--Debug Strings-->
 
-    <string name="debug_current_location">Current Location</string>
+    <string name="debug_current_location">Ubicación actual</string>
     <string name="debug_snap_location">Snap Location</string>
-    <string name="debug_closest_instruction">Closest Instruction</string>
+    <string name="debug_closest_instruction">La instrucción más cercana</string>
     <string name="destination_preview">destination_preview</string>
     <string name="destination_preview_distance">destination_preview_distance</string>
-    <string name="reverse">reverse</string>
+    <string name="reverse">Marcha atrás</string>
 
     <string name="secret_phrase">yo!!!</string>
-    <string name="debug_settings_on">Debug settings on</string>
-    <string name="debug_settings_off">Debug settings off</string>
+    <string name="debug_settings_on">Configuración de depuración activada</string>
+    <string name="debug_settings_off">Configuración de depuración desactivada</string>
 
 </resources>
