@@ -59,7 +59,6 @@ public class PagerResultsFragment extends BaseFragment {
     public static final String TAG = PagerResultsFragment.class.getSimpleName();
     private List<ItemFragment> currentCollection = new ArrayList<ItemFragment>();
     private ArrayList<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
-    private static final String PAGINATE_TEMPLATE = "Viewing %d of %d results";
     @Inject MapController mapController;
     @Inject Pelias pelias;
     @Inject MixpanelAPI mixpanelApi;
@@ -185,7 +184,7 @@ public class PagerResultsFragment extends BaseFragment {
         ItemFragment srf = currentCollection.get(i);
         SimpleFeature simpleFeature = srf.getSimpleFeature();
         Logger.d("simpleFeature: " + simpleFeature.toString());
-        String indicatorText = String.format(Locale.getDefault(), PAGINATE_TEMPLATE, i + 1,
+        String indicatorText = String.format(Locale.getDefault(), getString(R.string.paginate_template), i + 1,
                 currentCollection.size());
         indicator.setText(indicatorText);
         mapFragment.repopulatePoiLayer();
@@ -311,7 +310,7 @@ public class PagerResultsFragment extends BaseFragment {
     public void displayResults(int length, int currentPos) {
         SearchViewAdapter adapter = new SearchViewAdapter(getFragmentManager(), currentCollection);
         pager.setAdapter(adapter);
-        String indicatorText = String.format(Locale.getDefault(), PAGINATE_TEMPLATE, 1, length);
+        String indicatorText = String.format(Locale.getDefault(), getString(R.string.paginate_template), 1, length);
         indicator.setText(indicatorText);
         centerOnPlace(currentPos);
         mapFragment.updateMap();

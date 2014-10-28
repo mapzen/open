@@ -29,6 +29,7 @@
     <string name="osm_attribution">Map data © OpenStreetMap</string>
     <string name="no_network">No hay conexión de red disponible</string>
     <string name="you_have_arrived_at">Usted a arribado a</string>
+    <string name="paginate_template">Mostrando %d de %d resultados</string>
 
     <!--Login-->
     <string name="login_page_two_title">Hola,\nusted acaba de abrir Open.</string>
