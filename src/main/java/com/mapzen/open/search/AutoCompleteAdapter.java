@@ -122,7 +122,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                     pagerResultsFragment.add(simpleFeature);
                     pagerResultsFragment.displayResults(1, 0);
                     String peliasType = simpleFeature.getProperty(TYPE);
-                    long peliasId = Long.parseLong(simpleFeature.getProperty(ID).split(":")[0]);
+                    String peliasId = simpleFeature.getProperty(ID);
                     pelias.doc(peliasType, peliasId, new Callback<Result>() {
                         @Override
                         public void success(Result result, Response response) {
