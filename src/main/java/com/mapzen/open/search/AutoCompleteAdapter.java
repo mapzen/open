@@ -96,7 +96,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                 final TextView tv = (TextView) view;
                 SimpleFeature simpleFeature = (SimpleFeature) tv.getTag();
                 if (simpleFeature == null) {
-                    int simpleFeatureId = (Integer) tv.getTag(R.integer.pelias_doc_store);
+                    int simpleFeatureId = (Integer) tv.getTag(R.integer.pelias_doc_id);
                     Parcel payload = savedSearch.get(simpleFeatureId).getPayload();
                     if (payload != null) {
                         simpleFeature = SimpleFeature.readFromParcel(payload);
@@ -169,7 +169,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         final TextView tv = (TextView) view;
         if (cursor.getColumnName(1).equals(SEARCH_TERM)) {
             tv.setText(cursor.getString(1));
-            tv.setTag(R.integer.pelias_doc_store, cursor.getInt(0));
+            tv.setTag(R.integer.pelias_doc_id, cursor.getInt(0));
         } else {
             final int blobIndex = cursor.getColumnIndex(PELIAS_BLOB);
             byte[] bytes = cursor.getBlob(blobIndex);
