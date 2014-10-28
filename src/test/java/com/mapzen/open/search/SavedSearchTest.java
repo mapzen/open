@@ -37,13 +37,13 @@ public class SavedSearchTest {
 
     @Test
     public void store_shouldHaveNullPayload() throws Exception {
-        savedSearch.store("foo");
+        savedSearch.store("term");
         assertThat(savedSearch.get(0).getPayload()).isNull();
     }
 
     @Test
     public void store_shouldHaveNullPayloadAfterSerialze() throws Exception {
-        savedSearch.store("foo");
+        savedSearch.store("term");
         String serialized = savedSearch.serialize();
         savedSearch.clear();
         savedSearch.deserialize(serialized);
@@ -52,7 +52,7 @@ public class SavedSearchTest {
 
     @Test
     public void payloadShouldbeHealthy() throws Exception {
-        savedSearch.store("foo", payload);
+        savedSearch.store("term", payload);
         String serialized = savedSearch.serialize();
         savedSearch.clear();
         savedSearch.deserialize(serialized);
@@ -62,8 +62,8 @@ public class SavedSearchTest {
 
     @Test
     public void store_updateRecordWithPayload() throws Exception {
-        savedSearch.store("foo");
-        savedSearch.store("foo", payload);
+        savedSearch.store("term");
+        savedSearch.store("term", payload);
         assertThat(savedSearch.get(0).getPayload()).isNotNull();
         assertThat(countTerms(savedSearch.getIterator())).isEqualTo(1);
     }
