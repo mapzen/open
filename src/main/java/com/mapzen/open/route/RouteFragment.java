@@ -195,7 +195,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         notificationCreator = new MapzenNotificationCreator(act);
         if (instructions != null) {
             notificationCreator.createNewNotification(simpleFeature.getMarker().title,
-                    instructions.get(0).getFullInstruction());
+                    instructions.get(0).getFullInstruction(getActivity()));
         }
     }
 
@@ -572,7 +572,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             setCurrentPagerItemStyling(i);
         }
         notificationCreator.createNewNotification(simpleFeature.getMarker().title,
-                instructions.get(i).getFullInstruction());
+                instructions.get(i).getFullInstruction(getActivity()));
     }
 
     @Override
@@ -691,7 +691,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                         adapter.setDestinationName(simpleFeature.getProperty(TEXT));
                         pager.setAdapter(adapter);
                         notificationCreator.createNewNotification(simpleFeature.getMarker().title,
-                                instructions.get(0).getFullInstruction());
+                                instructions.get(0).getFullInstruction(getActivity()));
                         setCurrentPagerItemStyling(0);
                     }
                 });
@@ -760,8 +760,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private String formatInstructionForDescription(Instruction instruction) {
         Location loc = instruction.getLocation();
-        String locationName = instruction.getSimpleInstruction()
-                .replace(instruction.getHumanTurnInstruction(), "");
+        String locationName = instruction.getSimpleInstruction(getActivity())
+                .replace(instruction.getHumanTurnInstruction(getActivity()), "");
         String latLong = " [" + loc.getLatitude() + ", " + loc.getLongitude() + ']';
         String startLocationString = locationName + latLong;
         return startLocationString;

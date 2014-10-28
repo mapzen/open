@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.view.View;
 import android.widget.ImageView;
@@ -162,7 +163,7 @@ public class DirectionListFragmentTest {
         }
 
         @Override
-        public String getSimpleInstruction() {
+        public String getSimpleInstruction(Context context) {
             return simpleInstruction;
         }
 

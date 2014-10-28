@@ -112,7 +112,7 @@ public class RouteAdapter extends PagerAdapter {
     private void setFullInstruction(View view) {
         final TextView fullInstruction = (TextView) view.findViewById(R.id.full_instruction);
         fullInstruction.setText(getFullInstructionWithBoldName(currentInstruction
-                .getSimpleInstruction()));
+                .getSimpleInstruction(context)));
     }
 
     private void setDistance(View view) {
@@ -125,7 +125,7 @@ public class RouteAdapter extends PagerAdapter {
                 (TextView) view.findViewById(R.id.full_instruction_after_action);
         fullInstructionAfterAction.setText(
                 getFullInstructionWithBoldName(
-                        currentInstruction.getSimpleInstructionAfterAction()));
+                        currentInstruction.getSimpleInstructionAfterAction(context)));
     }
 
     private void setTurnIcon(View view) {
