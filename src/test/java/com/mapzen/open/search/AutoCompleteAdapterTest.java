@@ -1,5 +1,6 @@
 package com.mapzen.open.search;
 
+import com.mapzen.android.gson.Result;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
@@ -18,6 +19,9 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.MockitoAnnotations;
 import org.oscim.core.MapPosition;
 import org.robolectric.annotation.Config;
 import org.robolectric.tester.android.database.TestCursor;
@@ -39,7 +43,9 @@ import javax.inject.Inject;
 import retrofit.Callback;
 
 import static com.mapzen.open.MapController.getMapController;
+import static com.mapzen.open.entity.SimpleFeature.ID;
 import static com.mapzen.open.entity.SimpleFeature.TEXT;
+import static com.mapzen.open.entity.SimpleFeature.TYPE;
 import static com.mapzen.open.support.TestHelper.assertSpan;
 import static com.mapzen.open.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.open.support.TestHelper.initMapFragment;
@@ -68,9 +74,14 @@ public class AutoCompleteAdapterTest {
     @Inject MixpanelAPI mixpanelAPI;
     @Inject SavedSearch savedSearch;
 
+    @Captor
+    @SuppressWarnings("unused")
+    ArgumentCaptor<Callback<Result>> callback;
+
     @Before
     public void setUp() throws Exception {
         ((MapzenApplication) application).inject(this);
+        MockitoAnnotations.initMocks(this);
         savedSearch.clear();
         ActivityController<DummyActivity> controller = buildActivity(DummyActivity.class);
         controller.create().start().resume();
@@ -128,6 +139,13 @@ public class AutoCompleteAdapterTest {
                 pagerResultsFragment.pager.getAdapter();
         ItemFragment itemFragment = (ItemFragment) searchViewAdapter.getItem(0);
         assertThat(itemFragment.getSimpleFeature()).isSameAs(simpleFeature);
+    }
+
+    @Test
+    public void onClick_shouldRetreiveRestOfPropertyFromPelias() throws Exception {
+        view.performClick();
+        verify(pelias).doc(eq(simpleFeature.getProperty(TYPE)),
+                eq(simpleFeature.getProperty(ID)), callback.capture());
     }
 
     @Test

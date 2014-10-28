@@ -140,6 +140,10 @@ public final class SavedSearch {
     }
 
     public void deserialize(String serializedSavedSearch) {
+        if (serializedSavedSearch.isEmpty()) {
+            return;
+        }
+
         JSONArray jsonArray;
         try {
             jsonArray = new JSONArray(serializedSavedSearch);
