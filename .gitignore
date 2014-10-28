@@ -19,6 +19,7 @@ tmp/
 *.*~
 *.apk
 res/values/secrets.xml
+leyndo/
 
 assets/styles
 assets/textures
