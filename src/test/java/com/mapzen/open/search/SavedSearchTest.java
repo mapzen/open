@@ -1,17 +1,20 @@
 package com.mapzen.open.search;
 
+import com.mapzen.open.entity.SimpleFeature;
 import com.mapzen.open.support.MapzenTestRunner;
+import com.mapzen.open.support.TestHelper;
 
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
 
 import android.database.Cursor;
+import android.os.Parcel;
 
 import java.util.Iterator;
 
+import static com.mapzen.open.entity.SimpleFeature.TEXT;
 import static com.mapzen.open.search.SavedSearch.DEFAULT_SIZE;
 import static com.mapzen.open.search.SavedSearch.MAX_ENTRIES;
 import static org.fest.assertions.api.ANDROID.assertThat;
@@ -21,13 +24,48 @@ import static org.fest.assertions.api.Assertions.assertThat;
 @RunWith(MapzenTestRunner.class)
 public class SavedSearchTest {
     SavedSearch savedSearch;
-    JSONObject payload;
+    Parcel payload;
 
     @Before
     public void setUp() throws Exception {
         savedSearch = new SavedSearch();
         savedSearch.clear();
-        payload = new JSONObject("{\"key\":\"value\"}");
+        payload = Parcel.obtain();
+        TestHelper.getTestSimpleFeature().writeToParcel(payload, 0);
+        payload.setDataPosition(0);
+    }
+
+    @Test
+    public void store_shouldHaveNullPayload() throws Exception {
+        savedSearch.store("term");
+        assertThat(savedSearch.get(0).getPayload()).isNull();
+    }
+
+    @Test
+    public void store_shouldHaveNullPayloadAfterSerialze() throws Exception {
+        savedSearch.store("term");
+        String serialized = savedSearch.serialize();
+        savedSearch.clear();
+        savedSearch.deserialize(serialized);
+        assertThat(savedSearch.get(0).getPayload()).isNull();
+    }
+
+    @Test
+    public void payloadShouldbeHealthy() throws Exception {
+        savedSearch.store("term", payload);
+        String serialized = savedSearch.serialize();
+        savedSearch.clear();
+        savedSearch.deserialize(serialized);
+        SimpleFeature feature = SimpleFeature.readFromParcel(savedSearch.get(0).getPayload());
+        assertThat(feature.getProperty(SimpleFeature.ID)).isNotNull();
+    }
+
+    @Test
+    public void store_updateRecordWithPayload() throws Exception {
+        savedSearch.store("term");
+        savedSearch.store("term", payload);
+        assertThat(savedSearch.get(0).getPayload()).isNotNull();
+        assertThat(countTerms(savedSearch.getIterator())).isEqualTo(1);
     }
 
     @Test
@@ -35,7 +73,7 @@ public class SavedSearchTest {
         savedSearch.store("search1");
         savedSearch.store("search2", payload);
         savedSearch.store("expected");
-        assertThat(savedSearch.get(2).next().getTerm()).isEqualTo("expected");
+        assertThat(savedSearch.getSubIterator(2).next().getTerm()).isEqualTo("expected");
     }
 
     @Test
@@ -43,7 +81,7 @@ public class SavedSearchTest {
         for (int i = 0; i < MAX_ENTRIES + 3; i++) {
             savedSearch.store(String.valueOf(i));
         }
-        assertThat(countTerms(savedSearch.get(MAX_ENTRIES + 10))).isEqualTo(MAX_ENTRIES);
+        assertThat(countTerms(savedSearch.getSubIterator(MAX_ENTRIES + 10))).isEqualTo(MAX_ENTRIES);
     }
 
     @Test
@@ -52,7 +90,7 @@ public class SavedSearchTest {
         for (int i = 0; i < MAX_ENTRIES; i++) {
             savedSearch.store(String.valueOf(i));
         }
-        Iterator<SavedSearch.Member> it = savedSearch.get(MAX_ENTRIES);
+        Iterator<SavedSearch.Member> it = savedSearch.getSubIterator(MAX_ENTRIES);
         while (it.hasNext()) {
             assertThat(it.next().getTerm()).isNotEqualTo("search1");
         }
@@ -64,7 +102,22 @@ public class SavedSearchTest {
         savedSearch.store("search1", payload);
         savedSearch.store("search2");
         savedSearch.store("expected");
-        assertThat(countTerms(savedSearch.get(MAX_ENTRIES))).isEqualTo(3);
+        assertThat(countTerms(savedSearch.getSubIterator(MAX_ENTRIES))).isEqualTo(3);
+    }
+
+    @Test
+    public void store_shouldUpdateEntriresWithPayload() throws Exception {
+        Parcel newPayload = Parcel.obtain();
+        SimpleFeature expectedFeature = TestHelper.getTestSimpleFeature();
+        expectedFeature.setProperty(TEXT, "new property");
+        expectedFeature.writeToParcel(newPayload, 0);
+        newPayload.setDataPosition(0);
+        savedSearch.store("expected", payload);
+        savedSearch.store("expected", newPayload);
+        SavedSearch.Member member = savedSearch.getIterator().next();
+        SimpleFeature simpleFeature = SimpleFeature.readFromParcel(member.getPayload());
+        assertThat(simpleFeature.getProperty(TEXT)).isEqualTo(expectedFeature.getProperty(TEXT));
+        assertThat(countTerms(savedSearch.getSubIterator(MAX_ENTRIES))).isEqualTo(1);
     }
 
     @Test
@@ -73,7 +126,7 @@ public class SavedSearchTest {
         savedSearch.store("search1");
         savedSearch.store("search2");
         savedSearch.store("expected", payload);
-        assertThat(savedSearch.get(1).next().getTerm()).isEqualTo("expected");
+        assertThat(savedSearch.getSubIterator(1).next().getTerm()).isEqualTo("expected");
     }
 
     @Test
@@ -82,7 +135,7 @@ public class SavedSearchTest {
         savedSearch.store("search2", payload);
         savedSearch.store("search3");
         savedSearch.store("search4");
-        assertThat(countTerms(savedSearch.get())).isEqualTo(DEFAULT_SIZE);
+        assertThat(countTerms(savedSearch.getIterator())).isEqualTo(DEFAULT_SIZE);
     }
 
     @Test
@@ -90,12 +143,12 @@ public class SavedSearchTest {
         savedSearch.store("search1");
         savedSearch.store("search2", payload);
         savedSearch.store("search3");
-        assertThat(countTerms(savedSearch.get(1))).isEqualTo(1);
+        assertThat(countTerms(savedSearch.getSubIterator(1))).isEqualTo(1);
     }
 
     @Test
     public void get_shouldReturnEmptyList() throws Exception {
-        assertThat(savedSearch.get().hasNext()).isFalse();
+        assertThat(savedSearch.getIterator().hasNext()).isFalse();
     }
 
     @Test
@@ -117,7 +170,7 @@ public class SavedSearchTest {
         savedSearch.store("search2", payload);
         savedSearch.store("search3");
         savedSearch.clear();
-        assertThat(savedSearch.get().hasNext()).isFalse();
+        assertThat(savedSearch.getIterator().hasNext()).isFalse();
     }
 
     @Test
@@ -127,9 +180,9 @@ public class SavedSearchTest {
         savedSearch.store("expected");
         String serialized = savedSearch.serialize();
         savedSearch.clear();
-        assertThat(savedSearch.get().hasNext()).isFalse();
+        assertThat(savedSearch.getIterator().hasNext()).isFalse();
         savedSearch.deserialize(serialized);
-        Iterator<SavedSearch.Member> it = savedSearch.get();
+        Iterator<SavedSearch.Member> it = savedSearch.getIterator();
         assertThat(it.next().getTerm()).isEqualTo("expected");
         assertThat(it.next().getTerm()).isEqualTo("search2");
         assertThat(it.next().getTerm()).isEqualTo("search1");
@@ -139,9 +192,9 @@ public class SavedSearchTest {
     public void deserialize_shouldHandleEmptyString() throws Exception {
         String serialized = savedSearch.serialize();
         savedSearch.clear();
-        assertThat(savedSearch.get().hasNext()).isFalse();
+        assertThat(savedSearch.getIterator().hasNext()).isFalse();
         savedSearch.deserialize(serialized);
-        Iterator<SavedSearch.Member> it = savedSearch.get();
+        Iterator<SavedSearch.Member> it = savedSearch.getIterator();
         assertThat(it.hasNext()).isFalse();
     }
 

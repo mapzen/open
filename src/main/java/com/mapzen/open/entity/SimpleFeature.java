@@ -118,6 +118,13 @@ public class SimpleFeature implements Parcelable {
         out.writeString(getHint());
     }
 
+    public Parcel toParcel() {
+        Parcel parcel = Parcel.obtain();
+        writeToParcel(parcel, 0);
+        parcel.setDataPosition(0);
+        return parcel;
+    }
+
     @Override
     public boolean equals(Object o) {
         SimpleFeature other = (SimpleFeature) o;

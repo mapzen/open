@@ -8,6 +8,9 @@ import org.json.JSONObject;
 
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.os.Parcel;
+
+import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -26,15 +29,11 @@ public final class SavedSearch {
 
     public class Member {
         private String term;
-        private JSONObject payload = new JSONObject();
+        private Parcel payload = null;
 
-        public Member(String term, JSONObject payload) {
+        public Member(String term, Parcel payload) {
             this.term = term;
-            if (payload == null) {
-                this.payload = new JSONObject();
-            } else {
-                this.payload = payload;
-            }
+            this.payload = payload;
         }
 
         public Member(String term) {
@@ -45,7 +44,7 @@ public final class SavedSearch {
             return term;
         }
 
-        public JSONObject getPayload() {
+        public Parcel getPayload() {
             return payload;
         }
 
@@ -54,7 +53,12 @@ public final class SavedSearch {
             try {
                 jsonObject = new JSONObject();
                 jsonObject.put(SEARCH_TERM, getTerm());
-                jsonObject.put(PAYLOAD, getPayload());
+                Parcel payload = getPayload();
+                if (payload != null) {
+                    jsonObject.put(PAYLOAD, new String(payload.marshall(), "ISO-8859-1"));
+                }
+            } catch (UnsupportedEncodingException e) {
+                Logger.e(e.getMessage());
             } catch (JSONException e) {
                 Logger.e(e.getMessage());
             }
@@ -73,7 +77,7 @@ public final class SavedSearch {
 
             Member member = (Member) o;
 
-            return payload.toString().equals(member.payload.toString()) && term.equals(member.term);
+            return term.equals(member.term);
         }
 
         @Override
@@ -88,7 +92,7 @@ public final class SavedSearch {
 
     private LinkedList<Member> store = new LinkedList<Member>();
 
-    public int store(String term, JSONObject payload) {
+    public int store(String term, Parcel payload) {
         truncate();
         Member member = new Member(term, payload);
         store.remove(member);
@@ -104,11 +108,15 @@ public final class SavedSearch {
         return 0;
     }
 
-    public Iterator<Member> get() {
-        return get(DEFAULT_SIZE);
+    public Member get(int i) {
+        return store.get(i);
     }
 
-    public Iterator<Member> get(int size) {
+    public Iterator<Member> getIterator() {
+        return getSubIterator(DEFAULT_SIZE);
+    }
+
+    public Iterator<Member> getSubIterator(int size) {
         if (store.size() == 0 || store.size() < size) {
             return store.iterator();
         }
@@ -132,15 +140,28 @@ public final class SavedSearch {
     }
 
     public void deserialize(String serializedSavedSearch) {
+        if (serializedSavedSearch.isEmpty()) {
+            return;
+        }
+
         JSONArray jsonArray;
         try {
             jsonArray = new JSONArray(serializedSavedSearch);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 String term = jsonObject.getString(SEARCH_TERM);
-                JSONObject payload = jsonObject.getJSONObject(PAYLOAD);
+                Parcel payload = null;
+                if (jsonObject.has(PAYLOAD)) {
+                    payload = Parcel.obtain();
+                    String rawPayload = jsonObject.getString(PAYLOAD);
+                    payload.unmarshall(rawPayload.getBytes("ISO-8859-1"), 0,
+                            rawPayload.getBytes("ISO-8859-1").length);
+                    payload.setDataPosition(0);
+                }
                 store.add(new Member(term, payload));
             }
+        } catch (UnsupportedEncodingException e) {
+            Logger.e(e.getMessage());
         } catch (JSONException e) {
             Logger.e(e.getMessage());
         }
