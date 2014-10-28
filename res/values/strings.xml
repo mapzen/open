@@ -33,7 +33,7 @@
     <!--Login-->
     <string name="login_page_two_title">Welcome to Open.</string>
     <string name="login_page_two_body">Open is a search and navigation app built on open source software and open data.</string>
-    <string name="login_page_three_title">We <3 OpenStreetMap.</string>
+    <string name="login_page_three_title">We &lt;3 OpenStreetMap. </string>
     <string name="login_page_three_body">To use Open, you need an OpenStreetMap account. This is not an OpenStreetMap editor app, but you can use the app to collect GPS traces.</string>
     <string name="login_page_four_title">No tracking.\nJust tracing.</string>
     <string name="login_page_four_body">Open only collects GPS traces when you’re using Turn-by-Turn Navigation. This collection is 100% optional, and you can opt out from your OSM account.</string>
