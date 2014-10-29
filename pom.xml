@@ -134,7 +134,7 @@
         <dependency>
             <groupId>com.mapzen</groupId>
             <artifactId>on-the-road</artifactId>
-            <version>0.5-SNAPSHOT</version>
+            <version>0.5</version>
             <type>aar</type>
         </dependency>
 
