@@ -30,24 +30,22 @@
     <string name="no_network">Network connection unavailable</string>
     <string name="you_have_arrived_at">You have arrived at</string>
     <string name="paginate_template">Viewing %1$d of %2$d results</string>
+    <string name="about_link">About</string>
 
     <!--Login-->
-    <string name="login_page_two_title">Welcome to Open.</string>
-    <string name="login_page_two_body">Open is a search and navigation app built on open source software and open data.</string>
-    <string name="login_page_three_title">We &lt;3 OpenStreetMap. </string>
-    <string name="login_page_three_body">To use Open, you need an OpenStreetMap account. This is not an OpenStreetMap editor app, but you can use the app to collect GPS traces.</string>
-    <string name="login_page_four_title">No tracking.\nJust tracing.</string>
-    <string name="login_page_four_body">Open only collects GPS traces when you’re using Turn-by-Turn Navigation. This collection is 100% optional, and you can opt out from your OSM account.</string>
-    <string name="login_page_four_learn_more">Learn more</string>
-    <string name="login_page_five_title">If you see something, edit something.</string>
-    <string name="login_page_five_body">Open will only improve with continued contributions. If you find things in OSM that needs fixing while using Open, you should totally go fix that data.</string>
-    <string name="login_page_six_body">Sign up or log in with OpenStreetMap to get started.</string>
-    <string name="login_page_six_button">Continue with OpenStreetMap</string>
+    <string name="login_page_one_body">A search and navigation app built on open software and data</string>
+    <string name="login_page_two_body">You\'ll need to log in with OpenStreetMap, but this is not an OSM editor</string>
+    <string name="login_page_three_body">GPS traces from turn-by-turn will be uploaded to your OpenStreetMap account, unless you opt out</string>
+    <string name="login_page_four_body">Open is entirely open-source which means that the community can make it great</string>
+    <string name="login_page_five_body">Sign up or log in with OpenStreetMap to get started</string>
+    <string name="login_accept_terms"><u>I agree to the Terms and conditions</u></string>
+    <string name="login_button">Continue with OpenStreetMap</string>
     <string name="toast_fixed_location_is_malformed">Your fixed location is malformed</string>
     <string name="logo_description">Open Logo</string>
     <string name="osm_logout">OpenStreetMap Logout</string>
     <string name="osm_login_title">Please Authorize</string>
     <string name="login_error">Unable to log in. You can try to log in again by restarting the application.</string>
+    <string name="agree_to_terms_please">Please agree to the Terms and Conditions</string>
 
     <!--Settings-->
 

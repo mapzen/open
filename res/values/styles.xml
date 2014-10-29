@@ -58,24 +58,17 @@
         <item name="android:src">@drawable/ic_menu_overflow</item>
     </style>
 
-    <style name="LoginTitle" parent="@android:style/Widget.TextView">
-        <item name="android:layout_gravity">center_horizontal</item>
-        <item name="android:gravity">center_horizontal</item>
+    <style name="LoginBody" parent="@android:style/Widget.TextView">
         <item name="android:fontFamily">sans-serif-condensed-light</item>
-        <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@color/red</item>
         <item name="android:textSize">@dimen/medium_2</item>
+        <item name="android:gravity">center</item>
     </style>
 
-    <style name="LoginBody" parent="@android:style/Widget.TextView">
-        <item name="android:layout_gravity">center_horizontal</item>
-        <item name="android:layout_marginBottom">@dimen/login_body_margin_vertical</item>
-        <item name="android:gravity">center_horizontal</item>
+    <style name="LoginTerms" parent="LoginBody">
         <item name="android:fontFamily">sans-serif-condensed-light</item>
-        <item name="android:textColor">@color/dark_gray</item>
-        <item name="android:textColor">@color/sign_up_text</item>
+        <item name="android:textColor">@color/red</item>
         <item name="android:textSize">@dimen/small</item>
-        <item name="android:lineSpacingMultiplier">1.1</item>
     </style>
 
     <style name="LoginLink" parent="LoginBody">
