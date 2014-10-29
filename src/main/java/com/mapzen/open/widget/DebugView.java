@@ -42,7 +42,7 @@ public class DebugView extends RelativeLayout {
     public void setClosestInstruction(Instruction instruction) {
         instructionCoordinates.setText(formatCoordinates(instruction.getLocation()));
         instructionBearing.setText(formatBearing(instruction));
-        instructionTurn.setText(instruction.getHumanTurnInstruction());
+        instructionTurn.setText(instruction.getHumanTurnInstruction(getContext()));
         instructionName.setText(instruction.getName());
         instructionDistance.setText(instruction.getFormattedDistance());
     }

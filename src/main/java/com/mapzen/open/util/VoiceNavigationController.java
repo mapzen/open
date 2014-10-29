@@ -42,11 +42,11 @@ public class VoiceNavigationController {
     }
 
     public void playInstruction(Instruction instruction) {
-        speakerbox.play(instruction.getSimpleInstruction());
+        speakerbox.play(instruction.getSimpleInstruction(activity));
     }
 
     public void playFlippedInstruction(Instruction instruction) {
-        speakerbox.play(instruction.getFullInstructionAfterAction());
+        speakerbox.play(instruction.getFullInstructionAfterAction(activity));
     }
 
     public void recalculating() {

@@ -141,7 +141,7 @@ public class DirectionListFragment extends ListFragment {
 
             icon.setImageResource(DisplayHelper.getRouteDrawable(context,
                     current.getTurnInstruction(), DisplayHelper.IconStyle.GRAY));
-            simpleInstruction.setText(current.getSimpleInstruction());
+            simpleInstruction.setText(current.getSimpleInstruction(context));
             distance.setDistance(current.getDistance());
         }
     }

@@ -960,7 +960,7 @@ public class RouteFragmentTest {
         fragment.setInstructions(instructions);
         FragmentTestUtil.startFragment(fragment);
         fragment.onRouteComplete();
-        assertLastSpokenText(getTestLastInstruction().getSimpleInstruction());
+        assertLastSpokenText(getTestLastInstruction().getSimpleInstruction(fragment.getActivity()));
     }
 
     @Test
@@ -1229,6 +1229,7 @@ public class RouteFragmentTest {
 
     @Test
     public void getGPXDescription_shouldIncludeReturnBeginningAndEnd() throws Exception {
+        FragmentTestUtil.startFragment(fragment);
         testInstructions = new ArrayList<Instruction>();
         testInstructions.add(getTestInstruction(0, 0));
         fragment.setInstructions(testInstructions);
