@@ -11,6 +11,9 @@ import com.mapzen.osrm.Router;
 import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.support.TestBaseActivity;
 
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,10 +49,16 @@ import static com.mapzen.open.support.TestHelper.getTestLocation;
 import static com.mapzen.open.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.open.support.TestHelper.initBaseActivity;
 import static com.mapzen.open.util.DouglasPeuckerReducer.reduceWithTolerance;
+import static com.mapzen.open.util.MixpanelHelper.Event.ROUTING_PREVIEW_BIKE;
+import static com.mapzen.open.util.MixpanelHelper.Event.ROUTING_PREVIEW_CAR;
+import static com.mapzen.open.util.MixpanelHelper.Event.ROUTING_PREVIEW_FOOT;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
@@ -61,6 +70,7 @@ public class RoutePreviewFragmentTest {
     @Inject PathLayer path;
     @Inject ItemizedLayer<MarkerItem> markers;
     @Inject MapController mapController;
+    @Inject MixpanelAPI mixpanelAPI;
     @Captor
     @SuppressWarnings("unused")
     ArgumentCaptor<double[]> location;
@@ -191,7 +201,7 @@ public class RoutePreviewFragmentTest {
     public void createRouteToDestination_shouldGetFeatureDestinationFirst() throws Exception {
         mapController.setLocation(getTestLocation(22.22, 44.44));
         fragment.reverse();
-        verify(router, Mockito.times(2)).setLocation(location.capture());
+        verify(router, times(2)).setLocation(location.capture());
         List<double[]> values = location.getAllValues();
         assertThat(values.get(0)).isEqualTo(new double[] { 1.0, 1.0 });
         assertThat(values.get(1)).isEqualTo(new double[] { 22.22, 44.44 });
@@ -262,15 +272,35 @@ public class RoutePreviewFragmentTest {
     }
 
     @Test
+    public void byCar_shouldSendMixpanelEvent() throws Exception {
+        RadioButton byCar = (RadioButton) fragment.getView().findViewById(R.id.by_car);
+        byCar.setChecked(false);
+        byCar.performClick();
+        verify(mixpanelAPI).track(eq(ROUTING_PREVIEW_CAR), any(JSONObject.class));
+    }
+
+    @Test
     public void routeForFoot_shouldRouteByFoot() throws Exception {
         fragment.getView().findViewById(R.id.by_foot).performClick();
         verify(router).setWalking();
     }
 
     @Test
+    public void byFoot_shouldSendMixpanelEvent() throws Exception {
+        fragment.getView().findViewById(R.id.by_foot).performClick();
+        verify(mixpanelAPI).track(eq(ROUTING_PREVIEW_FOOT), any(JSONObject.class));
+    }
+
+    @Test
     public void routeForBike_shouldRouteByBike() throws Exception {
         fragment.getView().findViewById(R.id.by_bike).performClick();
         verify(router).setBiking();
+    }
+
+    @Test
+    public void byBike_shouldSendMixpanelEvent() throws Exception {
+        fragment.getView().findViewById(R.id.by_bike).performClick();
+        verify(mixpanelAPI).track(eq(ROUTING_PREVIEW_BIKE), any(JSONObject.class));
     }
 
     @Test
@@ -301,7 +331,7 @@ public class RoutePreviewFragmentTest {
         ArrayList<Location> geometry = testRoute.getGeometry();
         fragment.createRouteToDestination();
         fragment.success(testRoute);
-        verify(markers, Mockito.times(2)).addItem(marker.capture());
+        verify(markers, times(2)).addItem(marker.capture());
         List<MarkerItem> values = marker.getAllValues();
         assertThat(values.get(0).getPoint().getLatitude()).
                 isEqualTo(geometry.get(0).getLatitude());
@@ -411,6 +441,6 @@ public class RoutePreviewFragmentTest {
     @Test
     public void onUpdateView_shouldCreateRoute() throws Exception {
         fragment.onViewUpdate();
-        Mockito.verify(router).fetch();
+        verify(router).fetch();
     }
 }

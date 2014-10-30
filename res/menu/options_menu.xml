@@ -8,6 +8,10 @@
         android:showAsAction="collapseActionView|ifRoom"
         android:actionViewClass="android.widget.SearchView" />
 
+    <item
+        android:id="@+id/about"
+        android:title="@string/about_link" />
+
     <group android:id="@+id/overflow_menu">
 
         <item

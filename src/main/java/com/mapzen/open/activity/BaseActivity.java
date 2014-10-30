@@ -193,6 +193,12 @@ public class BaseActivity extends MapActivity {
             case R.id.upload_traces:
                 uploadTraces();
                 return true;
+            case R.id.about:
+                final Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://mapzen.com/open/about"));
+                startActivity(intent);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

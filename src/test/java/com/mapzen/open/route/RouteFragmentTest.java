@@ -22,6 +22,8 @@ import com.mapzen.open.util.MapzenNotificationCreator;
 import com.mapzen.open.util.RouteLocationIndicator;
 import com.mapzen.open.widget.DistanceView;
 
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
@@ -103,8 +105,11 @@ import static com.mapzen.open.util.DatabaseHelper.TABLE_GROUPS;
 import static com.mapzen.open.util.DatabaseHelper.TABLE_ROUTES;
 import static com.mapzen.open.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
 import static com.mapzen.open.util.DatabaseHelper.TABLE_ROUTE_GROUP;
+import static com.mapzen.open.util.MixpanelHelper.Event.ROUTING_START;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
@@ -123,6 +128,7 @@ public class RouteFragmentTest {
     @Inject PathLayer path;
     @Inject MapController mapController;
     @Inject ZoomController zoomController;
+    @Inject MixpanelAPI mixpanelAPI;
 
     private TestBaseActivity act;
     private RouteFragment fragment;
@@ -396,6 +402,13 @@ public class RouteFragmentTest {
         verify(router).setCallback(callback.capture());
         callback.getValue().success(new Route(MOCK_NY_TO_VT));
         assertThat(fragment.getRoute()).isNotSameAs(oldRoute);
+    }
+
+    @Test
+    public void onCreate_shouldFireMixpanelEvent() throws Exception {
+        initTestFragment();
+        FragmentTestUtil.startFragment(fragment);
+        verify(mixpanelAPI).track(eq(ROUTING_START), any(JSONObject.class));
     }
 
     @Test

@@ -8,6 +8,10 @@ import com.mapzen.open.TestMapzenApplication;
 import com.mapzen.android.lost.LocationClient;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.support.MapzenTestRunner;
+
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +21,8 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 import org.scribe.model.Token;
 
+import static com.mapzen.open.util.MixpanelHelper.Event.LOGIN_BUTTON_CLICK;
+import static com.mapzen.open.util.MixpanelHelper.Event.LOGIN_PAGE;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import android.net.Uri;
@@ -24,6 +30,9 @@ import android.net.Uri;
 import javax.inject.Inject;
 
 import static com.mapzen.open.support.TestHelper.initLoginActivity;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.robolectric.Robolectric.buildActivity;
 import static org.robolectric.Robolectric.getShadowApplication;
 import static org.robolectric.Robolectric.shadowOf;
@@ -35,12 +44,27 @@ public class LoginActivityTest {
     private LoginActivity activity;
     @Inject LocationClient locationClient;
     @Inject MapController mapController;
+    @Inject MixpanelAPI mixpanelAPI;
 
     @Before
     public void setUp() throws Exception {
         ((TestMapzenApplication) Robolectric.application).inject(this);
         activity = initLoginActivity();
         mapController.setActivity(new BaseActivity());
+    }
+
+    @Test
+    public void shouldSendMixpanelEventsForPages() throws Exception {
+        for (int i = 0; i < 6; i++) {
+            activity.onPageSelected(i);
+            verify(mixpanelAPI).track(eq(LOGIN_PAGE + String.valueOf(i)), any(JSONObject.class));
+        }
+    }
+
+    @Test
+    public void doLogin_shouldRecordMixpanelEvent() throws Exception {
+        activity.doLogin();
+        verify(mixpanelAPI).track(eq(LOGIN_BUTTON_CLICK), any(JSONObject.class));
     }
 
     @Test
@@ -142,7 +166,7 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void loginFlowShouldHaveViewPagerWithCountThree() throws Exception {
-        assertThat(activity.viewPager.getAdapter()).hasCount(3);
+    public void loginFlowShouldHaveViewPagerWithCountFive() throws Exception {
+        assertThat(activity.viewPager.getAdapter()).hasCount(5);
     }
 }

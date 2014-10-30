@@ -5,9 +5,12 @@ import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.entity.SimpleFeature;
 import com.mapzen.open.fragment.BaseFragment;
+import com.mapzen.open.util.MixpanelHelper;
 import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
 import com.mapzen.open.util.Logger;
+
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.oscim.android.canvas.AndroidGraphics;
 import org.oscim.core.BoundingBox;
@@ -43,6 +46,8 @@ import static com.mapzen.open.MapController.geoPointToPair;
 import static com.mapzen.open.MapController.locationToGeoPoint;
 import static com.mapzen.open.MapController.locationToPair;
 import static com.mapzen.open.entity.SimpleFeature.TEXT;
+import static com.mapzen.open.util.MixpanelHelper.Event.ROUTING_PREVIEW_BIKE;
+import static com.mapzen.open.util.MixpanelHelper.Event.ROUTING_PREVIEW_FOOT;
 import static com.mapzen.osrm.Router.Type;
 import static com.mapzen.osrm.Router.Type.BIKING;
 import static com.mapzen.osrm.Router.Type.DRIVING;
@@ -62,6 +67,7 @@ public class RoutePreviewFragment extends BaseFragment
     @Inject PathLayer path;
     @Inject ItemizedLayer<MarkerItem> markers;
     @Inject MapController mapController;
+    @Inject MixpanelAPI mixpanelAPI;
 
     @Inject Router router;
     @InjectView(R.id.starting_point) TextView startingPointTextView;
@@ -167,6 +173,7 @@ public class RoutePreviewFragment extends BaseFragment
         if (active) {
             transportationMode = DRIVING;
             createRouteToDestination();
+            mixpanelAPI.track(MixpanelHelper.Event.ROUTING_PREVIEW_CAR, null);
         }
     }
     @SuppressWarnings("unused")
@@ -174,6 +181,7 @@ public class RoutePreviewFragment extends BaseFragment
         if (active) {
             transportationMode = BIKING;
             createRouteToDestination();
+            mixpanelAPI.track(ROUTING_PREVIEW_BIKE, null);
         }
     }
     @SuppressWarnings("unused")
@@ -181,6 +189,7 @@ public class RoutePreviewFragment extends BaseFragment
         if (active) {
             transportationMode = WALKING;
             createRouteToDestination();
+            mixpanelAPI.track(ROUTING_PREVIEW_FOOT, null);
         }
     }
 

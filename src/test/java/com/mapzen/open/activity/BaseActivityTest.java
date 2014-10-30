@@ -35,7 +35,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowAlarmManager;
+import org.robolectric.shadows.ShadowIntent;
 import org.robolectric.shadows.ShadowLocationManager;
 import org.robolectric.tester.android.view.TestMenu;
 import org.scribe.model.Token;
@@ -284,6 +286,17 @@ public class BaseActivityTest {
         MenuItem menuItem = menu.findItem(R.id.settings);
         activity.onOptionsItemSelected(menuItem);
         assertThat(activity.getFragmentManager()).hasFragmentWithTag(SettingsFragment.TAG);
+    }
+
+    @Test
+    public void onOptionsItemSelected_shouldOpenAboutPage() throws Exception {
+        MenuItem menuItem = menu.findItem(R.id.about);
+        activity.onOptionsItemSelected(menuItem);
+        ShadowActivity shadowActivity = shadowOf(activity);
+        Intent startedIntent = shadowActivity.getNextStartedActivity();
+        ShadowIntent shadowIntent = shadowOf(startedIntent);
+        assertThat(shadowIntent.getAction()).isEqualTo(Intent.ACTION_VIEW);
+        assertThat(shadowIntent.getData()).isEqualTo(Uri.parse("https://mapzen.com/open/about"));
     }
 
     @Test
