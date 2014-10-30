@@ -10,6 +10,12 @@ public abstract class MixpanelHelper {
         public static final String INITIAL_LAUNCH = "initial-launch";
         public static final String PELIAS_SUGGEST = "pelias-suggest";
         public static final String PELIAS_SEARCH = "pelias-search";
+        public static final String ROUTING_START = "routing-start";
+        public static final String LOGIN_PAGE = "login-page-";
+        public static final String LOGIN_BUTTON_CLICK = "login-button-click";
+        public static final String ROUTING_PREVIEW_CAR = "routing-preview-car";
+        public static final String ROUTING_PREVIEW_FOOT = "routing-preview-foot";
+        public static final String ROUTING_PREVIEW_BIKE = "routing-preview-bike";
     }
 
     public static class Payload {

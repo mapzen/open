@@ -87,7 +87,7 @@ public class LoginAdapterTest {
     }
 
     @Test
-    public void instantiateItem_loginButtonShouldBeActive() throws Exception {
+    public void instantiateItem_loginButtonShouldSendMixpanelEvent() throws Exception {
         TestLoginListener listener = new TestLoginListener();
         loginAdapter.setLoginListener(listener);
         View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_5);

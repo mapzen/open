@@ -5,6 +5,7 @@ import com.mapzen.open.R;
 import com.mapzen.android.lost.LocationClient;
 import com.mapzen.open.activity.BaseActivity;
 
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import org.scribe.model.Token;
@@ -24,7 +25,11 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class LoginActivity extends Activity implements LoginAdapter.LoginListener {
+import static com.mapzen.open.util.MixpanelHelper.Event.LOGIN_BUTTON_CLICK;
+import static com.mapzen.open.util.MixpanelHelper.Event.LOGIN_PAGE;
+
+public class LoginActivity extends Activity implements LoginAdapter.LoginListener,
+        ViewPager.OnPageChangeListener {
     public static final String OSM_VERIFIER_KEY = "oauth_verifier";
 
     @InjectView(R.id.view_pager) ViewPager viewPager;
@@ -35,6 +40,7 @@ public class LoginActivity extends Activity implements LoginAdapter.LoginListene
     private Verifier verifier;
 
     @Inject LocationClient locationClient;
+    @Inject MixpanelAPI mixpanelApi;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,7 +57,22 @@ public class LoginActivity extends Activity implements LoginAdapter.LoginListene
         final LoginAdapter loginAdapter = new LoginAdapter(this);
         loginAdapter.setLoginListener(this);
         viewPager.setAdapter(loginAdapter);
+        viewPager.setOnPageChangeListener(this);
         viewPagerIndicator.setViewPager(viewPager);
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset,
+            int positionOffsetPixels) {
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        mixpanelApi.track(LOGIN_PAGE + String.valueOf(position), null);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
     }
 
     @Override
@@ -144,6 +165,7 @@ public class LoginActivity extends Activity implements LoginAdapter.LoginListene
 
     @Override
     public void doLogin() {
+        mixpanelApi.track(LOGIN_BUTTON_CLICK, null);
         loginRoutine();
     }
 }

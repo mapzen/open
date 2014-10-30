@@ -21,6 +21,7 @@ import com.mapzen.open.widget.DebugView;
 import com.mapzen.open.widget.DistanceView;
 
 import com.bugsense.trace.BugSenseHandler;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.json.JSONObject;
@@ -82,6 +83,7 @@ import static com.mapzen.open.util.DatabaseHelper.TABLE_ROUTES;
 import static com.mapzen.open.util.DatabaseHelper.TABLE_ROUTE_GEOMETRY;
 import static com.mapzen.open.util.DatabaseHelper.TABLE_ROUTE_GROUP;
 import static com.mapzen.open.util.DatabaseHelper.valuesForLocationCorrection;
+import static com.mapzen.open.util.MixpanelHelper.Event.ROUTING_START;
 
 public class RouteFragment extends BaseFragment implements DirectionListFragment.DirectionListener,
         ViewPager.OnPageChangeListener, Router.Callback, RouteEngine.RouteListener {
@@ -95,6 +97,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Inject Router router;
     @Inject RouteEngine routeEngine;
     @Inject MapController mapController;
+    @Inject MixpanelAPI mixpanelAPI;
 
     @InjectView(R.id.routes) ViewPager pager;
     @InjectView(R.id.resume_button) ImageButton resume;
@@ -211,6 +214,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mixpanelAPI.track(ROUTING_START, null);
         createGroup();
         initLocationReceiver();
         if (route != null) {
