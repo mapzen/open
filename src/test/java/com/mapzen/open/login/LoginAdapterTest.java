@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import static com.mapzen.open.login.LoginAdapter.PAGE_2;
 import static com.mapzen.open.login.LoginAdapter.PAGE_3;
-import static com.mapzen.open.login.LoginAdapter.PAGE_5;
+import static com.mapzen.open.login.LoginAdapter.PAGE_4;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
@@ -55,8 +55,8 @@ public class LoginAdapterTest {
     }
 
     @Test
-    public void getCount_shouldReturnFive() throws Exception {
-        assertThat(loginAdapter).hasCount(5);
+    public void getCount_shouldReturnNumberOfPages() throws Exception {
+        assertThat(loginAdapter).hasCount(4);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class LoginAdapterTest {
 
     @Test
     public void instantiateItem_pageFourShouldHaveLoginButton() throws Exception {
-        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_5);
+        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_4);
         Button loginButton = (Button) view.findViewById(R.id.login_button);
         assertThat(loginButton).hasText(R.string.login_button);
     }
@@ -90,7 +90,7 @@ public class LoginAdapterTest {
     public void instantiateItem_loginButtonShouldSendMixpanelEvent() throws Exception {
         TestLoginListener listener = new TestLoginListener();
         loginAdapter.setLoginListener(listener);
-        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_5);
+        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_4);
         Button loginButton = (Button) view.findViewById(R.id.login_button);
         CheckBox checkbox = (CheckBox) view.findViewById(R.id.agree);
         checkbox.setEnabled(true);
@@ -102,7 +102,7 @@ public class LoginAdapterTest {
     public void instantiateItem_loginButtonShouldNotBeActive() throws Exception {
         TestLoginListener listener = new TestLoginListener();
         loginAdapter.setLoginListener(listener);
-        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_5);
+        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_4);
         Button loginButton = (Button) view.findViewById(R.id.login_button);
         loginButton.performClick();
         assertThat(listener.login).isFalse();
@@ -112,7 +112,7 @@ public class LoginAdapterTest {
     public void instantiateItem_inActiveLoginButtonShouldToast() throws Exception {
         TestLoginListener listener = new TestLoginListener();
         loginAdapter.setLoginListener(listener);
-        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_5);
+        View view = (View) loginAdapter.instantiateItem(new FrameLayout(application), PAGE_4);
         Button loginButton = (Button) view.findViewById(R.id.login_button);
         loginButton.performClick();
         String expected = application.getString(R.string.agree_to_terms_please);

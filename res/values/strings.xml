@@ -36,8 +36,7 @@
     <string name="login_page_one_body">A search and navigation app built on open software and data</string>
     <string name="login_page_two_body">You\'ll need to log in with OpenStreetMap, but this is not an OSM editor</string>
     <string name="login_page_three_body">GPS traces from turn-by-turn will be uploaded to your OpenStreetMap account, unless you opt out</string>
-    <string name="login_page_four_body">Open is entirely open-source which means that the community can make it great</string>
-    <string name="login_page_five_body">Sign up or log in with OpenStreetMap to get started</string>
+    <string name="login_page_four_body">Sign up or log in with OpenStreetMap to get started</string>
     <string name="login_accept_terms"><u>I agree to the Terms and conditions</u></string>
     <string name="login_button">Continue with OpenStreetMap</string>
     <string name="toast_fixed_location_is_malformed">Your fixed location is malformed</string>

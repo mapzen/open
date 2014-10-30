@@ -17,15 +17,13 @@ public class LoginAdapter extends PagerAdapter {
             R.layout.login_page_1,
             R.layout.login_page_2,
             R.layout.login_page_3,
-            R.layout.login_page_4,
-            R.layout.login_page_5
+            R.layout.login_page_4
     };
 
     public static final int PAGE_1 = 0;
     public static final int PAGE_2 = 1;
     public static final int PAGE_3 = 2;
     public static final int PAGE_4 = 3;
-    public static final int PAGE_5 = 4;
 
     private Context context;
     private LoginListener loginListener;
@@ -38,7 +36,7 @@ public class LoginAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         final View view = View.inflate(context, LAYOUTS[position], null);
         container.addView(view);
-        if (position == PAGE_5) {
+        if (position == PAGE_4) {
             initLoginButtonListener(view);
             initTermsListener(view);
         }
