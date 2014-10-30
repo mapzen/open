@@ -166,7 +166,7 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void loginFlowShouldHaveViewPagerWithCountFive() throws Exception {
-        assertThat(activity.viewPager.getAdapter()).hasCount(5);
+    public void loginFlowShouldHaveViewPagerWithCountFour() throws Exception {
+        assertThat(activity.viewPager.getAdapter()).hasCount(4);
     }
 }
