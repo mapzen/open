@@ -32,16 +32,18 @@
     <string name="paginate_template">Mostrando %1$d de %2$d resultados</string>
 
     <!--Login-->
-    <string name="login_page_one_body">Open es una applicación de busqueda y navegacion que utiliza código abierto (Open Source) y bases de datos públicas (Open Data). Una de esas bases de datos abiertas es OpenStreetMap. Si bien esta no es una herramienta para editar mapas OSM, le pediomos a los usuarios entrar a su cuenta de OpenStreetMap.</string>
-    <string name="login_page_two_body">Una vez que haya ingresado a su cuenta de OSM, usted podrá elegir si desea o no proveer a Open con información sobre sus rutas en Modo Navegación. Más allá de eso Open no guardará ningún tipo de información (En serio. Absolutamente Nada.)</string>
-    <string name="login_learn_more">Leer más</string>
-    <string name="login_page_three_body">Cree o ingrese su cuenta de OpenStreerMap para comenza.</string>
-    <string name="login_button">Continúe con OpenStreetMap</string>
-    <string name="toast_fixed_location_is_malformed">Su posición fija está corrupta</string>
+    <string name="login_page_one_body">A search and navigation app built on open software and data</string>
+    <string name="login_page_two_body">You\'ll need to log in with OpenStreetMap, but this is not an OSM editor</string>
+    <string name="login_page_three_body">GPS traces from turn-by-turn will be uploaded to your OpenStreetMap account, unless you opt out</string>
+    <string name="login_page_four_body">Sign up or log in with OpenStreetMap to get started</string>
+    <string name="login_accept_terms"><u>I agree to the Terms and conditions</u></string>
+    <string name="login_button">Continue with OpenStreetMap</string>
+    <string name="toast_fixed_location_is_malformed">Your fixed location is malformed</string>
     <string name="logo_description">Open Logo</string>
-    <string name="osm_logout">Cerrar la sesión de OpenStreetMap</string>
-    <string name="osm_login_title">Por favor de su autorización</string>
-    <string name="login_error">No se ha podido iniciar la sesión. Usted puede intentar de nuevo reiniciando la aplicación.</string>
+    <string name="osm_logout">OpenStreetMap Logout</string>
+    <string name="osm_login_title">Please Authorize</string>
+    <string name="login_error">Unable to log in. You can try to log in again by restarting the application.</string>
+    <string name="agree_to_terms_please">Please agree to the Terms and Conditions</string>
 
     <!--Settings-->
 
