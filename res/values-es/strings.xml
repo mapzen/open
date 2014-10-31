@@ -34,7 +34,7 @@
     <!--Login-->
     <string name="login_page_one_body">Una aplicación de búsqueda y navegación utilizando software y datos abiertos</string>
     <string name="login_page_two_body">Sin bien esto no es un editor de OSM, usted debe ingresar a su cuenta OpenStreetMap</string>
-    <string name="login_page_three_body">A menos que opte por lo contrario, su recorridos con GPS serán subidos a su cuenta de OpenStreetMap.</string>
+    <string name="login_page_three_body">A menos que opte por lo contrario, su recorridos con GPS serán subidos a su cuenta de OpenStreetMap</string>
     <string name="login_page_four_body">Regístrate o inicia sesión con OpenStreetMap para empezar</string>
     <string name="login_accept_terms"><u>Estoy de acuerdo con los términos y condiciones</u></string>
     <string name="login_button">Continuar con OpenStreetMap</string>
