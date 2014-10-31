@@ -32,18 +32,18 @@
     <string name="paginate_template">Mostrando %1$d de %2$d resultados</string>
 
     <!--Login-->
-    <string name="login_page_one_body">A search and navigation app built on open software and data</string>
-    <string name="login_page_two_body">You\'ll need to log in with OpenStreetMap, but this is not an OSM editor</string>
-    <string name="login_page_three_body">GPS traces from turn-by-turn will be uploaded to your OpenStreetMap account, unless you opt out</string>
-    <string name="login_page_four_body">Sign up or log in with OpenStreetMap to get started</string>
-    <string name="login_accept_terms"><u>I agree to the Terms and conditions</u></string>
-    <string name="login_button">Continue with OpenStreetMap</string>
+    <string name="login_page_one_body">Una aplicación de búsqueda y navegación utilizando software y datos abiertos</string>
+    <string name="login_page_two_body">Sin bien esto no es un editor de OSM, usted debe ingresar a su cuenta OpenStreetMap</string>
+    <string name="login_page_three_body">A menos que opte por lo contrario, su recorridos con GPS serán subidos a su cuenta de OpenStreetMap.</string>
+    <string name="login_page_four_body">Regístrate o inicia sesión con OpenStreetMap para empezar</string>
+    <string name="login_accept_terms"><u>Estoy de acuerdo con los términos y condiciones</u></string>
+    <string name="login_button">Continuar con OpenStreetMap</string>
     <string name="toast_fixed_location_is_malformed">Your fixed location is malformed</string>
     <string name="logo_description">Open Logo</string>
-    <string name="osm_logout">OpenStreetMap Logout</string>
-    <string name="osm_login_title">Please Authorize</string>
-    <string name="login_error">Unable to log in. You can try to log in again by restarting the application.</string>
-    <string name="agree_to_terms_please">Please agree to the Terms and Conditions</string>
+    <string name="osm_logout">Cerrar su sesión de OpenStreetMap</string>
+    <string name="osm_login_title">Por favor Autorizar</string>
+    <string name="login_error">Incapaz de iniciar la sesión. Usted puede intentar conectarse de nuevo reiniciando la aplicación.</string>
+    <string name="agree_to_terms_please">Por favor, acepte los Términos y Condiciones</string>
 
     <!--Settings-->
 
