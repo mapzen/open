@@ -6,7 +6,7 @@
     android:installLocation="internalOnly">
 
     <uses-sdk
-        android:minSdkVersion="17"
+        android:minSdkVersion="15"
         android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
