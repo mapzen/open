@@ -138,38 +138,4 @@ public class ItemFragmentTest {
         itemFragment.startButton.performClick();
         assertThat(act.getSupportFragmentManager()).doesNotHaveFragmentWithTag("gps_dialog");
     }
-
-    @Test
-     public void shouldDismissGPSPromptOnNegativeButton() throws Exception {
-        ShadowLocationManager manager = shadowOf(locationClient.getLocationManager());
-        manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
-        itemFragment.startButton.performClick();
-        AlertDialog gpsPrompt = ShadowAlertDialog.getLatestAlertDialog();
-        assertThat(act.getSupportFragmentManager()).hasFragmentWithTag("gps_dialog");
-        gpsPrompt.getButton(AlertDialog.BUTTON_NEGATIVE).performClick();
-        assertThat(act.getSupportFragmentManager()).doesNotHaveFragmentWithTag("gps_dialog");
-    }
-
-    @Test
-    public void shouldOpenGPSSettingsOnPositiveButtonClick() throws Exception {
-        ShadowLocationManager manager = shadowOf(locationClient.getLocationManager());
-        manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
-        itemFragment.startButton.performClick();
-        AlertDialog gpsPrompt = ShadowAlertDialog.getLatestAlertDialog();
-        gpsPrompt.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
-        Intent intent = shadowOf(act).peekNextStartedActivityForResult().intent;
-        assertThat(intent).isEqualTo(new Intent(ACTION_LOCATION_SOURCE_SETTINGS));
-    }
-
-    @Test
-    public void shouldDisplayGPSPromptTextCorrectly() throws Exception {
-        ShadowLocationManager manager = shadowOf(locationClient.getLocationManager());
-        manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
-        itemFragment.startButton.performClick();
-        AlertDialog gpsPrompt = ShadowAlertDialog.getLatestAlertDialog();
-        ShadowAlertDialog shadowGPSPrompt = shadowOf(gpsPrompt);
-        assertThat(shadowGPSPrompt.getTitle()).isEqualTo(act.getString(R.string.gps_dialog_title));
-        assertThat(shadowGPSPrompt.getMessage()).isEqualTo(
-                act.getString(R.string.gps_dialog_message));
-    }
 }

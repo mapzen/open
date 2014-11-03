@@ -447,12 +447,12 @@ public class BaseActivityTest {
 
     @Test
     public void openingSearchView_shouldHideOverflow() throws Exception {
-        Menu spy = spy(activity.getActivityMenu());
-        activity.toggleDebugMode();
-        activity.onCreateOptionsMenu(spy);
+        TestMenuWithGroup menu = new TestMenuWithGroup();
+        activity.onCreateOptionsMenu(menu);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.onActionViewExpanded();
-        verify(spy).setGroupVisible(R.id.overflow_menu, false);
+        assertThat(menu.group).isEqualTo(R.id.overflow_menu);
+        assertThat(menu.visible).isFalse();
     }
 
     @Test
@@ -672,4 +672,14 @@ public class BaseActivityTest {
         return route;
     }
 
+    private class TestMenuWithGroup extends TestMenu {
+        private int group;
+        private boolean visible;
+
+        @Override
+        public void setGroupVisible(int group, boolean visible) {
+            this.group = group;
+            this.visible = visible;
+        }
+    }
 }

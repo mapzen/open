@@ -555,8 +555,4 @@ public class BaseActivity extends MapActivity {
         app.activateMoveMapToLocation();
         mapFragment.centerOnCurrentLocation();
     }
-
-    public Menu getActivityMenu() {
-        return activityMenu;
-    }
 }
