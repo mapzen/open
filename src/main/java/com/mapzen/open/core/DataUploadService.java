@@ -22,6 +22,7 @@ import android.app.Service;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.os.AsyncTask;
 import android.os.IBinder;
@@ -91,8 +92,11 @@ public class DataUploadService extends Service {
                 }
                 Cursor cursor = null;
                 try {
-                    cursor = app.getDb().query(
-                            TABLE_GROUPS,
+                    final SQLiteDatabase db  = app.getDb();
+                    if (db == null) {
+                        return null;
+                    }
+                    cursor = db.query(TABLE_GROUPS,
                             new String[] { COLUMN_TABLE_ID, COLUMN_MSG },
                             COLUMN_UPLOADED + " is null AND " + COLUMN_READY_FOR_UPLOAD + " == ?",
                             new String[] { "1" }, null, null, null);

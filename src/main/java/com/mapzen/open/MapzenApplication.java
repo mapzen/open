@@ -69,6 +69,10 @@ public class MapzenApplication extends Application {
         return db;
     }
 
+    public void setDb(SQLiteDatabase db) {
+        this.db = db;
+    }
+
     public String[] getColumns() {
         return columns;
     }
