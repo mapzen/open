@@ -27,7 +27,7 @@ public final class MapController {
     public static final String KEY_MAP_SCALE = "scale";
     public static final String KEY_BEARING = "rotation";
 
-    public static final int DEFAULT_ZOOM_LEVEL = 15;
+    public static final int DEFAULT_ZOOM_LEVEL = 16;
     public static final String DEBUG_LOCATION = "fixed_debug_location";
 
     private static MapController mapController;
