@@ -234,6 +234,12 @@ public class DataUploadServiceTest {
         assertThat(service.hasWritePermission(fakePermission)).isTrue();
     }
 
+    @Test
+    public void shouldNotCrashWhenDatabaseIsNull() throws Exception {
+        app.setDb(null);
+        service.onStartCommand(null, 0, 0);
+    }
+
     private void makeGroupReady(String groupId) throws Exception {
         ContentValues insertValues = new ContentValues();
         insertValues.put(COLUMN_TABLE_ID, groupId);
