@@ -4,7 +4,6 @@ import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
 
 import android.app.Activity;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -75,6 +74,6 @@ public class MapzenNotificationCreator {
         builder.setContentTitle(title);
         builder.setContentText(content);
         builder.setSmallIcon(R.drawable.ic_lets_go);
-        builder.setPriority(Notification.PRIORITY_MAX);
+        builder.setPriority(NotificationCompat.PRIORITY_MAX);
     }
 }
