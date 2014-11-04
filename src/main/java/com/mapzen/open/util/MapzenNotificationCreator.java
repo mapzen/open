@@ -4,18 +4,18 @@ import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
 
 import android.app.Activity;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
 public class MapzenNotificationCreator {
     public static final String EXIT_NAVIGATION = "exit_navigation";
 
     private Activity baseActivity;
-    private Notification.Builder builder;
-    private Notification.BigTextStyle bigTextStyle;
+    private NotificationCompat.Builder builder;
+    private NotificationCompat.BigTextStyle bigTextStyle;
     private TaskStackBuilder stackBuilder;
     private Intent notificationIntent, exitNavigationIntent;
     private PendingIntent pendingNotificationIntent, pendingExitNavigationIntent;
@@ -64,16 +64,16 @@ public class MapzenNotificationCreator {
     }
 
     private void initBigTextStyle(String title, String content) {
-        bigTextStyle = new Notification.BigTextStyle();
+        bigTextStyle = new NotificationCompat.BigTextStyle();
         bigTextStyle.setBigContentTitle(title);
         bigTextStyle.bigText(content);
     }
 
     private void initBuilder(String title, String content) {
-        builder = new Notification.Builder(baseActivity.getBaseContext());
+        builder = new NotificationCompat.Builder(baseActivity.getBaseContext());
         builder.setContentTitle(title);
         builder.setContentText(content);
         builder.setSmallIcon(R.drawable.ic_lets_go);
-        builder.setPriority(Notification.PRIORITY_MAX);
+        builder.setPriority(NotificationCompat.PRIORITY_MAX);
     }
 }
