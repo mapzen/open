@@ -1,11 +1,11 @@
 package com.mapzen.open.activity;
 
+import com.mapzen.android.gson.Feature;
+import com.mapzen.android.lost.LocationClient;
 import com.mapzen.open.MapController;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.TestMapzenApplication;
-import com.mapzen.android.gson.Feature;
-import com.mapzen.android.lost.LocationClient;
 import com.mapzen.open.core.MapzenLocation;
 import com.mapzen.open.core.SettingsFragment;
 import com.mapzen.open.entity.SimpleFeature;
@@ -74,7 +74,6 @@ import static com.mapzen.open.support.TestHelper.initBaseActivityWithMenu;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.shadowOf;
@@ -447,12 +446,12 @@ public class BaseActivityTest {
 
     @Test
     public void openingSearchView_shouldHideOverflow() throws Exception {
-        Menu spy = spy(activity.getActivityMenu());
-        activity.toggleDebugMode();
-        activity.onCreateOptionsMenu(spy);
+        TestMenuWithGroup menu = new TestMenuWithGroup();
+        activity.onCreateOptionsMenu(menu);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.onActionViewExpanded();
-        verify(spy).setGroupVisible(R.id.overflow_menu, false);
+        assertThat(menu.group).isEqualTo(R.id.overflow_menu);
+        assertThat(menu.visible).isFalse();
     }
 
     @Test
@@ -672,4 +671,14 @@ public class BaseActivityTest {
         return route;
     }
 
+    private class TestMenuWithGroup extends TestMenu {
+        private int group;
+        private boolean visible;
+
+        @Override
+        public void setGroupVisible(int group, boolean visible) {
+            this.group = group;
+            this.visible = visible;
+        }
+    }
 }

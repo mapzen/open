@@ -1,14 +1,14 @@
 package com.mapzen.open.fragment;
 
+import com.mapzen.android.lost.LocationClient;
 import com.mapzen.open.MapController;
 import com.mapzen.open.R;
 import com.mapzen.open.TestMapzenApplication;
-import com.mapzen.android.lost.LocationClient;
-import com.mapzen.osrm.Route;
-import com.mapzen.osrm.Router;
 import com.mapzen.open.route.RoutePreviewFragment;
 import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.support.TestBaseActivity;
+import com.mapzen.osrm.Route;
+import com.mapzen.osrm.Router;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,19 +19,15 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowAlertDialog;
 import org.robolectric.shadows.ShadowLocationManager;
 import org.robolectric.shadows.ShadowToast;
 
-import android.app.AlertDialog;
-import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.text.TextUtils;
 
 import javax.inject.Inject;
 
-import static android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS;
 import static com.mapzen.open.support.TestHelper.getFixture;
 import static com.mapzen.open.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.open.support.TestHelper.initBaseActivity;
@@ -137,39 +133,5 @@ public class ItemFragmentTest {
         manager.setProviderEnabled(LocationManager.GPS_PROVIDER, true);
         itemFragment.startButton.performClick();
         assertThat(act.getSupportFragmentManager()).doesNotHaveFragmentWithTag("gps_dialog");
-    }
-
-    @Test
-     public void shouldDismissGPSPromptOnNegativeButton() throws Exception {
-        ShadowLocationManager manager = shadowOf(locationClient.getLocationManager());
-        manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
-        itemFragment.startButton.performClick();
-        AlertDialog gpsPrompt = ShadowAlertDialog.getLatestAlertDialog();
-        assertThat(act.getSupportFragmentManager()).hasFragmentWithTag("gps_dialog");
-        gpsPrompt.getButton(AlertDialog.BUTTON_NEGATIVE).performClick();
-        assertThat(act.getSupportFragmentManager()).doesNotHaveFragmentWithTag("gps_dialog");
-    }
-
-    @Test
-    public void shouldOpenGPSSettingsOnPositiveButtonClick() throws Exception {
-        ShadowLocationManager manager = shadowOf(locationClient.getLocationManager());
-        manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
-        itemFragment.startButton.performClick();
-        AlertDialog gpsPrompt = ShadowAlertDialog.getLatestAlertDialog();
-        gpsPrompt.getButton(AlertDialog.BUTTON_POSITIVE).performClick();
-        Intent intent = shadowOf(act).peekNextStartedActivityForResult().intent;
-        assertThat(intent).isEqualTo(new Intent(ACTION_LOCATION_SOURCE_SETTINGS));
-    }
-
-    @Test
-    public void shouldDisplayGPSPromptTextCorrectly() throws Exception {
-        ShadowLocationManager manager = shadowOf(locationClient.getLocationManager());
-        manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
-        itemFragment.startButton.performClick();
-        AlertDialog gpsPrompt = ShadowAlertDialog.getLatestAlertDialog();
-        ShadowAlertDialog shadowGPSPrompt = shadowOf(gpsPrompt);
-        assertThat(shadowGPSPrompt.getTitle()).isEqualTo(act.getString(R.string.gps_dialog_title));
-        assertThat(shadowGPSPrompt.getMessage()).isEqualTo(
-                act.getString(R.string.gps_dialog_message));
     }
 }
