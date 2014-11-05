@@ -68,7 +68,6 @@ import static javax.xml.transform.OutputKeys.VERSION;
 import static org.apache.http.protocol.HTTP.UTF_8;
 
 public class DataUploadService extends Service {
-    private static final int MIN_NUM_TRACKING_POINTS = 10;
     private static final int MIN_RANGE_IN_METERS = 50;
 
     private static final String RANGE_QUERY_EXT = " from "
@@ -217,10 +216,6 @@ public class DataUploadService extends Service {
             }
             trkElement.appendChild(trksegElement);
             Element documentElement =  document.getDocumentElement();
-            int numberOfPoints = documentElement.getElementsByTagName("ele").getLength();
-            if (numberOfPoints < MIN_NUM_TRACKING_POINTS) {
-                return null;
-            }
             if (calculateMaxRange(groupId) < MIN_RANGE_IN_METERS) {
                 return null;
             }

@@ -160,23 +160,6 @@ public class DataUploadServiceTest {
     }
 
     @Test
-    public void shouldGenerateGPX_shouldNotSubmit() throws Exception {
-        Token token = new Token("stuff", "fun");
-        app.setAccessToken(token);
-
-        String expectedGroupId = "test_route";
-        String expectedRouteDescription = "does not matter";
-        fillLocationsTable(expectedGroupId, 4);
-        DataUploadService spy = spy(service);
-        spy.onStartCommand(null, 0, 0);
-        verify(spy).generateGpxXmlFor(expectedGroupId, expectedRouteDescription);
-        verify(spy).getDocument(expectedGroupId);
-        verify(spy, never()).submitCompressedFile(any(ByteArrayOutputStream.class),
-                eq(expectedGroupId),
-                eq(expectedRouteDescription));
-    }
-
-    @Test
     public void shouldHaveLocationsFromAllRoutesInGroup() throws Exception {
         String groupId = "test-group-id";
         String routeId = "test-route-id";
