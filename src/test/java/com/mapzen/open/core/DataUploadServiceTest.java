@@ -240,6 +240,18 @@ public class DataUploadServiceTest {
         service.onStartCommand(null, 0, 0);
     }
 
+    @Test
+    public void shouldNotUploadWhenLessThan50MetersTraveled() throws Exception {
+        Token token = new Token("stuff", "fun");
+        app.setAccessToken(token);
+        String groupId = "test-group-id";
+        String routeId = "test-route-id";
+        fillLocationsTableAllSamePoint(groupId, routeId, 10);
+        DataUploadService spy = spy(service);
+        spy.onStartCommand(null, 0, 0);
+        verify(spy, never()).submitTrace(anyString(), anyString(), any(byte[].class));
+    }
+
     private void makeGroupReady(String groupId) throws Exception {
         ContentValues insertValues = new ContentValues();
         insertValues.put(COLUMN_TABLE_ID, groupId);
@@ -277,6 +289,36 @@ public class DataUploadServiceTest {
         for (int i = 0; i < numPoints; i++) {
             cv = valuesForLocationCorrection(getTestLocation(i, i),
                     getTestLocation(i, i), getTestInstruction(i, i), routeId);
+            app.getDb().insert(TABLE_LOCATIONS, null, cv);
+        }
+    }
+
+    private void fillLocationsTableAllSamePoint(String groupId, String routeId, double numPoints)
+            throws Exception {
+        makeGroupReady(groupId);
+
+        ContentValues routeValues = new ContentValues();
+        routeValues.put(COLUMN_TABLE_ID, routeId);
+        routeValues.put(COLUMN_RAW, "does not matter");
+        long routeResults = app.getDb().insert(TABLE_ROUTES, null, routeValues);
+
+        ContentValues routeGroupValues = new ContentValues();
+        routeGroupValues.put(COLUMN_ROUTE_ID, routeId);
+        routeGroupValues.put(COLUMN_GROUP_ID, groupId);
+        long routeGroupResults = app.getDb().insert(TABLE_ROUTE_GROUP, null, routeGroupValues);
+
+        if (routeResults < 0 || routeGroupResults < 0) {
+            throw new Exception("database insertion failed");
+        }
+
+        final double testLat = 40.7484;
+        final double testLng = -73.9857;
+
+        ContentValues cv;
+        for (int i = 0; i < numPoints; i++) {
+            cv = valuesForLocationCorrection(getTestLocation(testLat, testLng),
+                    getTestLocation(testLat, testLng), getTestInstruction(testLat, testLng),
+                    routeId);
             app.getDb().insert(TABLE_LOCATIONS, null, cv);
         }
     }
