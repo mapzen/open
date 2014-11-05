@@ -229,9 +229,11 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     public void update(SimpleFeature simpleFeature) {
-        TextView address = (TextView) pager.findViewById(R.id.address);
-        address.setText(String.format(Locale.getDefault(), "%s, %s",
-                simpleFeature.getCity(), simpleFeature.getAdmin()));
+        if (pager != null) {
+            TextView address = (TextView) pager.findViewById(R.id.address);
+            address.setText(String.format(Locale.getDefault(), "%s, %s",
+                    simpleFeature.getCity(), simpleFeature.getAdmin()));
+        }
     }
 
     public void setSearchResults(List<Feature> features) {
