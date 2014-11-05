@@ -57,7 +57,7 @@ public class LoginActivity extends Activity implements LoginAdapter.LoginListene
         final LoginAdapter loginAdapter = new LoginAdapter(this);
         loginAdapter.setLoginListener(this);
         viewPager.setAdapter(loginAdapter);
-        viewPager.setOnPageChangeListener(this);
+        viewPagerIndicator.setOnPageChangeListener(this);
         viewPagerIndicator.setViewPager(viewPager);
     }
 
