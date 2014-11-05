@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabaseLockedException;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.IBinder;
 
@@ -68,6 +69,18 @@ import static org.apache.http.protocol.HTTP.UTF_8;
 
 public class DataUploadService extends Service {
     private static final int MIN_NUM_TRACKING_POINTS = 10;
+    private static final int MIN_RANGE_IN_METERS = 50;
+
+    private static final String RANGE_QUERY_EXT = " from "
+            + TABLE_ROUTE_GROUP + " inner join " + TABLE_LOCATIONS + " on "
+            + TABLE_LOCATIONS + "." + COLUMN_ROUTE_ID + " = " + TABLE_ROUTE_GROUP + "."
+            + COLUMN_ROUTE_ID + " where " + COLUMN_GROUP_ID + " = ?";
+
+    private static final String MIN_LAT_QUERY = "select min(" + COLUMN_LAT + ")" + RANGE_QUERY_EXT;
+    private static final String MAX_LAT_QUERY = "select max(" + COLUMN_LAT + ")" + RANGE_QUERY_EXT;
+    private static final String MIN_LNG_QUERY = "select min(" + COLUMN_LNG + ")" + RANGE_QUERY_EXT;
+    private static final String MAX_LNG_QUERY = "select max(" + COLUMN_LNG + ")" + RANGE_QUERY_EXT;
+
     private MapzenApplication app;
 
     @Inject OAuthRequestFactory requestFactory;
@@ -172,7 +185,7 @@ public class DataUploadService extends Service {
         DOMSource domSource = null;
         try {
             DateTimeFormatter isoDateParser = ISODateTimeFormat.dateTimeNoMillis();
-            String selectStatement = String.format(Locale.getDefault(),
+            String selectStatement = String.format(Locale.US,
                     "SELECT %s, %s, %s, %s, %s ", COLUMN_LAT, COLUMN_LNG, COLUMN_ALT, COLUMN_TIME,
                     COLUMN_SPEED);
             String fullQuery = selectStatement
@@ -208,11 +221,46 @@ public class DataUploadService extends Service {
             if (numberOfPoints < MIN_NUM_TRACKING_POINTS) {
                 return null;
             }
+            if (calculateMaxRange(groupId) < MIN_RANGE_IN_METERS) {
+                return null;
+            }
             domSource = new DOMSource(documentElement);
         } catch (ParserConfigurationException e) {
             Logger.e("Building xml failed: " + e.getMessage());
         }
         return domSource;
+    }
+
+    /**
+     * Calculates distance between the two theoretical farthest points in the route.
+     *
+     * @return theoretical max range in meters.
+     */
+    private float calculateMaxRange(String groupId) {
+        final Cursor minLatCursor = app.getDb().rawQuery(MIN_LAT_QUERY, new String[] { groupId });
+        final Cursor maxLatCursor = app.getDb().rawQuery(MAX_LAT_QUERY, new String[] { groupId });
+        final Cursor minLngCursor = app.getDb().rawQuery(MIN_LNG_QUERY, new String[] { groupId });
+        final Cursor maxLngCursor = app.getDb().rawQuery(MAX_LNG_QUERY, new String[] { groupId });
+
+        minLatCursor.moveToFirst();
+        minLngCursor.moveToFirst();
+        maxLatCursor.moveToFirst();
+        maxLngCursor.moveToFirst();
+
+        final double minLat = minLatCursor.getDouble(0);
+        final double maxLat = maxLatCursor.getDouble(0);
+        final double minLng = minLngCursor.getDouble(0);
+        final double maxLng = maxLngCursor.getDouble(0);
+
+        final Location min = new Location("temp");
+        min.setLatitude(minLat);
+        min.setLongitude(minLng);
+
+        final Location max = new Location("temp");
+        max.setLatitude(maxLat);
+        max.setLongitude(maxLng);
+
+        return min.distanceTo(max);
     }
 
     private void setOutputFormat(Transformer transformer) {
