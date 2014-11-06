@@ -4,6 +4,7 @@ import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.support.MapzenTestRunner;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -118,6 +119,7 @@ public class DataUploadServiceTest {
         assertThat(cursor).hasCount(0);
     }
 
+    @Ignore
     @Test
     public void onStartCommand_shouldMarkUploaded() throws Exception {
         Token token = new Token("stuff", "fun");
