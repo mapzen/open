@@ -297,7 +297,8 @@ public class DataUploadServiceTest {
         }
     }
 
-    private void fillLocationsTable(String groupId, double numPoints, boolean ready) throws Exception {
+    private void fillLocationsTable(String groupId, double numPoints, boolean ready)
+            throws Exception {
         fillLocationsTable(groupId, "test-route-id", numPoints, ready);
     }
 
