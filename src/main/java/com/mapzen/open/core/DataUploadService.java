@@ -59,6 +59,7 @@ import static com.mapzen.open.util.DatabaseHelper.COLUMN_TIME;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_UPLOADED;
 import static com.mapzen.open.util.DatabaseHelper.TABLE_GROUPS;
 import static com.mapzen.open.util.DatabaseHelper.TABLE_LOCATIONS;
+import static com.mapzen.open.util.DatabaseHelper.TABLE_ROUTES;
 import static com.mapzen.open.util.DatabaseHelper.TABLE_ROUTE_GROUP;
 import static javax.xml.transform.OutputKeys.ENCODING;
 import static javax.xml.transform.OutputKeys.INDENT;
@@ -378,6 +379,19 @@ public class DataUploadService extends Service {
         ContentValues cv = new ContentValues();
         cv.put(DatabaseHelper.COLUMN_UPLOADED, 1);
         app.getDb().update(TABLE_GROUPS, cv, COLUMN_TABLE_ID + " = ?",
+                new String[] { groupId });
+        Cursor cursor = app.getDb().query(TABLE_ROUTE_GROUP, new String[] { COLUMN_ROUTE_ID },
+                COLUMN_GROUP_ID + " = ?",
+                new String[] { groupId }, null, null, null);
+        while (cursor.moveToNext()) {
+            int routeIdIndex = cursor.getColumnIndex(COLUMN_ROUTE_ID);
+            String routeId = cursor.getString(routeIdIndex);
+            app.getDb().delete(TABLE_ROUTES, COLUMN_TABLE_ID + " = ?",
+                    new String[] { routeId });
+            app.getDb().delete(TABLE_LOCATIONS, COLUMN_ROUTE_ID + " = ?",
+                    new String[] { routeId });
+        }
+        app.getDb().delete(TABLE_GROUPS, COLUMN_TABLE_ID + " = ?",
                 new String[] { groupId });
     }
 

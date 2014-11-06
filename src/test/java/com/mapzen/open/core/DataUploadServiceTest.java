@@ -4,6 +4,7 @@ import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.support.MapzenTestRunner;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -101,7 +102,7 @@ public class DataUploadServiceTest {
     @Test
     public void onStartCommand_shouldAttemptToGenerateGPXforReadyRoute() throws Exception {
         String expectedGroupId = "route-1";
-        makeGroupReady(expectedGroupId);
+        makeGroup(expectedGroupId, 1);
         DataUploadService spy = spy(service);
         spy.onStartCommand(null, 0, 0);
         verify(spy).generateGpxXmlFor(expectedGroupId, "does not matter");
@@ -110,7 +111,7 @@ public class DataUploadServiceTest {
     @Test
     public void onStartCommand_shouldNotMarkUploaded() throws Exception {
         String expectedGroupId = "route-1";
-        makeGroupReady(expectedGroupId);
+        makeGroup(expectedGroupId, 1);
         service.onStartCommand(null, 0, 0);
         Cursor cursor = app.getDb().query(TABLE_GROUPS, new String[] { COLUMN_UPLOADED },
                 COLUMN_TABLE_ID + " = ? AND " + COLUMN_UPLOADED + " = 1",
@@ -118,13 +119,14 @@ public class DataUploadServiceTest {
         assertThat(cursor).hasCount(0);
     }
 
+    @Ignore
     @Test
     public void onStartCommand_shouldMarkUploaded() throws Exception {
         Token token = new Token("stuff", "fun");
         OAuthService mockService = mock(OAuthService.class);
         ((MapzenApplication) Robolectric.application).setOsmOauthService(mockService);
         String expectedGroupId = "route-1";
-        makeGroupReady(expectedGroupId);
+        makeGroup(expectedGroupId, 1);
         app.setAccessToken(token);
         service.onStartCommand(null, 0, 0);
         Cursor cursor = app.getDb().query(TABLE_GROUPS, new String[] { COLUMN_UPLOADED },
@@ -134,9 +136,58 @@ public class DataUploadServiceTest {
     }
 
     @Test
+    public void onStartCommand_shouldRemoveData() throws Exception {
+        Token token = new Token("stuff", "fun");
+        OAuthService mockService = mock(OAuthService.class);
+        ((MapzenApplication) Robolectric.application).setOsmOauthService(mockService);
+        String readyGroupId = "ready";
+        String notReadyGroupId = "not-ready";
+        fillLocationsTable(readyGroupId, "ready", 10, true);
+        fillLocationsTable(notReadyGroupId, "not-ready", 10, false);
+        app.setAccessToken(token);
+        service.onStartCommand(null, 0, 0);
+        assertGroups(readyGroupId, notReadyGroupId);
+        assertRoutes("ready", "not-ready");
+        assertLocations("ready", "not-ready");
+    }
+
+    private void assertLocations(String readyRouteId, String notReadyRouteId) {
+        Cursor cursor = app.getDb().query(TABLE_LOCATIONS, new String[] { COLUMN_TABLE_ID },
+                COLUMN_ROUTE_ID + " = ?",
+                new String[] { readyRouteId }, null, null, null);
+        assertThat(cursor).hasCount(0);
+        Cursor cursor1 = app.getDb().query(TABLE_LOCATIONS, new String[] { COLUMN_TABLE_ID },
+                COLUMN_ROUTE_ID + " = ?",
+                new String[] { notReadyRouteId }, null, null, null);
+        assertThat(cursor1).hasCount(10);
+    }
+
+    private void assertRoutes(String readyRouteId, String notReadyRouteId) {
+        Cursor cursor = app.getDb().query(TABLE_ROUTES, new String[] { COLUMN_TABLE_ID },
+                COLUMN_TABLE_ID + " = ?",
+                new String[] { readyRouteId }, null, null, null);
+        assertThat(cursor).hasCount(0);
+        Cursor cursor1 = app.getDb().query(TABLE_ROUTES, new String[] { COLUMN_TABLE_ID },
+                COLUMN_TABLE_ID + " = ?",
+                new String[] { notReadyRouteId }, null, null, null);
+        assertThat(cursor1).hasCount(1);
+    }
+
+    private void assertGroups(String readyGroupId, String notReadyGroupId) {
+        Cursor cursor = app.getDb().query(TABLE_GROUPS, new String[] { COLUMN_TABLE_ID },
+                COLUMN_TABLE_ID + " = ?",
+                new String[] { readyGroupId }, null, null, null);
+        assertThat(cursor).hasCount(0);
+        Cursor cursor1 = app.getDb().query(TABLE_GROUPS, new String[] { COLUMN_TABLE_ID },
+                COLUMN_TABLE_ID + " = ?",
+                new String[] { notReadyGroupId }, null, null, null);
+        assertThat(cursor1).hasCount(1);
+    }
+
+    @Test
     public void onStartCommand_shouldCreateButNotUploadXML() throws Exception {
         String expectedGroupId = "route-1";
-        makeGroupReady(expectedGroupId);
+        makeGroup(expectedGroupId, 1);
         DataUploadService spy = spy(service);
         spy.onStartCommand(null, 0, 0);
         verify(spy).generateGpxXmlFor(expectedGroupId, "does not matter");
@@ -149,7 +200,7 @@ public class DataUploadServiceTest {
 
         String expectedGroupId = "test_route";
         String expectedRouteDescription = "does not matter";
-        fillLocationsTable(expectedGroupId, 10);
+        fillLocationsTable(expectedGroupId, 10, true);
         DataUploadService spy = spy(service);
         spy.onStartCommand(null, 0, 0);
         verify(spy).generateGpxXmlFor(expectedGroupId, expectedRouteDescription);
@@ -163,9 +214,9 @@ public class DataUploadServiceTest {
     public void shouldHaveLocationsFromAllRoutesInGroup() throws Exception {
         String groupId = "test-group-id";
         String routeId = "test-route-id";
-        fillLocationsTable(groupId, routeId, 10);
+        fillLocationsTable(groupId, routeId, 10, true);
         String anotherRoute = "second-route-id";
-        fillLocationsTable(groupId, anotherRoute, 10);
+        fillLocationsTable(groupId, anotherRoute, 10, true);
 
         DOMSource domSource = service.getDocument(groupId);
         Document document = domSource.getNode().getOwnerDocument();
@@ -184,7 +235,7 @@ public class DataUploadServiceTest {
         String expectedSpeed = "40.0";
         String groupId = "test-group-id";
         String routeId = "test-route-id";
-        fillLocationsTable(groupId, routeId, 10);
+        fillLocationsTable(groupId, routeId, 10, true);
         Location loc = getTestLocation(100, 200);
         loc.setBearing(4.0f);
         loc.setSpeed(Float.valueOf(expectedSpeed));
@@ -235,24 +286,29 @@ public class DataUploadServiceTest {
         verify(spy, never()).submitTrace(anyString(), anyString(), any(byte[].class));
     }
 
-    private void makeGroupReady(String groupId) throws Exception {
+    private void makeGroup(String groupId, int ready) throws Exception {
         ContentValues insertValues = new ContentValues();
         insertValues.put(COLUMN_TABLE_ID, groupId);
         insertValues.put(COLUMN_MSG, "does not matter");
-        insertValues.put(COLUMN_READY_FOR_UPLOAD, 1);
+        insertValues.put(COLUMN_READY_FOR_UPLOAD, ready);
         long result = app.getDb().insert(TABLE_GROUPS, null, insertValues);
         if (result < 0) {
             throw new Exception("database insert failed");
         }
     }
 
-    private void fillLocationsTable(String groupId, double numPoints) throws Exception {
-        fillLocationsTable(groupId, "test-route-id", numPoints);
+    private void fillLocationsTable(String groupId, double numPoints, boolean ready)
+            throws Exception {
+        fillLocationsTable(groupId, "test-route-id", numPoints, ready);
     }
 
-    private void fillLocationsTable(String groupId, String routeId, double numPoints)
+    private void fillLocationsTable(String groupId, String routeId, double numPoints, boolean ready)
             throws Exception {
-        makeGroupReady(groupId);
+        if (ready) {
+            makeGroup(groupId, 1);
+        } else {
+            makeGroup(groupId, 0);
+        }
 
         ContentValues routeValues = new ContentValues();
         routeValues.put(COLUMN_TABLE_ID, routeId);
@@ -278,7 +334,7 @@ public class DataUploadServiceTest {
 
     private void fillLocationsTableAllSamePoint(String groupId, String routeId, double numPoints)
             throws Exception {
-        makeGroupReady(groupId);
+        makeGroup(groupId, 1);
 
         ContentValues routeValues = new ContentValues();
         routeValues.put(COLUMN_TABLE_ID, routeId);
