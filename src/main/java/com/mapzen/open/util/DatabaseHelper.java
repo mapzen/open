@@ -104,8 +104,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + " (" + COLUMN_ROUTE_ID + "," + COLUMN_LAT + ", " + COLUMN_LNG + ");";
 
     public DatabaseHelper(Context context) {
-        super(context, context.getExternalFilesDir(null).getAbsolutePath() + "/" + DB_NAME,
-                null, VERSION);
+        super(context, DB_NAME, null, VERSION);
     }
 
     private void createDatabases(SQLiteDatabase db) {
