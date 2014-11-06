@@ -45,6 +45,7 @@
     <dimen name="small_2">18sp</dimen>
     <dimen name="small">15sp</dimen>
     <dimen name="tiny">9sp</dimen>
+    <dimen name="login_body_font_size">24sp</dimen>
 
     <!-- ViewPagerIndicator -->
     <dimen name="vpi_height">26dp</dimen>

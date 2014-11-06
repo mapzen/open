@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="login_body_font_size">36sp</dimen>
+    <dimen name="login_padding_horizontal">48dp</dimen>
+</resources>
