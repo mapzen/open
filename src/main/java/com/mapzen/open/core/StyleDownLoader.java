@@ -47,6 +47,10 @@ public class StyleDownLoader {
         (new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
+                if (client == null) {
+                    return null;
+                }
+
                 URL url = null;
                 try {
                     url = new URL(host + "manifest");
