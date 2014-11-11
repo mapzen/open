@@ -1,9 +1,9 @@
 package com.mapzen.open.activity;
 
+import com.mapzen.android.lost.LocationClient;
 import com.mapzen.open.MapController;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
-import com.mapzen.android.lost.LocationClient;
 import com.mapzen.open.core.DataUploadService;
 import com.mapzen.open.core.SettingsFragment;
 import com.mapzen.open.fragment.MapFragment;
@@ -77,6 +77,7 @@ public class BaseActivity extends MapActivity {
     @Inject MixpanelAPI mixpanelAPI;
     @Inject MapController mapController;
     @Inject SavedSearch savedSearch;
+    @Inject SQLiteDatabase db;
 
     protected boolean enableActionbar = true;
 
@@ -142,10 +143,6 @@ public class BaseActivity extends MapActivity {
         NotificationManager notificationManager = (NotificationManager) getSystemService(
                 NOTIFICATION_SERVICE);
         notificationManager.cancelAll();
-    }
-
-    public SQLiteDatabase getDb() {
-        return app.getDb();
     }
 
     public boolean isInDebugMode() {
@@ -509,7 +506,7 @@ public class BaseActivity extends MapActivity {
         debugDataSubmitter = new DebugDataSubmitter(this);
         debugDataSubmitter.setClient(new OkHttpClient());
         debugDataSubmitter.setEndpoint(DEBUG_DATA_ENDPOINT);
-        debugDataSubmitter.setFile(new File(getDb().getPath()));
+        debugDataSubmitter.setFile(new File(db.getPath()));
     }
 
     public void setAccessToken(Token accessToken) {

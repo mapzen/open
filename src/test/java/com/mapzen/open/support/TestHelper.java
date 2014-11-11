@@ -20,6 +20,7 @@ import org.robolectric.tester.android.view.TestMenu;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationManager;
 import android.preference.PreferenceManager;
@@ -219,22 +220,22 @@ public final class TestHelper {
         shadowLocationManager.setLastKnownLocation(GPS_PROVIDER, new Location(GPS_PROVIDER));
     }
 
-    public static void populateDatabase(BaseActivity act) throws Exception {
-        populateRoutesTable(act);
-        populateLocationsTable(act);
-        populateRoutesGeometryTable(act);
-        populateLogEntriesTable(act);
+    public static void populateDatabase(SQLiteDatabase db) throws Exception {
+        populateRoutesTable(db);
+        populateLocationsTable(db);
+        populateRoutesGeometryTable(db);
+        populateLogEntriesTable(db);
     }
 
-    private static void populateLogEntriesTable(BaseActivity act) {
+    private static void populateLogEntriesTable(SQLiteDatabase db) {
         ContentValues logValues = new ContentValues();
         logValues.put(DatabaseHelper.COLUMN_TAG, "tag");
         logValues.put(DatabaseHelper.COLUMN_MSG, "log message");
         logValues.put(DatabaseHelper.COLUMN_TABLE_ID, UUID.randomUUID().toString());
-        act.getDb().insert(DatabaseHelper.TABLE_LOG_ENTRIES, null, logValues);
+        db.insert(DatabaseHelper.TABLE_LOG_ENTRIES, null, logValues);
     }
 
-    private static void populateRoutesGeometryTable(BaseActivity act) {
+    private static void populateRoutesGeometryTable(SQLiteDatabase db) {
         String routeId = UUID.randomUUID().toString();
         ContentValues values = new ContentValues();
         values.put(DatabaseHelper.COLUMN_TABLE_ID, UUID.randomUUID().toString());
@@ -242,19 +243,19 @@ public final class TestHelper {
         values.put(DatabaseHelper.COLUMN_POSITION, 0);
         values.put(DatabaseHelper.COLUMN_LAT, 0);
         values.put(DatabaseHelper.COLUMN_LNG, 0);
-        act.getDb().insert(DatabaseHelper.TABLE_ROUTE_GEOMETRY, null, values);
+        db.insert(DatabaseHelper.TABLE_ROUTE_GEOMETRY, null, values);
     }
 
-    public static void populateRoutesTable(BaseActivity act) {
+    public static void populateRoutesTable(SQLiteDatabase db) {
         ContentValues insertValues = new ContentValues();
         String routeId = UUID.randomUUID().toString();
         insertValues.put(DatabaseHelper.COLUMN_TABLE_ID, routeId);
         insertValues.put(DatabaseHelper.COLUMN_RAW, "blabla");
-        act.getDb().insert(DatabaseHelper.TABLE_ROUTES, null, insertValues);
+        db.insert(DatabaseHelper.TABLE_ROUTES, null, insertValues);
     }
 
-    private static void populateLocationsTable(BaseActivity act) throws Exception {
-        act.getDb().insert(DatabaseHelper.TABLE_LOCATIONS, null,
+    private static void populateLocationsTable(SQLiteDatabase db) throws Exception {
+        db.insert(DatabaseHelper.TABLE_LOCATIONS, null,
                 DatabaseHelper.valuesForLocationCorrection(TestHelper.getTestLocation(0.0, 0.0),
                         getTestLocation(1.0, 1.0), getTestInstruction(0.0, 0.0), "random-id"));
     }

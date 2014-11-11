@@ -38,6 +38,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -98,6 +99,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Inject RouteEngine routeEngine;
     @Inject MapController mapController;
     @Inject MixpanelAPI mixpanelAPI;
+    @Inject SQLiteDatabase db;
 
     @InjectView(R.id.routes) ViewPager pager;
     @InjectView(R.id.resume_button) ImageButton resume;
@@ -426,7 +428,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (isPaging) {
             final Instruction instruction = instructions.get(index);
             pagerPositionWhenPaused = index;
-            Logger.logToDatabase(act, ROUTE_TAG,
+            Logger.logToDatabase(act, db, ROUTE_TAG,
                     "paging to instruction: " + instruction.toString());
             pager.setCurrentItem(index);
             debugView.setClosestInstruction(instruction);
@@ -481,13 +483,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void logForDebugging(Location location, Location correctedLocation) {
-        Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: "
+        Logger.logToDatabase(act, db, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: "
                 + "new corrected location: " + correctedLocation.toString()
                 + " from original: " + location.toString());
-        Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
+        Logger.logToDatabase(act, db, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
                 "threshold: " + String.valueOf(getAdvanceRadius()));
         for (Instruction instruction : instructions) {
-            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
+            Logger.logToDatabase(act, db, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
                     "turnPoint: " + instruction.toString());
         }
     }
@@ -590,7 +592,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public float getAverageSpeed() {
-        Cursor cursor = act.getDb().
+        Cursor cursor = db.
                 rawQuery("SELECT AVG(" + COLUMN_SPEED + ") as avg_speed "
                         + "from (select " + COLUMN_SPEED + " from "
                         + TABLE_LOCATIONS
@@ -621,12 +623,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private void insertIntoDb(String table, String nullHack,
             ArrayList<ContentValues> contentValueCollection) {
         try {
-            act.getDb().beginTransaction();
+            db.beginTransaction();
             for (ContentValues values : contentValueCollection) {
                 insertIntoDb(table, nullHack, values);
             }
-            act.getDb().setTransactionSuccessful();
-            act.getDb().endTransaction();
+            db.setTransactionSuccessful();
+            db.endTransaction();
         } catch (IllegalStateException e) {
             BugSenseHandler.sendException(e);
         }
@@ -634,7 +636,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void insertIntoDb(String table, String nullHack, ContentValues contentValues) {
         try {
-            long result = act.getDb().insert(table, nullHack, contentValues);
+            long result = db.insert(table, nullHack, contentValues);
             if (result < 0) {
                 Logger.e("error inserting into db");
             }
@@ -736,7 +738,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         ContentValues cv = new ContentValues();
         cv.put(DatabaseHelper.COLUMN_READY_FOR_UPLOAD, 1);
         try {
-            act.getDb().update(TABLE_GROUPS, cv, COLUMN_TABLE_ID + " = ?",
+            db.update(TABLE_GROUPS, cv, COLUMN_TABLE_ID + " = ?",
                     new String[] { groupId });
         } catch (IllegalStateException e) {
             BugSenseHandler.sendException(e);

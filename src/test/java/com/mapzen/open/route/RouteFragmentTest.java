@@ -123,13 +123,13 @@ public class RouteFragmentTest {
     @Inject MapController mapController;
     @Inject ZoomController zoomController;
     @Inject MixpanelAPI mixpanelAPI;
+    @Inject SQLiteDatabase db;
 
     private TestBaseActivity act;
     private RouteFragment fragment;
     private ShadowApplication app;
     private TestMenu menu;
     private ArrayList<Instruction> testInstructions;
-    private SQLiteDatabase db;
     private Location startLocation;
 
     @Before
@@ -144,7 +144,6 @@ public class RouteFragmentTest {
         act = initBaseActivityWithMenu(menu);
         initTestFragment();
         app = Robolectric.getShadowApplication();
-        db = ((MapzenApplication) Robolectric.application).getDb();
         GeoPoint start = fragment.getSimpleFeature().getGeoPoint();
         startLocation = getTestLocation(start.getLatitude(), start.getLongitude());
     }

@@ -45,7 +45,6 @@ public class MapzenApplication extends Application {
     };
     public static final String LOG_TAG = "Mapzen: ";
     private String currentSearchTerm = "";
-    private SQLiteDatabase db;
     private OAuthService osmOauthService;
     @Inject SimpleCrypt simpleCrypt;
 
@@ -54,23 +53,12 @@ public class MapzenApplication extends Application {
         super.onCreate();
         graph = ObjectGraph.create(getModules().toArray());
         inject(this);
-        DatabaseHelper databaseHelper = new DatabaseHelper(this);
-        db = databaseHelper.getWritableDatabase();
-        db.enableWriteAheadLogging();
         osmOauthService = new ServiceBuilder()
                 .provider(OSMApi.class)
                 .apiKey(simpleCrypt.decode(getString(R.string.osm_key)))
                 .debug()
                 .callback("mapzen://oauth-login/mapzen.com")
                 .apiSecret(simpleCrypt.decode(getString(R.string.osm_secret))).build();
-    }
-
-    public SQLiteDatabase getDb() {
-        return db;
-    }
-
-    public void setDb(SQLiteDatabase db) {
-        this.db = db;
     }
 
     public String[] getColumns() {

@@ -1,5 +1,6 @@
 package com.mapzen.open.util;
 
+import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.activity.BaseActivity;
 
 import com.google.common.base.Charsets;
@@ -7,6 +8,7 @@ import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 import com.squareup.okhttp.OkHttpClient;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 
 import java.io.File;
@@ -17,7 +19,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import static com.mapzen.open.util.DatabaseHelper.truncateDatabase;
+import javax.inject.Inject;
 
 public class DebugDataSubmitter implements Runnable {
     OkHttpClient client = new OkHttpClient();
@@ -27,8 +29,11 @@ public class DebugDataSubmitter implements Runnable {
     OutputStream out;
     InputStream in;
 
+    @Inject SQLiteDatabase db;
+
     public DebugDataSubmitter(BaseActivity activity) {
         this.activity = activity;
+        ((MapzenApplication) activity.getApplication()).inject(this);
     }
 
     public void setEndpoint(String endpoint) {
@@ -76,7 +81,7 @@ public class DebugDataSubmitter implements Runnable {
                         + connection.getResponseCode() + " " + connection.getResponseMessage());
             }
             final String responseText = readInputStream(connection.getInputStream());
-            truncateDatabase(activity);
+            truncateDatabase();
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -91,5 +96,15 @@ public class DebugDataSubmitter implements Runnable {
                 in.close();
             }
         }
+    }
+
+    public void truncateDatabase() {
+        db.beginTransaction();
+        db.delete(DatabaseHelper.TABLE_ROUTES, null, null);
+        db.delete(DatabaseHelper.TABLE_LOCATIONS, null, null);
+        db.delete(DatabaseHelper.TABLE_ROUTE_GEOMETRY, null, null);
+        db.delete(DatabaseHelper.TABLE_LOG_ENTRIES, null, null);
+        db.setTransactionSuccessful();
+        db.endTransaction();
     }
 }

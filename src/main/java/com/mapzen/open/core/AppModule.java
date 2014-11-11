@@ -1,22 +1,25 @@
 package com.mapzen.open.core;
 
+import com.mapzen.android.Pelias;
 import com.mapzen.open.MapController;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.activity.InitialActivity;
-import com.mapzen.open.login.LoginActivity;
 import com.mapzen.open.adapters.PlaceArrayAdapter;
-import com.mapzen.android.Pelias;
 import com.mapzen.open.fragment.ItemFragment;
 import com.mapzen.open.fragment.MapFragment;
-import com.mapzen.open.util.SimpleCrypt;
-import com.mapzen.osrm.Router;
+import com.mapzen.open.login.LoginActivity;
 import com.mapzen.open.route.DrawPathTask;
 import com.mapzen.open.route.RouteFragment;
 import com.mapzen.open.route.RoutePreviewFragment;
 import com.mapzen.open.search.AutoCompleteAdapter;
 import com.mapzen.open.search.PagerResultsFragment;
+import com.mapzen.open.util.DatabaseHelper;
+import com.mapzen.open.util.DebugDataSubmitter;
+import com.mapzen.open.util.Logger;
+import com.mapzen.open.util.SimpleCrypt;
+import com.mapzen.osrm.Router;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
@@ -27,6 +30,7 @@ import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 
 import java.util.ArrayList;
@@ -54,7 +58,9 @@ import dagger.Provides;
                 MapzenLocation.ConnectionCallbacks.class,
                 MapzenLocation.Listener.class,
                 PagerResultsFragment.class,
-                MapzenApplication.class
+                MapzenApplication.class,
+                DebugDataSubmitter.class,
+                Logger.class
         },
         complete = false,
         library = true
@@ -109,5 +115,12 @@ public class AppModule {
 
     @Provides @Singleton SimpleCrypt provideSimpleCrypt() {
         return new SimpleCrypt();
+    }
+
+    @Provides @Singleton SQLiteDatabase provideDb() {
+        DatabaseHelper databaseHelper = new DatabaseHelper(context);
+        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.enableWriteAheadLogging();
+        return db;
     }
 }

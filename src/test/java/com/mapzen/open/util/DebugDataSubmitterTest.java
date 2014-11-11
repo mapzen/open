@@ -13,7 +13,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 
 import android.database.Cursor;
@@ -21,9 +20,10 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.io.File;
 
+import javax.inject.Inject;
+
 import static com.mapzen.open.support.TestHelper.initBaseActivity;
 import static com.mapzen.open.support.TestHelper.populateDatabase;
-import static com.mapzen.open.util.DatabaseHelper.truncateDatabase;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -33,23 +33,24 @@ public class DebugDataSubmitterTest {
     DebugDataSubmitter submitter;
     MockWebServer server;
     BaseActivity activity;
-    SQLiteDatabase db;
+
+    @Inject SQLiteDatabase db;
 
     @Before
     public void setUp() throws Exception {
+        activity = initBaseActivity();
+        ((MapzenApplication) activity.getApplication()).inject(this);
         server = new MockWebServer();
         server.play();
-        activity = initBaseActivity();
-        populateDatabase(activity);
+        populateDatabase(db);
         submitter = new DebugDataSubmitter(activity);
-        submitter.setFile(new File(activity.getDb().getPath()));
+        submitter.setFile(new File(db.getPath()));
         submitter.setEndpoint(server.getUrl("/fake").toString());
-        db = ((MapzenApplication) Robolectric.application).getDb();
     }
 
     @After
     public void tearDown() throws Exception {
-        truncateDatabase(activity);
+        submitter.truncateDatabase();
         server.shutdown();
     }
 
@@ -74,7 +75,7 @@ public class DebugDataSubmitterTest {
     @Test
     public void setFile_shouldSubmitChosenFile() throws Exception {
         server.enqueue(new MockResponse());
-        File file = new File(activity.getDb().getPath());
+        File file = new File(db.getPath());
         byte[] expectedBody = Files.toByteArray(file);
         submitter.run();
         RecordedRequest request = server.takeRequest();

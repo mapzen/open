@@ -14,6 +14,8 @@ import org.robolectric.annotation.Config;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import javax.inject.Inject;
+
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -22,18 +24,18 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class LoggerTest {
 
     private TestBaseActivity activity;
-    private SQLiteDatabase db;
+    @Inject SQLiteDatabase db;
 
     @Before
     public void setup() throws Exception {
         activity = TestHelper.initBaseActivity();
-        db = ((MapzenApplication) Robolectric.application).getDb();
+        ((MapzenApplication) activity.getApplication()).inject(this);
     }
 
     @Test
     public void logToDatabase_shouldWriteToDatabase() throws Exception {
         TestHelper.enableDebugMode(activity);
-        Logger.logToDatabase(activity, "tag", "message");
+        Logger.logToDatabase(activity, db, "tag", "message");
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOG_ENTRIES,
                 new String[]{ DatabaseHelper.COLUMN_TAG, DatabaseHelper.COLUMN_MSG},
                 "tag = ? AND msg = ?", new String[] {"tag", "message"}, null, null, null);
@@ -42,7 +44,7 @@ public class LoggerTest {
 
     @Test
     public void logToDatabase_shouldNotWriteToDatabase() throws Exception {
-        Logger.logToDatabase(activity, "tag", "message");
+        Logger.logToDatabase(activity, db, "tag", "message");
         Cursor cursor = db.query(DatabaseHelper.TABLE_LOG_ENTRIES,
                 new String[]{ DatabaseHelper.COLUMN_TAG, DatabaseHelper.COLUMN_MSG},
                 null, null, null, null, null);

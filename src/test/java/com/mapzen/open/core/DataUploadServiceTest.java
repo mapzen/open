@@ -22,12 +22,14 @@ import org.w3c.dom.NodeList;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -72,6 +74,8 @@ public class DataUploadServiceTest {
     DataUploadService service;
     MapzenApplication app;
 
+    @Inject SQLiteDatabase db;
+
     @Captor
     @SuppressWarnings("unused")
     ArgumentCaptor<OAuthRequest> callback;
@@ -82,6 +86,7 @@ public class DataUploadServiceTest {
         service = new DataUploadService();
         service.onCreate();
         app = (MapzenApplication) Robolectric.application;
+        app.inject(this);
     }
 
     @Test
@@ -113,7 +118,7 @@ public class DataUploadServiceTest {
         String expectedGroupId = "route-1";
         makeGroup(expectedGroupId, 1);
         service.onStartCommand(null, 0, 0);
-        Cursor cursor = app.getDb().query(TABLE_GROUPS, new String[] { COLUMN_UPLOADED },
+        Cursor cursor = db.query(TABLE_GROUPS, new String[] { COLUMN_UPLOADED },
                 COLUMN_TABLE_ID + " = ? AND " + COLUMN_UPLOADED + " = 1",
                 new String[] { expectedGroupId }, null, null, null);
         assertThat(cursor).hasCount(0);
@@ -129,7 +134,7 @@ public class DataUploadServiceTest {
         makeGroup(expectedGroupId, 1);
         app.setAccessToken(token);
         service.onStartCommand(null, 0, 0);
-        Cursor cursor = app.getDb().query(TABLE_GROUPS, new String[] { COLUMN_UPLOADED },
+        Cursor cursor = db.query(TABLE_GROUPS, new String[] { COLUMN_UPLOADED },
                 COLUMN_TABLE_ID + " = ? AND " + COLUMN_UPLOADED + " = 1",
                 new String[] { expectedGroupId }, null, null, null);
         assertThat(cursor).hasCount(1);
@@ -152,33 +157,33 @@ public class DataUploadServiceTest {
     }
 
     private void assertLocations(String readyRouteId, String notReadyRouteId) {
-        Cursor cursor = app.getDb().query(TABLE_LOCATIONS, new String[] { COLUMN_TABLE_ID },
+        Cursor cursor = db.query(TABLE_LOCATIONS, new String[] { COLUMN_TABLE_ID },
                 COLUMN_ROUTE_ID + " = ?",
                 new String[] { readyRouteId }, null, null, null);
         assertThat(cursor).hasCount(0);
-        Cursor cursor1 = app.getDb().query(TABLE_LOCATIONS, new String[] { COLUMN_TABLE_ID },
+        Cursor cursor1 = db.query(TABLE_LOCATIONS, new String[] { COLUMN_TABLE_ID },
                 COLUMN_ROUTE_ID + " = ?",
                 new String[] { notReadyRouteId }, null, null, null);
         assertThat(cursor1).hasCount(10);
     }
 
     private void assertRoutes(String readyRouteId, String notReadyRouteId) {
-        Cursor cursor = app.getDb().query(TABLE_ROUTES, new String[] { COLUMN_TABLE_ID },
+        Cursor cursor = db.query(TABLE_ROUTES, new String[] { COLUMN_TABLE_ID },
                 COLUMN_TABLE_ID + " = ?",
                 new String[] { readyRouteId }, null, null, null);
         assertThat(cursor).hasCount(0);
-        Cursor cursor1 = app.getDb().query(TABLE_ROUTES, new String[] { COLUMN_TABLE_ID },
+        Cursor cursor1 = db.query(TABLE_ROUTES, new String[] { COLUMN_TABLE_ID },
                 COLUMN_TABLE_ID + " = ?",
                 new String[] { notReadyRouteId }, null, null, null);
         assertThat(cursor1).hasCount(1);
     }
 
     private void assertGroups(String readyGroupId, String notReadyGroupId) {
-        Cursor cursor = app.getDb().query(TABLE_GROUPS, new String[] { COLUMN_TABLE_ID },
+        Cursor cursor = db.query(TABLE_GROUPS, new String[] { COLUMN_TABLE_ID },
                 COLUMN_TABLE_ID + " = ?",
                 new String[] { readyGroupId }, null, null, null);
         assertThat(cursor).hasCount(0);
-        Cursor cursor1 = app.getDb().query(TABLE_GROUPS, new String[] { COLUMN_TABLE_ID },
+        Cursor cursor1 = db.query(TABLE_GROUPS, new String[] { COLUMN_TABLE_ID },
                 COLUMN_TABLE_ID + " = ?",
                 new String[] { notReadyGroupId }, null, null, null);
         assertThat(cursor1).hasCount(1);
@@ -244,7 +249,7 @@ public class DataUploadServiceTest {
         loc.setTime(System.currentTimeMillis());
         ContentValues insertValues = valuesForLocationCorrection(loc, loc, getTestInstruction(0, 0),
             routeId);
-        app.getDb().insert(TABLE_LOCATIONS, null, insertValues);
+        db.insert(TABLE_LOCATIONS, null, insertValues);
 
         String actual = getTextForXpath(groupId,
                 "//trk/trkseg/trkpt[position()=last()]/speed/text()");
@@ -270,7 +275,7 @@ public class DataUploadServiceTest {
 
     @Test
     public void shouldNotCrashWhenDatabaseIsNull() throws Exception {
-        app.setDb(null);
+        service.db = null;
         service.onStartCommand(null, 0, 0);
     }
 
@@ -291,7 +296,7 @@ public class DataUploadServiceTest {
         insertValues.put(COLUMN_TABLE_ID, groupId);
         insertValues.put(COLUMN_MSG, "does not matter");
         insertValues.put(COLUMN_READY_FOR_UPLOAD, ready);
-        long result = app.getDb().insert(TABLE_GROUPS, null, insertValues);
+        long result = db.insert(TABLE_GROUPS, null, insertValues);
         if (result < 0) {
             throw new Exception("database insert failed");
         }
@@ -313,12 +318,12 @@ public class DataUploadServiceTest {
         ContentValues routeValues = new ContentValues();
         routeValues.put(COLUMN_TABLE_ID, routeId);
         routeValues.put(COLUMN_RAW, "does not matter");
-        long routeResults = app.getDb().insert(TABLE_ROUTES, null, routeValues);
+        long routeResults = db.insert(TABLE_ROUTES, null, routeValues);
 
         ContentValues routeGroupValues = new ContentValues();
         routeGroupValues.put(COLUMN_ROUTE_ID, routeId);
         routeGroupValues.put(COLUMN_GROUP_ID, groupId);
-        long routeGroupResults = app.getDb().insert(TABLE_ROUTE_GROUP, null, routeGroupValues);
+        long routeGroupResults = db.insert(TABLE_ROUTE_GROUP, null, routeGroupValues);
 
         if (routeResults < 0 || routeGroupResults < 0) {
             throw new Exception("database insertion failed");
@@ -328,7 +333,7 @@ public class DataUploadServiceTest {
         for (int i = 0; i < numPoints; i++) {
             cv = valuesForLocationCorrection(getTestLocation(i, i),
                     getTestLocation(i, i), getTestInstruction(i, i), routeId);
-            app.getDb().insert(TABLE_LOCATIONS, null, cv);
+            db.insert(TABLE_LOCATIONS, null, cv);
         }
     }
 
@@ -339,12 +344,12 @@ public class DataUploadServiceTest {
         ContentValues routeValues = new ContentValues();
         routeValues.put(COLUMN_TABLE_ID, routeId);
         routeValues.put(COLUMN_RAW, "does not matter");
-        long routeResults = app.getDb().insert(TABLE_ROUTES, null, routeValues);
+        long routeResults = db.insert(TABLE_ROUTES, null, routeValues);
 
         ContentValues routeGroupValues = new ContentValues();
         routeGroupValues.put(COLUMN_ROUTE_ID, routeId);
         routeGroupValues.put(COLUMN_GROUP_ID, groupId);
-        long routeGroupResults = app.getDb().insert(TABLE_ROUTE_GROUP, null, routeGroupValues);
+        long routeGroupResults = db.insert(TABLE_ROUTE_GROUP, null, routeGroupValues);
 
         if (routeResults < 0 || routeGroupResults < 0) {
             throw new Exception("database insertion failed");
@@ -358,7 +363,7 @@ public class DataUploadServiceTest {
             cv = valuesForLocationCorrection(getTestLocation(testLat, testLng),
                     getTestLocation(testLat, testLng), getTestInstruction(testLat, testLng),
                     routeId);
-            app.getDb().insert(TABLE_LOCATIONS, null, cv);
+            db.insert(TABLE_LOCATIONS, null, cv);
         }
     }
 
@@ -367,7 +372,7 @@ public class DataUploadServiceTest {
         insertValues.put(COLUMN_TABLE_ID, routeId);
         insertValues.put(COLUMN_RAW, "does not matter");
         insertValues.put(COLUMN_UPLOADED, 1);
-        app.getDb().insert(TABLE_ROUTES, null, insertValues);
+        db.insert(TABLE_ROUTES, null, insertValues);
     }
 
     public String generatePermissionXml() throws ParserConfigurationException,

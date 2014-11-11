@@ -3,9 +3,12 @@ package com.mapzen.open.util;
 import com.mapzen.open.activity.BaseActivity;
 
 import android.content.ContentValues;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.util.UUID;
+
+import javax.inject.Inject;
 
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_MSG;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_TABLE_ID;
@@ -36,14 +39,15 @@ public final class Logger {
         }
     }
 
-    public static void logToDatabase(BaseActivity activity, String tag, String msg) {
+    public static void logToDatabase(BaseActivity activity, SQLiteDatabase db,
+            String tag, String msg) {
         Log.v(TAG, tag + ": " + msg);
         if (activity.isInDebugMode()) {
             ContentValues values = new ContentValues();
             values.put(COLUMN_TAG, tag);
             values.put(COLUMN_MSG, msg);
             values.put(COLUMN_TABLE_ID, UUID.randomUUID().toString());
-            activity.getDb().insert(DatabaseHelper.TABLE_LOG_ENTRIES, null, values);
+            db.insert(DatabaseHelper.TABLE_LOG_ENTRIES, null, values);
         }
     }
 }

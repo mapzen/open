@@ -46,6 +46,7 @@ import android.app.AlarmManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -89,6 +90,7 @@ public class BaseActivityTest {
     @Inject MixpanelAPI mixpanelAPI;
     @Inject MapController mapController;
     @Inject SavedSearch savedSearch;
+    @Inject SQLiteDatabase db;
 
     @Before
     public void setUp() throws Exception {
@@ -268,7 +270,7 @@ public class BaseActivityTest {
 
     @Test
     public void onResume_shouldGetWritableLocationDatabase() throws Exception {
-        assertThat(activity.getDb()).isOpen();
+        assertThat(db).isOpen();
     }
 
     @Test
@@ -514,7 +516,7 @@ public class BaseActivityTest {
         server.play();
 
         activity.toggleDebugMode();
-        byte[] expected = Files.toByteArray(new File(testBaseActivity.getDb().getPath()));
+        byte[] expected = Files.toByteArray(new File(db.getPath()));
         testBaseActivity.setDebugDataEndpoint(server.getUrl("/upload.php").toString());
         MenuItem menuItem = menu.findItem(R.id.phone_home);
         testBaseActivity.onOptionsItemSelected(menuItem);

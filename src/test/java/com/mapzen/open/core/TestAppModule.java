@@ -1,5 +1,6 @@
 package com.mapzen.open.core;
 
+import com.mapzen.android.Pelias;
 import com.mapzen.open.MapController;
 import com.mapzen.open.MapControllerTest;
 import com.mapzen.open.MapzenApplication;
@@ -9,17 +10,14 @@ import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.activity.BaseActivityTest;
 import com.mapzen.open.activity.InitialActivity;
 import com.mapzen.open.activity.InitialActivityTest;
-import com.mapzen.open.login.LoginActivity;
-import com.mapzen.open.login.LoginActivityTest;
 import com.mapzen.open.adapters.PlaceArrayAdapter;
 import com.mapzen.open.adapters.PlaceArrayAdapterTest;
-import com.mapzen.android.Pelias;
 import com.mapzen.open.fragment.ItemFragment;
 import com.mapzen.open.fragment.ItemFragmentTest;
 import com.mapzen.open.fragment.MapFragment;
 import com.mapzen.open.fragment.MapFragmentTest;
-import com.mapzen.open.util.SimpleCrypt;
-import com.mapzen.osrm.Router;
+import com.mapzen.open.login.LoginActivity;
+import com.mapzen.open.login.LoginActivityTest;
 import com.mapzen.open.route.DrawPathTask;
 import com.mapzen.open.route.DrawPathTaskTest;
 import com.mapzen.open.route.RouteFragment;
@@ -31,6 +29,13 @@ import com.mapzen.open.search.AutoCompleteAdapterTest;
 import com.mapzen.open.search.PagerResultsFragment;
 import com.mapzen.open.search.PagerResultsFragmentTest;
 import com.mapzen.open.support.TestBaseActivity;
+import com.mapzen.open.util.DatabaseHelper;
+import com.mapzen.open.util.DebugDataSubmitter;
+import com.mapzen.open.util.DebugDataSubmitterTest;
+import com.mapzen.open.util.Logger;
+import com.mapzen.open.util.LoggerTest;
+import com.mapzen.open.util.SimpleCrypt;
+import com.mapzen.osrm.Router;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
@@ -40,6 +45,7 @@ import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
 
 import javax.inject.Singleton;
@@ -71,6 +77,7 @@ import static org.mockito.Mockito.when;
                 RoutePreviewFragment.class,
                 RoutePreviewFragmentTest.class,
                 DataUploadService.class,
+                DataUploadServiceTest.class,
                 PlaceArrayAdapter.class,
                 PlaceArrayAdapterTest.class,
                 AutoCompleteAdapter.class,
@@ -87,7 +94,11 @@ import static org.mockito.Mockito.when;
                 PagerResultsFragmentTest.class,
                 MapzenApplication.class,
                 MapzenApplicationTest.class,
-                TestMapzenApplication.class
+                TestMapzenApplication.class,
+                DebugDataSubmitter.class,
+                DebugDataSubmitterTest.class,
+                Logger.class,
+                LoggerTest.class
         },
         complete = false
 )
@@ -141,5 +152,12 @@ public class TestAppModule {
         when(simpleCrypt.encode(anyString())).thenReturn("stuff");
         when(simpleCrypt.decode(anyString())).thenReturn("stuff");
         return simpleCrypt;
+    }
+
+    @Provides @Singleton SQLiteDatabase provideDb() {
+        DatabaseHelper databaseHelper = new DatabaseHelper(context);
+        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        db.enableWriteAheadLogging();
+        return db;
     }
 }
