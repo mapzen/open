@@ -77,7 +77,7 @@
         <dependency>
             <groupId>org.robolectric</groupId>
             <artifactId>robolectric</artifactId>
-            <version>2.4-SNAPSHOT</version>
+            <version>2.4</version>
             <scope>test</scope>
         </dependency>
 
