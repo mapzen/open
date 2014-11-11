@@ -1,6 +1,5 @@
 package com.mapzen.open.route;
 
-import com.mapzen.android.lost.LocationClient;
 import com.mapzen.helpers.DistanceFormatter;
 import com.mapzen.helpers.ZoomController;
 import com.mapzen.open.MapController;
@@ -33,7 +32,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
-import org.oscim.layers.PathLayer;
 import org.oscim.map.TestMap;
 import org.oscim.map.TestViewport;
 import org.oscim.map.ViewController;
@@ -121,9 +119,7 @@ import static org.robolectric.Robolectric.shadowOf_;
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class RouteFragmentTest {
-    @Inject LocationClient locationClient;
     @Inject Router router;
-    @Inject PathLayer path;
     @Inject MapController mapController;
     @Inject ZoomController zoomController;
     @Inject MixpanelAPI mixpanelAPI;
