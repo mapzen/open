@@ -52,6 +52,7 @@ import org.robolectric.shadows.ShadowView;
 import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.util.FragmentTestUtil;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -1355,7 +1356,7 @@ public class RouteFragmentTest {
         assertThat(fragment.getView().findViewById(R.id.debugging)).isVisible();
     }
 
-    @Test
+    @Test @SuppressLint("NewApi")
     public void shouldGenerateNotificationOnFirstInstruction() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction instruction = getTestInstruction(3, 3);
@@ -1369,7 +1370,7 @@ public class RouteFragmentTest {
         assertThat(sNotification.getActions().get(0).title).isEqualTo("Exit Navigation");
     }
 
-    @Test
+    @Test @SuppressLint("NewApi")
     public void shouldGenerateNotificationOnPageSelected() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction instruction = getTestInstruction(3, 3);
@@ -1384,7 +1385,7 @@ public class RouteFragmentTest {
         assertThat(sNotification.getActions().get(0).title).isEqualTo("Exit Navigation");
     }
 
-    @Test
+    @Test @SuppressLint("NewApi")
     public void shouldKillNotificationOnExitNavigation() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction instruction = getTestInstruction(3, 3);
