@@ -1003,6 +1003,8 @@ public class RouteFragmentTest {
 
     @Test
     public void onRecalculate_shouldUpdateCurrentInstructionText() throws Exception {
+        act = initBaseActivityWithMenu(menu);
+        initTestFragment();
         loadAceHotelMockRoute();
         fragment.onRecalculate(getTestLocation(111.0, 111.0));
         View view = fragment.getPagerViewForIndex(0);
