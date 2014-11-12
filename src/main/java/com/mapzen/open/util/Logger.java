@@ -8,8 +8,6 @@ import android.util.Log;
 
 import java.util.UUID;
 
-import javax.inject.Inject;
-
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_MSG;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_TABLE_ID;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_TAG;

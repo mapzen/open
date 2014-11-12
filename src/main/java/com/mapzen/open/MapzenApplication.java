@@ -1,9 +1,8 @@
 package com.mapzen.open;
 
-import com.mapzen.open.core.CommonModule;
 import com.mapzen.open.core.AppModule;
+import com.mapzen.open.core.CommonModule;
 import com.mapzen.open.core.OSMApi;
-import com.mapzen.open.util.DatabaseHelper;
 import com.mapzen.open.util.SimpleCrypt;
 
 import org.scribe.builder.ServiceBuilder;
@@ -13,7 +12,6 @@ import org.scribe.oauth.OAuthService;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 
 import java.util.Arrays;
 import java.util.List;

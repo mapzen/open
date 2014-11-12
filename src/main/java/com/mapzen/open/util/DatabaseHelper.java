@@ -1,6 +1,5 @@
 package com.mapzen.open.util;
 
-import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.osrm.Instruction;
 
 import android.content.ContentValues;
