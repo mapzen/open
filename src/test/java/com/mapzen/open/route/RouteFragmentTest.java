@@ -1,19 +1,16 @@
 package com.mapzen.open.route;
 
+import com.mapzen.android.lost.LocationClient;
+import com.mapzen.helpers.DistanceFormatter;
+import com.mapzen.helpers.ZoomController;
 import com.mapzen.open.MapController;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.TestMapzenApplication;
 import com.mapzen.open.activity.BaseActivity;
-import com.mapzen.android.lost.LocationClient;
 import com.mapzen.open.entity.SimpleFeature;
 import com.mapzen.open.fragment.MapFragment;
-import com.mapzen.helpers.DistanceFormatter;
-import com.mapzen.helpers.ZoomController;
-import com.mapzen.osrm.Instruction;
-import com.mapzen.osrm.Route;
-import com.mapzen.osrm.Router;
-import com.mapzen.open.shadows.ShadowBugSenseHandler;
+import com.mapzen.open.shadows.ShadowMint;
 import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.support.TestBaseActivity;
 import com.mapzen.open.support.TestHelper;
@@ -21,21 +18,19 @@ import com.mapzen.open.util.DatabaseHelper;
 import com.mapzen.open.util.MapzenNotificationCreator;
 import com.mapzen.open.util.RouteLocationIndicator;
 import com.mapzen.open.widget.DistanceView;
+import com.mapzen.osrm.Instruction;
+import com.mapzen.osrm.Route;
+import com.mapzen.osrm.Router;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.json.JSONObject;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
-import org.oscim.layers.PathLayer;
 import org.oscim.map.TestMap;
 import org.oscim.map.TestViewport;
 import org.oscim.map.ViewController;
@@ -52,6 +47,7 @@ import org.robolectric.shadows.ShadowView;
 import org.robolectric.tester.android.view.TestMenu;
 import org.robolectric.util.FragmentTestUtil;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -61,6 +57,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
@@ -81,7 +78,6 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import static com.mapzen.open.MapController.KEY_STORED_MAPPOSITION;
 import static com.mapzen.open.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.open.core.MapzenLocation.KEY_LOCATION;
 import static com.mapzen.open.entity.SimpleFeature.TEXT;
@@ -95,7 +91,6 @@ import static com.mapzen.open.support.TestHelper.getTestLastInstruction;
 import static com.mapzen.open.support.TestHelper.getTestLocation;
 import static com.mapzen.open.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.open.support.TestHelper.initBaseActivityWithMenu;
-import static com.mapzen.open.support.TestHelper.initMapFragment;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_GROUP_ID;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_MSG;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_READY_FOR_UPLOAD;
@@ -123,46 +118,27 @@ import static org.robolectric.Robolectric.shadowOf_;
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class RouteFragmentTest {
-    @Inject LocationClient locationClient;
     @Inject Router router;
-    @Inject PathLayer path;
     @Inject MapController mapController;
     @Inject ZoomController zoomController;
     @Inject MixpanelAPI mixpanelAPI;
+    @Inject SQLiteDatabase db;
 
-    private TestBaseActivity act;
+    private static TestMenu menu = new TestMenu();
+    private static TestBaseActivity act = initBaseActivityWithMenu(menu);
+
     private RouteFragment fragment;
     private ShadowApplication app;
-    private TestMenu menu;
     private ArrayList<Instruction> testInstructions;
-    private SQLiteDatabase db;
     private Location startLocation;
-
-    @Captor
-    @SuppressWarnings("unused")
-    ArgumentCaptor<Router.Callback> callback;
 
     @Before
     public void setUp() throws Exception {
         ((TestMapzenApplication) Robolectric.application).inject(this);
-        SharedPreferences.Editor editor = application.getSharedPreferences(KEY_STORED_MAPPOSITION,
-                Context.MODE_PRIVATE).edit();
-        editor.clear();
-        editor.commit();
-        MockitoAnnotations.initMocks(this);
-        menu = new TestMenu();
-        act = initBaseActivityWithMenu(menu);
         initTestFragment();
         app = Robolectric.getShadowApplication();
-        db = ((MapzenApplication) Robolectric.application).getDb();
         GeoPoint start = fragment.getSimpleFeature().getGeoPoint();
         startLocation = getTestLocation(start.getLatitude(), start.getLongitude());
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        db.close();
-        act.onPause();
     }
 
     @Test
@@ -294,8 +270,7 @@ public class RouteFragmentTest {
         initTestFragment();
         FragmentTestUtil.startFragment(fragment);
         fragment.createRouteTo(getTestLocation(100.0, 100.0));
-        verify(router).setCallback(callback.capture());
-        callback.getValue().success(new Route(MOCK_ROUTE_JSON));
+        fragment.success(new Route(MOCK_ROUTE_JSON));
         fragment.onPause();
         Cursor cursor = db.query(TABLE_ROUTE_GEOMETRY,
                 new String[] { COLUMN_ROUTE_ID },
@@ -399,8 +374,7 @@ public class RouteFragmentTest {
 
         Route oldRoute = fragment.getRoute();
         fragment.onRecalculate(getTestLocation(111.0, 111.0));
-        verify(router).setCallback(callback.capture());
-        callback.getValue().success(new Route(MOCK_NY_TO_VT));
+        fragment.success(new Route(MOCK_NY_TO_VT));
         assertThat(fragment.getRoute()).isNotSameAs(oldRoute);
     }
 
@@ -1031,6 +1005,8 @@ public class RouteFragmentTest {
 
     @Test
     public void onRecalculate_shouldUpdateCurrentInstructionText() throws Exception {
+        act = initBaseActivityWithMenu(menu);
+        initTestFragment();
         loadAceHotelMockRoute();
         fragment.onRecalculate(getTestLocation(111.0, 111.0));
         View view = fragment.getPagerViewForIndex(0);
@@ -1114,30 +1090,25 @@ public class RouteFragmentTest {
 
     @Test
     public void createRouteTo_shouldDisplayProgressDialog() throws Exception {
-        Location testLocation = getTestLocation(100.0, 100.0);
         FragmentTestUtil.startFragment(fragment);
-        fragment.createRouteTo(testLocation);
+        fragment.createRouteTo(getTestLocation(0, 0));
         assertThat(act.getMapFragment().getView().findViewById(R.id.progress)).isVisible();
     }
 
     @Test
     public void createRouteTo_shouldDismissProgressDialogOnError() throws Exception {
-        Location testLocation = getTestLocation(100.0, 100.0);
         FragmentTestUtil.startFragment(fragment);
-        fragment.createRouteTo(testLocation);
-        verify(router).setCallback(callback.capture());
-        callback.getValue().failure(500);
+        fragment.createRouteTo(getTestLocation(0, 0));
+        fragment.failure(500);
         assertThat(act.getMapFragment().getView().findViewById(R.id.map)).isVisible();
         assertThat(act.getMapFragment().getView().findViewById(R.id.progress)).isNotVisible();
     }
 
     @Test
     public void createRouteTo_shouldDismissProgressDialogOnSuccess() throws Exception {
-        Location testLocation = getTestLocation(100.0, 100.0);
         FragmentTestUtil.startFragment(fragment);
-        fragment.createRouteTo(testLocation);
-        verify(router).setCallback(callback.capture());
-        callback.getValue().failure(207);
+        fragment.createRouteTo(getTestLocation(0, 0));
+        fragment.failure(207);
         assertThat(act.getMapFragment().getView().findViewById(R.id.map)).isVisible();
         assertThat(act.getMapFragment().getView().findViewById(R.id.progress)).isNotVisible();
     }
@@ -1147,8 +1118,7 @@ public class RouteFragmentTest {
         Location testLocation = getTestLocation(100.0, 100.0);
         FragmentTestUtil.startFragment(fragment);
         fragment.createRouteTo(testLocation);
-        verify(router).setCallback(callback.capture());
-        callback.getValue().failure(207);
+        fragment.failure(207);
         assertThat(ShadowToast.getTextOfLatestToast())
                 .isEqualTo(act.getString(R.string.no_route_found));
     }
@@ -1157,9 +1127,7 @@ public class RouteFragmentTest {
     public void createRouteTo_shouldAddFragment() throws Exception {
         Location testLocation = getTestLocation(100.0, 100.0);
         FragmentTestUtil.startFragment(fragment);
-        fragment.createRouteTo(testLocation);
-        verify(router).setCallback(callback.capture());
-        callback.getValue().success(new Route(MOCK_NY_TO_VT));
+        fragment.success(new Route(MOCK_NY_TO_VT));
         assertThat(fragment).isAdded();
     }
 
@@ -1171,9 +1139,8 @@ public class RouteFragmentTest {
         assertThat(previousCount).isEqualTo(3);
         Location testLocation = getTestLocation(100.0, 100.0);
         fragment.createRouteTo(testLocation);
-        verify(router).setCallback(callback.capture());
         Route newRoute = new Route(MOCK_NY_TO_VT);
-        callback.getValue().success(newRoute);
+        fragment.success(newRoute);
         assertThat(fragment.pager.getAdapter().getCount())
                 .isEqualTo(newRoute.getRouteInstructions().size());
     }
@@ -1186,8 +1153,6 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         fragment.createRouteTo(getTestLocation(100.0, 200.0));
         fragment.createRouteTo(getTestLocation(200.0, 300.0));
-        verify(router, atLeastOnce()).setCallback(callback.capture());
-        callback.getValue().success(new Route(MOCK_NY_TO_VT));
         assertThat(router.getRouteUrl().toString()).contains("200.0,300.0");
         assertThat(router.getRouteUrl().toString()).doesNotContain("100.0,200.0");
     }
@@ -1219,8 +1184,7 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(spyFragment);
         spyFragment.onLocationChanged(startLocation);
         spyFragment.onLocationChanged(testLocation);
-        verify(router).setCallback(callback.capture());
-        callback.getValue().success(new Route(new JSONObject(MOCK_AROUND_THE_BLOCK)));
+        spyFragment.success(new Route(new JSONObject(MOCK_AROUND_THE_BLOCK)));
         spyFragment.onLocationChanged(startLocation);
         spyFragment.onLocationChanged(testLocation);
         verify(spyFragment, Mockito.times(2)).createRouteTo(testLocation);
@@ -1234,8 +1198,7 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(spyFragment);
         spyFragment.onLocationChanged(startLocation);
         spyFragment.onLocationChanged(testLocation);
-        verify(router).setCallback(callback.capture());
-        callback.getValue().failure(500);
+        spyFragment.failure(500);
         spyFragment.onLocationChanged(testLocation);
         verify(spyFragment, Mockito.times(2)).createRouteTo(testLocation);
     }
@@ -1288,7 +1251,7 @@ public class RouteFragmentTest {
     public void storeRouteInDatabase_shouldSendExceptionToBugSense() throws Exception {
         db.close();
         fragment.storeRouteInDatabase(new JSONObject());
-        assertThat(ShadowBugSenseHandler.getLastHandledException())
+        assertThat(ShadowMint.getLastHandledException())
                 .isInstanceOf(IllegalStateException.class);
     }
 
@@ -1296,11 +1259,9 @@ public class RouteFragmentTest {
     public void addCoordinatesToDatabase_shouldSendExceptionToBugSense() throws Exception {
         initTestFragment();
         FragmentTestUtil.startFragment(fragment);
-        fragment.createRouteTo(getTestLocation(100.0, 100.0));
-        verify(router).setCallback(callback.capture());
         db.close();
-        callback.getValue().success(new Route(MOCK_ROUTE_JSON));
-        assertThat(ShadowBugSenseHandler.getLastHandledException())
+        fragment.success(new Route(MOCK_ROUTE_JSON));
+        assertThat(ShadowMint.getLastHandledException())
                 .isInstanceOf(IllegalStateException.class);
     }
 
@@ -1355,7 +1316,7 @@ public class RouteFragmentTest {
         assertThat(fragment.getView().findViewById(R.id.debugging)).isVisible();
     }
 
-    @Test
+    @Test @SuppressLint("NewApi")
     public void shouldGenerateNotificationOnFirstInstruction() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction instruction = getTestInstruction(3, 3);
@@ -1369,7 +1330,7 @@ public class RouteFragmentTest {
         assertThat(sNotification.getActions().get(0).title).isEqualTo("Exit Navigation");
     }
 
-    @Test
+    @Test @SuppressLint("NewApi")
     public void shouldGenerateNotificationOnPageSelected() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction instruction = getTestInstruction(3, 3);
@@ -1384,7 +1345,7 @@ public class RouteFragmentTest {
         assertThat(sNotification.getActions().get(0).title).isEqualTo("Exit Navigation");
     }
 
-    @Test
+    @Test @SuppressLint("NewApi")
     public void shouldKillNotificationOnExitNavigation() throws Exception {
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         Instruction instruction = getTestInstruction(3, 3);
@@ -1453,10 +1414,11 @@ public class RouteFragmentTest {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
         prefs.edit().putBoolean(act.getString(R.string.settings_mock_gpx_key), true).commit();
         initTestFragment();
+        fragment.locationClient.connect();
         FragmentTestUtil.startFragment(fragment);
         fragment.onDetach();
         ShadowLocationManager shadowLocationManager = Robolectric.shadowOf((LocationManager)
-                application.getSystemService(Context.LOCATION_SERVICE));
+                act.getApplication().getSystemService(Context.LOCATION_SERVICE));
         assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).hasSize(2);
     }
 
@@ -1468,9 +1430,7 @@ public class RouteFragmentTest {
     }
 
     private void loadAceHotelMockRoute() {
-        fragment.createRouteTo(getTestLocation(100.0, 100.0));
-        verify(router).setCallback(callback.capture());
-        callback.getValue().success(new Route(MOCK_ACE_HOTEL));
+        fragment.success(new Route(MOCK_ACE_HOTEL));
         FragmentTestUtil.startFragment(fragment);
         fragment.onResume();
     }
@@ -1495,7 +1455,6 @@ public class RouteFragmentTest {
     }
 
     private void initTestFragment() throws Exception {
-        initMapFragment(act);
         fragment = RouteFragment.newInstance(act, getTestSimpleFeature());
         fragment.setRoute(new Route(MOCK_ROUTE_JSON));
 
@@ -1504,11 +1463,12 @@ public class RouteFragmentTest {
         testInstructions.add(getTestInstruction(1, 1));
         testInstructions.add(getTestInstruction(2, 2));
         fragment.setInstructions(testInstructions);
+        setTestLocationClient();
     }
 
     private ShadowNotification getRoutingNotification() {
         NotificationManager manager = (NotificationManager) act.getSystemService(
-                act.getApplicationContext().NOTIFICATION_SERVICE);
+                Context.NOTIFICATION_SERVICE);
         ShadowNotificationManager sManager = shadowOf(manager);
         return shadowOf(sManager.getAllNotifications().get(0));
     }
@@ -1522,15 +1482,13 @@ public class RouteFragmentTest {
     }
 
     private void simulateUserPagerTouch() {
-        MotionEvent motionEvent =
-                MotionEvent.obtain(0L, 0L, MotionEvent.ACTION_DOWN, 12f, 34f, 0);
+        MotionEvent motionEvent = MotionEvent.obtain(0L, 0L, MotionEvent.ACTION_DOWN, 12f, 34f, 0);
         View.OnTouchListener listener = shadowOf(fragment.pager).getOnTouchListener();
         listener.onTouch(null, motionEvent);
     }
 
     private void simulateUserDrag() {
-        MotionEvent e =
-                MotionEvent.obtain(0L, 0L, MotionEvent.ACTION_MOVE, 120f, 100f, 0);
+        MotionEvent e = MotionEvent.obtain(0L, 0L, MotionEvent.ACTION_MOVE, 120f, 100f, 0);
         ShadowView view = shadowOf(act.findViewById(R.id.map));
         fragment.setCurrentXCor(3.0f);
         view.getOnTouchListener().onTouch(null, e);
@@ -1566,5 +1524,26 @@ public class RouteFragmentTest {
         ShadowTextToSpeech shadowTts = shadowOf_(tts);
         shadowTts.getOnInitListener().onInit(TextToSpeech.SUCCESS);
         assertThat(shadowTts.getLastSpokenText()).isEqualTo(expected);
+    }
+
+    private void setTestLocationClient() {
+        fragment.locationClient = new TestLocationClient(application,
+                new LocationClient.ConnectionCallbacks() {
+            @Override public void onConnected(Bundle connectionHint) {
+            }
+
+            @Override public void onDisconnected() {
+            }
+        });
+    }
+
+    class TestLocationClient extends LocationClient {
+        public TestLocationClient(Context context, ConnectionCallbacks connectionCallbacks) {
+            super(context, connectionCallbacks);
+        }
+
+        @Override public void setMockTrace(String filename) {
+            // Fake it 'til you make it.
+        }
     }
 }

@@ -84,6 +84,7 @@ public class DataUploadService extends Service {
     private MapzenApplication app;
 
     @Inject OAuthRequestFactory requestFactory;
+    @Inject SQLiteDatabase db;
 
     @Override
     public void onCreate() {
@@ -105,7 +106,6 @@ public class DataUploadService extends Service {
                 }
                 Cursor cursor = null;
                 try {
-                    final SQLiteDatabase db  = app.getDb();
                     if (db == null) {
                         return null;
                     }
@@ -198,7 +198,7 @@ public class DataUploadService extends Service {
                     + "ORDER BY " + TABLE_LOCATIONS + "." + COLUMN_TIME
                     + " ASC";
             Logger.d("full query: " + fullQuery);
-            Cursor cursor = app.getDb().rawQuery(fullQuery, new String[] { groupId });
+            Cursor cursor = db.rawQuery(fullQuery, new String[] { groupId });
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
                     .newInstance();
             DocumentBuilder documentBuilder = documentBuilderFactory
@@ -233,10 +233,10 @@ public class DataUploadService extends Service {
      * @return theoretical max range in meters.
      */
     private float calculateMaxRange(String groupId) {
-        final Cursor minLatCursor = app.getDb().rawQuery(MIN_LAT_QUERY, new String[] { groupId });
-        final Cursor maxLatCursor = app.getDb().rawQuery(MAX_LAT_QUERY, new String[] { groupId });
-        final Cursor minLngCursor = app.getDb().rawQuery(MIN_LNG_QUERY, new String[] { groupId });
-        final Cursor maxLngCursor = app.getDb().rawQuery(MAX_LNG_QUERY, new String[] { groupId });
+        final Cursor minLatCursor = db.rawQuery(MIN_LAT_QUERY, new String[] { groupId });
+        final Cursor maxLatCursor = db.rawQuery(MAX_LAT_QUERY, new String[] { groupId });
+        final Cursor minLngCursor = db.rawQuery(MIN_LNG_QUERY, new String[] { groupId });
+        final Cursor maxLngCursor = db.rawQuery(MAX_LNG_QUERY, new String[] { groupId });
 
         minLatCursor.moveToFirst();
         minLngCursor.moveToFirst();
@@ -378,20 +378,20 @@ public class DataUploadService extends Service {
     private void setGroupAsUploaded(String groupId) {
         ContentValues cv = new ContentValues();
         cv.put(DatabaseHelper.COLUMN_UPLOADED, 1);
-        app.getDb().update(TABLE_GROUPS, cv, COLUMN_TABLE_ID + " = ?",
+        db.update(TABLE_GROUPS, cv, COLUMN_TABLE_ID + " = ?",
                 new String[] { groupId });
-        Cursor cursor = app.getDb().query(TABLE_ROUTE_GROUP, new String[] { COLUMN_ROUTE_ID },
+        Cursor cursor = db.query(TABLE_ROUTE_GROUP, new String[] { COLUMN_ROUTE_ID },
                 COLUMN_GROUP_ID + " = ?",
                 new String[] { groupId }, null, null, null);
         while (cursor.moveToNext()) {
             int routeIdIndex = cursor.getColumnIndex(COLUMN_ROUTE_ID);
             String routeId = cursor.getString(routeIdIndex);
-            app.getDb().delete(TABLE_ROUTES, COLUMN_TABLE_ID + " = ?",
+            db.delete(TABLE_ROUTES, COLUMN_TABLE_ID + " = ?",
                     new String[] { routeId });
-            app.getDb().delete(TABLE_LOCATIONS, COLUMN_ROUTE_ID + " = ?",
+            db.delete(TABLE_LOCATIONS, COLUMN_ROUTE_ID + " = ?",
                     new String[] { routeId });
         }
-        app.getDb().delete(TABLE_GROUPS, COLUMN_TABLE_ID + " = ?",
+        db.delete(TABLE_GROUPS, COLUMN_TABLE_ID + " = ?",
                 new String[] { groupId });
     }
 

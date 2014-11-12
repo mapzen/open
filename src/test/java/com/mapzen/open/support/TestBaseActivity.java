@@ -1,7 +1,7 @@
 package com.mapzen.open.support;
 
-import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.android.lost.LocationClient;
+import com.mapzen.open.activity.BaseActivity;
 
 import org.mockito.Mockito;
 import org.oscim.android.MapView;
@@ -39,7 +39,7 @@ public class TestBaseActivity extends BaseActivity {
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
     }
 

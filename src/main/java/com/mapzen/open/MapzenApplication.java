@@ -1,9 +1,8 @@
 package com.mapzen.open;
 
-import com.mapzen.open.core.CommonModule;
 import com.mapzen.open.core.AppModule;
+import com.mapzen.open.core.CommonModule;
 import com.mapzen.open.core.OSMApi;
-import com.mapzen.open.util.DatabaseHelper;
 import com.mapzen.open.util.SimpleCrypt;
 
 import org.scribe.builder.ServiceBuilder;
@@ -13,7 +12,6 @@ import org.scribe.oauth.OAuthService;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +43,6 @@ public class MapzenApplication extends Application {
     };
     public static final String LOG_TAG = "Mapzen: ";
     private String currentSearchTerm = "";
-    private SQLiteDatabase db;
     private OAuthService osmOauthService;
     @Inject SimpleCrypt simpleCrypt;
 
@@ -54,23 +51,12 @@ public class MapzenApplication extends Application {
         super.onCreate();
         graph = ObjectGraph.create(getModules().toArray());
         inject(this);
-        DatabaseHelper databaseHelper = new DatabaseHelper(this);
-        db = databaseHelper.getWritableDatabase();
-        db.enableWriteAheadLogging();
         osmOauthService = new ServiceBuilder()
                 .provider(OSMApi.class)
                 .apiKey(simpleCrypt.decode(getString(R.string.osm_key)))
                 .debug()
                 .callback("mapzen://oauth-login/mapzen.com")
                 .apiSecret(simpleCrypt.decode(getString(R.string.osm_secret))).build();
-    }
-
-    public SQLiteDatabase getDb() {
-        return db;
-    }
-
-    public void setDb(SQLiteDatabase db) {
-        this.db = db;
     }
 
     public String[] getColumns() {

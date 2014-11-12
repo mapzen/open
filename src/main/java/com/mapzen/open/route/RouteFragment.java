@@ -1,16 +1,13 @@
 package com.mapzen.open.route;
 
+import com.mapzen.android.lost.LocationClient;
+import com.mapzen.helpers.DistanceFormatter;
+import com.mapzen.helpers.ZoomController;
 import com.mapzen.open.MapController;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
-import com.mapzen.android.lost.LocationClient;
 import com.mapzen.open.entity.SimpleFeature;
 import com.mapzen.open.fragment.BaseFragment;
-import com.mapzen.helpers.DistanceFormatter;
-import com.mapzen.helpers.ZoomController;
-import com.mapzen.osrm.Instruction;
-import com.mapzen.osrm.Route;
-import com.mapzen.osrm.Router;
 import com.mapzen.open.util.DatabaseHelper;
 import com.mapzen.open.util.DisplayHelper;
 import com.mapzen.open.util.Logger;
@@ -19,10 +16,13 @@ import com.mapzen.open.util.RouteLocationIndicator;
 import com.mapzen.open.util.VoiceNavigationController;
 import com.mapzen.open.widget.DebugView;
 import com.mapzen.open.widget.DistanceView;
+import com.mapzen.osrm.Instruction;
+import com.mapzen.osrm.Route;
+import com.mapzen.osrm.Router;
 
-import com.bugsense.trace.BugSenseHandler;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.splunk.mint.Mint;
 
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
@@ -38,6 +38,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -61,19 +62,19 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.mapzen.helpers.ZoomController.DrivingSpeed;
 import static com.mapzen.open.MapController.geoPointToPair;
 import static com.mapzen.open.MapController.getMapController;
 import static com.mapzen.open.MapController.locationToPair;
 import static com.mapzen.open.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.open.core.MapzenLocation.Util.getDistancePointFromBearing;
 import static com.mapzen.open.entity.SimpleFeature.TEXT;
-import static com.mapzen.helpers.ZoomController.DrivingSpeed;
+import static com.mapzen.open.util.DatabaseHelper.COLUMN_GROUP_ID;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_LAT;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_LNG;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_MSG;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_POSITION;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_RAW;
-import static com.mapzen.open.util.DatabaseHelper.COLUMN_GROUP_ID;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_ROUTE_ID;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_SPEED;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_TABLE_ID;
@@ -98,6 +99,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Inject RouteEngine routeEngine;
     @Inject MapController mapController;
     @Inject MixpanelAPI mixpanelAPI;
+    @Inject SQLiteDatabase db;
 
     @InjectView(R.id.routes) ViewPager pager;
     @InjectView(R.id.resume_button) ImageButton resume;
@@ -426,7 +428,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (isPaging) {
             final Instruction instruction = instructions.get(index);
             pagerPositionWhenPaused = index;
-            Logger.logToDatabase(act, ROUTE_TAG,
+            Logger.logToDatabase(act, db, ROUTE_TAG,
                     "paging to instruction: " + instruction.toString());
             pager.setCurrentItem(index);
             debugView.setClosestInstruction(instruction);
@@ -481,13 +483,13 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void logForDebugging(Location location, Location correctedLocation) {
-        Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: "
+        Logger.logToDatabase(act, db, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: "
                 + "new corrected location: " + correctedLocation.toString()
                 + " from original: " + location.toString());
-        Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
+        Logger.logToDatabase(act, db, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
                 "threshold: " + String.valueOf(getAdvanceRadius()));
         for (Instruction instruction : instructions) {
-            Logger.logToDatabase(act, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
+            Logger.logToDatabase(act, db, ROUTE_TAG, "RouteFragment::onLocationChangeLocation: " +
                     "turnPoint: " + instruction.toString());
         }
     }
@@ -590,7 +592,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public float getAverageSpeed() {
-        Cursor cursor = act.getDb().
+        Cursor cursor = db.
                 rawQuery("SELECT AVG(" + COLUMN_SPEED + ") as avg_speed "
                         + "from (select " + COLUMN_SPEED + " from "
                         + TABLE_LOCATIONS
@@ -621,25 +623,25 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private void insertIntoDb(String table, String nullHack,
             ArrayList<ContentValues> contentValueCollection) {
         try {
-            act.getDb().beginTransaction();
+            db.beginTransaction();
             for (ContentValues values : contentValueCollection) {
                 insertIntoDb(table, nullHack, values);
             }
-            act.getDb().setTransactionSuccessful();
-            act.getDb().endTransaction();
+            db.setTransactionSuccessful();
+            db.endTransaction();
         } catch (IllegalStateException e) {
-            BugSenseHandler.sendException(e);
+            Mint.logException(e);
         }
     }
 
     private void insertIntoDb(String table, String nullHack, ContentValues contentValues) {
         try {
-            long result = act.getDb().insert(table, nullHack, contentValues);
+            long result = db.insert(table, nullHack, contentValues);
             if (result < 0) {
                 Logger.e("error inserting into db");
             }
         } catch (IllegalStateException e) {
-            BugSenseHandler.sendException(e);
+            Mint.logException(e);
         }
     }
 
@@ -736,10 +738,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         ContentValues cv = new ContentValues();
         cv.put(DatabaseHelper.COLUMN_READY_FOR_UPLOAD, 1);
         try {
-            act.getDb().update(TABLE_GROUPS, cv, COLUMN_TABLE_ID + " = ?",
+            db.update(TABLE_GROUPS, cv, COLUMN_TABLE_ID + " = ?",
                     new String[] { groupId });
         } catch (IllegalStateException e) {
-            BugSenseHandler.sendException(e);
+            Mint.logException(e);
         }
     }
 

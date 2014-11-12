@@ -1,19 +1,19 @@
 package com.mapzen.open.search;
 
+import com.mapzen.android.Pelias;
+import com.mapzen.android.gson.Feature;
+import com.mapzen.android.gson.Result;
 import com.mapzen.open.MapController;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.adapters.SearchViewAdapter;
-import com.mapzen.android.Pelias;
-import com.mapzen.android.gson.Feature;
-import com.mapzen.android.gson.Result;
 import com.mapzen.open.entity.SimpleFeature;
 import com.mapzen.open.fragment.BaseFragment;
 import com.mapzen.open.fragment.ItemFragment;
 import com.mapzen.open.util.Logger;
 
-import com.bugsense.trace.BugSenseHandler;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.splunk.mint.Mint;
 
 import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
@@ -202,7 +202,7 @@ public class PagerResultsFragment extends BaseFragment {
             mapFragment.clearMarkers();
             mapFragment.updateMap();
         } catch (NullPointerException npe) {
-            BugSenseHandler.sendException(npe);
+            Mint.logException(npe);
         }
     }
 
