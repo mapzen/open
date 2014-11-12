@@ -1527,7 +1527,8 @@ public class RouteFragmentTest {
     }
 
     private void setTestLocationClient() {
-        fragment.locationClient = new TestLocationClient(application, new LocationClient.ConnectionCallbacks() {
+        fragment.locationClient = new TestLocationClient(application,
+                new LocationClient.ConnectionCallbacks() {
             @Override public void onConnected(Bundle connectionHint) {
             }
 
