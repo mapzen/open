@@ -1,5 +1,6 @@
 package com.mapzen.open.route;
 
+import com.mapzen.android.lost.LocationClient;
 import com.mapzen.helpers.DistanceFormatter;
 import com.mapzen.helpers.ZoomController;
 import com.mapzen.open.MapController;
@@ -56,6 +57,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
@@ -1461,6 +1463,7 @@ public class RouteFragmentTest {
         testInstructions.add(getTestInstruction(1, 1));
         testInstructions.add(getTestInstruction(2, 2));
         fragment.setInstructions(testInstructions);
+        setTestLocationClient();
     }
 
     private ShadowNotification getRoutingNotification() {
@@ -1521,5 +1524,25 @@ public class RouteFragmentTest {
         ShadowTextToSpeech shadowTts = shadowOf_(tts);
         shadowTts.getOnInitListener().onInit(TextToSpeech.SUCCESS);
         assertThat(shadowTts.getLastSpokenText()).isEqualTo(expected);
+    }
+
+    private void setTestLocationClient() {
+        fragment.locationClient = new TestLocationClient(application, new LocationClient.ConnectionCallbacks() {
+            @Override public void onConnected(Bundle connectionHint) {
+            }
+
+            @Override public void onDisconnected() {
+            }
+        });
+    }
+
+    class TestLocationClient extends LocationClient {
+        public TestLocationClient(Context context, ConnectionCallbacks connectionCallbacks) {
+            super(context, connectionCallbacks);
+        }
+
+        @Override public void setMockTrace(String filename) {
+            // Fake it 'til you make it.
+        }
     }
 }
