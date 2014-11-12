@@ -24,12 +24,10 @@ import com.mapzen.osrm.Router;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.json.JSONObject;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.oscim.core.GeoPoint;
 import org.oscim.core.MapPosition;
 import org.oscim.map.TestMap;
@@ -78,7 +76,6 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import static com.mapzen.open.MapController.KEY_STORED_MAPPOSITION;
 import static com.mapzen.open.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.open.core.MapzenLocation.KEY_LOCATION;
 import static com.mapzen.open.entity.SimpleFeature.TEXT;
@@ -135,23 +132,12 @@ public class RouteFragmentTest {
     @Before
     public void setUp() throws Exception {
         ((TestMapzenApplication) Robolectric.application).inject(this);
-        SharedPreferences.Editor editor = application.getSharedPreferences(KEY_STORED_MAPPOSITION,
-                Context.MODE_PRIVATE).edit();
-        editor.clear();
-        editor.commit();
-        MockitoAnnotations.initMocks(this);
         menu = new TestMenu();
         act = initBaseActivityWithMenu(menu);
         initTestFragment();
         app = Robolectric.getShadowApplication();
         GeoPoint start = fragment.getSimpleFeature().getGeoPoint();
         startLocation = getTestLocation(start.getLatitude(), start.getLongitude());
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        db.close();
-        act.onPause();
     }
 
     @Test
