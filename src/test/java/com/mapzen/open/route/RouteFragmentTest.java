@@ -122,18 +122,17 @@ public class RouteFragmentTest {
     @Inject MixpanelAPI mixpanelAPI;
     @Inject SQLiteDatabase db;
 
-    private TestBaseActivity act;
+    private static TestMenu menu = new TestMenu();
+    private static TestBaseActivity act = initBaseActivityWithMenu(menu);
+
     private RouteFragment fragment;
     private ShadowApplication app;
-    private TestMenu menu;
     private ArrayList<Instruction> testInstructions;
     private Location startLocation;
 
     @Before
     public void setUp() throws Exception {
         ((TestMapzenApplication) Robolectric.application).inject(this);
-        menu = new TestMenu();
-        act = initBaseActivityWithMenu(menu);
         initTestFragment();
         app = Robolectric.getShadowApplication();
         GeoPoint start = fragment.getSimpleFeature().getGeoPoint();
@@ -1411,10 +1410,11 @@ public class RouteFragmentTest {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
         prefs.edit().putBoolean(act.getString(R.string.settings_mock_gpx_key), true).commit();
         initTestFragment();
+        fragment.locationClient.connect();
         FragmentTestUtil.startFragment(fragment);
         fragment.onDetach();
         ShadowLocationManager shadowLocationManager = Robolectric.shadowOf((LocationManager)
-                application.getSystemService(Context.LOCATION_SERVICE));
+                act.getApplication().getSystemService(Context.LOCATION_SERVICE));
         assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).hasSize(2);
     }
 
