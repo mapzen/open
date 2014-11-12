@@ -18,8 +18,8 @@ import com.mapzen.open.util.Logger;
 import com.mapzen.open.util.MapzenGPSPromptDialogFragment;
 import com.mapzen.open.util.MapzenNotificationCreator;
 
-import com.bugsense.trace.BugSenseHandler;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.splunk.mint.Mint;
 import com.squareup.okhttp.OkHttpClient;
 
 import org.oscim.android.MapActivity;
@@ -92,8 +92,8 @@ public class BaseActivity extends MapActivity {
         super.onCreate(savedInstanceState);
         app = (MapzenApplication) getApplication();
         app.inject(this);
-        BugSenseHandler.initAndStartSession(this, "ebfa8fd7");
-        BugSenseHandler.addCrashExtraData("OEM", Build.MANUFACTURER);
+        Mint.initAndStartSession(this, "ebfa8fd7");
+        Mint.addExtraData("OEM", Build.MANUFACTURER);
         setContentView(R.layout.base);
         initMapFragment();
         gpsPromptDialogFragment = new MapzenGPSPromptDialogFragment();

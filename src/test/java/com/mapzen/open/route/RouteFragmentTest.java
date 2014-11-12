@@ -10,7 +10,7 @@ import com.mapzen.open.TestMapzenApplication;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.entity.SimpleFeature;
 import com.mapzen.open.fragment.MapFragment;
-import com.mapzen.open.shadows.ShadowBugSenseHandler;
+import com.mapzen.open.shadows.ShadowMint;
 import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.support.TestBaseActivity;
 import com.mapzen.open.support.TestHelper;
@@ -1251,7 +1251,7 @@ public class RouteFragmentTest {
     public void storeRouteInDatabase_shouldSendExceptionToBugSense() throws Exception {
         db.close();
         fragment.storeRouteInDatabase(new JSONObject());
-        assertThat(ShadowBugSenseHandler.getLastHandledException())
+        assertThat(ShadowMint.getLastHandledException())
                 .isInstanceOf(IllegalStateException.class);
     }
 
@@ -1261,7 +1261,7 @@ public class RouteFragmentTest {
         FragmentTestUtil.startFragment(fragment);
         db.close();
         fragment.success(new Route(MOCK_ROUTE_JSON));
-        assertThat(ShadowBugSenseHandler.getLastHandledException())
+        assertThat(ShadowMint.getLastHandledException())
                 .isInstanceOf(IllegalStateException.class);
     }
 

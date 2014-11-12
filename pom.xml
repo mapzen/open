@@ -12,9 +12,9 @@
 
     <repositories>
         <repository>
-            <id>bugsense-repo</id>
-            <name>The BugSense Repository</name>
-            <url>http://www.bugsense.com/maven/</url>
+            <id>Splunk MINT repo</id>
+            <name>The Splunk MINT Repository</name>
+            <url>https://mint.splunk.com/maven/</url>
         </repository>
 
         <repository>
@@ -245,9 +245,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.bugsense.trace</groupId>
-            <artifactId>bugsense</artifactId>
-            <version>3.6.1</version>
+            <groupId>com.splunk.mint</groupId>
+            <artifactId>mint</artifactId>
+            <version>4.0.5</version>
         </dependency>
 
         <dependency>

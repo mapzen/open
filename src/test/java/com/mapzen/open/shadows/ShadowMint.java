@@ -1,17 +1,17 @@
 package com.mapzen.open.shadows;
 
-import com.bugsense.trace.BugSenseHandler;
+import com.splunk.mint.Mint;
 
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 
 import android.content.Context;
 
-@Implements(BugSenseHandler.class)
-public final class ShadowBugSenseHandler {
+@Implements(Mint.class)
+public final class ShadowMint {
     private static Exception lastHandledException;
 
-    private ShadowBugSenseHandler() {
+    private ShadowMint() {
         // Do nothing.
     }
 
@@ -21,12 +21,12 @@ public final class ShadowBugSenseHandler {
     }
 
     @Implementation
-    public static void addCrashExtraData(String s, String s1) {
+    public static void addExtraData(String s, String s1) {
         // Do nothing.
     }
 
     @Implementation
-    public static void sendException(Exception e) {
+    public static void logException(Exception e) {
         lastHandledException = e;
     }
 

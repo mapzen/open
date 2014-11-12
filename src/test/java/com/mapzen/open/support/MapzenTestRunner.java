@@ -1,10 +1,10 @@
 package com.mapzen.open.support;
 
-import com.mapzen.open.shadows.ShadowBugSenseHandler;
 import com.mapzen.open.shadows.ShadowGLMatrix;
 import com.mapzen.open.shadows.ShadowGLShader;
 import com.mapzen.open.shadows.ShadowGLState;
 import com.mapzen.open.shadows.ShadowMapView;
+import com.mapzen.open.shadows.ShadowMint;
 import com.mapzen.open.shadows.ShadowVectorTileLayer;
 
 import org.junit.runners.model.InitializationError;
@@ -48,7 +48,7 @@ public class MapzenTestRunner extends RobolectricTestRunner {
                     "org.oscim.renderer.GLMatrix",
                     "org.oscim.renderer.GLShader",
                     "org.oscim.renderer.GLState",
-                    "com.bugsense.trace.BugSenseHandler"
+                    "com.splunk.mint.Mint"
             ));
 
     public MapzenTestRunner(Class<?> testClass) throws InitializationError {
@@ -67,7 +67,7 @@ public class MapzenTestRunner extends RobolectricTestRunner {
                 .addShadowClass(ShadowGLMatrix.class)
                 .addShadowClass(ShadowGLShader.class)
                 .addShadowClass(ShadowGLState.class)
-                .addShadowClass(ShadowBugSenseHandler.class)
+                .addShadowClass(ShadowMint.class)
                 .build();
     }
 

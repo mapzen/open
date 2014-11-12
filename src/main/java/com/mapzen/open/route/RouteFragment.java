@@ -1,16 +1,13 @@
 package com.mapzen.open.route;
 
+import com.mapzen.android.lost.LocationClient;
+import com.mapzen.helpers.DistanceFormatter;
+import com.mapzen.helpers.ZoomController;
 import com.mapzen.open.MapController;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
-import com.mapzen.android.lost.LocationClient;
 import com.mapzen.open.entity.SimpleFeature;
 import com.mapzen.open.fragment.BaseFragment;
-import com.mapzen.helpers.DistanceFormatter;
-import com.mapzen.helpers.ZoomController;
-import com.mapzen.osrm.Instruction;
-import com.mapzen.osrm.Route;
-import com.mapzen.osrm.Router;
 import com.mapzen.open.util.DatabaseHelper;
 import com.mapzen.open.util.DisplayHelper;
 import com.mapzen.open.util.Logger;
@@ -19,10 +16,13 @@ import com.mapzen.open.util.RouteLocationIndicator;
 import com.mapzen.open.util.VoiceNavigationController;
 import com.mapzen.open.widget.DebugView;
 import com.mapzen.open.widget.DistanceView;
+import com.mapzen.osrm.Instruction;
+import com.mapzen.osrm.Route;
+import com.mapzen.osrm.Router;
 
-import com.bugsense.trace.BugSenseHandler;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.splunk.mint.Mint;
 
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
@@ -62,19 +62,19 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import static com.mapzen.helpers.ZoomController.DrivingSpeed;
 import static com.mapzen.open.MapController.geoPointToPair;
 import static com.mapzen.open.MapController.getMapController;
 import static com.mapzen.open.MapController.locationToPair;
 import static com.mapzen.open.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.open.core.MapzenLocation.Util.getDistancePointFromBearing;
 import static com.mapzen.open.entity.SimpleFeature.TEXT;
-import static com.mapzen.helpers.ZoomController.DrivingSpeed;
+import static com.mapzen.open.util.DatabaseHelper.COLUMN_GROUP_ID;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_LAT;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_LNG;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_MSG;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_POSITION;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_RAW;
-import static com.mapzen.open.util.DatabaseHelper.COLUMN_GROUP_ID;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_ROUTE_ID;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_SPEED;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_TABLE_ID;
@@ -630,7 +630,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             db.setTransactionSuccessful();
             db.endTransaction();
         } catch (IllegalStateException e) {
-            BugSenseHandler.sendException(e);
+            Mint.logException(e);
         }
     }
 
@@ -641,7 +641,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 Logger.e("error inserting into db");
             }
         } catch (IllegalStateException e) {
-            BugSenseHandler.sendException(e);
+            Mint.logException(e);
         }
     }
 
@@ -741,7 +741,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             db.update(TABLE_GROUPS, cv, COLUMN_TABLE_ID + " = ?",
                     new String[] { groupId });
         } catch (IllegalStateException e) {
-            BugSenseHandler.sendException(e);
+            Mint.logException(e);
         }
     }
 
