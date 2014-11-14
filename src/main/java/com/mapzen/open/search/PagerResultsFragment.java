@@ -252,7 +252,7 @@ public class PagerResultsFragment extends BaseFragment {
 
         } else {
             hide();
-            Toast.makeText(act, "No results where found for: " + act.getSearchView().getQuery(),
+            Toast.makeText(act, "No results were found for: " + act.getSearchView().getQuery(),
                     Toast.LENGTH_LONG).show();
         }
     }
