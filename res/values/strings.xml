@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="rn:oasis:names:tc:xliff:document:1.2">
     <string name="application_name"><xliff:g> OPEN </xliff:g> </string>
     <!-- title of search menu -->
     <string name="search_title">Search</string>
