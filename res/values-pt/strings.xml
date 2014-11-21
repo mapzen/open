@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><resources>
+    <string name="application_name">
+    <xliff:g> OPEN </xliff:g>
+  </string>
+    <!-- title of search menu -->
+    <string name="search_title">Busca</string>
+    <!-- the results from doing a search -->
+    <string name="results_title">Resutados da busca</string>
+
+    <string name="route_description">Virar Ícone</string>
+    <!-- this button brings the user back to the directions if they have left that view -->
+    <string name="route_resume_button">Retomar</string>
+    <!-- see all search results -->
+    <string name="view_all">VER TODOS</string>
+    <!-- the message that appears when there are no directions to a point -->
+    <string name="no_route_found">Nenhum Rota Encontrada</string>
+    <!-- where teh user currently is located -->
+    <string name="current_location">Localização Atual</string>
+    <!-- generic error message -->
+    <string name="generic_server_error">Ocorreu um erro</string>
+    <!-- message when content is loading -->
+    <string name="progress_dialog_title">Carregando</string>
+    <!-- message displayed the the phones GPS is turned off -->
+    <string name="gps_dialog_title">GPS Desativado</string>
+    <!-- message asking the user to turn on GPS on their phone -->
+    <string name="gps_dialog_message">O GPS em seu dispositivo está desligado. Você gostaria de ligá-lo para uma melhor precisão de localização?</string>
+    <!-- yes -->
+    <string name="gps_positive_button">Sim</string>
+    <!-- ignore button -->
+    <string name="gps_negative_button">Descartar</string>
+    <!-- begin navigation -->
+    <string name="start">Iniciar</string>
+    <!--  -->
+    <string name="view">Ver</string>
+    <!--  -->
+    <string name="overflow_menu">Mais</string>
+    <!-- the step by step list of instructions -->
+    <string name="route_steps_menu_option">Lista passo-a-passo</string>
+    <!-- message displayed when the phone is finding its location -->
+    <string name="waiting">Aguardando localização</string>
+    <!-- message displayed when the phone is figuring out a new route -->
+    <string name="recalculating">Recalculando</string>
+    <!--  -->
+    <string name="upload_traces">Carregar Rastreamento do GPS</string>
+    <!-- origin of the trip -->
+    <string name="from_text">De:</string>
+    <!-- destination of the trip -->
+    <string name="to_text">Para:</string>
+    <!-- destination of the trip -->
+    <string name="routing_to_text">Para</string>
+    <!--  -->
+    <string name="search_hint_icon_spacer">   </string>
+    <string name="osm_attribution">Mapa de dados © OpenStreetMap</string>
+    <!-- phone has no connection -->
+    <string name="no_network">Conexão de rede indisponível</string>
+    <!-- message displayed when the user reaches their destination -->
+    <string name="you_have_arrived_at">Você chegou a</string>
+    <!-- when a user is viewing search results this tells them where they are in the list of results -->
+    <string name="paginate_template">Visualizando %1$d de %2$d resultados</string>
+    <!-- what the app is about -->
+    <string name="about_link">Sobre</string>
+
+    <!--Login-->
+    <!-- these are pages in the login flow -->
+    <string name="login_page_one_body">Um aplicativo de busca e navegação construído em software e dados abertos</string>
+    <string name="login_page_two_body">Você precisa fazer login com o OpenStreetMap, mas este não é um editor de OSM</string>
+    <string name="login_page_three_body">O rastreamento de GPS de curva-por-curva será carregado para sua conta OpenStreetMap, a não ser que escolha não receber</string>
+    <string name="login_page_four_body">Cadastre-se ou acesse com o OpenStreetMap para começar</string>
+    <string name="login_accept_terms">
+    <u>Concordo com os Termos e Condições</u>
+  </string>
+    <string name="login_button">Continue com OpenStreetMap</string>
+    <string name="toast_fixed_location_is_malformed">Sua localização fixa está disforme</string>
+    <string name="logo_description">Abrir Logo</string>
+    <string name="osm_logout">Sair OpenStreetMap</string>
+    <string name="osm_login_title">Por favor, Autorizar</string>
+    <string name="login_error">Não foi possível fazer login. Você pode tentar novamente, reiniciando o aplicativo.</string>
+    <string name="agree_to_terms_please">Por favor, concordar com os Termos e Condições</string>
+
+</resources>
