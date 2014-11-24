@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="rn:oasis:names:tc:xliff:document:1.2">
+    <string name="application_name">
+    <xliff:g> OPEN </xliff:g>
+  </string>
+    <!-- title of search menu -->
+    <string name="search_title">Keresés</string>
+    <!-- the results from doing a search -->
+    <string name="results_title">Keresési eredmények</string>
+
+    <string name="route_description">Fordulás ikon</string>
+    <!-- this button brings the user back to the directions if they have left that view -->
+    <string name="route_resume_button">Visszatérés</string>
+    <!-- see all search results -->
+    <string name="view_all">ÖSSZES MEGTEKINTÉSE</string>
+    <!-- the message that appears when there are no directions to a point -->
+    <string name="no_route_found">Nem található útvonal</string>
+    <!-- where teh user currently is located -->
+    <string name="current_location">Jelenlegi tartózkodási hely</string>
+    <!-- generic error message -->
+    <string name="generic_server_error">Hiba történt</string>
+    <!-- message when content is loading -->
+    <string name="progress_dialog_title">Töltés...</string>
+    <!-- message displayed the the phones GPS is turned off -->
+    <string name="gps_dialog_title">GPS kikapcsolva</string>
+    <!-- message asking the user to turn on GPS on their phone -->
+    <string name="gps_dialog_message">A GPS nincs bekapcsolva. Bekapcsolja, hogy pontosabb legyen a helymeghatározás?</string>
+    <!-- yes -->
+    <string name="gps_positive_button">Igen</string>
+    <!-- ignore button -->
+    <string name="gps_negative_button">Elvetés</string>
+    <!-- begin navigation -->
+    <string name="start">Kezdés</string>
+    <!--  -->
+    <string name="view">Megtekintés</string>
+    <!--  -->
+    <string name="overflow_menu">Több</string>
+    <!-- the step by step list of instructions -->
+    <string name="route_steps_menu_option">Lista lépésről-lépésre</string>
+    <!-- message displayed when the phone is finding its location -->
+    <string name="waiting">Várakozás a pontos helyre</string>
+    <!-- message displayed when the phone is figuring out a new route -->
+    <string name="recalculating">\nÚjratervezés</string>
+    <!--  -->
+    <string name="upload_traces">GPS-útvonal feltöltése</string>
+    <!-- origin of the trip -->
+    <string name="from_text">Kezdőpont:</string>
+    <!-- destination of the trip -->
+    <string name="to_text">\nCél:</string>
+    <!-- destination of the trip -->
+    <string name="routing_to_text">Cél:</string>
+    <!--  -->
+    <string name="search_hint_icon_spacer">   </string>
+    <string name="osm_attribution">Térképadatok © OpenStreetMap</string>
+    <!-- phone has no connection -->
+    <string name="no_network">Nincs hálózati kapcsolat</string>
+    <!-- message displayed when the user reaches their destination -->
+    <string name="you_have_arrived_at">Megérkezett a céljához:</string>
+    <!-- when a user is viewing search results this tells them where they are in the list of results -->
+    <string name="paginate_template">%1$d számú találat a(z) %2$d találatból</string>
+    <!-- what the app is about -->
+    <string name="about_link">Bemutatás</string>
+
+    <!--Login-->
+    <!-- these are pages in the login flow -->
+    <string name="login_page_one_body">Kereső- és navigációs alkalmazás nyílt szoftverre és adatokra építve</string>
+    <string name="login_page_two_body">Be kell lépnie az OpenStreetMapbe, de ez nem OSM-szerkesztő</string>
+    <string name="login_page_three_body">A navigáció GPS-útvonalát feltöltjük az ön OpenStreetMap-fiókjába, ha csak nem használ más beállítást.</string>
+    <string name="login_page_four_body">Regisztráljon vagy lépjen be OpenStreetMapbe a kezdéshez</string>
+    <string name="login_accept_terms">
+    <u>Elfogadom a Felhasználási feltételeket</u>
+  </string>
+    <string name="login_button">\nTovább az OpenStreetMappel</string>
+    <string name="toast_fixed_location_is_malformed">A meghatározott helye hibásan formázott.</string>
+    <string name="logo_description">Open logó</string>
+    <string name="osm_logout">Kilépés az OpenStreetMapből</string>
+    <string name="osm_login_title">Kérem, engedélyezze</string>
+    <string name="login_error">Nem tud bejelentkezni. Próbálja újra az alkalmazás újraindítása után.</string>
+    <string name="agree_to_terms_please">Kérjük, fogadja el a felhasználási feltételeket.</string>
+
+</resources>
