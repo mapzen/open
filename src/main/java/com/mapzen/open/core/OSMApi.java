@@ -3,17 +3,16 @@ package com.mapzen.open.core;
 import org.scribe.builder.api.DefaultApi10a;
 import org.scribe.model.Token;
 
+import java.util.Locale;
+
 public class OSMApi extends DefaultApi10a {
 
     public static final String BASE_URL = "https://www.openstreetmap.org";
     private static final String OAUTH_URL = BASE_URL + "/oauth/";
-    private static final String AUTHORIZATION_URL = OAUTH_URL + "authorize?oauth_token=%s";
+    private static final String AUTHORIZATION_URL =
+            OAUTH_URL + "authorize?oauth_token=%s&locale=%s";
     public static final String CREATE_GPX = "/api/0.6/gpx/create";
     public static final String CHECK_PERMISSIONS = "/api/0.6/permissions";
-
-    public OSMApi() {
-        super();
-    }
 
     @Override
     public String getRequestTokenEndpoint() {
@@ -27,6 +26,7 @@ public class OSMApi extends DefaultApi10a {
 
     @Override
     public String getAuthorizationUrl(Token requestToken) {
-        return String.format(AUTHORIZATION_URL, requestToken.getToken());
+        return String.format(AUTHORIZATION_URL, requestToken.getToken(),
+                Locale.getDefault().getLanguage());
     }
 }
