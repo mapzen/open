@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><resources xmlns:xliff="rn:oasis:names:tc:xliff:document:1.2">
+    <string name="application_name">
+    <xliff:g> OPEN </xliff:g>
+  </string>
+    <!-- title of search menu -->
+    <string name="search_title">検索</string>
+    <!-- the results from doing a search -->
+    <string name="results_title">検索結果</string>
+
+    <string name="route_description">アイコンを回転させる</string>
+    <!-- this button brings the user back to the directions if they have left that view -->
+    <string name="route_resume_button">履歴</string>
+    <!-- see all search results -->
+    <string name="view_all">全て見る</string>
+    <!-- the message that appears when there are no directions to a point -->
+    <string name="no_route_found">ルートが見つかりません</string>
+    <!-- where teh user currently is located -->
+    <string name="current_location">現在位置</string>
+    <!-- generic error message -->
+    <string name="generic_server_error">エラーが発生しました</string>
+    <!-- message when content is loading -->
+    <string name="progress_dialog_title">読み込み中</string>
+    <!-- message displayed the the phones GPS is turned off -->
+    <string name="gps_dialog_title">GPSが無効になっています</string>
+    <!-- message asking the user to turn on GPS on their phone -->
+    <string name="gps_dialog_message">お使いのデバイス上のGPSが無効になっています。現在位置を正確に測定するために、GPSを有効にしますか？</string>
+    <!-- yes -->
+    <string name="gps_positive_button">はい</string>
+    <!-- ignore button -->
+    <string name="gps_negative_button">無視する</string>
+    <!-- begin navigation -->
+    <string name="start">スタート</string>
+    <!--  -->
+    <string name="view">表示</string>
+    <!--  -->
+    <string name="overflow_menu">詳細</string>
+    <!-- the step by step list of instructions -->
+    <string name="route_steps_menu_option">使い方</string>
+    <!-- message displayed when the phone is finding its location -->
+    <string name="waiting">ロケーションを探しています</string>
+    <!-- message displayed when the phone is figuring out a new route -->
+    <string name="recalculating">新しいルートを探しています</string>
+    <!--  -->
+    <string name="upload_traces">GPSトレースをアップロード</string>
+    <!-- origin of the trip -->
+    <string name="from_text">出発点：</string>
+    <!-- destination of the trip -->
+    <string name="to_text">目的地：</string>
+    <!-- destination of the trip -->
+    <string name="routing_to_text">目的地</string>
+    <!--  -->
+    <string name="search_hint_icon_spacer">   </string>
+    <string name="osm_attribution">Map data © OpenStreetMap</string>
+    <!-- phone has no connection -->
+    <string name="no_network">ネットワークへ接続できません</string>
+    <!-- message displayed when the user reaches their destination -->
+    <string name="you_have_arrived_at">目的地へ到着しました</string>
+    <!-- when a user is viewing search results this tells them where they are in the list of results -->
+    <string name="paginate_template">%2$d のうち %1$d の結果を表示中</string>
+    <!-- what the app is about -->
+    <string name="about_link">詳細</string>
+
+    <!--Login-->
+    <!-- these are pages in the login flow -->
+    <string name="login_page_one_body">オープンソフトウェアとデータで構築された、検索およびナビゲーションアプリ</string>
+    <string name="login_page_two_body">OpenStreetMapのを用いてログインする必要がありますが、これはOSM用エディタではありません</string>
+    <string name="login_page_three_body">配信停止設定をしない限り、turn-by-turnのGPSトレースは、あなたのOpenStreetMapのアカウントに自動的にアップロードされます</string>
+    <string name="login_page_four_body">利用開始するためにOpenStreetMapでログイン、またはサインインする</string>
+    <string name="login_accept_terms">
+    <u> 私は利用規約に同意します </u>
+  </string>
+    <string name="login_button">OpenStreetMapの利用を続ける</string>
+    <string name="toast_fixed_location_is_malformed">設定した位置が無効です。</string>
+    <string name="logo_description">オープンロゴ</string>
+    <string name="osm_logout">OpenStreetMapをログアウトする</string>
+    <string name="osm_login_title">承認してください</string>
+    <string name="login_error">ログインできません。アプリケーションを再起動してからもう一度、ログインしてみて下さい。</string>
+    <string name="agree_to_terms_please">利用規約に同意してください</string>
+
+</resources>

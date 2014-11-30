@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><resources xmlns:xliff="rn:oasis:names:tc:xliff:document:1.2">
+    <string name="application_name">
+    <xliff:g> OPEN </xliff:g>
+  </string>
+    <!-- title of search menu -->
+    <string name="search_title">Sök</string>
+    <!-- the results from doing a search -->
+    <string name="results_title">Sökresultat</string>
+
+    <string name="route_description">Vändikon</string>
+    <!-- this button brings the user back to the directions if they have left that view -->
+    <string name="route_resume_button">Återuppta</string>
+    <!-- see all search results -->
+    <string name="view_all">VISA ALLA</string>
+    <!-- the message that appears when there are no directions to a point -->
+    <string name="no_route_found">Inge rutt hittades</string>
+    <!-- where teh user currently is located -->
+    <string name="current_location">Aktuell plats</string>
+    <!-- generic error message -->
+    <string name="generic_server_error">Ett fel uppstod</string>
+    <!-- message when content is loading -->
+    <string name="progress_dialog_title">Laddar</string>
+    <!-- message displayed the the phones GPS is turned off -->
+    <string name="gps_dialog_title">GPS Inaktiverad</string>
+    <!-- message asking the user to turn on GPS on their phone -->
+    <string name="gps_dialog_message">GPS:en på din enhet är inaktiverad. Vill du aktivera den för bättre platsprecision?</string>
+    <!-- yes -->
+    <string name="gps_positive_button">Ja</string>
+    <!-- ignore button -->
+    <string name="gps_negative_button">Ignorera</string>
+    <!-- begin navigation -->
+    <string name="start">Starta</string>
+    <!--  -->
+    <string name="view">Öppna</string>
+    <!--  -->
+    <string name="overflow_menu">Mer</string>
+    <!-- the step by step list of instructions -->
+    <string name="route_steps_menu_option">Steg-för-steg-lista</string>
+    <!-- message displayed when the phone is finding its location -->
+    <string name="waiting">Väntar på plats</string>
+    <!-- message displayed when the phone is figuring out a new route -->
+    <string name="recalculating">Omberäknar</string>
+    <!--  -->
+    <string name="upload_traces">Ladda upp GPS-spår</string>
+    <!-- origin of the trip -->
+    <string name="from_text">Från:</string>
+    <!-- destination of the trip -->
+    <string name="to_text">Till:</string>
+    <!-- destination of the trip -->
+    <string name="routing_to_text">Till</string>
+    <!--  -->
+    <string name="search_hint_icon_spacer">   </string>
+    <string name="osm_attribution">Map data © OpenStreetMap</string>
+    <!-- phone has no connection -->
+    <string name="no_network">Nätverksanslutningen är otillgänglig</string>
+    <!-- message displayed when the user reaches their destination -->
+    <string name="you_have_arrived_at">Du har kommit fram till</string>
+    <!-- when a user is viewing search results this tells them where they are in the list of results -->
+    <string name="paginate_template">Visar %1$d av %2$d resultat</string>
+    <!-- what the app is about -->
+    <string name="about_link">Om</string>
+
+    <!--Login-->
+    <!-- these are pages in the login flow -->
+    <string name="login_page_one_body">En sök- och navigeringsapp byggd av öppen källkod och öppen data</string>
+    <string name="login_page_two_body">Du måste logga in med OpenStreetMap, men detta är inte en OSM-editor</string>
+    <string name="login_page_three_body">GPS spår från sväng-efter-sväng kommer att laddas upp till ditt OpenStreetMap-konto, om du inte väljer bort det</string>
+    <string name="login_page_four_body">Bli medlem eller logga in med OpenStreetMap för att komma igång</string>
+    <string name="login_accept_terms">
+    <u> Jag godkänner villkoren </u>
+  </string>
+    <string name="login_button">Fortsätt med OpenStreetMap</string>
+    <string name="toast_fixed_location_is_malformed">Din fasta plats är i felaktigt format</string>
+    <string name="logo_description">Open Logga in</string>
+    <string name="osm_logout">OpenStreetMap Logga ut</string>
+    <string name="osm_login_title">Vänligen godkänn</string>
+    <string name="login_error">Det går inte att logga in. Du kan prova att logga in igen genom att starta om programmet.</string>
+    <string name="agree_to_terms_please">Du måste godkänna användarvillkoren</string>
+
+</resources>
