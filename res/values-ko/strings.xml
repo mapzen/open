@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><resources xmlns:xliff="rn:oasis:names:tc:xliff:document:1.2">
+    <string name="application_name">
+    <xliff:g> OPEN </xliff:g>
+  </string>
+    <!-- title of search menu -->
+    <string name="search_title">검색</string>
+    <!-- the results from doing a search -->
+    <string name="results_title">검색 결과</string>
+
+    <string name="route_description">회전 아이콘</string>
+    <!-- this button brings the user back to the directions if they have left that view -->
+    <string name="route_resume_button">다시 재개</string>
+    <!-- see all search results -->
+    <string name="view_all">모두 보기</string>
+    <!-- the message that appears when there are no directions to a point -->
+    <string name="no_route_found">경로를 찾을 수 없습니다</string>
+    <!-- where teh user currently is located -->
+    <string name="current_location">현재 위치</string>
+    <!-- generic error message -->
+    <string name="generic_server_error">오류가 발생했습니다</string>
+    <!-- message when content is loading -->
+    <string name="progress_dialog_title">로딩 중</string>
+    <!-- message displayed the the phones GPS is turned off -->
+    <string name="gps_dialog_title">GPS 비활성화</string>
+    <!-- message asking the user to turn on GPS on their phone -->
+    <string name="gps_dialog_message">기기의 GPS가 비활성화되어 있습니다. 위치의 정확도를 더욱 향상시키기 위해 활성화하시겠습니까?</string>
+    <!-- yes -->
+    <string name="gps_positive_button">예</string>
+    <!-- ignore button -->
+    <string name="gps_negative_button">무시</string>
+    <!-- begin navigation -->
+    <string name="start">출발</string>
+    <!--  -->
+    <string name="view">보기</string>
+    <!--  -->
+    <string name="overflow_menu">더 자세히</string>
+    <!-- the step by step list of instructions -->
+    <string name="route_steps_menu_option">단계별 목록</string>
+    <!-- message displayed when the phone is finding its location -->
+    <string name="waiting">위치 찾는 중</string>
+    <!-- message displayed when the phone is figuring out a new route -->
+    <string name="recalculating">다시 계산하는 중</string>
+    <!--  -->
+    <string name="upload_traces">GPS 추적 업로드</string>
+    <!-- origin of the trip -->
+    <string name="from_text">출발지:</string>
+    <!-- destination of the trip -->
+    <string name="to_text">목적지:</string>
+    <!-- destination of the trip -->
+    <string name="routing_to_text">목적지</string>
+    <!--  -->
+    <string name="search_hint_icon_spacer">   </string>
+    <string name="osm_attribution">Map data © OpenStreetMap</string>
+    <!-- phone has no connection -->
+    <string name="no_network">네트워크에 연결할 수 없습니다</string>
+    <!-- message displayed when the user reaches their destination -->
+    <string name="you_have_arrived_at">다음 장소에 도착했습니다:</string>
+    <!-- when a user is viewing search results this tells them where they are in the list of results -->
+    <string name="paginate_template">%1$d / %2$d 결과 보기</string>
+    <!-- what the app is about -->
+    <string name="about_link">앱 소개</string>
+
+    <!--Login-->
+    <!-- these are pages in the login flow -->
+    <string name="login_page_one_body">공개 소프트웨어와 데이터를 기반으로 한 검색 및 네비게이션 앱</string>
+    <string name="login_page_two_body">OpenStreetMap으로 로그인해야 하지만, OSM 편집기가 아닙니다.</string>
+    <string name="login_page_three_body">선택을 해제하지 않으면, 구간별 GPS 추적이 OpenStreetMap 계정에 업로드됩니다.</string>
+    <string name="login_page_four_body">OpenStreetMap에 가입하거나 로그인하여 시작하세요.</string>
+    <string name="login_accept_terms">
+    <u>이용약관에 동의합니다.</u>
+  </string>
+    <string name="login_button">OpenStreetMap으로 계속</string>
+    <string name="toast_fixed_location_is_malformed">고정 위치가 잘못되었습니다.</string>
+    <string name="logo_description">오픈 로고</string>
+    <string name="osm_logout">OpenStreetMap에서 로그 아웃</string>
+    <string name="osm_login_title">권한을 부여하십시오</string>
+    <string name="login_error">로그인 할 수 없습니다. 앱을 다시 시작하여 로그인해주십시오.</string>
+    <string name="agree_to_terms_please">이용 약관에 동의하여 주십시오.</string>
+
+</resources>
