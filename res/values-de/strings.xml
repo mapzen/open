@@ -50,7 +50,7 @@
     <!-- destination of the trip -->
     <string name="routing_to_text">Nach</string>
     <!--  -->
-    <string name="search_hint_icon_spacer">   </string>
+    <string name="search_hint_icon_spacer">"   "</string>
     <string name="osm_attribution">Kartendaten © OpenStreetMap</string>
     <!-- phone has no connection -->
     <string name="no_network">Netzwerkverbindung nicht verfügbar</string>

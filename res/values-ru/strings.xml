@@ -49,7 +49,7 @@
     <!-- destination of the trip -->
     <string name="routing_to_text">Куда</string>
     <!--  -->
-    <string name="search_hint_icon_spacer">   </string>
+    <string name="search_hint_icon_spacer">"   "</string>
     <string name="osm_attribution">Картографические данные © OpenStreetMap</string>
     <!-- phone has no connection -->
     <string name="no_network">Отсутствует сетевое подключение</string>

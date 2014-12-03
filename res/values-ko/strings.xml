@@ -49,7 +49,7 @@
     <!-- destination of the trip -->
     <string name="routing_to_text">목적지</string>
     <!--  -->
-    <string name="search_hint_icon_spacer">   </string>
+    <string name="search_hint_icon_spacer">"   "</string>
     <string name="osm_attribution">Map data © OpenStreetMap</string>
     <!-- phone has no connection -->
     <string name="no_network">네트워크에 연결할 수 없습니다</string>
