@@ -11,8 +11,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
+
+import android.content.Context;
 
 import java.io.File;
 
@@ -81,5 +84,12 @@ public class StyleDownLoaderTest {
             File file = new File(app.getExternalFilesDir(null).getAbsolutePath() + "/" + path);
             assertThat(file).exists();
         }
+    }
+
+    @Test
+    public void shouldVerifyExternalCacheDirectoryIsAvailable() throws Exception {
+        Context mockContext = Mockito.mock(Context.class);
+        Mockito.when(mockContext.getExternalCacheDir()).thenReturn(null);
+        new StyleDownLoader(mockContext);
     }
 }

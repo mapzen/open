@@ -27,9 +27,14 @@ public class StyleDownLoader {
 
     public StyleDownLoader(Context context) {
         this.context = context;
-        File cacheDir = new File(context.getExternalCacheDir().getAbsolutePath()
-                + "/assets");
-        int cacheSize = 1024 * 1024;
+        if (context.getExternalCacheDir() != null) {
+            init();
+        }
+    }
+
+    private void init() {
+        final File cacheDir = new File(context.getExternalCacheDir().getAbsolutePath() + "/assets");
+        final int cacheSize = 1024 * 1024;
         try {
             cache = new HttpResponseCache(cacheDir, cacheSize);
             client = new OkHttpClient();
