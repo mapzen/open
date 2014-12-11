@@ -202,6 +202,10 @@ public class MapFragment extends BaseFragment {
     }
 
     private HttpResponseCache getTileCache() {
+        if (act.getExternalCacheDir() == null) {
+            return null;
+        }
+
         HttpResponseCache cache = null;
         try {
             File cacheDir = new File(act.getExternalCacheDir().getAbsolutePath()
