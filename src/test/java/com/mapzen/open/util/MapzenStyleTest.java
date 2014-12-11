@@ -11,8 +11,11 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.oscim.backend.AssetAdapter;
 import org.robolectric.annotation.Config;
+
+import android.content.Context;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -20,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.robolectric.Robolectric.getShadowApplication;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
@@ -60,6 +64,16 @@ public class MapzenStyleTest {
         assertThat(IOUtils.contentEquals(actual, expected)).isTrue();
     }
 
+    @Test
+    public void openFileAsStream_shouldReturnAssetsDirectoryIfNullExternalFiles() throws Exception {
+        Context mockContext = Mockito.mock(Context.class);
+        Mockito.when(mockContext.getExternalCacheDir()).thenReturn(null);
+        Mockito.when(mockContext.getAssets()).thenReturn(getShadowApplication().getAssets());
+        InputStream in = new MapzenStyle.MapzenAssetAdapter(mockContext)
+                .openFileAsStream("styles/mapzen.xml");
+        assertThat(in).isNotNull();
+    }
+
     private InputStream writeExternalFile() throws IOException {
         Files.write("some content", new File(pathToFile), Charsets.UTF_8);
         return new ByteArrayInputStream(Files.toByteArray(new File(pathToFile)));
@@ -69,5 +83,4 @@ public class MapzenStyleTest {
         return new ByteArrayInputStream(
                 Files.toByteArray(new File("assets/styles/mapzen.xml")));
     }
-
 }
