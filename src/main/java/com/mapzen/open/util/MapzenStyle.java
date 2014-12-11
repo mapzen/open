@@ -40,6 +40,15 @@ public class MapzenStyle {
 
         @Override
         public InputStream openFileAsStream(String fileName) {
+            if (context.getExternalFilesDir(null) == null) {
+                try {
+                    return context.getAssets().open(fileName);
+                } catch (IOException e) {
+                    Logger.e("opening file failed: " + e.toString());
+                    return null;
+                }
+            }
+
             InputStream value = null;
             String pathToFile = context.getExternalFilesDir(null).getAbsolutePath()
                     + "/assets/" + fileName;

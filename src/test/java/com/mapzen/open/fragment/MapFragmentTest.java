@@ -23,6 +23,7 @@ import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.tile.TileLayer;
 import org.oscim.map.Map;
+import org.oscim.map.TestMap;
 import org.oscim.tiling.TileSource;
 import org.oscim.tiling.source.HttpEngine;
 import org.oscim.tiling.source.OkHttpEngine;
@@ -36,6 +37,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.io.File;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -318,11 +320,29 @@ public class MapFragmentTest {
         assertThat(mapFragment.mapController.getZoomLevel()).isEqualTo(10);
     }
 
+    @Test
+    public void onActivityCreated_shouldVerifyTileCacheDirectoryIsAvailable() throws Exception {
+        BaseActivityWithNullCache baseActivityWithNullCache = new BaseActivityWithNullCache();
+        mapFragment.setAct(baseActivityWithNullCache);
+        mapFragment.onActivityCreated(null);
+    }
+
     private void setTileSourceConfiguration(String source) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(
-                activity);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         SharedPreferences.Editor prefEditor = prefs.edit();
         prefEditor.putString(activity.getString(R.string.settings_key_mapsource), source);
         prefEditor.commit();
+    }
+
+    public class BaseActivityWithNullCache extends BaseActivity {
+        @Override
+        public File getExternalCacheDir() {
+            return null;
+        }
+
+        @Override
+        public Map getMap() {
+            return new TestMap();
+        }
     }
 }
