@@ -23,6 +23,9 @@
         android:background="@drawable/signin_button"
         android:layout_marginBottom="40dp"
         android:layout_centerHorizontal="true"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:textSize="@dimen/button_font_size" />
 
     <LinearLayout
