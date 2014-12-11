@@ -12,7 +12,7 @@ if [ -z ${CIRCLE_TOKEN} ]
     exit 1
 fi
 
-trigger_build_url=https://circleci.com/api/v1/project/mapzen/mapzen-android-demo/tree/$1?circle-token=${CIRCLE_TOKEN}
+trigger_build_url=https://circleci.com/api/v1/project/mapzen/open/tree/$1?circle-token=${CIRCLE_TOKEN}
 
 post_data=$(cat <<EOF
 {
