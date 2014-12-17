@@ -142,13 +142,6 @@ public class AutoCompleteAdapterTest {
     }
 
     @Test
-    public void onClick_shouldRetreiveRestOfPropertyFromPelias() throws Exception {
-        view.performClick();
-        verify(pelias).doc(eq(simpleFeature.getProperty(TYPE)),
-                eq(simpleFeature.getProperty(ID)), callback.capture());
-    }
-
-    @Test
     public void onQueryTextChange_shouldAttachAdapterIfNull() throws Exception {
         baseActivity.executeSearchOnMap("query");
         adapter.onQueryTextChange("new query");
