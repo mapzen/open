@@ -18,6 +18,7 @@
     <string name="start">Start</string>
     <string name="view">View</string>
     <string name="overflow_menu">More</string>
+    <string name="osrm_endpoint">https://osrm.mapzen.com</string>
     <string name="route_steps_menu_option">Step-by-step list</string>
     <string name="waiting">Waiting for location</string>
     <string name="recalculating">Recalculating</string>

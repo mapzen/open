@@ -73,7 +73,7 @@ public class AppModule {
     }
 
     @Provides @Singleton Router provideRouter() {
-        return Router.getRouter();
+        return Router.getRouter().setEndpoint(context.getString(R.string.osrm_endpoint));
     }
 
     @Provides OAuthRequestFactory provideOAuthRequestFactory() {
