@@ -55,7 +55,7 @@
     <string name="settings_debug_title">Debugging</string>
     <string name="settings_key_debug">checkbox_debug</string>
     <string name="settings_key_mapsource">edittext_mapsource</string>
-    <string name="settings_default_mapsource">http://vector.mapzen.com/osm/all</string>
+    <string name="settings_default_mapsource">https://vector.mapzen.com/osm/all</string>
     <string name="settings_mapsource_dialog_title">Configure Map Tile source</string>
     <string name="settings_mapsource">Configure Tile server</string>
     <string name="settings_mapsource_summary">Restart required! And possibly flushing caches.</string>
