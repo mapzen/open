@@ -490,6 +490,31 @@
 
         <profile>
             <id>release</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.mapzen.android</groupId>
+                    <artifactId>leyndo</artifactId>
+                    <version>0.0.1-SNAPSHOT</version>
+                    <classifier>armeabi</classifier>
+                    <type>so</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>com.mapzen.android</groupId>
+                    <artifactId>leyndo</artifactId>
+                    <version>0.0.1-SNAPSHOT</version>
+                    <classifier>armeabi-v7a</classifier>
+                    <type>so</type>
+                </dependency>
+
+                <dependency>
+                    <groupId>com.mapzen.android</groupId>
+                    <artifactId>leyndo</artifactId>
+                    <version>0.0.1-SNAPSHOT</version>
+                    <classifier>x86</classifier>
+                    <type>so</type>
+                </dependency>
+            </dependencies>
             <build>
                 <finalName>${artifactId}-${version}-unsigned</finalName>
                 <plugins>
