@@ -51,12 +51,15 @@ public class MapzenApplication extends Application {
         super.onCreate();
         graph = ObjectGraph.create(getModules().toArray());
         inject(this);
-        osmOauthService = new ServiceBuilder()
-                .provider(OSMApi.class)
-                .apiKey(simpleCrypt.decode(getString(R.string.osm_key)))
-                .debug()
-                .callback("mapzen://oauth-login/mapzen.com")
-                .apiSecret(simpleCrypt.decode(getString(R.string.osm_secret))).build();
+
+        if (simpleCrypt != null) {
+            osmOauthService = new ServiceBuilder()
+                    .provider(OSMApi.class)
+                    .apiKey(simpleCrypt.decode(getString(R.string.osm_key)))
+                    .debug()
+                    .callback("mapzen://oauth-login/mapzen.com")
+                    .apiSecret(simpleCrypt.decode(getString(R.string.osm_secret))).build();
+        }
     }
 
     public String[] getColumns() {

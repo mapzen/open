@@ -114,6 +114,10 @@ public class AppModule {
     }
 
     @Provides @Singleton SimpleCrypt provideSimpleCrypt() {
+        if ("bogus_key".equals(context.getString(R.string.osm_key))) {
+            return null;
+        }
+
         return new SimpleCrypt();
     }
 

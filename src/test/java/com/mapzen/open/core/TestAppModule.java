@@ -103,6 +103,8 @@ import static org.mockito.Mockito.when;
         complete = false
 )
 public class TestAppModule {
+    private static boolean simpleCryptEnabled = true;
+
     Context context;
 
     public TestAppModule(Context context) {
@@ -148,6 +150,10 @@ public class TestAppModule {
     }
 
     @Provides @Singleton SimpleCrypt provideSimpleCrypt() {
+        if (!simpleCryptEnabled) {
+            return null;
+        }
+
         SimpleCrypt simpleCrypt = mock(SimpleCrypt.class);
         when(simpleCrypt.encode(anyString())).thenReturn("stuff");
         when(simpleCrypt.decode(anyString())).thenReturn("stuff");
@@ -159,5 +165,9 @@ public class TestAppModule {
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.enableWriteAheadLogging();
         return db;
+    }
+
+    public static void setSimpleCryptEnabled(boolean enabled) {
+        TestAppModule.simpleCryptEnabled = enabled;
     }
 }
