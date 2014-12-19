@@ -31,13 +31,11 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import java.util.HashMap;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 import static com.mapzen.open.MapController.getMapController;
 import static com.mapzen.open.MapzenApplication.PELIAS_BLOB;
