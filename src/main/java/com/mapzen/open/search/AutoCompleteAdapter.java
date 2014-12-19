@@ -40,9 +40,7 @@ import retrofit.RetrofitError;
 import static com.mapzen.open.MapController.getMapController;
 import static com.mapzen.open.MapzenApplication.PELIAS_BLOB;
 import static com.mapzen.open.entity.SimpleFeature.CREATOR;
-import static com.mapzen.open.entity.SimpleFeature.ID;
 import static com.mapzen.open.entity.SimpleFeature.TEXT;
-import static com.mapzen.open.entity.SimpleFeature.TYPE;
 import static com.mapzen.open.search.SavedSearch.SEARCH_TERM;
 import static com.mapzen.open.util.MixpanelHelper.Event.PELIAS_SUGGEST;
 import static com.mapzen.open.util.MixpanelHelper.Payload.PELIAS_TERM;
@@ -119,8 +117,6 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                     fragmentManager.executePendingTransactions();
                     pagerResultsFragment.add(simpleFeature);
                     pagerResultsFragment.displayResults(1, 0);
-                    String peliasType = simpleFeature.getProperty(TYPE);
-                    String peliasId = simpleFeature.getProperty(ID);
                 } else {
                     searchView.setQuery(tv.getText().toString(), true);
                 }
