@@ -16,8 +16,8 @@ This project is a simple mobile mapping application built using the Mapzen SDKs 
 Install and run Mapzen demo application.
 
 ```bash
-$ git clone https://github.com/mapzen/mapzen-android-demo.git
-$ cd mapzen-android-demo
+$ git clone https://github.com/mapzen/open.git
+$ cd open
 $ ./scripts/install-dependencies.sh
 $ mvn clean install
 $ mvn android:deploy android:run
@@ -33,4 +33,4 @@ and make sure it runs cleanly as it runs all of our tests and code quality tools
 we have configured. If you cannot make it run cleanly please let us know in the
 comments of your pull requests and we will help. Thanks!
 
-[1]: https://circleci.com/gh/mapzen/mapzen-android-demo
+[1]: https://circleci.com/gh/mapzen/open
