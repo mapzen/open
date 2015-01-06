@@ -31,20 +31,16 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import java.util.HashMap;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 import static com.mapzen.open.MapController.getMapController;
 import static com.mapzen.open.MapzenApplication.PELIAS_BLOB;
 import static com.mapzen.open.entity.SimpleFeature.CREATOR;
-import static com.mapzen.open.entity.SimpleFeature.ID;
 import static com.mapzen.open.entity.SimpleFeature.TEXT;
-import static com.mapzen.open.entity.SimpleFeature.TYPE;
 import static com.mapzen.open.search.SavedSearch.SEARCH_TERM;
 import static com.mapzen.open.util.MixpanelHelper.Event.PELIAS_SUGGEST;
 import static com.mapzen.open.util.MixpanelHelper.Payload.PELIAS_TERM;
@@ -121,24 +117,6 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                     fragmentManager.executePendingTransactions();
                     pagerResultsFragment.add(simpleFeature);
                     pagerResultsFragment.displayResults(1, 0);
-                    String peliasType = simpleFeature.getProperty(TYPE);
-                    String peliasId = simpleFeature.getProperty(ID);
-                    pelias.doc(peliasType, peliasId, new Callback<Result>() {
-                        @Override
-                        public void success(Result result, Response response) {
-                            List<Feature> features = result.getFeatures();
-                            if (features.size() > 0) {
-                                SimpleFeature simpleFeature = SimpleFeature.fromFeature(
-                                        features.get(0));
-                                pagerResultsFragment.update(simpleFeature);
-                            }
-                        }
-
-                        @Override
-                        public void failure(RetrofitError retrofitError) {
-                            Logger.e("failed to retreive a document" + retrofitError.toString());
-                        }
-                    });
                 } else {
                     searchView.setQuery(tv.getText().toString(), true);
                 }

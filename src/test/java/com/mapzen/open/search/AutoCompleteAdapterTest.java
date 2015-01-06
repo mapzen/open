@@ -43,9 +43,7 @@ import javax.inject.Inject;
 import retrofit.Callback;
 
 import static com.mapzen.open.MapController.getMapController;
-import static com.mapzen.open.entity.SimpleFeature.ID;
 import static com.mapzen.open.entity.SimpleFeature.TEXT;
-import static com.mapzen.open.entity.SimpleFeature.TYPE;
 import static com.mapzen.open.support.TestHelper.assertSpan;
 import static com.mapzen.open.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.open.support.TestHelper.initMapFragment;
@@ -139,13 +137,6 @@ public class AutoCompleteAdapterTest {
                 pagerResultsFragment.pager.getAdapter();
         ItemFragment itemFragment = (ItemFragment) searchViewAdapter.getItem(0);
         assertThat(itemFragment.getSimpleFeature()).isSameAs(simpleFeature);
-    }
-
-    @Test
-    public void onClick_shouldRetreiveRestOfPropertyFromPelias() throws Exception {
-        view.performClick();
-        verify(pelias).doc(eq(simpleFeature.getProperty(TYPE)),
-                eq(simpleFeature.getProperty(ID)), callback.capture());
     }
 
     @Test
