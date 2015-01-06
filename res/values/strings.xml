@@ -1,39 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <string name="application_name">OPEN</string>
+<resources xmlns:xliff="rn:oasis:names:tc:xliff:document:1.2">
+    <string name="application_name"><xliff:g> OPEN </xliff:g> </string>
+    <!-- title of search menu -->
     <string name="search_title">Search</string>
+    <!-- the results from doing a search -->
     <string name="results_title">Search Results</string>
+
     <string name="route_description">Turn Icon</string>
+    <!-- this button brings the user back to the directions if they have left that view -->
     <string name="route_resume_button">Resume</string>
+    <!-- see all search results -->
     <string name="view_all">VIEW ALL</string>
+    <!-- the message that appears when there are no directions to a point -->
     <string name="no_route_found">No Route Found</string>
+    <!-- where teh user currently is located -->
     <string name="current_location">Current Location</string>
+    <!-- generic error message -->
     <string name="generic_server_error">An error occurred</string>
+    <!-- message when content is loading -->
     <string name="progress_dialog_title">Loading</string>
+    <!-- message displayed the the phones GPS is turned off -->
     <string name="gps_dialog_title">GPS Disabled</string>
+    <!-- message asking the user to turn on GPS on their phone -->
     <string name="gps_dialog_message">The GPS on your device is disabled. Would you like to enable it for improved location accuracy?</string>
+    <!-- yes -->
     <string name="gps_positive_button">Yes</string>
+    <!-- ignore button -->
     <string name="gps_negative_button">Dismiss</string>
+    <!-- begin navigation -->
     <string name="start">Start</string>
+    <!--  -->
     <string name="view">View</string>
+    <!--  -->
     <string name="overflow_menu">More</string>
-    <string name="osrm_endpoint">https://osrm.mapzen.com</string>
+    <!-- the step by step list of instructions -->
     <string name="route_steps_menu_option">Step-by-step list</string>
+    <!-- message displayed when the phone is finding its location -->
     <string name="waiting">Waiting for location</string>
+    <!-- message displayed when the phone is figuring out a new route -->
     <string name="recalculating">Recalculating</string>
+    <!--  -->
     <string name="upload_traces">Upload GPS Traces</string>
+    <!-- origin of the trip -->
     <string name="from_text">From:</string>
+    <!-- destination of the trip -->
     <string name="to_text">To:</string>
+    <!-- destination of the trip -->
     <string name="routing_to_text">To\u0020</string>
+    <!--  -->
     <string name="search_hint_icon_spacer">"   "</string>
     <string name="osm_attribution">Map data © OpenStreetMap</string>
+    <!-- phone has no connection -->
     <string name="no_network">Network connection unavailable</string>
+    <!-- message displayed when the user reaches their destination -->
     <string name="you_have_arrived_at">You have arrived at</string>
+    <!-- when a user is viewing search results this tells them where they are in the list of results -->
     <string name="paginate_template">Viewing %1$d of %2$d results</string>
+    <!-- what the app is about -->
     <string name="about_link">About</string>
 
     <!--Login-->
+    <!-- these are pages in the login flow -->
     <string name="login_page_one_body">A search and navigation app built on open software and data</string>
     <string name="login_page_two_body">You\'ll need to log in with OpenStreetMap, but this is not an OSM editor</string>
     <string name="login_page_three_body">GPS traces from turn-by-turn will be uploaded to your OpenStreetMap account, unless you opt out</string>
@@ -46,75 +73,5 @@
     <string name="osm_login_title">Please Authorize</string>
     <string name="login_error">Unable to log in. You can try to log in again by restarting the application.</string>
     <string name="agree_to_terms_please">Please agree to the Terms and Conditions</string>
-
-    <!--Settings-->
-
-    <string name="settings">Settings</string>
-    <string name="submit_data">Submit data</string>
-    <string name="settings_debug_mode">Debug Mode</string>
-    <string name="settings_debug_mode_summary">This will keep application in debug mode and location will be stored</string>
-    <string name="settings_debug_title">Debugging</string>
-    <string name="settings_key_debug">checkbox_debug</string>
-    <string name="settings_key_mapsource">edittext_mapsource</string>
-    <string name="settings_default_mapsource">https://vector.mapzen.com/osm/all</string>
-    <string name="settings_mapsource_dialog_title">Configure Map Tile source</string>
-    <string name="settings_mapsource">Configure Tile server</string>
-    <string name="settings_mapsource_summary">Restart required! And possibly flushing caches.</string>
-    <string name="settings_voice_navigation_key">checkbox_voice_navigation</string>
-    <string name="settings_voice_navigation_summary">Enable voice navigation</string>
-    <string name="settings_voice_navigation_title">Voice navigation</string>
-    <string name="settings_key_enable_fixed_location">checkbox_preset_location</string>
-    <string name="settings_enable_fixed_location_summary">Enable fixed preset location</string>
-    <string name="settings_enable_fixed_location_title">Fixed location</string>
-    <string name="settings_fixed_location_dialog_title">Set Fixed Location (lat, lng)</string>
-    <string name="settings_fixed_location_default_value">40.7443, -73.9903</string>
-    <string name="settings_fixed_location_key">edittext_fixed_location</string>
-    <string name="settings_fixed_location_summary">Set fixed debug location</string>
-    <string name="settings_fixed_location_title">Debug location</string>
-    <string name="settings_mock_gpx_key">checkbox_mock_gpx</string>
-    <string name="settings_mock_gpx_title">GPX trace mode</string>
-    <string name="settings_mock_gpx_summary">Replay mock locations via GPX trace file</string>
-    <string name="settings_mock_gpx_filename_default_value">lost.gpx</string>
-    <string name="settings_mock_gpx_filename_key">edittext_mock_gpx</string>
-    <string name="settings_mock_gpx_filename_summary">Copy file to root folder of external media (SD card)</string>
-    <string name="settings_mock_gpx_filename_title">GPX file</string>
-    <string name="settings_location_update_interval_key">settings_location_update_interval</string>
-    <string name="settings_location_update_interval_title">Location update interval</string>
-    <string name="settings_location_update_interval_summary">ms between location updates (restart required)</string>
-
-    <!--Zoom Settings-->
-
-    <string name="settings_zoom_title">Zoom</string>
-    <string name="settings_zoom_walking_key">zoom_walking</string>
-    <string name="settings_zoom_walking_title">Walking</string>
-    <string name="settings_zoom_biking_key">zoom_biking</string>
-    <string name="settings_zoom_biking_title">Biking</string>
-    <string name="settings_zoom_driving_0to15_key">zoom_driving_0_to_15</string>
-    <string name="settings_zoom_driving_0_to_15_title">Driving 0–15 Mph</string>
-    <string name="settings_zoom_driving_15to25_key">zoom_driving_15_to_25</string>
-    <string name="settings_zoom_driving_15_to_25_title">Driving 15–25 Mph</string>
-    <string name="settings_zoom_driving_25to35_key">zoom_driving_25_to_35</string>
-    <string name="settings_zoom_driving_25_to_35_title">Driving 25–35 Mph</string>
-    <string name="settings_zoom_driving_35to50_key">zoom_driving_35_to_50</string>
-    <string name="settings_zoom_driving_35_to_50_title">Driving 35–50 Mph</string>
-    <string name="settings_zoom_driving_over50_key">zoom_driving_over_50</string>
-    <string name="settings_zoom_driving_over_50_title">Driving 50+ Mph</string>
-
-    <string name="settings_speed_title">Average Speed</string>
-    <string name="settings_number_of_locations_for_average_speed_key">number_of_locations_for_average_speed</string>
-    <string name="settings_number_of_locations_for_average_speed_title">Number of Location for average speed</string>
-
-    <!--Debug Strings-->
-
-    <string name="debug_current_location">Current Location</string>
-    <string name="debug_snap_location">Snap Location</string>
-    <string name="debug_closest_instruction">Closest Instruction</string>
-    <string name="destination_preview">destination_preview</string>
-    <string name="destination_preview_distance">destination_preview_distance</string>
-    <string name="reverse">reverse</string>
-
-    <string name="secret_phrase">yo!!!</string>
-    <string name="debug_settings_on">Debug settings on</string>
-    <string name="debug_settings_off">Debug settings off</string>
 
 </resources>
