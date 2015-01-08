@@ -1,12 +1,13 @@
 package com.mapzen.open.core;
 
+import com.mapzen.android.lost.api.FusedLocationProviderApi;
+import com.mapzen.android.lost.api.LocationListener;
+import com.mapzen.android.lost.api.LocationRequest;
+import com.mapzen.android.lost.api.LocationServices;
 import com.mapzen.open.MapController;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
-import com.mapzen.android.lost.LocationClient;
-import com.mapzen.android.lost.LocationListener;
-import com.mapzen.android.lost.LocationRequest;
 import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.support.TestHelper;
 
@@ -18,9 +19,11 @@ import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.location.LocationManager;
 import android.preference.PreferenceManager;
 
 import java.util.List;
@@ -28,10 +31,13 @@ import java.util.List;
 import javax.inject.Inject;
 
 import static com.mapzen.open.core.MapzenLocation.KEY_LOCATION;
+import static com.mapzen.open.core.MapzenLocation.onLocationServicesConnected;
 import static com.mapzen.open.support.TestHelper.getTestLocation;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
+import static org.robolectric.Robolectric.shadowOf;
+import static org.robolectric.shadows.ShadowToast.getTextOfLatestToast;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
@@ -96,13 +102,11 @@ public class MapzenLocationTest {
 
     @Test
     public void shouldSetDefaultLocationUpdateInterval() throws Exception {
-        LocationClient client = Mockito.mock(LocationClient.class);
+        FusedLocationProviderApi api = Mockito.mock(FusedLocationProviderApi.class);
+        LocationServices.FusedLocationApi = api;
         ArgumentCaptor<LocationRequest> argument = ArgumentCaptor.forClass(LocationRequest.class);
-        MapzenLocation.ConnectionCallbacks callbacks =
-                new MapzenLocation.ConnectionCallbacks(application);
-        callbacks.setLocationClient(client);
-        callbacks.onConnected(null);
-        verify(client).requestLocationUpdates(argument.capture(), any(LocationListener.class));
+        onLocationServicesConnected(mapController, api, application);
+        verify(api).requestLocationUpdates(argument.capture(), any(LocationListener.class));
         assertThat(argument.getValue().getInterval()).isEqualTo(1000);
     }
 
@@ -113,13 +117,47 @@ public class MapzenLocationTest {
         editor.putInt(application.getString(R.string.settings_location_update_interval_key), 2000);
         editor.commit();
 
-        LocationClient client = Mockito.mock(LocationClient.class);
+        FusedLocationProviderApi api = Mockito.mock(FusedLocationProviderApi.class);
+        LocationServices.FusedLocationApi = api;
         ArgumentCaptor<LocationRequest> argument = ArgumentCaptor.forClass(LocationRequest.class);
-        MapzenLocation.ConnectionCallbacks callbacks =
-                new MapzenLocation.ConnectionCallbacks(application);
-        callbacks.setLocationClient(client);
-        callbacks.onConnected(null);
-        verify(client).requestLocationUpdates(argument.capture(), any(LocationListener.class));
+        onLocationServicesConnected(mapController, api, application);
+        verify(api).requestLocationUpdates(argument.capture(), any(LocationListener.class));
         assertThat(argument.getValue().getInterval()).isEqualTo(2000);
+    }
+
+    @Test
+    public void onLocationServicesConnected_shouldUpdateMapController() throws Exception {
+        Location expected = initLastLocation();
+        onLocationServicesConnected(mapController, LocationServices.FusedLocationApi, application);
+        Location actual = mapController.getLocation();
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void onLocationServicesConnected_shouldResetZoomLevel() throws Exception {
+        mapController.setZoomLevel(1);
+        initLastLocation();
+        onLocationServicesConnected(mapController, LocationServices.FusedLocationApi, application);
+        assertThat(mapController.getZoomLevel()).isEqualTo(MapController.DEFAULT_ZOOM_LEVEL);
+    }
+
+    @Test
+    public void shouldNotifyUserIfLastLocationNotAvailable() throws Exception {
+        LocationManager locationManager = (LocationManager)
+                application.getSystemService(Context.LOCATION_SERVICE);
+        shadowOf(locationManager).setLastKnownLocation(LocationManager.GPS_PROVIDER, null);
+        shadowOf(locationManager).setLastKnownLocation(LocationManager.NETWORK_PROVIDER, null);
+        shadowOf(locationManager).setLastKnownLocation(LocationManager.GPS_PROVIDER, null);
+        onLocationServicesConnected(mapController, LocationServices.FusedLocationApi, application);
+        assertThat(getTextOfLatestToast()).isEqualTo(application.getString(R.string.waiting));
+    }
+
+    private Location initLastLocation() {
+        Location location = new Location(LocationManager.GPS_PROVIDER);
+        location.setLatitude(1.0);
+        location.setLongitude(2.0);
+        shadowOf((LocationManager) application.getSystemService(Context.LOCATION_SERVICE))
+                .setLastKnownLocation(LocationManager.GPS_PROVIDER, location);
+        return location;
     }
 }

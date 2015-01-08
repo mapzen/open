@@ -1,6 +1,6 @@
 package com.mapzen.open.route;
 
-import com.mapzen.android.lost.LocationClient;
+import com.mapzen.android.lost.api.LocationServices;
 import com.mapzen.helpers.DistanceFormatter;
 import com.mapzen.helpers.ZoomController;
 import com.mapzen.open.MapController;
@@ -41,6 +41,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -52,6 +53,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -94,7 +96,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public static final String ROUTE_TAG = "route";
 
     @Inject ZoomController zoomController;
-    @Inject LocationClient locationClient;
     @Inject Router router;
     @Inject RouteEngine routeEngine;
     @Inject MapController mapController;
@@ -181,11 +182,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         if (prefs.getBoolean(getString(R.string.settings_mock_gpx_key), false)) {
             final String key = getString(R.string.settings_mock_gpx_filename_key);
             final String defaultFile = getString(R.string.settings_mock_gpx_filename_default_value);
-            final String file = prefs.getString(key, defaultFile);
-            locationClient.setMockMode(true);
-            locationClient.setMockTrace(file);
+            final String filename = prefs.getString(key, defaultFile);
+            final File file = new File(Environment.getExternalStorageDirectory(), filename);
+            LocationServices.FusedLocationApi.setMockMode(true);
+            LocationServices.FusedLocationApi.setMockTrace(file);
         } else {
-            locationClient.setMockMode(false);
+            LocationServices.FusedLocationApi.setMockMode(false);
         }
 
         return rootView;
@@ -269,7 +271,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         mapFragment.getMap().layers().remove(routeLocationIndicator);
         act.unregisterReceiver(locationReceiver);
         showLocateButton();
-        locationClient.setMockMode(false);
+        LocationServices.FusedLocationApi.setMockMode(false);
     }
 
     public RouteLocationIndicator getRouteLocationIndicator() {

@@ -1,6 +1,5 @@
 package com.mapzen.open.fragment;
 
-import com.mapzen.android.lost.LocationClient;
 import com.mapzen.open.MapController;
 import com.mapzen.open.R;
 import com.mapzen.open.TestMapzenApplication;
@@ -22,6 +21,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLocationManager;
 import org.robolectric.shadows.ShadowToast;
 
+import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 import android.text.TextUtils;
@@ -46,7 +46,6 @@ public class ItemFragmentTest {
     private ItemFragment itemFragment;
     private TestBaseActivity act;
     @Inject Router router;
-    @Inject LocationClient locationClient;
     @Inject MapController mapController;
 
     @Before
@@ -121,7 +120,7 @@ public class ItemFragmentTest {
 
     @Test
     public void shouldDisplayGPSPromptOnRoute() throws Exception {
-        ShadowLocationManager manager = shadowOf(locationClient.getLocationManager());
+        ShadowLocationManager manager = shadowOf(getLocationManager());
         manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
         itemFragment.startButton.performClick();
         assertThat(act.getSupportFragmentManager()).hasFragmentWithTag("gps_dialog");
@@ -129,9 +128,13 @@ public class ItemFragmentTest {
 
     @Test
     public void shouldNotDisplayGPSPromptOnRoute() throws Exception {
-        ShadowLocationManager manager = shadowOf(locationClient.getLocationManager());
+        ShadowLocationManager manager = shadowOf(getLocationManager());
         manager.setProviderEnabled(LocationManager.GPS_PROVIDER, true);
         itemFragment.startButton.performClick();
         assertThat(act.getSupportFragmentManager()).doesNotHaveFragmentWithTag("gps_dialog");
+    }
+
+    private LocationManager getLocationManager() {
+        return (LocationManager) Robolectric.application.getSystemService(Context.LOCATION_SERVICE);
     }
 }

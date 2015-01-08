@@ -55,7 +55,6 @@ import dagger.Provides;
                 MapFragment.class,
                 MapController.class,
                 DrawPathTask.class,
-                MapzenLocation.ConnectionCallbacks.class,
                 MapzenLocation.Listener.class,
                 PagerResultsFragment.class,
                 MapzenApplication.class,
