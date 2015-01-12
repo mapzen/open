@@ -99,6 +99,7 @@ public final class MapzenLocation {
 
         final LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setInterval(getLocationUpdateIntervalPreference(app));
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         api.requestLocationUpdates(locationRequest, new Listener(app));
     }
 

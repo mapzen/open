@@ -30,6 +30,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import static com.mapzen.android.lost.api.LocationRequest.PRIORITY_HIGH_ACCURACY;
 import static com.mapzen.open.core.MapzenLocation.KEY_LOCATION;
 import static com.mapzen.open.core.MapzenLocation.onLocationServicesConnected;
 import static com.mapzen.open.support.TestHelper.getTestLocation;
@@ -139,6 +140,16 @@ public class MapzenLocationTest {
         initLastLocation();
         onLocationServicesConnected(mapController, LocationServices.FusedLocationApi, application);
         assertThat(mapController.getZoomLevel()).isEqualTo(MapController.DEFAULT_ZOOM_LEVEL);
+    }
+
+    @Test
+    public void onLocationServicesConnected_shouldSetPriority() throws Exception {
+        FusedLocationProviderApi api = Mockito.mock(FusedLocationProviderApi.class);
+        LocationServices.FusedLocationApi = api;
+        ArgumentCaptor<LocationRequest> argument = ArgumentCaptor.forClass(LocationRequest.class);
+        onLocationServicesConnected(mapController, api, application);
+        verify(api).requestLocationUpdates(argument.capture(), any(LocationListener.class));
+        assertThat(argument.getValue().getPriority()).isEqualTo(PRIORITY_HIGH_ACCURACY);
     }
 
     @Test
