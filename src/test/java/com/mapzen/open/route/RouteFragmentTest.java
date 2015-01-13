@@ -1,6 +1,7 @@
 package com.mapzen.open.route;
 
-import com.mapzen.android.lost.LocationClient;
+import com.mapzen.android.lost.api.LocationServices;
+import com.mapzen.android.lost.internal.FusedLocationProviderApiImpl;
 import com.mapzen.helpers.DistanceFormatter;
 import com.mapzen.helpers.ZoomController;
 import com.mapzen.open.MapController;
@@ -57,7 +58,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
@@ -1414,12 +1414,12 @@ public class RouteFragmentTest {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(act);
         prefs.edit().putBoolean(act.getString(R.string.settings_mock_gpx_key), true).commit();
         initTestFragment();
-        fragment.locationClient.connect();
         FragmentTestUtil.startFragment(fragment);
         fragment.onDetach();
         ShadowLocationManager shadowLocationManager = Robolectric.shadowOf((LocationManager)
                 act.getApplication().getSystemService(Context.LOCATION_SERVICE));
-        assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).hasSize(2);
+        assertThat(((TestFusedLocationProviderApiImpl) LocationServices.FusedLocationApi).mockMode)
+                .isFalse();
     }
 
     @Test
@@ -1527,23 +1527,25 @@ public class RouteFragmentTest {
     }
 
     private void setTestLocationClient() {
-        fragment.locationClient = new TestLocationClient(application,
-                new LocationClient.ConnectionCallbacks() {
-            @Override public void onConnected(Bundle connectionHint) {
-            }
-
-            @Override public void onDisconnected() {
-            }
-        });
+        LocationServices.FusedLocationApi = new TestFusedLocationProviderApiImpl(application);
     }
 
-    class TestLocationClient extends LocationClient {
-        public TestLocationClient(Context context, ConnectionCallbacks connectionCallbacks) {
-            super(context, connectionCallbacks);
+    class TestFusedLocationProviderApiImpl extends FusedLocationProviderApiImpl {
+        private boolean mockMode = false;
+
+        public TestFusedLocationProviderApiImpl(Context context) {
+            super(context);
         }
 
-        @Override public void setMockTrace(String filename) {
-            // Fake it 'til you make it.
+        @Override
+        public void setMockMode(boolean isMockMode) {
+            super.setMockMode(isMockMode);
+            mockMode = isMockMode;
+        }
+
+        @Override
+        public void setMockTrace(File file) {
+            // Prevents spawning thread to replay mock locations
         }
     }
 }

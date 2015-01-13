@@ -1,12 +1,11 @@
 package com.mapzen.open.activity;
 
 import com.mapzen.android.gson.Feature;
-import com.mapzen.android.lost.LocationClient;
+import com.mapzen.android.lost.api.LostApiClient;
 import com.mapzen.open.MapController;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.TestMapzenApplication;
-import com.mapzen.open.core.MapzenLocation;
 import com.mapzen.open.core.SettingsFragment;
 import com.mapzen.open.entity.SimpleFeature;
 import com.mapzen.open.route.RouteFragment;
@@ -38,7 +37,6 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowAlarmManager;
 import org.robolectric.shadows.ShadowIntent;
-import org.robolectric.shadows.ShadowLocationManager;
 import org.robolectric.tester.android.view.TestMenu;
 import org.scribe.model.Token;
 
@@ -50,7 +48,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -66,9 +63,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
-import static android.location.LocationManager.NETWORK_PROVIDER;
 import static com.mapzen.open.support.TestHelper.getTestFeature;
 import static com.mapzen.open.support.TestHelper.initBaseActivity;
 import static com.mapzen.open.support.TestHelper.initBaseActivityWithMenu;
@@ -86,7 +81,7 @@ import static org.robolectric.util.FragmentTestUtil.startFragment;
 public class BaseActivityTest {
     private BaseActivity activity;
     private TestMenu menu;
-    @Inject LocationClient locationClient;
+    @Inject LostApiClient locationClient;
     @Inject MixpanelAPI mixpanelAPI;
     @Inject MapController mapController;
     @Inject SavedSearch savedSearch;
@@ -391,35 +386,6 @@ public class BaseActivityTest {
     }
 
     @Test
-    public void deactivateMapLocationUpdates_shouldBlockLocationUpdates() throws Exception {
-        Location location = new Location("expected");
-        Location newLocation = new Location("new expected");
-        // TODO activity.getMapFragment().setUserLocation(location);
-
-        ShadowLocationManager manager = shadowOf(locationClient.getLocationManager());
-        manager.simulateLocation(location);
-        ((MapzenApplication) application).deactivateMoveMapToLocation();
-        manager.simulateLocation(location);
-        // TODO assertThat(activity.getMapFragment().getUserLocation()).isNotEqualTo(newLocation);
-    }
-
-    @Test
-    public void onConnect_shouldUpdateMapController() throws Exception {
-        Location expected = initLastLocation();
-        invokeOnConnected();
-        Location actual = mapController.getLocation();
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @Test
-    public void onConnect_shouldResetZoomLevel() throws Exception {
-        mapController.setZoomLevel(1);
-        initLastLocation();
-        invokeOnConnected();
-        assertThat(mapController.getZoomLevel()).isEqualTo(MapController.DEFAULT_ZOOM_LEVEL);
-    }
-
-    @Test
     public void shouldHaveSuggestionsAdapter() throws Exception {
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         assertThat(searchView.getSuggestionsAdapter()).isNotNull();
@@ -523,17 +489,6 @@ public class BaseActivityTest {
         RecordedRequest request = server.takeRequest();
         assertThat(request.getBody()).isEqualTo(expected);
         server.shutdown();
-    }
-
-    @Test
-    public void shouldNotifyUserIfLastLocationNotAvailable() throws Exception {
-        LocationManager locationManager = (LocationManager)
-                application.getSystemService(LOCATION_SERVICE);
-        shadowOf(locationManager).setLastKnownLocation(GPS_PROVIDER, null);
-        shadowOf(locationManager).setLastKnownLocation(NETWORK_PROVIDER, null);
-        shadowOf(locationManager).setLastKnownLocation(GPS_PROVIDER, null);
-        invokeOnConnected();
-        assertThat(getTextOfLatestToast()).isEqualTo("Waiting for location");
     }
 
     @Test
@@ -653,13 +608,6 @@ public class BaseActivityTest {
         Robolectric.shadowOf((LocationManager) activity.getSystemService(Context.LOCATION_SERVICE))
                 .setLastKnownLocation(GPS_PROVIDER, location);
         return location;
-    }
-
-    private void invokeOnConnected() {
-        MapzenLocation.ConnectionCallbacks connectionCallbacks =
-                new MapzenLocation.ConnectionCallbacks((MapzenApplication) application);
-        connectionCallbacks.setLocationClient(locationClient);
-        connectionCallbacks.onConnected(new Bundle());
     }
 
     private Route getRouteMock() throws JSONException {

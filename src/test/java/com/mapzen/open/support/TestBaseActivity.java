@@ -1,6 +1,5 @@
 package com.mapzen.open.support;
 
-import com.mapzen.android.lost.LocationClient;
 import com.mapzen.open.activity.BaseActivity;
 
 import org.mockito.Mockito;
@@ -13,15 +12,12 @@ import android.os.Bundle;
 
 import java.util.concurrent.Executor;
 
-import javax.inject.Inject;
-
 public class TestBaseActivity extends BaseActivity {
     private ActionBar actionBar = new TestActionBar();
     private boolean backPressed = false;
     private boolean optionsMenuInvalidated = false;
     private String debugDataEndpoint;
     private Map map = new TestMap();
-    @Inject LocationClient locationClient;
 
     @Override
     public ActionBar getActionBar() {

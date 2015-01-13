@@ -1,10 +1,12 @@
 package com.mapzen.open.activity;
 
-import com.mapzen.android.lost.LocationClient;
+import com.mapzen.android.lost.api.LocationServices;
+import com.mapzen.android.lost.api.LostApiClient;
 import com.mapzen.open.MapController;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.core.DataUploadService;
+import com.mapzen.open.core.MapzenLocation;
 import com.mapzen.open.core.SettingsFragment;
 import com.mapzen.open.fragment.MapFragment;
 import com.mapzen.open.route.RouteFragment;
@@ -36,6 +38,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -68,7 +71,7 @@ public class BaseActivity extends MapActivity {
             DEBUG_DATA_ENDPOINT = "http://on-the-road.dev.mapzen.com/upload";
 
     protected DebugDataSubmitter debugDataSubmitter;
-    @Inject LocationClient locationClient;
+    @Inject LostApiClient locationClient;
     private Menu activityMenu;
     private AutoCompleteAdapter autoCompleteAdapter;
     private MapzenApplication app;
@@ -130,6 +133,8 @@ public class BaseActivity extends MapActivity {
     protected void onResume() {
         super.onResume();
         locationClient.connect();
+        MapzenLocation.onLocationServicesConnected(MapController.getMapController(),
+                LocationServices.FusedLocationApi, (MapzenApplication) getApplication());
     }
 
     @Override
@@ -230,7 +235,8 @@ public class BaseActivity extends MapActivity {
     }
 
     public void promptForGPSIfNotEnabled() {
-        if (!locationClient.isGPSEnabled()) {
+        final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             showGPSPromptDialog();
         }
     }

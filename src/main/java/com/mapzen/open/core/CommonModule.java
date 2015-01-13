@@ -1,8 +1,8 @@
 package com.mapzen.open.core;
 
-import com.mapzen.open.MapzenApplication;
-import com.mapzen.android.lost.LocationClient;
+import com.mapzen.android.lost.api.LostApiClient;
 import com.mapzen.helpers.ZoomController;
+import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.route.RouteEngine;
 import com.mapzen.open.search.SavedSearch;
 
@@ -21,12 +21,8 @@ public class CommonModule {
         this.application = application;
     }
 
-    @Provides @Singleton LocationClient provideLocationClient() {
-        MapzenLocation.ConnectionCallbacks callbacks =
-                new MapzenLocation.ConnectionCallbacks(application);
-        LocationClient locationClient = new LocationClient(application, callbacks);
-        callbacks.setLocationClient(locationClient);
-        return locationClient;
+    @Provides @Singleton LostApiClient provideLocationClient() {
+        return new LostApiClient.Builder(application).build();
     }
 
     @Provides @Singleton ZoomController provideZoomController() {

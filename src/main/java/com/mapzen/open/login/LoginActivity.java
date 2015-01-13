@@ -1,9 +1,12 @@
 package com.mapzen.open.login;
 
+import com.mapzen.android.lost.api.LocationServices;
+import com.mapzen.android.lost.api.LostApiClient;
+import com.mapzen.open.MapController;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
-import com.mapzen.android.lost.LocationClient;
 import com.mapzen.open.activity.BaseActivity;
+import com.mapzen.open.core.MapzenLocation;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.viewpagerindicator.CirclePageIndicator;
@@ -39,7 +42,7 @@ public class LoginActivity extends Activity implements LoginAdapter.LoginListene
     private Token requestToken = null;
     private Verifier verifier;
 
-    @Inject LocationClient locationClient;
+    @Inject LostApiClient locationClient;
     @Inject MixpanelAPI mixpanelApi;
 
     @Override
@@ -79,6 +82,8 @@ public class LoginActivity extends Activity implements LoginAdapter.LoginListene
     protected void onResume() {
         super.onResume();
         locationClient.connect();
+        MapzenLocation.onLocationServicesConnected(MapController.getMapController(),
+                LocationServices.FusedLocationApi, (MapzenApplication) getApplication());
     }
 
     @Override

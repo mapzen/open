@@ -88,7 +88,6 @@ import static org.mockito.Mockito.when;
                 MapControllerTest.class,
                 DrawPathTask.class,
                 DrawPathTaskTest.class,
-                MapzenLocation.ConnectionCallbacks.class,
                 MapzenLocation.Listener.class,
                 PagerResultsFragment.class,
                 PagerResultsFragmentTest.class,

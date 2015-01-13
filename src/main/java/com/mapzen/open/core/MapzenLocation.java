@@ -1,18 +1,18 @@
 package com.mapzen.open.core;
 
+import com.mapzen.android.lost.api.FusedLocationProviderApi;
+import com.mapzen.android.lost.api.LocationListener;
+import com.mapzen.android.lost.api.LocationRequest;
 import com.mapzen.open.MapController;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
-import com.mapzen.android.lost.LocationClient;
-import com.mapzen.android.lost.LocationListener;
-import com.mapzen.android.lost.LocationRequest;
 import com.mapzen.open.util.Logger;
 
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
@@ -79,54 +79,33 @@ public final class MapzenLocation {
         }
     }
 
-    public static class ConnectionCallbacks implements LocationClient.ConnectionCallbacks {
-        private MapzenApplication application;
-        private LocationClient locationClient;
-        @Inject MapController mapController;
+    public static void onLocationServicesConnected(MapController mapController,
+            FusedLocationProviderApi api, MapzenApplication app) {
+        mapController.setZoomLevel(MapController.DEFAULT_ZOOM_LEVEL);
+        final Location location = api.getLastLocation();
+        Logger.d("Last known location: " + location);
 
-        public ConnectionCallbacks(MapzenApplication application) {
-            this.application = application;
-            application.inject(this);
-        }
-
-        public void setLocationClient(LocationClient locationClient) {
-            this.locationClient = locationClient;
-        }
-
-        @Override
-        public void onConnected(Bundle bundle) {
-            mapController.setZoomLevel(MapController.DEFAULT_ZOOM_LEVEL);
-            final Location location = locationClient.getLastLocation();
-            Logger.d("Last known location: " + location);
-
-            if (location != null) {
-                mapController.setLocation(location);
-                if (application.shouldMoveMapToLocation()) {
-                    Intent findMe = new Intent(COM_MAPZEN_FIND_ME);
-                    application.sendBroadcast(findMe);
-                }
-            } else {
-                if (mapController.getMap() != null) {
-                    Toast.makeText(application, application.getString(R.string.waiting),
-                            Toast.LENGTH_LONG).show();
-                }
+        if (location != null) {
+            mapController.setLocation(location);
+            if (app.shouldMoveMapToLocation()) {
+                Intent findMe = new Intent(COM_MAPZEN_FIND_ME);
+                app.sendBroadcast(findMe);
             }
-
-            LocationRequest locationRequest = LocationRequest.create();
-            locationRequest.setInterval(getLocationUpdateIntervalPreference());
-            locationClient.requestLocationUpdates(locationRequest,
-                    new MapzenLocation.Listener(application));
+        } else {
+            if (mapController.getMap() != null) {
+                Toast.makeText(app, app.getString(R.string.waiting), Toast.LENGTH_LONG).show();
+            }
         }
 
-        private int getLocationUpdateIntervalPreference() {
-            return PreferenceManager.getDefaultSharedPreferences(application)
-                    .getInt(application.getString(R.string.settings_location_update_interval_key),
-                            DEFAULT_LOCATION_INTERVAL);
-        }
+        final LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setInterval(getLocationUpdateIntervalPreference(app));
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        api.requestLocationUpdates(locationRequest, new Listener(app));
+    }
 
-        @Override
-        public void onDisconnected() {
-            Logger.d("LocationClient disconnected.");
-        }
+    private static int getLocationUpdateIntervalPreference(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getInt(context.getString(R.string.settings_location_update_interval_key),
+                        DEFAULT_LOCATION_INTERVAL);
     }
 }
