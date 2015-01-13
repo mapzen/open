@@ -13,17 +13,12 @@ import com.mapzen.open.route.RoutePreviewFragment;
 import com.mapzen.open.search.PagerResultsFragment;
 import com.mapzen.open.search.SavedSearch;
 import com.mapzen.open.support.MapzenTestRunner;
-import com.mapzen.open.support.TestBaseActivity;
 import com.mapzen.open.support.TestHelper;
 import com.mapzen.open.util.MapzenNotificationCreator;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 
-import com.google.common.io.Files;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
-import com.squareup.okhttp.mockwebserver.MockResponse;
-import com.squareup.okhttp.mockwebserver.MockWebServer;
-import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,7 +52,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,15 +102,6 @@ public class BaseActivityTest {
         activity.toggleDebugMode();
         activity.onPrepareOptionsMenu(menu);
         assertThat(menu.findItem(R.id.settings)).isVisible();
-    }
-
-    @Test
-    public void toggleDebugMode_shouldToggleSubmitData() {
-        activity.onPrepareOptionsMenu(menu);
-        assertThat(menu.findItem(R.id.phone_home)).isNotVisible();
-        activity.toggleDebugMode();
-        activity.onPrepareOptionsMenu(menu);
-        assertThat(menu.findItem(R.id.phone_home)).isVisible();
     }
 
     @Test
@@ -435,60 +420,6 @@ public class BaseActivityTest {
         activity.disableActionbar();
         activity.showActionBar();
         assertThat(activity.getActionBar()).isNotShowing();
-    }
-
-    @Test
-    public void onOptionsItemSelected_shouldBeSuccessful() throws Exception {
-        final TestBaseActivity testBaseActivity = (TestBaseActivity) activity;
-        final String expected = "upload successful!";
-        final MockWebServer server = new MockWebServer();
-        MockResponse response = new MockResponse().setBody(expected);
-        server.enqueue(response);
-        server.play();
-
-        testBaseActivity.setDebugDataEndpoint(server.getUrl("/upload.php").toString());
-        activity.toggleDebugMode();
-        MenuItem menuItem = menu.findItem(R.id.phone_home);
-        testBaseActivity.onOptionsItemSelected(menuItem);
-
-        assertThat(getTextOfLatestToast()).isEqualTo(expected);
-        server.shutdown();
-    }
-
-    @Test
-    public void onOptionsItemSelected_shouldNotifyWhenUnsuccessful() throws Exception {
-        final TestBaseActivity testBaseActivity = (TestBaseActivity) activity;
-        final String expected = "Upload failed, please try again later!";
-        final MockWebServer server = new MockWebServer();
-        MockResponse response = new MockResponse().setResponseCode(500);
-        server.enqueue(response);
-        server.play();
-
-        activity.toggleDebugMode();
-        testBaseActivity.setDebugDataEndpoint(server.getUrl("/upload.php").toString());
-        MenuItem menuItem = menu.findItem(R.id.phone_home);
-        testBaseActivity.onOptionsItemSelected(menuItem);
-
-        assertThat(getTextOfLatestToast()).isEqualTo(expected);
-        server.shutdown();
-    }
-
-    @Test
-    public void onOptionsItemSelected_shouldPostDatabaseFile() throws Exception {
-        TestBaseActivity testBaseActivity = (TestBaseActivity) activity;
-        MockWebServer server = new MockWebServer();
-        MockResponse response = new MockResponse();
-        server.enqueue(response);
-        server.play();
-
-        activity.toggleDebugMode();
-        byte[] expected = Files.toByteArray(new File(db.getPath()));
-        testBaseActivity.setDebugDataEndpoint(server.getUrl("/upload.php").toString());
-        MenuItem menuItem = menu.findItem(R.id.phone_home);
-        testBaseActivity.onOptionsItemSelected(menuItem);
-        RecordedRequest request = server.takeRequest();
-        assertThat(request.getBody()).isEqualTo(expected);
-        server.shutdown();
     }
 
     @Test

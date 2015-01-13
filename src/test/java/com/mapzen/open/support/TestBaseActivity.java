@@ -10,13 +10,10 @@ import org.oscim.map.TestMap;
 import android.app.ActionBar;
 import android.os.Bundle;
 
-import java.util.concurrent.Executor;
-
 public class TestBaseActivity extends BaseActivity {
     private ActionBar actionBar = new TestActionBar();
     private boolean backPressed = false;
     private boolean optionsMenuInvalidated = false;
-    private String debugDataEndpoint;
     private Map map = new TestMap();
 
     @Override
@@ -62,20 +59,6 @@ public class TestBaseActivity extends BaseActivity {
     @Override
     public Map getMap() {
         return map;
-    }
-
-    @Override
-    public void initDebugDataSubmitter() {
-        super.initDebugDataSubmitter();
-        debugDataSubmitter.setEndpoint(debugDataEndpoint);
-    }
-
-    public void setDebugDataEndpoint(String debugDataEndpoint) {
-        this.debugDataEndpoint = debugDataEndpoint;
-    }
-
-    public void setDebugDataExecutor(Executor executor) {
-        debugDataExecutor = executor;
     }
 
     public boolean actionBarIsEnabled() {
