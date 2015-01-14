@@ -4,7 +4,6 @@
     <!--Settings-->
 
     <string name="settings">Settings</string>
-    <string name="submit_data">Submit data</string>
     <string name="settings_debug_mode">Debug Mode</string>
     <string name="settings_debug_mode_summary">This will keep application in debug mode and location will be stored</string>
     <string name="settings_debug_title">Debugging</string>

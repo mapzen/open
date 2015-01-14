@@ -15,14 +15,12 @@ import com.mapzen.open.search.AutoCompleteAdapter;
 import com.mapzen.open.search.OnPoiClickListener;
 import com.mapzen.open.search.PagerResultsFragment;
 import com.mapzen.open.search.SavedSearch;
-import com.mapzen.open.util.DebugDataSubmitter;
 import com.mapzen.open.util.Logger;
 import com.mapzen.open.util.MapzenGPSPromptDialogFragment;
 import com.mapzen.open.util.MapzenNotificationCreator;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.splunk.mint.Mint;
-import com.squareup.okhttp.OkHttpClient;
 
 import org.oscim.android.MapActivity;
 import org.oscim.layers.marker.MarkerItem;
@@ -55,10 +53,7 @@ import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.Calendar;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
@@ -67,10 +62,6 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 public class BaseActivity extends MapActivity {
     public static final String COM_MAPZEN_UPDATE_VIEW = "com.mapzen.updates.view";
     public static final String COM_MAPZEN_UPDATES_LOCATION = "com.mapzen.updates.location";
-    public static final String
-            DEBUG_DATA_ENDPOINT = "http://on-the-road.dev.mapzen.com/upload";
-
-    protected DebugDataSubmitter debugDataSubmitter;
     @Inject LostApiClient locationClient;
     private Menu activityMenu;
     private AutoCompleteAdapter autoCompleteAdapter;
@@ -83,8 +74,6 @@ public class BaseActivity extends MapActivity {
     @Inject SQLiteDatabase db;
 
     protected boolean enableActionbar = true;
-
-    protected Executor debugDataExecutor = Executors.newSingleThreadExecutor();
 
     MenuItem searchMenuItem;
 
@@ -178,10 +167,6 @@ public class BaseActivity extends MapActivity {
                         .add(R.id.settings, settingsFragment, SettingsFragment.TAG)
                         .addToBackStack(null)
                         .commit();
-                return true;
-            case R.id.phone_home:
-                initDebugDataSubmitter();
-                debugDataExecutor.execute(debugDataSubmitter);
                 return true;
             case R.id.logout:
                 SharedPreferences prefs = getSharedPreferences("OAUTH", Context.MODE_PRIVATE);
@@ -318,7 +303,6 @@ public class BaseActivity extends MapActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         final boolean debug = isInDebugMode();
         menu.findItem(R.id.settings).setVisible(debug);
-        menu.findItem(R.id.phone_home).setVisible(debug);
         menu.findItem(R.id.upload_traces).setVisible(debug);
         return true;
     }
@@ -506,13 +490,6 @@ public class BaseActivity extends MapActivity {
                         PagerResultsFragment.TAG)
                 .commit();
         return pagerResultsFragment.executeSearchOnMap(getSearchView(), query);
-    }
-
-    public void initDebugDataSubmitter() {
-        debugDataSubmitter = new DebugDataSubmitter(this);
-        debugDataSubmitter.setClient(new OkHttpClient());
-        debugDataSubmitter.setEndpoint(DEBUG_DATA_ENDPOINT);
-        debugDataSubmitter.setFile(new File(db.getPath()));
     }
 
     public void setAccessToken(Token accessToken) {

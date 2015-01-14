@@ -48,7 +48,6 @@
     <!--Settings-->
 
     <string name="settings">Configuración</string>
-    <string name="submit_data">Enviar datos</string>
     <string name="settings_debug_mode">Modo de depuración</string>
     <string name="settings_debug_mode_summary">Esto mantendra la aplicación en modo de depuración y su ubicación será almacenada</string>
     <string name="settings_debug_title">Depurando</string>

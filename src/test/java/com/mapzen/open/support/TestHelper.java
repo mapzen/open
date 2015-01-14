@@ -72,7 +72,6 @@ public final class TestHelper {
                 .get();
 
         activity.onCreateOptionsMenu(menu);
-        activity.setDebugDataExecutor(new ImmediateExecutor());
         return activity;
     }
 
