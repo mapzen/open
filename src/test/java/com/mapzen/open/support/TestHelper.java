@@ -24,6 +24,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationManager;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -56,6 +58,10 @@ public final class TestHelper {
     public static final String MOCK_ACE_HOTEL = TestHelper.getFixture("ace_hotel");
 
     private TestHelper() {
+    }
+
+    public static void startFragment(Fragment fragment, FragmentActivity activity) {
+        activity.getSupportFragmentManager().beginTransaction().add(fragment, null).commit();
     }
 
     public static TestBaseActivity initBaseActivity() {

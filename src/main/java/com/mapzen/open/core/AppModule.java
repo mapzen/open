@@ -23,17 +23,9 @@ import com.mapzen.osrm.Router;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
-import org.oscim.android.canvas.AndroidGraphics;
-import org.oscim.backend.canvas.Color;
-import org.oscim.layers.PathLayer;
-import org.oscim.layers.marker.ItemizedLayer;
-import org.oscim.layers.marker.MarkerItem;
-
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
-
-import java.util.ArrayList;
 
 import javax.inject.Singleton;
 
@@ -77,17 +69,6 @@ public class AppModule {
 
     @Provides OAuthRequestFactory provideOAuthRequestFactory() {
         return new OAuthRequestFactory();
-    }
-
-    @Provides PathLayer providePathLayer() {
-        return new PathLayer(MapController.getMapController().getMap(), Color.DKGRAY, 8);
-    }
-
-    @Provides @Singleton ItemizedLayer<MarkerItem> provideItemizedLayer() {
-        return new ItemizedLayer<MarkerItem>(
-                MapController.getMapController().getMap(), new ArrayList<MarkerItem>(),
-                AndroidGraphics.makeMarker(context.getResources().getDrawable(R.drawable.ic_pin),
-                MarkerItem.HotspotPlace.BOTTOM_CENTER), null);
     }
 
     @Provides @Singleton Typeface provideTypeface() {

@@ -40,9 +40,6 @@ import com.mapzen.osrm.Router;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
 import org.mockito.Mockito;
-import org.oscim.layers.PathLayer;
-import org.oscim.layers.marker.ItemizedLayer;
-import org.oscim.layers.marker.MarkerItem;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -118,14 +115,6 @@ public class TestAppModule {
 
     @Provides OAuthRequestFactory provideOAuthRequestFactory() {
         return new TestOAuthRequestFactory();
-    }
-
-    @Provides @Singleton PathLayer providePathLayer() {
-        return mock(PathLayer.class);
-    }
-
-    @Provides @Singleton ItemizedLayer<MarkerItem> provideItemizedLayer() {
-        return mock(ItemizedLayer.class);
     }
 
     @Provides @Singleton MixpanelAPI provideMixpanelApi() {

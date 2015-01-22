@@ -39,7 +39,10 @@ public class ItemFragment extends BaseFragment {
     public void start() {
         final RoutePreviewFragment routePreviewFragment =
                 RoutePreviewFragment.newInstance(act, simpleFeature);
-        routePreviewFragment.createRouteToDestination();
+        act.getSupportFragmentManager().beginTransaction()
+                .addToBackStack(null)
+                .add(R.id.routes_preview_container, routePreviewFragment, RoutePreviewFragment.TAG)
+                .commit();
         act.promptForGPSIfNotEnabled();
     }
 

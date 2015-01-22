@@ -4,14 +4,18 @@ import com.mapzen.open.MapController;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.TestMapzenApplication;
+import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.open.event.ViewUpdateEvent;
 import com.mapzen.open.fragment.MapFragment;
-import com.mapzen.osrm.Route;
-import com.mapzen.osrm.Router;
 import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.support.TestBaseActivity;
+import com.mapzen.open.support.TestHelper;
+import com.mapzen.osrm.Route;
+import com.mapzen.osrm.Router;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.squareup.otto.Bus;
 
 import org.json.JSONObject;
 import org.junit.Before;
@@ -21,27 +25,19 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.oscim.layers.PathLayer;
-import org.oscim.layers.marker.ItemizedLayer;
-import org.oscim.layers.marker.MarkerItem;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowApplication;
-import org.robolectric.util.FragmentTestUtil;
 
-import android.content.Intent;
 import android.location.Location;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import static com.mapzen.open.MapController.locationToGeoPoint;
-import static com.mapzen.open.activity.BaseActivity.COM_MAPZEN_UPDATE_VIEW;
 import static com.mapzen.open.entity.SimpleFeature.TEXT;
 import static com.mapzen.open.route.RoutePreviewFragment.REDUCE_TOLERANCE;
 import static com.mapzen.open.support.TestHelper.getFixture;
@@ -57,8 +53,8 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
@@ -67,17 +63,12 @@ public class RoutePreviewFragmentTest {
     RoutePreviewFragment fragment;
     SimpleFeature destination;
     @Inject Router router;
-    @Inject PathLayer path;
-    @Inject ItemizedLayer<MarkerItem> markers;
     @Inject MapController mapController;
     @Inject MixpanelAPI mixpanelAPI;
+    @Inject Bus bus;
     @Captor
     @SuppressWarnings("unused")
     ArgumentCaptor<double[]> location;
-
-    @Captor
-    @SuppressWarnings("unused")
-    ArgumentCaptor<MarkerItem> marker;
 
     @Before
     public void setup() throws Exception {
@@ -87,12 +78,17 @@ public class RoutePreviewFragmentTest {
         activity.disableActionbar();
         destination = getTestSimpleFeature();
         fragment = RoutePreviewFragment.newInstance(activity, destination);
-        FragmentTestUtil.startFragment(fragment);
+        TestHelper.startFragment(fragment, activity);
     }
 
     @Test
     public void shouldHaveTag() throws Exception {
         assertThat(RoutePreviewFragment.TAG).isEqualTo(RoutePreviewFragment.class.getSimpleName());
+    }
+
+    @Test
+    public void shouldRetainInstanceState() throws Exception {
+        assertThat(fragment.getRetainInstance()).isTrue();
     }
 
     @Test
@@ -191,27 +187,27 @@ public class RoutePreviewFragmentTest {
     public void createRouteToDestination_shouldGetCurrentLocationFirst() throws Exception {
         mapController.setLocation(getTestLocation(22.22, 44.44));
         fragment.createRouteToDestination();
-        verify(router, Mockito.times(2)).setLocation(location.capture());
+        verify(router, Mockito.times(4)).setLocation(location.capture());
         List<double[]> values = location.getAllValues();
-        assertThat(values.get(0)).isEqualTo(new double[] { 22.22, 44.44 });
-        assertThat(values.get(1)).isEqualTo(new double[] { 1.0, 1.0 });
+        assertThat(values.get(2)).isEqualTo(new double[] { 22.22, 44.44 });
+        assertThat(values.get(3)).isEqualTo(new double[] { 1.0, 1.0 });
     }
 
     @Test
-    public void createRouteToDestination_shouldGetFeatureDestinationFirst() throws Exception {
+    public void reverse_shouldGetFeatureDestinationFirst() throws Exception {
         mapController.setLocation(getTestLocation(22.22, 44.44));
         fragment.reverse();
-        verify(router, times(2)).setLocation(location.capture());
+        verify(router, times(4)).setLocation(location.capture());
         List<double[]> values = location.getAllValues();
-        assertThat(values.get(0)).isEqualTo(new double[] { 1.0, 1.0 });
-        assertThat(values.get(1)).isEqualTo(new double[] { 22.22, 44.44 });
+        assertThat(values.get(2)).isEqualTo(new double[] { 1.0, 1.0 });
+        assertThat(values.get(3)).isEqualTo(new double[] { 22.22, 44.44 });
     }
 
     @Test
     public void success_shouldAddPathToMap() throws Exception {
         fragment.createRouteToDestination();
         fragment.success(new Route(getFixture("around_the_block")));
-        assertThat(mapController.getMap().layers().contains(path)).isTrue();
+        assertThat(mapController.getMap().layers().contains(fragment.path)).isTrue();
     }
 
     @Test
@@ -219,21 +215,26 @@ public class RoutePreviewFragmentTest {
         fragment.createRouteToDestination();
         fragment.success(new Route(getFixture("around_the_block")));
         fragment.success(new Route(getFixture("around_the_block")));
-        assertThat(mapController.getMap().layers().contains(path)).isTrue();
+        assertThat(mapController.getMap().layers().contains(fragment.path)).isTrue();
     }
 
     @Test
     public void success_shouldClearPreviousRoutes() throws Exception {
+        Route route = new Route(getFixture("around_the_block"));
         fragment.createRouteToDestination();
-        fragment.success(new Route(getFixture("around_the_block")));
-        verify(path).clearPath();
+        fragment.success(route);
+        fragment.createRouteToDestination();
+        fragment.success(route);
+        assertThat(fragment.path.getPoints()).hasSize(route.getGeometry().size());
     }
 
     @Test
     public void failure_shouldClearPreviousRoutes() throws Exception {
         fragment.createRouteToDestination();
+        fragment.success(new Route(getFixture("around_the_block")));
+        fragment.createRouteToDestination();
         fragment.failure(500);
-        verify(path).clearPath();
+        assertThat(fragment.path.getPoints()).isEmpty();
     }
 
     @Test
@@ -242,7 +243,7 @@ public class RoutePreviewFragmentTest {
         Route route = new Route(getFixture("under_hundred"));
         fragment.success(route);
         for (Location loc : route.getGeometry()) {
-            verify(path).addPoint(locationToGeoPoint(loc));
+            assertThat(fragment.path.getPoints()).contains(locationToGeoPoint(loc));
         }
     }
 
@@ -253,7 +254,7 @@ public class RoutePreviewFragmentTest {
         fragment.success(route);
 
         for (Location loc : reduceWithTolerance(route.getGeometry(), REDUCE_TOLERANCE)) {
-            verify(path).addPoint(locationToGeoPoint(loc));
+            assertThat(fragment.path.getPoints()).contains(locationToGeoPoint(loc));
         }
     }
 
@@ -268,7 +269,7 @@ public class RoutePreviewFragmentTest {
         RadioButton byCar = (RadioButton) fragment.getView().findViewById(R.id.by_car);
         byCar.setChecked(false);
         byCar.performClick();
-        verify(router).setDriving();
+        verify(router, times(2)).setDriving();
     }
 
     @Test
@@ -307,7 +308,7 @@ public class RoutePreviewFragmentTest {
     public void success_shouldAddMarkerLayer() throws Exception {
         fragment.createRouteToDestination();
         fragment.success(new Route(getFixture("around_the_block")));
-        assertThat(mapController.getMap().layers().contains(markers)).isTrue();
+        assertThat(mapController.getMap().layers().contains(fragment.markers)).isTrue();
     }
 
     @Test
@@ -315,32 +316,22 @@ public class RoutePreviewFragmentTest {
         fragment.createRouteToDestination();
         fragment.success(new Route(getFixture("around_the_block")));
         fragment.success(new Route(getFixture("around_the_block")));
-        assertThat(mapController.getMap().layers().contains(markers)).isTrue();
+        assertThat(mapController.getMap().layers().contains(fragment.markers)).isTrue();
     }
 
     @Test
     public void success_shouldClearMarkerLayer() throws Exception {
         fragment.createRouteToDestination();
         fragment.success(new Route(getFixture("around_the_block")));
-        verify(markers).removeAllItems();
+        assertThat(fragment.markers.size()).isEqualTo(2);
     }
 
     @Test
     public void success_shouldAddBubblesAandB() throws Exception {
         Route testRoute = new Route(getFixture("around_the_block"));
-        ArrayList<Location> geometry = testRoute.getGeometry();
         fragment.createRouteToDestination();
         fragment.success(testRoute);
-        verify(markers, times(2)).addItem(marker.capture());
-        List<MarkerItem> values = marker.getAllValues();
-        assertThat(values.get(0).getPoint().getLatitude()).
-                isEqualTo(geometry.get(0).getLatitude());
-        assertThat(values.get(0).getPoint().getLongitude()).
-                isEqualTo(geometry.get(0).getLongitude());
-        assertThat(values.get(1).getPoint().getLatitude()).
-                isEqualTo(geometry.get(geometry.size() - 1).getLatitude());
-        assertThat(values.get(1).getPoint().getLongitude()).
-                isEqualTo(geometry.get(geometry.size() - 1).getLongitude());
+        assertThat(fragment.markers.size()).isEqualTo(2);
     }
 
     @Test
@@ -372,7 +363,7 @@ public class RoutePreviewFragmentTest {
         fragment.success(testRoute);
         ImageButton startBtn = (ImageButton) fragment.getView().findViewById(R.id.routing_circle);
         startBtn.performClick();
-        assertThat(mapController.getMap().layers().contains(markers)).isFalse();
+        assertThat(mapController.getMap().layers().contains(fragment.markers)).isFalse();
     }
 
     @Test
@@ -402,7 +393,7 @@ public class RoutePreviewFragmentTest {
         Route testRoute = new Route(getFixture("around_the_block"));
         fragment.success(testRoute);
         fragment.onDetach();
-        assertThat(mapController.getMap().layers().contains(markers)).isFalse();
+        assertThat(mapController.getMap().layers().contains(fragment.markers)).isFalse();
     }
 
     @Test
@@ -411,7 +402,7 @@ public class RoutePreviewFragmentTest {
         Route testRoute = new Route(getFixture("around_the_block"));
         fragment.success(testRoute);
         fragment.onDetach();
-        assertThat(mapController.getMap().layers().contains(path)).isFalse();
+        assertThat(mapController.getMap().layers().contains(fragment.path)).isFalse();
     }
 
     @Test
@@ -425,22 +416,34 @@ public class RoutePreviewFragmentTest {
         verify(mockMapFragment).updateMap();
     }
 
-    @Test
-    public void onViewCreate_shouldSetViewUpdateReceiver() throws Exception {
-        ShadowApplication application = Robolectric.getShadowApplication();
-        assertThat(application.hasReceiverForIntent(new Intent(COM_MAPZEN_UPDATE_VIEW))).isTrue();
+    @Test(expected = IllegalArgumentException.class)
+    public void onCreate_shouldRegisterWithEventBus() throws Exception {
+        bus.register(fragment);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void onDestroy_shouldUnregisterWithEventBus() throws Exception {
+        fragment.onDestroy();
+        bus.unregister(fragment);
     }
 
     @Test
-    public void onDetach_shouldRemoveViewUpdateReceiver() throws Exception {
-        fragment.onDetach();
-        ShadowApplication application = Robolectric.getShadowApplication();
-        assertThat(application.hasReceiverForIntent(new Intent(COM_MAPZEN_UPDATE_VIEW))).isFalse();
+    public void onViewUpdate_shouldCreateRoute() throws Exception {
+        fragment.onViewUpdate(new ViewUpdateEvent());
+        verify(router, times(2)).fetch();
     }
 
     @Test
-    public void onUpdateView_shouldCreateRoute() throws Exception {
-        fragment.onViewUpdate();
-        verify(router).fetch();
+    public void onAttach_shouldHideActionBar() throws Exception {
+        activity.getActionBar().show();
+        fragment.onAttach(activity);
+        assertThat(activity.getActionBar()).isNotShowing();
+    }
+
+    @Test
+    public void onAttach_shouldResetReferenceToActivity() throws Exception {
+        BaseActivity newActivity = initBaseActivity();
+        fragment.onAttach(newActivity);
+        assertThat(fragment.getBaseActivity()).isEqualTo(newActivity);
     }
 }

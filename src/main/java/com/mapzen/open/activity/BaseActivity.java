@@ -8,6 +8,7 @@ import com.mapzen.open.R;
 import com.mapzen.open.core.DataUploadService;
 import com.mapzen.open.core.MapzenLocation;
 import com.mapzen.open.core.SettingsFragment;
+import com.mapzen.open.event.ViewUpdateEvent;
 import com.mapzen.open.fragment.MapFragment;
 import com.mapzen.open.route.RouteFragment;
 import com.mapzen.open.route.RoutePreviewFragment;
@@ -21,6 +22,7 @@ import com.mapzen.open.util.MapzenNotificationCreator;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.splunk.mint.Mint;
+import com.squareup.otto.Bus;
 
 import org.oscim.android.MapActivity;
 import org.oscim.layers.marker.MarkerItem;
@@ -34,7 +36,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -60,7 +61,6 @@ import javax.inject.Inject;
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class BaseActivity extends MapActivity {
-    public static final String COM_MAPZEN_UPDATE_VIEW = "com.mapzen.updates.view";
     public static final String COM_MAPZEN_UPDATES_LOCATION = "com.mapzen.updates.location";
     @Inject LostApiClient locationClient;
     private Menu activityMenu;
@@ -71,7 +71,7 @@ public class BaseActivity extends MapActivity {
     @Inject MixpanelAPI mixpanelAPI;
     @Inject MapController mapController;
     @Inject SavedSearch savedSearch;
-    @Inject SQLiteDatabase db;
+    @Inject Bus bus;
 
     protected boolean enableActionbar = true;
 
@@ -230,6 +230,7 @@ public class BaseActivity extends MapActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         mapFragment = (MapFragment) fragmentManager.findFragmentById(R.id.map_fragment);
         mapFragment.setAct(this);
+        mapFragment.setRetainInstance(true);
         mapFragment.setOnPoiClickListener(new OnPoiClickListener() {
             @Override
             public void onPoiClick(int index, MarkerItem item) {
@@ -497,11 +498,7 @@ public class BaseActivity extends MapActivity {
     }
 
     public void updateView() {
-        sendBroadcast(new Intent(COM_MAPZEN_UPDATE_VIEW));
-    }
-
-    public interface ViewUpdater {
-        public void onViewUpdate();
+        bus.post(new ViewUpdateEvent());
     }
 
     private void initAlarm() {

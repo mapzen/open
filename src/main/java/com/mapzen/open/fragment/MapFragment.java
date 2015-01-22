@@ -98,9 +98,7 @@ public class MapFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_map,
-                container, false);
-        return view;
+        return inflater.inflate(R.layout.fragment_map, container, false);
     }
 
     public void centerOn(SimpleFeature simpleFeature) {
@@ -354,13 +352,17 @@ public class MapFragment extends BaseFragment {
     }
 
     public void showProgress() {
-        getView().findViewById(R.id.progress).setVisibility(View.VISIBLE);
-        getView().findViewById(R.id.map).setClickable(false);
+        if (getView() != null) {
+            getView().findViewById(R.id.progress).setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.map).setClickable(false);
+        }
     }
 
     public void hideProgress() {
-        getView().findViewById(R.id.progress).setVisibility(View.GONE);
-        getView().findViewById(R.id.map).setClickable(true);
+        if (getView() != null) {
+            getView().findViewById(R.id.progress).setVisibility(View.GONE);
+            getView().findViewById(R.id.map).setClickable(true);
+        }
     }
 
     private final class FindMeReceiver extends IntentReceiver {

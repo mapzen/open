@@ -8,6 +8,7 @@ import com.mapzen.open.R;
 import com.mapzen.open.TestMapzenApplication;
 import com.mapzen.open.core.SettingsFragment;
 import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.open.event.ViewUpdateEvent;
 import com.mapzen.open.route.RouteFragment;
 import com.mapzen.open.route.RoutePreviewFragment;
 import com.mapzen.open.search.PagerResultsFragment;
@@ -19,6 +20,8 @@ import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,8 +43,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
-import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -57,7 +58,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import static android.location.LocationManager.GPS_PROVIDER;
 import static com.mapzen.open.support.TestHelper.getTestFeature;
 import static com.mapzen.open.support.TestHelper.initBaseActivity;
 import static com.mapzen.open.support.TestHelper.initBaseActivityWithMenu;
@@ -80,6 +80,7 @@ public class BaseActivityTest {
     @Inject MapController mapController;
     @Inject SavedSearch savedSearch;
     @Inject SQLiteDatabase db;
+    @Inject Bus bus;
 
     @Before
     public void setUp() throws Exception {
@@ -445,10 +446,11 @@ public class BaseActivityTest {
     }
 
     @Test
-    public void updateView_shouldSendUpdateViewBroadcast() throws Exception {
+    public void updateView_shouldPostViewUpdateEvent() throws Exception {
+        ViewUpdateSubscriber viewUpdateSubscriber = new ViewUpdateSubscriber();
+        bus.register(viewUpdateSubscriber);
         activity.updateView();
-        List<Intent> intents = Robolectric.getShadowApplication().getBroadcastIntents();
-        assertThat(intents).contains(new Intent(BaseActivity.COM_MAPZEN_UPDATE_VIEW));
+        assertThat(viewUpdateSubscriber.event).isNotNull();
     }
 
     @Test
@@ -532,15 +534,6 @@ public class BaseActivityTest {
         assertThat(app.shouldMoveMapToLocation()).isTrue();
     }
 
-    private Location initLastLocation() {
-        Location location = new Location(GPS_PROVIDER);
-        location.setLatitude(1.0);
-        location.setLongitude(2.0);
-        Robolectric.shadowOf((LocationManager) activity.getSystemService(Context.LOCATION_SERVICE))
-                .setLastKnownLocation(GPS_PROVIDER, location);
-        return location;
-    }
-
     private Route getRouteMock() throws JSONException {
         Route route = mock(Route.class);
         Mockito.when(route.foundRoute()).thenReturn(true);
@@ -560,6 +553,15 @@ public class BaseActivityTest {
         public void setGroupVisible(int group, boolean visible) {
             this.group = group;
             this.visible = visible;
+        }
+    }
+
+    public static class ViewUpdateSubscriber {
+        private ViewUpdateEvent event;
+
+        @Subscribe
+        public void onViewUpdate(ViewUpdateEvent event) {
+            this.event = event;
         }
     }
 }
