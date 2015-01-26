@@ -1,16 +1,20 @@
 package com.mapzen.open.support;
 
-import com.mapzen.open.R;
-import com.mapzen.open.activity.BaseActivity;
-import com.mapzen.open.activity.InitialActivity;
-import com.mapzen.open.login.LoginActivity;
 import com.mapzen.android.gson.Feature;
 import com.mapzen.android.gson.Geometry;
 import com.mapzen.android.gson.Properties;
+import com.mapzen.open.R;
+import com.mapzen.open.activity.BaseActivity;
+import com.mapzen.open.activity.InitialActivity;
 import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.open.event.LocationUpdateEvent;
+import com.mapzen.open.event.ViewUpdateEvent;
 import com.mapzen.open.fragment.MapFragment;
-import com.mapzen.osrm.Instruction;
+import com.mapzen.open.login.LoginActivity;
 import com.mapzen.open.util.DatabaseHelper;
+import com.mapzen.osrm.Instruction;
+
+import com.squareup.otto.Subscribe;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
@@ -34,12 +38,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.Executor;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
-import static com.mapzen.open.entity.SimpleFeature.ADMIN1_ABBR;
 import static com.mapzen.open.entity.SimpleFeature.ADMIN1;
+import static com.mapzen.open.entity.SimpleFeature.ADMIN1_ABBR;
 import static com.mapzen.open.entity.SimpleFeature.ID;
 import static com.mapzen.open.entity.SimpleFeature.LOCAL_ADMIN;
 import static com.mapzen.open.entity.SimpleFeature.TEXT;
@@ -311,10 +314,29 @@ public final class TestHelper {
         }
     }
 
-    public static class ImmediateExecutor implements Executor {
-        @Override
-        public void execute(Runnable command) {
-            command.run();
+    public static class ViewUpdateSubscriber {
+        private ViewUpdateEvent event;
+
+        @Subscribe
+        public void onViewUpdate(ViewUpdateEvent event) {
+            this.event = event;
+        }
+
+        public ViewUpdateEvent getEvent() {
+            return event;
+        }
+    }
+
+    public static class LocationUpdateSubscriber {
+        private LocationUpdateEvent event;
+
+        @Subscribe
+        public void onLocationUpdate(LocationUpdateEvent event) {
+            this.event = event;
+        }
+
+        public LocationUpdateEvent getEvent() {
+            return event;
         }
     }
 }

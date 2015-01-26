@@ -22,6 +22,7 @@ import com.mapzen.open.route.DrawPathTask;
 import com.mapzen.open.route.DrawPathTaskTest;
 import com.mapzen.open.route.RouteFragment;
 import com.mapzen.open.route.RouteFragmentTest;
+import com.mapzen.open.route.RouteLocationIndicatorFactory;
 import com.mapzen.open.route.RoutePreviewFragment;
 import com.mapzen.open.route.RoutePreviewFragmentTest;
 import com.mapzen.open.search.AutoCompleteAdapter;
@@ -29,6 +30,7 @@ import com.mapzen.open.search.AutoCompleteAdapterTest;
 import com.mapzen.open.search.PagerResultsFragment;
 import com.mapzen.open.search.PagerResultsFragmentTest;
 import com.mapzen.open.support.TestBaseActivity;
+import com.mapzen.open.support.TestRouteLocationIndicatorFactory;
 import com.mapzen.open.util.DatabaseHelper;
 import com.mapzen.open.util.DebugDataSubmitter;
 import com.mapzen.open.util.DebugDataSubmitterTest;
@@ -153,6 +155,10 @@ public class TestAppModule {
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.enableWriteAheadLogging();
         return db;
+    }
+
+    @Provides @Singleton RouteLocationIndicatorFactory provideRouteLocationIndicatorFactory() {
+        return new TestRouteLocationIndicatorFactory();
     }
 
     public static void setSimpleCryptEnabled(boolean enabled) {

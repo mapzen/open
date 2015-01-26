@@ -12,6 +12,7 @@ import com.mapzen.open.fragment.MapFragment;
 import com.mapzen.open.login.LoginActivity;
 import com.mapzen.open.route.DrawPathTask;
 import com.mapzen.open.route.RouteFragment;
+import com.mapzen.open.route.RouteLocationIndicatorFactory;
 import com.mapzen.open.route.RoutePreviewFragment;
 import com.mapzen.open.search.AutoCompleteAdapter;
 import com.mapzen.open.search.PagerResultsFragment;
@@ -106,5 +107,9 @@ public class AppModule {
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.enableWriteAheadLogging();
         return db;
+    }
+
+    @Provides @Singleton RouteLocationIndicatorFactory provideRouteLocationIndicatorFactory() {
+        return new RouteLocationIndicatorFactory();
     }
 }

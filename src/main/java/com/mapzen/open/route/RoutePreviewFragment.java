@@ -114,7 +114,9 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
         super.onResume();
         app.deactivateMoveMapToLocation();
         act.hideActionBar();
-        createRouteToDestination();
+        if (act.getSupportFragmentManager().findFragmentByTag(RouteFragment.TAG) == null) {
+            createRouteToDestination();
+        }
     }
 
     @Override

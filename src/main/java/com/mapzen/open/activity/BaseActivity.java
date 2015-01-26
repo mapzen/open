@@ -61,7 +61,6 @@ import javax.inject.Inject;
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class BaseActivity extends MapActivity {
-    public static final String COM_MAPZEN_UPDATES_LOCATION = "com.mapzen.updates.location";
     @Inject LostApiClient locationClient;
     private Menu activityMenu;
     private AutoCompleteAdapter autoCompleteAdapter;
@@ -114,7 +113,9 @@ public class BaseActivity extends MapActivity {
     @Override
     public void onPause() {
         super.onPause();
-        locationClient.disconnect();
+        if (getSupportFragmentManager().findFragmentByTag(RouteFragment.TAG) == null) {
+            locationClient.disconnect();
+        }
         persistSavedSearches();
     }
 

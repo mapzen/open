@@ -4,12 +4,15 @@ import com.mapzen.open.MapController;
 import com.mapzen.open.R;
 import com.mapzen.open.core.StyleDownLoader;
 import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.open.event.LocationUpdateEvent;
 import com.mapzen.open.search.OnPoiClickListener;
 import com.mapzen.open.util.IntentReceiver;
 import com.mapzen.open.util.Logger;
 import com.mapzen.open.util.MapzenStyle;
 
 import com.squareup.okhttp.HttpResponseCache;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import org.oscim.android.canvas.AndroidGraphics;
 import org.oscim.backend.AssetAdapter;
@@ -47,7 +50,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import static com.mapzen.open.MapController.DEFAULT_ZOOM_LEVEL;
-import static com.mapzen.open.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.open.core.MapzenLocation.COM_MAPZEN_FIND_ME;
 import static org.oscim.layers.marker.ItemizedLayer.OnItemGestureListener;
 
@@ -64,9 +66,9 @@ public class MapFragment extends BaseFragment {
     private boolean initialRelocateHappened = false;
     private OnPoiClickListener onPoiClickListener;
     private FindMeReceiver findMeReceiver;
-    private LocationReceiver locationReceiver;
     @Inject MapController mapController;
     @Inject StyleDownLoader styleDownLoader;
+    @Inject Bus bus;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -339,16 +341,14 @@ public class MapFragment extends BaseFragment {
     }
 
     private void unregisterLocationReceivers() {
-        app.unregisterReceiver(locationReceiver);
+        bus.unregister(this);
         app.unregisterReceiver(findMeReceiver);
     }
 
     private void registerLocationReceivers() {
         findMeReceiver = new FindMeReceiver(COM_MAPZEN_FIND_ME);
         app.registerReceiver(findMeReceiver, findMeReceiver.getIntentFilter());
-
-        locationReceiver = new LocationReceiver(COM_MAPZEN_UPDATES_LOCATION);
-        app.registerReceiver(locationReceiver, locationReceiver.getIntentFilter());
+        bus.register(this);
     }
 
     public void showProgress() {
@@ -376,14 +376,8 @@ public class MapFragment extends BaseFragment {
         }
     }
 
-    private final class LocationReceiver extends IntentReceiver {
-        private LocationReceiver(String action) {
-            super(action);
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            addLocationDot();
-        }
+    @Subscribe
+    public void onLocationUpdate(LocationUpdateEvent event) {
+        addLocationDot();
     }
 }

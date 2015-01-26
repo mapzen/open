@@ -8,20 +8,19 @@ import com.mapzen.open.R;
 import com.mapzen.open.TestMapzenApplication;
 import com.mapzen.open.core.SettingsFragment;
 import com.mapzen.open.entity.SimpleFeature;
-import com.mapzen.open.event.ViewUpdateEvent;
 import com.mapzen.open.route.RouteFragment;
 import com.mapzen.open.route.RoutePreviewFragment;
 import com.mapzen.open.search.PagerResultsFragment;
 import com.mapzen.open.search.SavedSearch;
 import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.support.TestHelper;
+import com.mapzen.open.support.TestHelper.ViewUpdateSubscriber;
 import com.mapzen.open.util.MapzenNotificationCreator;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.squareup.otto.Bus;
-import com.squareup.otto.Subscribe;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -243,6 +242,15 @@ public class BaseActivityTest {
     }
 
     @Test
+    public void onPause_shouldNotDisconnectLocationClientWhileRouting() throws Exception {
+        activity.getSupportFragmentManager().beginTransaction()
+                .add(R.id.routes_container, new Fragment(), RouteFragment.TAG)
+                .commit();
+        activity.onPause();
+        assertThat(locationClient.isConnected()).isTrue();
+    }
+
+    @Test
     public void onResume_shouldReConnectLocationClient() throws Exception {
         locationClient.disconnect();
         activity.onResume();
@@ -450,7 +458,7 @@ public class BaseActivityTest {
         ViewUpdateSubscriber viewUpdateSubscriber = new ViewUpdateSubscriber();
         bus.register(viewUpdateSubscriber);
         activity.updateView();
-        assertThat(viewUpdateSubscriber.event).isNotNull();
+        assertThat(viewUpdateSubscriber.getEvent()).isNotNull();
     }
 
     @Test
@@ -553,15 +561,6 @@ public class BaseActivityTest {
         public void setGroupVisible(int group, boolean visible) {
             this.group = group;
             this.visible = visible;
-        }
-    }
-
-    public static class ViewUpdateSubscriber {
-        private ViewUpdateEvent event;
-
-        @Subscribe
-        public void onViewUpdate(ViewUpdateEvent event) {
-            this.event = event;
         }
     }
 }

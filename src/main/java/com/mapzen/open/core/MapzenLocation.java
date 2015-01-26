@@ -6,8 +6,10 @@ import com.mapzen.android.lost.api.LocationRequest;
 import com.mapzen.open.MapController;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
-import com.mapzen.open.activity.BaseActivity;
+import com.mapzen.open.event.LocationUpdateEvent;
 import com.mapzen.open.util.Logger;
+
+import com.squareup.otto.Bus;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,7 +21,6 @@ import android.widget.Toast;
 import javax.inject.Inject;
 
 public final class MapzenLocation {
-    public static final String KEY_LOCATION = "location";
     public static final String COM_MAPZEN_FIND_ME = "com.mapzen.updates.find_me";
     public static final int DEFAULT_LOCATION_INTERVAL = 1000;
 
@@ -61,6 +62,7 @@ public final class MapzenLocation {
     public static class Listener implements LocationListener {
         private MapzenApplication application;
         @Inject MapController mapController;
+        @Inject Bus bus;
 
         public Listener(MapzenApplication application) {
             this.application = application;
@@ -73,9 +75,8 @@ public final class MapzenLocation {
                 Intent findMe = new Intent(COM_MAPZEN_FIND_ME);
                 application.sendBroadcast(findMe);
             }
-            Intent toBroadcast = new Intent(BaseActivity.COM_MAPZEN_UPDATES_LOCATION);
-            toBroadcast.putExtra(KEY_LOCATION, location);
-            application.sendBroadcast(toBroadcast);
+
+            bus.post(new LocationUpdateEvent(location));
         }
     }
 

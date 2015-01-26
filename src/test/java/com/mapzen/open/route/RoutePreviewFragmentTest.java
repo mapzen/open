@@ -29,6 +29,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 
 import android.location.Location;
+import android.support.v4.app.Fragment;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -161,6 +162,20 @@ public class RoutePreviewFragmentTest {
     public void onResume_shouldDeactivateMoveToMapUpdates() throws Exception {
         assertThat(((MapzenApplication) Robolectric.application)
                 .shouldMoveMapToLocation()).isFalse();
+    }
+
+    @Test
+    public void onResume_shouldCreateRouteToDestination() throws Exception {
+        fragment.onResume();
+        verify(router, times(2)).fetch();
+    }
+
+    @Test
+    public void onResume_shouldNotCreateRouteToDestinationIfRouting() throws Exception {
+        activity.getSupportFragmentManager().beginTransaction()
+                .add(new Fragment(), RouteFragment.TAG).commit();
+        fragment.onResume();
+        verify(router, times(1)).fetch();
     }
 
     @Test
