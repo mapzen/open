@@ -2,4 +2,5 @@
 <resources>
     <dimen name="login_body_font_size">36sp</dimen>
     <dimen name="login_padding_horizontal">48dp</dimen>
+    <dimen name="login_padding_vertical">72dp</dimen>
 </resources>

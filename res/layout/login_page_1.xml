@@ -3,10 +3,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="top"
+    android:gravity="bottom"
     android:orientation="vertical"
     android:paddingLeft="@dimen/login_padding_horizontal"
-    android:paddingRight="@dimen/login_padding_horizontal">
+    android:paddingRight="@dimen/login_padding_horizontal"
+    android:paddingBottom="@dimen/login_padding_vertical">
 
     <TextView
         android:id="@+id/title"

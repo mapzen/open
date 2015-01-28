@@ -3,12 +3,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="top"
+    android:gravity="bottom"
     android:orientation="vertical"
     android:paddingLeft="@dimen/login_padding_horizontal"
-    android:paddingRight="@dimen/login_padding_horizontal">
+    android:paddingRight="@dimen/login_padding_horizontal"
+    android:paddingBottom="@dimen/login_padding_vertical">
 
-    <Button
+<Button
         android:id="@+id/login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,7 +22,7 @@
         android:textColor="@android:color/white"
         android:fontFamily="sans-serif-condensed"
         android:background="@drawable/signin_button"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="8dp"
         android:layout_centerHorizontal="true"
         android:singleLine="true"
         android:maxLines="1"
