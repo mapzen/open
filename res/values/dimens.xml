@@ -35,6 +35,7 @@
     <dimen name="login_title_margin_vertical">12dp</dimen>
     <dimen name="login_body_margin_vertical">12dp</dimen>
     <dimen name="login_padding_horizontal">24dp</dimen>
+    <dimen name="login_padding_vertical">48dp</dimen>
     <dimen name="login_button_bottom_margin">16dp</dimen>
 
     <!-- fonts -->
