@@ -42,7 +42,7 @@ public class SavedSearchTest {
     }
 
     @Test
-    public void store_shouldHaveNullPayloadAfterSerialze() throws Exception {
+    public void store_shouldHaveNullPayloadAfterSerialize() throws Exception {
         savedSearch.store("term");
         String serialized = savedSearch.serialize();
         savedSearch.clear();
@@ -51,7 +51,7 @@ public class SavedSearchTest {
     }
 
     @Test
-    public void payloadShouldbeHealthy() throws Exception {
+    public void payloadShouldBeHealthy() throws Exception {
         savedSearch.store("term", payload);
         String serialized = savedSearch.serialize();
         savedSearch.clear();
@@ -211,6 +211,14 @@ public class SavedSearchTest {
         assertThat(cursor.getString(1)).isEqualTo("saved query 2");
         cursor.moveToNext();
         assertThat(cursor.getString(1)).isEqualTo("saved query 1");
+    }
+
+    @Test
+    public void deserialize_shouldClearStoreBeforeLoadingTerms() throws Exception {
+        savedSearch.store("saved query");
+        String serialized = savedSearch.serialize();
+        savedSearch.deserialize(serialized);
+        assertThat(savedSearch.size()).isEqualTo(1);
     }
 
     private int countTerms(Iterator<SavedSearch.Member> results) {
