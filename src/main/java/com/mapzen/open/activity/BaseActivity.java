@@ -15,6 +15,7 @@ import com.mapzen.open.route.RoutePreviewFragment;
 import com.mapzen.open.search.AutoCompleteAdapter;
 import com.mapzen.open.search.OnPoiClickListener;
 import com.mapzen.open.search.PagerResultsFragment;
+import com.mapzen.open.search.PeliasSearchView;
 import com.mapzen.open.search.SavedSearch;
 import com.mapzen.open.util.Logger;
 import com.mapzen.open.util.MapzenGPSPromptDialogFragment;
@@ -50,7 +51,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
-import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -91,6 +91,8 @@ public class BaseActivity extends MapActivity {
         initMapController();
         initAlarm();
         initSavedSearches();
+        PeliasSearchView.setSearchIcon(R.drawable.ic_search);
+        PeliasSearchView.setCloseIcon(R.drawable.ic_cancel);
     }
 
     @Override
@@ -347,10 +349,6 @@ public class BaseActivity extends MapActivity {
             }
         });
 
-        final ImageView close = (ImageView) searchView.findViewById(searchView.getContext()
-                .getResources().getIdentifier("android:id/search_close_btn", null, null));
-        close.setImageDrawable(getResources().getDrawable(R.drawable.ic_cancel));
-
         // Set custom search hint icon.
         final SpannableStringBuilder ssb =
                 new SpannableStringBuilder(getString(R.string.search_hint_icon_spacer));
@@ -405,7 +403,6 @@ public class BaseActivity extends MapActivity {
         }
         return false;
     }
-
 
     private void handleGeoIntent(SearchView searchView, Uri data) {
         if (data.toString().contains("q=")) {

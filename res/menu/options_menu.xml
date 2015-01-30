@@ -6,7 +6,7 @@
         android:title="@string/search_title"
         android:icon="@drawable/ic_search"
         android:showAsAction="collapseActionView|ifRoom"
-        android:actionViewClass="android.widget.SearchView" />
+        android:actionViewClass="com.mapzen.open.search.PeliasSearchView" />
 
     <item
         android:id="@+id/about"
