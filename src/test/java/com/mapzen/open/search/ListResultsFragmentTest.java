@@ -42,6 +42,11 @@ public class ListResultsFragmentTest {
     }
 
     @Test
+    public void shouldRetainInstance() throws Exception {
+        assertThat(fragment.getRetainInstance()).isTrue();
+    }
+
+    @Test
     public void shouldHaveListAdapter() throws Exception {
         assertThat(fragment.getListAdapter()).hasCount(3);
     }

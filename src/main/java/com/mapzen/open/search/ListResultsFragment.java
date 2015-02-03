@@ -26,6 +26,7 @@ public class ListResultsFragment extends ListFragment {
         final ListResultsFragment listResultsFragment = new ListResultsFragment();
         listResultsFragment.features = simpleFeatures;
         listResultsFragment.currentSearchTerm = currentSearchTerm;
+        listResultsFragment.setRetainInstance(true);
         return listResultsFragment;
     }
 
