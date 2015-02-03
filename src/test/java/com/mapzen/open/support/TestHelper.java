@@ -8,6 +8,7 @@ import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.activity.InitialActivity;
 import com.mapzen.open.entity.SimpleFeature;
 import com.mapzen.open.event.LocationUpdateEvent;
+import com.mapzen.open.event.RoutePreviewEvent;
 import com.mapzen.open.event.ViewUpdateEvent;
 import com.mapzen.open.fragment.MapFragment;
 import com.mapzen.open.login.LoginActivity;
@@ -336,6 +337,19 @@ public final class TestHelper {
         }
 
         public LocationUpdateEvent getEvent() {
+            return event;
+        }
+    }
+
+    public static class RoutePreviewSubscriber {
+        private RoutePreviewEvent event;
+
+        @Subscribe
+        public void onRoutePreviewEvent(RoutePreviewEvent event) {
+            this.event = event;
+        }
+
+        public RoutePreviewEvent getEvent() {
             return event;
         }
     }

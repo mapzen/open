@@ -8,6 +8,7 @@ import com.mapzen.open.R;
 import com.mapzen.open.core.DataUploadService;
 import com.mapzen.open.core.MapzenLocation;
 import com.mapzen.open.core.SettingsFragment;
+import com.mapzen.open.event.RoutePreviewEvent;
 import com.mapzen.open.event.ViewUpdateEvent;
 import com.mapzen.open.fragment.MapFragment;
 import com.mapzen.open.route.RouteFragment;
@@ -24,6 +25,7 @@ import com.mapzen.open.util.MapzenNotificationCreator;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.splunk.mint.Mint;
 import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import org.oscim.android.MapActivity;
 import org.oscim.layers.marker.MarkerItem;
@@ -93,6 +95,7 @@ public class BaseActivity extends MapActivity {
         initSavedSearches();
         PeliasSearchView.setSearchIcon(R.drawable.ic_search);
         PeliasSearchView.setCloseIcon(R.drawable.ic_cancel);
+        bus.register(this);
     }
 
     @Override
@@ -134,6 +137,7 @@ public class BaseActivity extends MapActivity {
         super.onDestroy();
         clearNotifications();
         mixpanelAPI.flush();
+        bus.unregister(this);
     }
 
     private void clearNotifications() {
@@ -529,5 +533,16 @@ public class BaseActivity extends MapActivity {
     public void locateButtonAction(View view) {
         app.activateMoveMapToLocation();
         mapFragment.centerOnCurrentLocation();
+    }
+
+    @Subscribe
+    public void onRoutePreviewEvent(RoutePreviewEvent event) {
+        final RoutePreviewFragment routePreviewFragment =
+                RoutePreviewFragment.newInstance(this, event.getSimpleFeature());
+        getSupportFragmentManager().beginTransaction()
+                .addToBackStack(null)
+                .add(R.id.routes_preview_container, routePreviewFragment, RoutePreviewFragment.TAG)
+                .commitAllowingStateLoss();
+        promptForGPSIfNotEnabled();
     }
 }

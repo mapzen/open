@@ -8,6 +8,7 @@ import com.mapzen.open.R;
 import com.mapzen.open.TestMapzenApplication;
 import com.mapzen.open.core.SettingsFragment;
 import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.open.event.RoutePreviewEvent;
 import com.mapzen.open.route.RouteFragment;
 import com.mapzen.open.route.RoutePreviewFragment;
 import com.mapzen.open.search.PagerResultsFragment;
@@ -34,6 +35,7 @@ import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowAlarmManager;
 import org.robolectric.shadows.ShadowIntent;
+import org.robolectric.shadows.ShadowLocationManager;
 import org.robolectric.tester.android.view.TestMenu;
 import org.scribe.model.Token;
 
@@ -42,6 +44,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -58,6 +61,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import static com.mapzen.open.support.TestHelper.getTestFeature;
+import static com.mapzen.open.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.open.support.TestHelper.initBaseActivity;
 import static com.mapzen.open.support.TestHelper.initBaseActivityWithMenu;
 import static org.fest.assertions.api.ANDROID.assertThat;
@@ -542,6 +546,21 @@ public class BaseActivityTest {
         assertThat(app.shouldMoveMapToLocation()).isTrue();
     }
 
+    @Test
+    public void onRoutePreviewEvent_shouldStartRoutePreviewFragment() throws Exception {
+        activity.onRoutePreviewEvent(new RoutePreviewEvent(getTestSimpleFeature()));
+        assertThat(activity.getSupportFragmentManager())
+                .hasFragmentWithTag(RoutePreviewFragment.TAG);
+    }
+
+    @Test
+    public void onRoutePreviewEvent_shouldDisplayGPSPromptIfNotEnabled() throws Exception {
+        ShadowLocationManager manager = shadowOf(getLocationManager());
+        manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
+        activity.onRoutePreviewEvent(new RoutePreviewEvent(getTestSimpleFeature()));
+        assertThat(activity.getSupportFragmentManager()).hasFragmentWithTag("gps_dialog");
+    }
+
     private Route getRouteMock() throws JSONException {
         Route route = mock(Route.class);
         Mockito.when(route.foundRoute()).thenReturn(true);
@@ -551,6 +570,10 @@ public class BaseActivityTest {
         Mockito.when(route.getRouteInstructions()).thenReturn(instructions);
         Mockito.when(route.getStartCoordinates()).thenReturn(TestHelper.getTestLocation(0, 0));
         return route;
+    }
+
+    private LocationManager getLocationManager() {
+        return (LocationManager) Robolectric.application.getSystemService(Context.LOCATION_SERVICE);
     }
 
     private class TestMenuWithGroup extends TestMenu {
