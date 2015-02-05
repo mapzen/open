@@ -19,7 +19,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
-import org.robolectric.annotation.Config;
 
 import android.content.Context;
 import android.content.Intent;
@@ -41,7 +40,6 @@ import static org.mockito.Mockito.verify;
 import static org.robolectric.Robolectric.shadowOf;
 import static org.robolectric.shadows.ShadowToast.getTextOfLatestToast;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class MapzenLocationTest {
     private MapzenApplication application;

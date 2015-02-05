@@ -30,7 +30,6 @@ import org.oscim.tiling.source.HttpEngine;
 import org.oscim.tiling.source.OkHttpEngine;
 import org.oscim.tiling.source.UrlTileSource;
 import org.robolectric.Robolectric;
-import org.robolectric.annotation.Config;
 import org.robolectric.util.FragmentTestUtil;
 
 import android.content.BroadcastReceiver;
@@ -50,7 +49,6 @@ import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.reflect.core.Reflection.field;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class MapFragmentTest {
     private MapFragment mapFragment;

@@ -8,7 +8,6 @@ import com.mapzen.open.support.TestHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
 
 import android.graphics.Typeface;
 import android.widget.TextView;
@@ -20,7 +19,6 @@ import javax.inject.Inject;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.robolectric.Robolectric.application;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class PlaceArrayAdapterTest {
     private PlaceArrayAdapter adapter;

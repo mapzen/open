@@ -1,17 +1,14 @@
 package com.mapzen.open.route;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 import com.mapzen.open.R;
 import com.mapzen.open.entity.SimpleFeature;
-import com.mapzen.osrm.Instruction;
 import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.widget.DistanceView;
+import com.mapzen.osrm.Instruction;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -22,13 +19,15 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 import static com.mapzen.open.entity.SimpleFeature.TEXT;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.util.FragmentTestUtil.startFragment;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class DirectionListFragmentTest {
     private static final double METERS_IN_MILE = 1609.34;

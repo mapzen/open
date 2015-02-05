@@ -1,11 +1,11 @@
 package com.mapzen.open.search;
 
-import com.mapzen.open.MapzenApplication;
-import com.mapzen.open.R;
-import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.android.Pelias;
 import com.mapzen.android.gson.Feature;
 import com.mapzen.android.gson.Result;
+import com.mapzen.open.MapzenApplication;
+import com.mapzen.open.R;
+import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.entity.SimpleFeature;
 import com.mapzen.open.support.MapzenTestRunner;
 
@@ -19,7 +19,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.oscim.core.MapPosition;
-import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowLog;
 import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.shadows.ShadowToast;
@@ -63,7 +62,6 @@ import static org.robolectric.Robolectric.getShadowApplication;
 import static org.robolectric.Robolectric.shadowOf;
 import static org.robolectric.shadows.ShadowToast.getTextOfLatestToast;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class PagerResultsFragmentTest {
     @Captor

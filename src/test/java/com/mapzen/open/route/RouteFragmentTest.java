@@ -39,7 +39,6 @@ import org.oscim.map.TestMap;
 import org.oscim.map.TestViewport;
 import org.oscim.map.ViewController;
 import org.robolectric.Robolectric;
-import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowEnvironment;
 import org.robolectric.shadows.ShadowNotification;
@@ -113,7 +112,6 @@ import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.shadowOf;
 import static org.robolectric.Robolectric.shadowOf_;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class RouteFragmentTest {
     @Inject Router router;
@@ -159,7 +157,7 @@ public class RouteFragmentTest {
     @Test
     public void shouldHideActionBar() throws Exception {
         TestHelper.startFragment(fragment, act);
-        assertThat(act.getActionBar()).isNotShowing();
+        assertThat(act.getSupportActionBar().isShowing()).isFalse();
     }
 
     @Test
@@ -701,7 +699,7 @@ public class RouteFragmentTest {
     @Test
     public void onResume_shouldDisableActionbar() throws Exception {
         TestHelper.startFragment(fragment, act);
-        assertThat(act.getActionBar()).isNotShowing();
+        assertThat(act.getSupportActionBar().isShowing()).isFalse();
     }
 
     @Test

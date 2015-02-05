@@ -26,7 +26,6 @@ import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import org.robolectric.annotation.Config;
 
 import android.location.Location;
 import android.support.v4.app.Fragment;
@@ -57,7 +56,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class RoutePreviewFragmentTest {
     TestBaseActivity activity;
@@ -129,14 +127,14 @@ public class RoutePreviewFragmentTest {
 
     @Test
     public void onStart_shouldHideActionbar() throws Exception {
-        assertThat(activity.getActionBar()).isNotShowing();
+        assertThat(activity.getSupportActionBar().isShowing()).isFalse();
     }
 
     @Test
     public void onDetach_shouldShowActionbar() throws Exception {
         fragment.onDetach();
         assertThat(activity.actionBarIsEnabled()).isTrue();
-        assertThat(activity.getActionBar()).isShowing();
+        assertThat(activity.getSupportActionBar().isShowing()).isTrue();
     }
 
     @Test

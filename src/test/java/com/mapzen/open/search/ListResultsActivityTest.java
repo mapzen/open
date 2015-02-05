@@ -7,10 +7,8 @@ import com.mapzen.open.support.MapzenTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
 import org.robolectric.tester.android.view.TestMenuItem;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.text.Html;
 import android.text.Spanned;
@@ -18,13 +16,14 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import static android.app.ActionBar.DISPLAY_HOME_AS_UP;
+import static android.app.ActionBar.DISPLAY_SHOW_TITLE;
 import static com.mapzen.open.support.TestHelper.getTestSimpleFeature;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.buildActivity;
 import static org.robolectric.Robolectric.getShadowApplication;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class ListResultsActivityTest {
     private ListResultsActivity activity;
@@ -60,10 +59,10 @@ public class ListResultsActivityTest {
 
     @Test
     public void shouldSetActionBarDisplayOptions() throws Exception {
-        assertThat(activity.getActionBar()).hasDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP
-                | ActionBar.DISPLAY_SHOW_HOME
-                | ActionBar.DISPLAY_SHOW_TITLE
-                | ActionBar.DISPLAY_USE_LOGO);
+        assertThat(activity.getSupportActionBar().getDisplayOptions() & DISPLAY_HOME_AS_UP)
+                .isEqualTo(DISPLAY_HOME_AS_UP);
+        assertThat(activity.getSupportActionBar().getDisplayOptions() & DISPLAY_SHOW_TITLE)
+                .isEqualTo(DISPLAY_SHOW_TITLE);
     }
 
     @Test

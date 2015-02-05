@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
-import org.robolectric.annotation.Config;
 
 import android.content.Context;
 
@@ -22,7 +21,6 @@ import java.io.File;
 import static org.apache.commons.lang.StringUtils.join;
 import static org.fest.assertions.api.Assertions.assertThat;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class StyleDownLoaderTest {
     StyleDownLoader downLoader;

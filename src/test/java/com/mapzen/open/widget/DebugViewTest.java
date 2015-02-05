@@ -1,15 +1,14 @@
 package com.mapzen.open.widget;
 
 import com.mapzen.open.R;
-import com.mapzen.osrm.Instruction;
-import com.mapzen.osrm.Route;
 import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.support.TestHelper;
+import com.mapzen.osrm.Instruction;
+import com.mapzen.osrm.Route;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
 
 import android.location.Location;
 import android.widget.TextView;
@@ -20,7 +19,6 @@ import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class DebugViewTest {
     private DebugView debugView;

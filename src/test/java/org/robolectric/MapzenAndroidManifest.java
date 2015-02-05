@@ -1,15 +1,24 @@
 package org.robolectric;
 
-import android.app.Activity;
-import android.graphics.Color;
-import org.robolectric.res.*;
+import org.robolectric.res.ActivityData;
+import org.robolectric.res.ContentProviderData;
+import org.robolectric.res.Fs;
+import org.robolectric.res.FsFile;
+import org.robolectric.res.IntentFilterData;
+import org.robolectric.res.ResName;
+import org.robolectric.res.ResourceIndex;
+import org.robolectric.res.ResourceLoader;
+import org.robolectric.res.ResourcePath;
+import org.robolectric.res.TypedResource;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import android.app.Activity;
+import android.graphics.Color;
+import android.os.Build;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,6 +31,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import static android.content.pm.ApplicationInfo.FLAG_ALLOW_BACKUP;
 import static android.content.pm.ApplicationInfo.FLAG_ALLOW_CLEAR_USER_DATA;
@@ -503,8 +515,7 @@ public class MapzenAndroidManifest extends AndroidManifest {
   }
 
   public int getTargetSdkVersion() {
-    parseAndroidManifest();
-    return targetSdkVersion == null ? getMinSdkVersion() : targetSdkVersion;
+    return Build.VERSION_CODES.JELLY_BEAN_MR2;
   }
 
   public int getApplicationFlags() {

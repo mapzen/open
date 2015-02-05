@@ -6,14 +6,12 @@ import com.mapzen.open.support.MapzenTestRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.robolectric.annotation.Config;
 
 import android.content.Context;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class AppModuleTest {
     @Test

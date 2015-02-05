@@ -7,8 +7,8 @@ import org.oscim.android.MapView;
 import org.oscim.map.Map;
 import org.oscim.map.TestMap;
 
-import android.app.ActionBar;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 
 public class TestBaseActivity extends BaseActivity {
     private ActionBar actionBar = new TestActionBar();
@@ -17,17 +17,15 @@ public class TestBaseActivity extends BaseActivity {
     private Map map = new TestMap();
 
     @Override
-    public ActionBar getActionBar() {
+    public ActionBar getSupportActionBar() {
         return actionBar;
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MapView mapView = Mockito.mock(MapView.class);
         Mockito.when(mapView.map()).thenReturn(new TestMap());
-        registerMapView(mapView);
         actionBar.show();
     }
 

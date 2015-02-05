@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.oscim.backend.AssetAdapter;
-import org.robolectric.annotation.Config;
 
 import android.content.Context;
 
@@ -25,7 +24,6 @@ import java.io.InputStream;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.getShadowApplication;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class MapzenStyleTest {
     BaseActivity act;

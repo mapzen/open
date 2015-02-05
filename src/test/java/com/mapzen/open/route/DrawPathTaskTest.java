@@ -16,7 +16,6 @@ import org.oscim.layers.PathLayer;
 import org.oscim.map.TestMap;
 import org.oscim.map.ViewController;
 import org.robolectric.Robolectric;
-import org.robolectric.annotation.Config;
 
 import android.location.Location;
 
@@ -29,7 +28,6 @@ import static com.mapzen.open.MapController.locationToGeoPoint;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.stub;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class DrawPathTaskTest {
     DrawPathTask task;

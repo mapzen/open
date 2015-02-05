@@ -5,13 +5,12 @@ import com.mapzen.open.support.MapzenTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
 
 import android.os.Parcel;
 import android.widget.TextView;
 
-import static com.mapzen.open.entity.SimpleFeature.ADMIN1_ABBR;
 import static com.mapzen.open.entity.SimpleFeature.ADMIN1;
+import static com.mapzen.open.entity.SimpleFeature.ADMIN1_ABBR;
 import static com.mapzen.open.entity.SimpleFeature.ADMIN2;
 import static com.mapzen.open.entity.SimpleFeature.ALPHA3;
 import static com.mapzen.open.entity.SimpleFeature.LOCALITY;
@@ -22,7 +21,6 @@ import static com.mapzen.open.support.TestHelper.getTestSimpleFeature;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class SimpleFeatureTest {
     SimpleFeature simpleFeature = new SimpleFeature();

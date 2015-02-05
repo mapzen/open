@@ -13,7 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.annotation.Config;
 
 import android.text.TextUtils;
 
@@ -27,7 +26,6 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.shadowOf;
 import static org.robolectric.util.FragmentTestUtil.startFragment;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class ItemFragmentTest {
     private ItemFragment itemFragment;
