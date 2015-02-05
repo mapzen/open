@@ -122,8 +122,8 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        getActivity().getActionBar().hide();
         this.act = (BaseActivity) activity;
+        this.act.getSupportActionBar().hide();
     }
 
     @Override
