@@ -7,6 +7,7 @@ import com.mapzen.open.MapController;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.open.event.LocationUpdateEvent;
 import com.mapzen.open.fragment.BaseFragment;
 import com.mapzen.open.util.DatabaseHelper;
 import com.mapzen.open.util.DisplayHelper;
@@ -23,6 +24,8 @@ import com.mapzen.osrm.Router;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.splunk.mint.Mint;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import org.json.JSONObject;
 import org.oscim.core.GeoPoint;
@@ -30,11 +33,8 @@ import org.oscim.core.MapPosition;
 import org.oscim.event.Event;
 import org.oscim.map.Map;
 
-import android.content.BroadcastReceiver;
+import android.app.Activity;
 import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -68,7 +68,6 @@ import static com.mapzen.helpers.ZoomController.DrivingSpeed;
 import static com.mapzen.open.MapController.geoPointToPair;
 import static com.mapzen.open.MapController.getMapController;
 import static com.mapzen.open.MapController.locationToPair;
-import static com.mapzen.open.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.open.core.MapzenLocation.Util.getDistancePointFromBearing;
 import static com.mapzen.open.entity.SimpleFeature.TEXT;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_GROUP_ID;
@@ -101,6 +100,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     @Inject MapController mapController;
     @Inject MixpanelAPI mixpanelAPI;
     @Inject SQLiteDatabase db;
+    @Inject Bus bus;
+    @Inject RouteLocationIndicatorFactory routeLocationIndicatorFactory;
 
     @InjectView(R.id.routes) ViewPager pager;
     @InjectView(R.id.resume_button) ImageButton resume;
@@ -111,7 +112,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private RouteAdapter adapter;
     private Route route;
     protected String groupId;
-    private LocationReceiver locationReceiver;
     private RouteLocationIndicator routeLocationIndicator;
     private SimpleFeature simpleFeature;
     private String routeId;
@@ -138,9 +138,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         fragment.setAct(act);
         fragment.setMapFragment(act.getMapFragment());
         fragment.setSimpleFeature(simpleFeature);
-        fragment.setRouteLocationIndicator(new RouteLocationIndicator(act.getMap()));
         fragment.groupId = UUID.randomUUID().toString();
         fragment.inject();
+        fragment.setRetainInstance(true);
         return fragment;
     }
 
@@ -220,14 +220,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         super.onCreate(savedInstanceState);
         mixpanelAPI.track(ROUTING_START, null);
         createGroup();
-        initLocationReceiver();
-        if (route != null) {
-            Location startPoint = route.getStartCoordinates();
-            routeLocationIndicator.setPosition(startPoint.getLatitude(), startPoint.getLongitude());
-            routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
-            mapFragment.getMap().layers().add(routeLocationIndicator);
-            mapFragment.hideLocationMarker();
-        }
+        bus.register(this);
     }
 
     private void createGroup() {
@@ -238,8 +231,24 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.act = (BaseActivity) activity;
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+        routeLocationIndicatorFactory.setMap(act.getMap());
+        setRouteLocationIndicator(routeLocationIndicatorFactory.getRouteLocationIndicator());
+        if (route != null) {
+            Location startPoint = route.getStartCoordinates();
+            routeLocationIndicator.setPosition(startPoint.getLatitude(), startPoint.getLongitude());
+            routeLocationIndicator.setRotation((float) route.getCurrentRotationBearing());
+            mapFragment.getMap().layers().add(routeLocationIndicator);
+            mapFragment.hideLocationMarker();
+        }
+
         setupZoomController();
         act.disableActionbar();
         act.hideActionBar();
@@ -254,24 +263,20 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        Logger.d("RouteFragment::onPause");
+    public void onDestroy() {
         app.activateMoveMapToLocation();
         teardownLinedrawing();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
         markReadyForUpload();
         mapController.clearLines();
         act.updateView();
         mapFragment.showLocationMarker();
         mapFragment.getMap().layers().remove(routeLocationIndicator);
-        act.unregisterReceiver(locationReceiver);
+        bus.unregister(this);
         showLocateButton();
-        LocationServices.FusedLocationApi.setMockMode(false);
+        if (LocationServices.FusedLocationApi != null) {
+            LocationServices.FusedLocationApi.setMockMode(false);
+        }
+        super.onDestroy();
     }
 
     public RouteLocationIndicator getRouteLocationIndicator() {
@@ -609,13 +614,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return cursor.getFloat(0);
     }
 
-    private void initLocationReceiver() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(COM_MAPZEN_UPDATES_LOCATION);
-        locationReceiver = new LocationReceiver();
-        act.registerReceiver(locationReceiver, filter);
-    }
-
     private void storeLocationInfo(Location location, Location correctedLocation) {
         insertIntoDb(TABLE_LOCATIONS, null,
                 valuesForLocationCorrection(location,
@@ -672,13 +670,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         mapController.setMapPerspectiveForInstruction(instructions.get(current));
     }
 
-    private class LocationReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Bundle bundle = intent.getExtras();
-            Location location = bundle.getParcelable("location");
-            onLocationChanged(location);
-        }
+    @Subscribe
+    public void onLocationUpdate(LocationUpdateEvent event) {
+        onLocationChanged(event.getLocation());
     }
 
     @Override

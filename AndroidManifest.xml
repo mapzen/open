@@ -20,31 +20,36 @@
         android:allowBackup="true"
         android:label="@string/application_name"
         android:icon="@drawable/ic_launcher"
-        android:theme="@style/Theme.Mapzen" >
+        android:theme="@style/Theme.Mapzen">
+
         <activity
             android:name=".activity.BaseActivity"
             android:label="@string/application_name"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait">
-        </activity>
+            android:launchMode="singleTask" />
+
         <activity
-                android:name=".login.LoginActivity"
-                android:launchMode="singleTask"
-                android:theme="@style/Theme.Mapzen.NoActionBar"
-                android:screenOrientation="portrait">
+            android:name=".login.LoginActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.Mapzen.NoActionBar"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="mapzen" android:host="oauth-login" />
+
+                <data
+                    android:scheme="mapzen"
+                    android:host="oauth-login" />
             </intent-filter>
         </activity>
+
         <activity
-                android:name=".activity.InitialActivity"
-                android:theme="@android:style/Theme.NoDisplay">
+            android:name=".activity.InitialActivity"
+            android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -53,23 +58,30 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-                <data android:scheme="http" android:host="maps.google.com" />
+                <data
+                    android:scheme="http"
+                    android:host="maps.google.com" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-                <data android:scheme="https" android:host="maps.google.com" />
+                <data
+                    android:scheme="https"
+                    android:host="maps.google.com" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".search.ListResultsActivity"
             android:label="@string/results_title"
             android:theme="@style/Theme.Mapzen.SearchResults" />
-        <service android:name=".core.DataUploadService"
+
+        <service
+            android:name=".core.DataUploadService"
             android:exported="false"
-            android:enabled="true" >
-        </service>
-    <receiver android:name=".util.NotificationBroadcastReceiver" />
+            android:enabled="true" />
+
+        <receiver android:name=".util.NotificationBroadcastReceiver" />
     </application>
 </manifest>

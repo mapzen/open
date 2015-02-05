@@ -7,9 +7,11 @@ import com.mapzen.android.lost.api.LocationServices;
 import com.mapzen.open.MapController;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
-import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.support.TestHelper;
+import com.mapzen.open.support.TestHelper.LocationUpdateSubscriber;
+
+import com.squareup.otto.Bus;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +33,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import static com.mapzen.android.lost.api.LocationRequest.PRIORITY_HIGH_ACCURACY;
-import static com.mapzen.open.core.MapzenLocation.KEY_LOCATION;
 import static com.mapzen.open.core.MapzenLocation.onLocationServicesConnected;
 import static com.mapzen.open.support.TestHelper.getTestLocation;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -46,6 +47,7 @@ public class MapzenLocationTest {
     private MapzenApplication application;
     private LocationListener listener;
     @Inject MapController mapController;
+    @Inject Bus bus;
 
     @Before
     public void setup() {
@@ -73,13 +75,12 @@ public class MapzenLocationTest {
     }
 
     @Test
-    public void onLocationChange_shouldSendLocationBroadcast() {
+    public void onLocationChange_shouldPostEvent() {
+        LocationUpdateSubscriber locationUpdateSubscriber = new LocationUpdateSubscriber();
+        bus.register(locationUpdateSubscriber);
         Location expected = getTestLocation(111.1f, 222.2f);
         listener.onLocationChanged(expected);
-        List<Intent> intents = Robolectric.getShadowApplication().getBroadcastIntents();
-        Intent expectedIntent = new Intent(BaseActivity.COM_MAPZEN_UPDATES_LOCATION);
-        expectedIntent.putExtra(KEY_LOCATION, expected);
-        assertThat(intents.contains(expectedIntent)).isTrue();
+        assertThat(locationUpdateSubscriber.getEvent().getLocation()).isEqualTo(expected);
     }
 
     @Test

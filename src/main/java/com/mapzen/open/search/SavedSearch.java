@@ -144,6 +144,8 @@ public final class SavedSearch {
             return;
         }
 
+        store.clear();
+
         JSONArray jsonArray;
         try {
             jsonArray = new JSONArray(serializedSavedSearch);
@@ -180,5 +182,9 @@ public final class SavedSearch {
         if (store.size() >= MAX_ENTRIES) {
             store.removeLast();
         }
+    }
+
+    public int size() {
+        return store.size();
     }
 }

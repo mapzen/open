@@ -4,6 +4,7 @@ import com.mapzen.open.MapController;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.open.event.ViewUpdateEvent;
 import com.mapzen.open.fragment.BaseFragment;
 import com.mapzen.open.util.Logger;
 import com.mapzen.open.util.MixpanelHelper;
@@ -11,8 +12,11 @@ import com.mapzen.osrm.Route;
 import com.mapzen.osrm.Router;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.squareup.otto.Bus;
+import com.squareup.otto.Subscribe;
 
 import org.oscim.android.canvas.AndroidGraphics;
+import org.oscim.backend.canvas.Color;
 import org.oscim.core.BoundingBox;
 import org.oscim.core.MapPosition;
 import org.oscim.layers.PathLayer;
@@ -20,6 +24,7 @@ import org.oscim.layers.marker.ItemizedLayer;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.layers.marker.MarkerSymbol;
 
+import android.app.Activity;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -33,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -54,8 +60,7 @@ import static com.mapzen.osrm.Router.Type.BIKING;
 import static com.mapzen.osrm.Router.Type.DRIVING;
 import static com.mapzen.osrm.Router.Type.WALKING;
 
-public class RoutePreviewFragment extends BaseFragment
-        implements Router.Callback {
+public class RoutePreviewFragment extends BaseFragment implements Router.Callback {
     public static final String TAG = RoutePreviewFragment.class.getSimpleName();
     public static final int ROUTE_ZOOM_LEVEL = 19;
     public static final int REDUCE_TOLERANCE = 100;
@@ -64,10 +69,11 @@ public class RoutePreviewFragment extends BaseFragment
     private Type transportationMode = DRIVING;
     private Route route;
 
-    @Inject PathLayer path;
-    @Inject ItemizedLayer<MarkerItem> markers;
+    PathLayer path;
+    ItemizedLayer<MarkerItem> markers;
     @Inject MapController mapController;
     @Inject MixpanelAPI mixpanelAPI;
+    @Inject Bus bus;
 
     @Inject Router router;
     @InjectView(R.id.starting_point) TextView startingPointTextView;
@@ -81,14 +87,26 @@ public class RoutePreviewFragment extends BaseFragment
     @InjectView(R.id.from_text) TextView fromTextView;
     @InjectView(R.id.routing_circle) ImageButton routingCircle;
 
-    public static RoutePreviewFragment newInstance(BaseActivity act,
-                                                   SimpleFeature destination) {
+    public static RoutePreviewFragment newInstance(BaseActivity act, SimpleFeature destination) {
         final RoutePreviewFragment fragment = new RoutePreviewFragment();
         fragment.setAct(act);
         fragment.setMapFragment(act.getMapFragment());
         fragment.inject();
         fragment.setDestination(destination);
+        fragment.setRetainInstance(true);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        bus.register(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        bus.unregister(this);
     }
 
     @Override
@@ -96,6 +114,16 @@ public class RoutePreviewFragment extends BaseFragment
         super.onResume();
         app.deactivateMoveMapToLocation();
         act.hideActionBar();
+        if (act.getSupportFragmentManager().findFragmentByTag(RouteFragment.TAG) == null) {
+            createRouteToDestination();
+        }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        getActivity().getActionBar().hide();
+        this.act = (BaseActivity) activity;
     }
 
     @Override
@@ -107,7 +135,6 @@ public class RoutePreviewFragment extends BaseFragment
         act.enableActionbar();
         act.showActionBar();
         app.activateMoveMapToLocation();
-        unregisterViewUpdater();
     }
 
     @Override
@@ -116,7 +143,6 @@ public class RoutePreviewFragment extends BaseFragment
         View view = inflater.inflate(R.layout.route_preview, container, false);
         ButterKnife.inject(this, view);
         setOriginAndDestination();
-        registerViewUpdater();
         return view;
     }
 
@@ -204,7 +230,6 @@ public class RoutePreviewFragment extends BaseFragment
     }
 
     public void createRouteToDestination() {
-        addFragment();
         mapFragment.clearMarkers();
         mapFragment.updateMap();
         act.showLoadingIndicator();
@@ -221,15 +246,6 @@ public class RoutePreviewFragment extends BaseFragment
             router.setBiking();
         }
         router.fetch();
-    }
-
-    private void addFragment() {
-        if (!isAdded()) {
-            act.getSupportFragmentManager().beginTransaction()
-                    .addToBackStack(null)
-                    .add(R.id.routes_preview_container, this, TAG)
-                    .commit();
-        }
     }
 
     private double[] getDestinationPoint() {
@@ -250,6 +266,23 @@ public class RoutePreviewFragment extends BaseFragment
     public void success(Route route) {
         this.route = route;
         act.hideLoadingIndicator();
+        displayRoute();
+    }
+
+    private void displayRoute() {
+        if (route == null) {
+            return;
+        }
+
+        mapController.getMap().layers().remove(path);
+        mapController.getMap().layers().remove(markers);
+        path = new PathLayer(MapController.getMapController().getMap(), Color.DKGRAY, 8);
+        markers = new ItemizedLayer<MarkerItem>(
+                MapController.getMapController().getMap(), new ArrayList<MarkerItem>(),
+                AndroidGraphics.makeMarker(getActivity().getResources()
+                                .getDrawable(R.drawable.ic_pin),
+                        MarkerItem.HotspotPlace.BOTTOM_CENTER), null);
+
         List<Location> points = route.getGeometry();
         long time = System.currentTimeMillis();
         Logger.d("RoutePreviewFragment::success Geometry points before: " + points.size());
@@ -296,12 +329,14 @@ public class RoutePreviewFragment extends BaseFragment
     @Override
     public void failure(int statusCode) {
         act.getSupportFragmentManager().popBackStack(); // Pop RoutePreviewFragment
-        path.clearPath();
+        if (path != null) {
+            path.clearPath();
+        }
         onServerError(statusCode);
     }
 
-    @Override
-    public void onViewUpdate() {
+    @Subscribe
+    public void onViewUpdate(ViewUpdateEvent event) {
         createRouteToDestination();
     }
 

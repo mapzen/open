@@ -3,32 +3,22 @@ package com.mapzen.open.fragment;
 import com.mapzen.open.MapController;
 import com.mapzen.open.R;
 import com.mapzen.open.TestMapzenApplication;
-import com.mapzen.open.route.RoutePreviewFragment;
 import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.support.TestBaseActivity;
-import com.mapzen.osrm.Route;
-import com.mapzen.osrm.Router;
+import com.mapzen.open.support.TestHelper.RoutePreviewSubscriber;
+
+import com.squareup.otto.Bus;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowLocationManager;
-import org.robolectric.shadows.ShadowToast;
 
-import android.content.Context;
-import android.location.Location;
-import android.location.LocationManager;
 import android.text.TextUtils;
 
 import javax.inject.Inject;
 
-import static com.mapzen.open.support.TestHelper.getFixture;
 import static com.mapzen.open.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.open.support.TestHelper.initBaseActivity;
 import static com.mapzen.open.support.TestHelper.initMapFragment;
@@ -40,23 +30,17 @@ import static org.robolectric.util.FragmentTestUtil.startFragment;
 @Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class ItemFragmentTest {
-    @Captor
-    @SuppressWarnings("unused")
-    ArgumentCaptor<Router.Callback> callback;
     private ItemFragment itemFragment;
     private TestBaseActivity act;
-    @Inject Router router;
     @Inject MapController mapController;
+    @Inject Bus bus;
 
     @Before
     public void setUp() throws Exception {
         ((TestMapzenApplication) Robolectric.application).inject(this);
-        MockitoAnnotations.initMocks(this);
         act = initBaseActivity();
-        mapController.setActivity(act);
         initItemFragment();
         startFragment(itemFragment);
-        mapController.setLocation(new Location(""));
     }
 
     private void initItemFragment() {
@@ -93,48 +77,10 @@ public class ItemFragmentTest {
     }
 
     @Test
-    public void start_shouldPopRoutePreviewFragmentWhenFailure() throws Exception {
+    public void start_shouldPostRoutePreviewEvent() throws Exception {
+        RoutePreviewSubscriber subscriber = new RoutePreviewSubscriber();
+        bus.register(subscriber);
         itemFragment.startButton.performClick();
-        Mockito.verify(router).setCallback(callback.capture());
-        callback.getValue().failure(500);
-        assertThat(act.getSupportFragmentManager()).
-                doesNotHaveFragmentWithTag(RoutePreviewFragment.TAG);
-    }
-
-    @Test
-    public void start_shouldToastFailure() throws Exception {
-        itemFragment.startButton.performClick();
-        Mockito.verify(router).setCallback(callback.capture());
-        callback.getValue().failure(500);
-        assertThat(ShadowToast.getTextOfLatestToast()).
-                isEqualTo(act.getString(R.string.generic_server_error));
-    }
-
-    @Test
-    public void start_shouldStartRoutePreviewFragment() throws Exception {
-        itemFragment.startButton.performClick();
-        Mockito.verify(router).setCallback(callback.capture());
-        callback.getValue().success(new Route(getFixture("around_the_block")));
-        assertThat(act.getSupportFragmentManager()).hasFragmentWithTag(RoutePreviewFragment.TAG);
-    }
-
-    @Test
-    public void shouldDisplayGPSPromptOnRoute() throws Exception {
-        ShadowLocationManager manager = shadowOf(getLocationManager());
-        manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
-        itemFragment.startButton.performClick();
-        assertThat(act.getSupportFragmentManager()).hasFragmentWithTag("gps_dialog");
-    }
-
-    @Test
-    public void shouldNotDisplayGPSPromptOnRoute() throws Exception {
-        ShadowLocationManager manager = shadowOf(getLocationManager());
-        manager.setProviderEnabled(LocationManager.GPS_PROVIDER, true);
-        itemFragment.startButton.performClick();
-        assertThat(act.getSupportFragmentManager()).doesNotHaveFragmentWithTag("gps_dialog");
-    }
-
-    private LocationManager getLocationManager() {
-        return (LocationManager) Robolectric.application.getSystemService(Context.LOCATION_SERVICE);
+        assertThat(subscriber.getEvent()).isNotNull();
     }
 }

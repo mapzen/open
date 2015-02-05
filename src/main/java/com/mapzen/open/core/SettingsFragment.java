@@ -3,6 +3,7 @@ package com.mapzen.open.core;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -21,6 +22,7 @@ public class SettingsFragment extends PreferenceFragment {
     public static SettingsFragment newInstance(BaseActivity activity) {
         SettingsFragment settingsFragment = new SettingsFragment();
         settingsFragment.setActivity(activity);
+        settingsFragment.setRetainInstance(true);
         return settingsFragment;
     }
 
@@ -42,9 +44,15 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.activity = (BaseActivity) activity;
+        this.activity.hideActionBar();
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
-        activity.hideActionBar();
         updateDisplayValues();
         initSharedPrefsListener();
     }

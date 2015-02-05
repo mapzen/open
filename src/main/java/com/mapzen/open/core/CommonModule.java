@@ -6,6 +6,8 @@ import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.route.RouteEngine;
 import com.mapzen.open.search.SavedSearch;
 
+import com.squareup.otto.Bus;
+
 import android.content.Context;
 
 import javax.inject.Singleton;
@@ -43,5 +45,9 @@ public class CommonModule {
 
     @Provides @Singleton SavedSearch provideSavedSearch() {
         return new SavedSearch();
+    }
+
+    @Provides @Singleton Bus provideBus() {
+        return new Bus();
     }
 }

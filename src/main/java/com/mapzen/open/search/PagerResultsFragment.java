@@ -83,6 +83,7 @@ public class PagerResultsFragment extends BaseFragment {
         pagerResultsFragment.setAct(act);
         pagerResultsFragment.setMapFragment(act.getMapFragment());
         pagerResultsFragment.inject();
+        pagerResultsFragment.setRetainInstance(true);
         return pagerResultsFragment;
     }
 
@@ -94,6 +95,17 @@ public class PagerResultsFragment extends BaseFragment {
         ButterKnife.inject(this, view);
         initOnPageChangeListener();
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (simpleFeatures != null && !simpleFeatures.isEmpty()) {
+            for (SimpleFeature simpleFeature : simpleFeatures) {
+                addMarker(simpleFeature);
+            }
+            displayResults(simpleFeatures.size(), pager.getCurrentItem());
+        }
     }
 
     @Override
@@ -310,7 +322,8 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     public void displayResults(int length, int currentPos) {
-        SearchViewAdapter adapter = new SearchViewAdapter(getFragmentManager(), currentCollection);
+        SearchViewAdapter adapter = new SearchViewAdapter(getChildFragmentManager(),
+                currentCollection);
         pager.setAdapter(adapter);
         String indicatorText = getString(R.string.paginate_template, 1, length);
         indicator.setText(indicatorText);

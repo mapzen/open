@@ -12,6 +12,7 @@ import com.mapzen.open.fragment.MapFragment;
 import com.mapzen.open.login.LoginActivity;
 import com.mapzen.open.route.DrawPathTask;
 import com.mapzen.open.route.RouteFragment;
+import com.mapzen.open.route.RouteLocationIndicatorFactory;
 import com.mapzen.open.route.RoutePreviewFragment;
 import com.mapzen.open.search.AutoCompleteAdapter;
 import com.mapzen.open.search.PagerResultsFragment;
@@ -23,17 +24,9 @@ import com.mapzen.osrm.Router;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 
-import org.oscim.android.canvas.AndroidGraphics;
-import org.oscim.backend.canvas.Color;
-import org.oscim.layers.PathLayer;
-import org.oscim.layers.marker.ItemizedLayer;
-import org.oscim.layers.marker.MarkerItem;
-
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
-
-import java.util.ArrayList;
 
 import javax.inject.Singleton;
 
@@ -79,17 +72,6 @@ public class AppModule {
         return new OAuthRequestFactory();
     }
 
-    @Provides PathLayer providePathLayer() {
-        return new PathLayer(MapController.getMapController().getMap(), Color.DKGRAY, 8);
-    }
-
-    @Provides @Singleton ItemizedLayer<MarkerItem> provideItemizedLayer() {
-        return new ItemizedLayer<MarkerItem>(
-                MapController.getMapController().getMap(), new ArrayList<MarkerItem>(),
-                AndroidGraphics.makeMarker(context.getResources().getDrawable(R.drawable.ic_pin),
-                MarkerItem.HotspotPlace.BOTTOM_CENTER), null);
-    }
-
     @Provides @Singleton Typeface provideTypeface() {
         return Typeface.createFromAsset(context.getAssets(), "fonts/RobotoCondensed-Light.ttf");
     }
@@ -125,5 +107,9 @@ public class AppModule {
         SQLiteDatabase db = databaseHelper.getWritableDatabase();
         db.enableWriteAheadLogging();
         return db;
+    }
+
+    @Provides @Singleton RouteLocationIndicatorFactory provideRouteLocationIndicatorFactory() {
+        return new RouteLocationIndicatorFactory();
     }
 }

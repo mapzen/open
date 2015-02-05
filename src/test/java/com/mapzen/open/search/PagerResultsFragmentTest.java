@@ -309,6 +309,21 @@ public class PagerResultsFragmentTest {
                 .isEqualTo("Unable to display search results: pager is null");
     }
 
+    @Test
+    public void onViewCreated_shouldRepopulateSavedSearchResults() throws Exception {
+        fragment.add(getTestSimpleFeature());
+        fragment.onViewCreated(fragment.getView(), null);
+        assertThat(fragment.pager.getAdapter()).hasCount(1);
+    }
+
+    @Test
+    public void onViewCreated_shouldRepopulateMapMarkers() throws Exception {
+        fragment.add(getTestSimpleFeature());
+        fragment.getMapFragment().clearMarkers();
+        fragment.onViewCreated(fragment.getView(), null);
+        assertThat(act.getMapFragment().getPoiLayer().size()).isEqualTo(2);
+    }
+
     private void simulateNoNetworkConnection() {
         ConnectivityManager cm = (ConnectivityManager) act.getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();

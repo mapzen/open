@@ -11,6 +11,7 @@ import com.mapzen.open.support.MapzenTestRunner;
 import com.squareup.okhttp.HttpResponseCache;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.OkResponseCache;
+import com.squareup.otto.Bus;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +43,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import static com.mapzen.open.activity.BaseActivity.COM_MAPZEN_UPDATES_LOCATION;
 import static com.mapzen.open.core.MapzenLocation.COM_MAPZEN_FIND_ME;
 import static com.mapzen.open.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.open.support.TestHelper.initBaseActivity;
@@ -57,6 +57,7 @@ public class MapFragmentTest {
     private TestPoiClickListener listener;
     private BaseActivity activity;
     @Inject StyleDownLoader styleDownLoader;
+    @Inject Bus bus;
 
     @Before
     public void setUp() throws Exception {
@@ -137,21 +138,15 @@ public class MapFragmentTest {
         assertThat(poiMarkerLayer.size()).isEqualTo(2);
     }
 
-    @Test
-    public void onResume_shouldLocationUpdatesReceivers() {
-        Intent expectedIntent = new Intent(COM_MAPZEN_UPDATES_LOCATION);
-        List<BroadcastReceiver> intents =
-                Robolectric.getShadowApplication().getReceiversForIntent(expectedIntent);
-        assertThat(intents).hasSize(1);
+    @Test (expected = IllegalArgumentException.class)
+    public void onResume_shouldRegisterLocationUpdateSubscriber() {
+        bus.register(mapFragment);
     }
 
-    @Test
-    public void onPause_shouldUnregisterLocationUpdatesReceivers() {
+    @Test (expected = IllegalArgumentException.class)
+    public void onPause_shouldUnregisterLocationUpdatesSubscriber() {
         mapFragment.onPause();
-        Intent expectedIntent = new Intent(COM_MAPZEN_UPDATES_LOCATION);
-        List<BroadcastReceiver> intents =
-                Robolectric.getShadowApplication().getReceiversForIntent(expectedIntent);
-        assertThat(intents).isEmpty();
+        bus.unregister(mapFragment);
     }
 
     @Test

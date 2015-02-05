@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
-import org.robolectric.util.FragmentTestUtil;
 
 import android.content.SharedPreferences;
 import android.preference.EditTextPreference;
@@ -32,7 +31,7 @@ public class SettingsFragmentTest {
     public void setUp() throws Exception {
         activity = TestHelper.initBaseActivity();
         fragment = SettingsFragment.newInstance(activity);
-        FragmentTestUtil.startFragment(fragment);
+        activity.getFragmentManager().beginTransaction().add(fragment, null).commit();
     }
 
     @Test
@@ -41,9 +40,14 @@ public class SettingsFragmentTest {
     }
 
     @Test
-    public void onStart_shouldHideActionbar() throws Exception {
+    public void shouldRetainInstance() throws Exception {
+        assertThat(fragment.getRetainInstance()).isTrue();
+    }
+
+    @Test
+    public void onAttach_shouldHideActionbar() throws Exception {
         activity.showActionBar();
-        fragment.onStart();
+        fragment.onAttach(activity);
         assertThat(activity.getActionBar()).isNotShowing();
     }
 
