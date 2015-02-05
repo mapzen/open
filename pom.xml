@@ -254,7 +254,7 @@
         <dependency>
             <groupId>com.sothree.slidinguppanel</groupId>
             <artifactId>library</artifactId>
-            <version>1.0.1</version>
+            <version>3.0.0</version>
             <type>aar</type>
         </dependency>
 
