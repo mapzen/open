@@ -7,9 +7,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="bottom"
-        sothree:panelHeight="@dimen/route_footer_height"
-        sothree:shadowHeight="4dp"
-        sothree:paralaxOffset="@dimen/parallax_offset">
+        sothree:umanoPanelHeight="@dimen/route_footer_height"
+        sothree:umanoShadowHeight="4dp"
+        sothree:umanoParalaxOffset="@dimen/parallax_offset">
 
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"

@@ -7,7 +7,6 @@ import com.mapzen.open.support.TestHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
 
 import android.database.Cursor;
 import android.os.Parcel;
@@ -20,7 +19,6 @@ import static com.mapzen.open.search.SavedSearch.MAX_ENTRIES;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class SavedSearchTest {
     SavedSearch savedSearch;

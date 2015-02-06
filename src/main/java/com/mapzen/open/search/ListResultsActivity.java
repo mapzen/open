@@ -3,12 +3,12 @@ package com.mapzen.open.search;
 import com.mapzen.open.entity.SimpleFeature;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
 
-public class ListResultsActivity extends FragmentActivity {
+public class ListResultsActivity extends ActionBarActivity {
     public static final String EXTRA_FEATURE_LIST = "com.mapzen.search.features";
     public static final String EXTRA_SEARCH_TERM = "com.mapzen.search.term";
     public static final String EXTRA_INDEX = "com.mapzen.search.index";
@@ -21,7 +21,7 @@ public class ListResultsActivity extends FragmentActivity {
         final ListResultsFragment fragment = ListResultsFragment.newInstance(simpleFeatures,
                 getIntent().getStringExtra(EXTRA_SEARCH_TERM));
         getSupportFragmentManager().beginTransaction().add(android.R.id.content, fragment).commit();
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

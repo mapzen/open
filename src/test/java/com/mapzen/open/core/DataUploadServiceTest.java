@@ -11,7 +11,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
-import org.robolectric.annotation.Config;
 import org.scribe.model.OAuthRequest;
 import org.scribe.model.Token;
 import org.scribe.oauth.OAuthService;
@@ -68,7 +67,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class DataUploadServiceTest {
     DataUploadService service;

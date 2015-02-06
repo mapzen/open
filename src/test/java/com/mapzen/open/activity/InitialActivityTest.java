@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
-import org.robolectric.annotation.Config;
 import org.scribe.model.Token;
 
 import android.content.Intent;
@@ -33,7 +32,6 @@ import static org.robolectric.Robolectric.buildActivity;
 import static org.robolectric.Robolectric.getShadowApplication;
 import static org.robolectric.Robolectric.shadowOf;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class InitialActivityTest {
     private BaseActivity baseActivity;

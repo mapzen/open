@@ -5,12 +5,9 @@ import com.mapzen.open.support.MapzenTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
 
-import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class SimpleCryptTest {
     @Before

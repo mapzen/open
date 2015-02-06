@@ -27,7 +27,7 @@ import com.splunk.mint.Mint;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
-import org.oscim.android.MapActivity;
+import org.oscim.android.MapView;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.Map;
 import org.scribe.model.Token;
@@ -46,6 +46,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
@@ -62,7 +64,7 @@ import javax.inject.Inject;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
-public class BaseActivity extends MapActivity {
+public class BaseActivity extends ActionBarActivity {
     @Inject LostApiClient locationClient;
     private Menu activityMenu;
     private AutoCompleteAdapter autoCompleteAdapter;
@@ -156,7 +158,7 @@ public class BaseActivity extends MapActivity {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(getString(R.string.settings_key_debug), !isInDebugMode());
         editor.commit();
-        searchMenuItem.collapseActionView();
+        MenuItemCompat.collapseActionView(searchMenuItem);
         supportInvalidateOptionsMenu();
         if (isInDebugMode()) {
             Toast.makeText(this, getString(R.string.debug_settings_on), Toast.LENGTH_LONG).show();
@@ -262,7 +264,8 @@ public class BaseActivity extends MapActivity {
         getMenuInflater().inflate(R.menu.options_menu, menu);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchMenuItem = menu.findItem(R.id.search);
-        searchMenuItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+        MenuItemCompat.setOnActionExpandListener(searchMenuItem,
+                new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 hideOptionsMenu();
@@ -282,7 +285,7 @@ public class BaseActivity extends MapActivity {
             }
         });
 
-        final SearchView searchView = (SearchView) searchMenuItem.getActionView();
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         initSavedSearchAutoComplete(searchView);
         setupAdapter(searchView);
@@ -426,8 +429,20 @@ public class BaseActivity extends MapActivity {
         }
     }
 
+    public MapView getMapView() {
+        if (mapFragment == null || mapFragment.getView() == null) {
+            return null;
+        }
+
+        return (MapView) mapFragment.getView().findViewById(R.id.map);
+    }
+
     public Map getMap() {
-        return mMap;
+        if (getMapView() == null) {
+            return null;
+        }
+
+        return getMapView().map();
     }
 
     public SearchView getSearchView() {
@@ -444,7 +459,7 @@ public class BaseActivity extends MapActivity {
 
     public void setupAdapter(SearchView searchView) {
         if (autoCompleteAdapter == null) {
-            autoCompleteAdapter = new AutoCompleteAdapter(getActionBar().getThemedContext(),
+            autoCompleteAdapter = new AutoCompleteAdapter(getSupportActionBar().getThemedContext(),
                     this, app.getColumns(), getSupportFragmentManager());
             autoCompleteAdapter.setSearchView(searchView);
             autoCompleteAdapter.setMapFragment(mapFragment);
@@ -459,7 +474,7 @@ public class BaseActivity extends MapActivity {
 
     public void hideActionBar() {
         collapseSearchView();
-        getActionBar().hide();
+        getSupportActionBar().hide();
     }
 
     public void collapseSearchView() {
@@ -478,8 +493,8 @@ public class BaseActivity extends MapActivity {
     }
 
     public void showActionBar() {
-        if (!getActionBar().isShowing() && enableActionbar) {
-            getActionBar().show();
+        if (!getSupportActionBar().isShowing() && enableActionbar) {
+            getSupportActionBar().show();
         }
     }
 

@@ -1,17 +1,17 @@
 package com.mapzen.open.util;
 
-import android.app.Activity;
 import com.mapzen.open.R;
 import com.mapzen.open.support.MapzenTestRunner;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
 
-import static com.mapzen.open.util.DisplayHelper.getRouteDrawable;
+import android.app.Activity;
+
 import static com.mapzen.open.util.DisplayHelper.IconStyle;
+import static com.mapzen.open.util.DisplayHelper.getRouteDrawable;
 import static org.fest.assertions.api.Assertions.assertThat;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class DisplayHelperTest {
     @Test

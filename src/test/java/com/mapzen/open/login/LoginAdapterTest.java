@@ -6,7 +6,6 @@ import com.mapzen.open.support.MapzenTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 
 import android.view.View;
@@ -23,7 +22,6 @@ import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class LoginAdapterTest {
     private LoginAdapter loginAdapter;

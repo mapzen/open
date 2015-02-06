@@ -4,7 +4,6 @@ import com.mapzen.open.support.MapzenTestRunner;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
 
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -12,7 +11,6 @@ import android.text.style.ForegroundColorSpan;
 import static com.mapzen.open.support.TestHelper.assertSpan;
 import static org.fest.assertions.api.Assertions.assertThat;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class HighlighterTest {
     @Test

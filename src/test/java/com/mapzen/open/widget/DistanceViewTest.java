@@ -2,15 +2,14 @@ package com.mapzen.open.widget;
 
 import com.mapzen.helpers.DistanceFormatter;
 import com.mapzen.open.support.MapzenTestRunner;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.annotation.Config;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class DistanceViewTest {
     private DistanceView view;

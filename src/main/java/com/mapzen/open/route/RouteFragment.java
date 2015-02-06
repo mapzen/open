@@ -779,7 +779,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void initSlideLayout(View view) {
         setSlideLayout((SlidingUpPanelLayout) view.findViewById(R.id.sliding_layout));
         getSlideLayout().setDragView(view.findViewById(R.id.drag_area));
-        getSlideLayout().setSlidingEnabled(false);
+        getSlideLayout().setTouchEnabled(false);
         addSlideLayoutTouchListener();
         getSlideLayout().setPanelSlideListener(getPanelSlideListener());
     }
@@ -795,10 +795,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 }
                 if (slideOffset > .99 && directionListFragment != null) {
                     hideDirectionListFragment();
-                    getSlideLayout().collapsePane();
+                    getSlideLayout().setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
                 }
                 if (slideOffset == 1.0) {
-                    getSlideLayout().setSlidingEnabled(false);
+                    getSlideLayout().setTouchEnabled(false);
                 }
             }
 
@@ -808,11 +808,14 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
             @Override
             public void onPanelCollapsed(View panel) {
-                getSlideLayout().setSlidingEnabled(false);
+                getSlideLayout().setTouchEnabled(false);
             }
 
             @Override
             public void onPanelAnchored(View panel) {
+            }
+
+            @Override public void onPanelHidden(View view) {
             }
         });
     }
@@ -853,20 +856,20 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         footerWrapper.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                getSlideLayout().setSlidingEnabled(true);
+                getSlideLayout().setTouchEnabled(true);
                 return false;
             }
         });
     }
 
     public void collapseSlideLayout() {
-        if (getSlideLayout().isExpanded()) {
-            getSlideLayout().collapsePane();
+        if (slideLayoutIsExpanded()) {
+            getSlideLayout().setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         }
     }
 
     public boolean slideLayoutIsExpanded() {
-        return getSlideLayout().isExpanded();
+        return getSlideLayout().getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED;
     }
 
     public SlidingUpPanelLayout getSlideLayout() {

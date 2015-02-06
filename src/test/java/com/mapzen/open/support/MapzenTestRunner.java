@@ -5,15 +5,18 @@ import com.mapzen.open.shadows.ShadowGLShader;
 import com.mapzen.open.shadows.ShadowGLState;
 import com.mapzen.open.shadows.ShadowMapView;
 import com.mapzen.open.shadows.ShadowMint;
+import com.mapzen.open.shadows.ShadowSupportMenuInflater;
 import com.mapzen.open.shadows.ShadowVectorTileLayer;
 
 import org.junit.runners.model.InitializationError;
 import org.robolectric.AndroidManifest;
 import org.robolectric.MapzenAndroidManifest;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 import org.robolectric.bytecode.ClassInfo;
 import org.robolectric.bytecode.Setup;
 import org.robolectric.bytecode.ShadowMap;
+import org.robolectric.res.Fs;
 import org.robolectric.res.FsFile;
 
 import java.util.Arrays;
@@ -68,6 +71,7 @@ public class MapzenTestRunner extends RobolectricTestRunner {
                 .addShadowClass(ShadowGLShader.class)
                 .addShadowClass(ShadowGLState.class)
                 .addShadowClass(ShadowMint.class)
+                .addShadowClass(ShadowSupportMenuInflater.class)
                 .build();
     }
 
@@ -103,5 +107,21 @@ public class MapzenTestRunner extends RobolectricTestRunner {
         String packageName = System.getProperty("android.package");
         manifest.setPackageName(packageName);
         return manifest;
+    }
+
+    @Override
+    protected AndroidManifest getAppManifest(Config config) {
+        String manifestProperty = System.getProperty("android.manifest");
+        if (config.manifest().equals(Config.DEFAULT) && manifestProperty != null) {
+            String resProperty = System.getProperty("android.resources");
+            String assetsProperty = System.getProperty("android.assets");
+            AndroidManifest androidManifest = new AndroidManifest(
+                    Fs.fileFromPath(manifestProperty),
+                    Fs.fileFromPath(resProperty),
+                    Fs.fileFromPath(assetsProperty));
+            androidManifest.setPackageName("com.mapzen.open");
+            return androidManifest;
+        }
+        return super.getAppManifest(config);
     }
 }

@@ -1,14 +1,13 @@
 package com.mapzen.open.route;
 
+import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.osrm.Instruction;
 import com.mapzen.osrm.Route;
-import com.mapzen.open.support.MapzenTestRunner;
 
 import org.fest.assertions.data.Offset;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
 
 import android.location.Location;
 
@@ -16,7 +15,6 @@ import static com.mapzen.open.support.TestHelper.MOCK_ACE_HOTEL;
 import static com.mapzen.open.support.TestHelper.getTestLocation;
 import static org.fest.assertions.api.Assertions.assertThat;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class RouteEngineTest {
     private RouteEngine routeEngine;

@@ -1,9 +1,9 @@
 package com.mapzen.open;
 
-import com.mapzen.osrm.Instruction;
 import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.support.TestBaseActivity;
 import com.mapzen.open.support.TestHelper;
+import com.mapzen.osrm.Instruction;
 
 import org.fest.assertions.data.Offset;
 import org.junit.Before;
@@ -17,7 +17,6 @@ import org.oscim.map.Map;
 import org.oscim.map.TestMap;
 import org.oscim.map.TestViewport;
 import org.robolectric.Robolectric;
-import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 
 import android.content.SharedPreferences;
@@ -43,7 +42,6 @@ import static com.mapzen.open.support.TestHelper.getTestLocation;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class MapControllerTest {
     private TestBaseActivity activity;

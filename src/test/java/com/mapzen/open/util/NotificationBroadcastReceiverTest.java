@@ -6,7 +6,6 @@ import com.mapzen.open.support.MapzenTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowNotificationManager;
 
 import android.app.Notification;
@@ -20,7 +19,6 @@ import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.getShadowApplication;
 import static org.robolectric.Robolectric.shadowOf;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class NotificationBroadcastReceiverTest {
     private NotificationBroadcastReceiver receiver;

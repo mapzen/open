@@ -11,7 +11,6 @@ import org.mockito.Mockito;
 import org.oscim.backend.GL20;
 import org.oscim.map.TestMap;
 import org.oscim.renderer.LayerRendererTestHelper;
-import org.robolectric.annotation.Config;
 
 import static com.mapzen.open.util.RouteLocationIndicator.FRAGMENT_SHADER;
 import static com.mapzen.open.util.RouteLocationIndicator.MAX_SCALE;
@@ -23,7 +22,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class RouteLocationIndicatorTest {
     private RouteLocationIndicator indicator;

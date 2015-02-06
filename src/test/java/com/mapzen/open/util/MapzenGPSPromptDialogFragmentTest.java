@@ -6,7 +6,6 @@ import com.mapzen.open.support.MapzenTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowAlertDialog;
 
 import android.app.AlertDialog;
@@ -21,7 +20,6 @@ import static org.robolectric.Robolectric.getShadowApplication;
 import static org.robolectric.Robolectric.shadowOf;
 import static org.robolectric.util.FragmentTestUtil.startFragment;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class MapzenGPSPromptDialogFragmentTest {
     private MapzenGPSPromptDialogFragment dialogFragment;

@@ -31,7 +31,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
-import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowAlarmManager;
 import org.robolectric.shadows.ShadowIntent;
@@ -73,7 +72,6 @@ import static org.robolectric.Robolectric.shadowOf;
 import static org.robolectric.shadows.ShadowToast.getTextOfLatestToast;
 import static org.robolectric.util.FragmentTestUtil.startFragment;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class BaseActivityTest {
     private BaseActivity activity;
@@ -309,7 +307,7 @@ public class BaseActivityTest {
         activity.toggleDebugMode();
         MenuItem menuItem = menu.findItem(R.id.settings);
         activity.onOptionsItemSelected(menuItem);
-        assertThat(activity.getActionBar()).isNotShowing();
+        assertThat(activity.getSupportActionBar().isShowing()).isFalse();
     }
 
     @Test
@@ -318,7 +316,7 @@ public class BaseActivityTest {
         MenuItem menuItem = menu.findItem(R.id.settings);
         activity.onOptionsItemSelected(menuItem);
         activity.onBackPressed();
-        assertThat(activity.getActionBar()).isShowing();
+        assertThat(activity.getSupportActionBar().isShowing()).isTrue();
     }
 
     @Test
@@ -424,7 +422,7 @@ public class BaseActivityTest {
     public void showActionbar_shouldShowActionbar() throws Exception {
         activity.hideActionBar();
         activity.showActionBar();
-        assertThat(activity.getActionBar()).isShowing();
+        assertThat(activity.getSupportActionBar().isShowing()).isTrue();
     }
 
     @Test
@@ -432,7 +430,7 @@ public class BaseActivityTest {
         activity.hideActionBar();
         activity.disableActionbar();
         activity.showActionBar();
-        assertThat(activity.getActionBar()).isNotShowing();
+        assertThat(activity.getSupportActionBar().isShowing()).isFalse();
     }
 
     @Test

@@ -103,14 +103,14 @@
         <dependency>
             <groupId>android</groupId>
             <artifactId>android</artifactId>
-            <version>4.4.2_r3</version>
+            <version>5.0.1_r2</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.android.support</groupId>
             <artifactId>support-v4</artifactId>
-            <version>19.1.0</version>
+            <version>21.0.3</version>
         </dependency>
 
         <dependency>
@@ -144,30 +144,6 @@
             <artifactId>mixpanel-android</artifactId>
             <version>4.2.2</version>
             <type>aar</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.oscim</groupId>
-            <artifactId>vtm-jni</artifactId>
-            <version>0.5.9-SNAPSHOT</version>
-            <classifier>armeabi</classifier>
-            <type>so</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.oscim</groupId>
-            <artifactId>vtm-jni</artifactId>
-            <version>0.5.9-SNAPSHOT</version>
-            <classifier>armeabi-v7a</classifier>
-            <type>so</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.oscim</groupId>
-            <artifactId>vtm-jni</artifactId>
-            <version>0.5.9-SNAPSHOT</version>
-            <classifier>x86</classifier>
-            <type>so</type>
         </dependency>
 
         <dependency>
@@ -253,7 +229,7 @@
         <dependency>
             <groupId>com.sothree.slidinguppanel</groupId>
             <artifactId>library</artifactId>
-            <version>1.0.1</version>
+            <version>3.0.0</version>
             <type>aar</type>
         </dependency>
 
@@ -282,6 +258,13 @@
             <version>1.3.6</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.android.support</groupId>
+            <artifactId>appcompat-v7</artifactId>
+            <version>21.0.3</version>
+            <type>aar</type>
+        </dependency>
+        
     </dependencies>
 
     <build>
@@ -289,9 +272,9 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                    <groupId>com.simpligility.maven.plugins</groupId>
                     <artifactId>android-maven-plugin</artifactId>
-                    <version>3.9.0-rc.2</version>
+                    <version>4.1.1</version>
                     <extensions>true</extensions>
                 </plugin>
 
@@ -322,11 +305,15 @@
 
         <plugins>
             <plugin>
-                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                <groupId>com.simpligility.maven.plugins</groupId>
                 <artifactId>android-maven-plugin</artifactId>
                 <configuration>
+                    <androidManifestFile>AndroidManifest.xml</androidManifestFile>
+                    <resourceDirectory>res</resourceDirectory>
+                    <assetsDirectory>assets</assetsDirectory>
+                    <includeLibsJarsFromAar>true</includeLibsJarsFromAar>
                     <sdk>
-                        <platform>19</platform>
+                        <platform>21</platform>
                     </sdk>
                     <lint>
                         <skip>true</skip>

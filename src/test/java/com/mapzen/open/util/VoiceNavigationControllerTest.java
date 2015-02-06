@@ -6,7 +6,6 @@ import com.mapzen.open.support.MapzenTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowTextToSpeech;
 
 import android.app.Activity;
@@ -20,7 +19,6 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.shadowOf_;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class VoiceNavigationControllerTest {
     private VoiceNavigationController controller;

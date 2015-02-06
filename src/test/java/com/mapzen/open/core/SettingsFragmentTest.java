@@ -9,7 +9,6 @@ import com.mapzen.open.widget.EditIntPreference;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
 
 import android.content.SharedPreferences;
 import android.preference.EditTextPreference;
@@ -21,7 +20,6 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.shadowOf;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class SettingsFragmentTest {
     private SettingsFragment fragment;
@@ -48,14 +46,14 @@ public class SettingsFragmentTest {
     public void onAttach_shouldHideActionbar() throws Exception {
         activity.showActionBar();
         fragment.onAttach(activity);
-        assertThat(activity.getActionBar()).isNotShowing();
+        assertThat(activity.getSupportActionBar().isShowing()).isFalse();
     }
 
     @Test
     public void onStop_shouldShowActionbar() throws Exception {
         activity.hideActionBar();
         fragment.onStop();
-        assertThat(activity.getActionBar()).isShowing();
+        assertThat(activity.getSupportActionBar().isShowing()).isTrue();
     }
 
     @Test

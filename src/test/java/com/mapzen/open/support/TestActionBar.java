@@ -1,10 +1,11 @@
 package com.mapzen.open.support;
 
-import android.app.ActionBar;
+import org.robolectric.Robolectric;
+
 import android.graphics.drawable.Drawable;
+import android.support.v7.app.ActionBar;
 import android.view.View;
 import android.widget.SpinnerAdapter;
-import org.robolectric.Robolectric;
 
 public class TestActionBar extends ActionBar {
 

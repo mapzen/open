@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
-import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 import org.scribe.model.Token;
 
@@ -35,7 +34,6 @@ import static org.robolectric.Robolectric.buildActivity;
 import static org.robolectric.Robolectric.getShadowApplication;
 import static org.robolectric.Robolectric.shadowOf;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class LoginActivityTest {
     private LoginActivity activity;

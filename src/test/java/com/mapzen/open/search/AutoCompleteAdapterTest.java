@@ -1,11 +1,11 @@
 package com.mapzen.open.search;
 
+import com.mapzen.android.Pelias;
 import com.mapzen.android.gson.Result;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.adapters.SearchViewAdapter;
-import com.mapzen.android.Pelias;
 import com.mapzen.open.entity.SimpleFeature;
 import com.mapzen.open.fragment.ItemFragment;
 import com.mapzen.open.support.DummyActivity;
@@ -23,7 +23,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.oscim.core.MapPosition;
-import org.robolectric.annotation.Config;
 import org.robolectric.tester.android.database.TestCursor;
 import org.robolectric.util.ActivityController;
 
@@ -60,7 +59,6 @@ import static org.mockito.Mockito.verify;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.buildActivity;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class AutoCompleteAdapterTest {
     private AutoCompleteAdapter adapter;
@@ -85,7 +83,7 @@ public class AutoCompleteAdapterTest {
         controller.create().start().resume();
         fragmentManager = controller.get().getSupportFragmentManager();
         baseActivity = TestHelper.initBaseActivity();
-        adapter = new AutoCompleteAdapter(baseActivity.getActionBar().getThemedContext(),
+        adapter = new AutoCompleteAdapter(baseActivity.getSupportActionBar().getThemedContext(),
                 baseActivity, ((MapzenApplication) application).getColumns(), fragmentManager);
         adapter.setSearchView(baseActivity.getSearchView());
         adapter.setMapFragment(initMapFragment(baseActivity));
