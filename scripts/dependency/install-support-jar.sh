@@ -5,16 +5,16 @@
 # Usage:
 #   install-support-jar.sh
 
-# Version 19.1.0 used by mapzen-android-demo
+# Version 21.0.3 used by mapzen-android-demo
 
-echo "Downloading support_r19.1.zip"
-wget https://dl-ssl.google.com/android/repository/support_r19.1.zip
-unzip support_r19.1.zip
-mv support support_r19.1
+echo "Downloading support_r21.0.3.zip"
+wget https://dl-ssl.google.com/android/repository/support_r21.0.3.zip
+unzip support_r21.0.3.zip
+mv support support_r21.0.3
 
-echo "Installing com.android.support:support-v4:19.1.0"
+echo "Installing com.android.support:support-v4:21.0.3@aar"
 mvn -q install:install-file -DgroupId=com.android.support -DartifactId=support-v4 \
-  -Dversion=19.1.0 -Dpackaging=jar -Dfile=support_r19.1/v4/android-support-v4.jar
+  -Dversion=21.0.3 -Dpackaging=jar -Dfile=support_r21.0.3/v4/android-support-v4.jar
 
 # Version 19.0.1 used by Robolectric
 
@@ -29,11 +29,11 @@ mvn -q install:install-file -DgroupId=com.android.support -DartifactId=support-v
 
 # Cleanup
 
-echo "Deleting file support_r19.1.zip"
-rm support_r19.1.zip
+echo "Deleting file support_r21.0.3.zip"
+rm support_r21.0.3.zip
 
-echo "Deleting folder support_r19.1"
-rm -rf support_r19.1
+echo "Deleting folder support_r21.0.3"
+rm -rf support_r21.0.3
 
 echo "Deleting file support_r19.0.1.zip"
 rm support_r19.0.1.zip

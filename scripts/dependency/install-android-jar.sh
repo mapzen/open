@@ -12,14 +12,14 @@
 #
 # Adapted from https://github.com/robolectric/robolectric/blob/master/scripts/install-support-jar.sh
 
-jarLocation="$ANDROID_HOME/platforms/android-19/android.jar"
+jarLocation="$ANDROID_HOME/platforms/android-21/android.jar"
 if [ ! -f "$jarLocation" ]; then
-  echo "android-19 artifact not found!";
+  echo "android-21 artifact not found!";
   exit 1;
 fi
 
 echo "Installing android:android from $jarLocation"
 mvn -q install:install-file -DgroupId=android -DartifactId=android \
-  -Dversion=4.4.2_r3 -Dpackaging=jar -Dfile="$jarLocation"
+  -Dversion=5.0.1_r2 -Dpackaging=jar -Dfile="$jarLocation"
 
 echo "Done!"

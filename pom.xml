@@ -111,7 +111,6 @@
             <groupId>com.android.support</groupId>
             <artifactId>support-v4</artifactId>
             <version>21.0.3</version>
-            <type>aar</type>
         </dependency>
 
         <dependency>
@@ -145,30 +144,6 @@
             <artifactId>mixpanel-android</artifactId>
             <version>4.2.2</version>
             <type>aar</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.oscim</groupId>
-            <artifactId>vtm-jni</artifactId>
-            <version>0.5.9-SNAPSHOT</version>
-            <classifier>armeabi</classifier>
-            <type>so</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.oscim</groupId>
-            <artifactId>vtm-jni</artifactId>
-            <version>0.5.9-SNAPSHOT</version>
-            <classifier>armeabi-v7a</classifier>
-            <type>so</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.oscim</groupId>
-            <artifactId>vtm-jni</artifactId>
-            <version>0.5.9-SNAPSHOT</version>
-            <classifier>x86</classifier>
-            <type>so</type>
         </dependency>
 
         <dependency>
