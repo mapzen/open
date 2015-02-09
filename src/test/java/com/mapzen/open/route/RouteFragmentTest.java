@@ -1502,11 +1502,13 @@ public class RouteFragmentTest {
     }
 
     private void simulatePaneOpenSlide() {
-        fragment.getPanelSlideListener().onPanelSlide(fragment.getSlideLayout(), 0.95f);
+        fragment.getPanelSlideListener().onPanelSlide(fragment.getSlideLayout(),
+                RouteFragment.SLIDING_PANEL_OFFSET_OPEN);
     }
 
     private void simulatePaneCloseSlide() {
-        fragment.getPanelSlideListener().onPanelSlide(fragment.getSlideLayout(), 1.0f);
+        fragment.getPanelSlideListener().onPanelSlide(fragment.getSlideLayout(),
+                RouteFragment.SLIDING_PANEL_OFFSET_CLOSED);
     }
 
     private View getInstructionView(int position) {

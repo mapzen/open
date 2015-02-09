@@ -94,6 +94,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public static final double MIN_CHANGE_FOR_SHOW_RESUME = .00000001;
     public static final String ROUTE_TAG = "route";
 
+    public static final float SLIDING_PANEL_OFFSET_OPEN = 1f;
+    public static final float SLIDING_PANEL_OFFSET_CLOSED = 0f;
+    public static final float SLIDING_PANEL_OFFSET_MARGIN = 0.1f;
+
     @Inject ZoomController zoomController;
     @Inject Router router;
     @Inject RouteEngine routeEngine;
@@ -788,16 +792,16 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         return (new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
-                if (slideOffset < .99) {
+                if (slideOffset > SLIDING_PANEL_OFFSET_MARGIN) {
                     if (directionListFragment == null) {
                         showDirectionListFragmentInExpanded();
                     }
                 }
-                if (slideOffset > .99 && directionListFragment != null) {
+                if (slideOffset < SLIDING_PANEL_OFFSET_MARGIN && directionListFragment != null) {
                     hideDirectionListFragment();
                     getSlideLayout().setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
                 }
-                if (slideOffset == 1.0) {
+                if (slideOffset == SLIDING_PANEL_OFFSET_OPEN) {
                     getSlideLayout().setTouchEnabled(false);
                 }
             }
