@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.Mapzen" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/transparent_white</item>
+        <item name="colorPrimaryDark">@color/dark_red</item>
+        <item name="colorAccent">@color/blue</item>
         <item name="android:actionBarStyle">@style/ActionBar.Solid.Mapzen</item>
         <item name="android:windowActionBarOverlay">true</item>
         <item name="android:itemTextAppearance">@style/MapzenItemTextAppearance</item>
@@ -16,11 +19,11 @@
         <item name="android:colorBackground">@android:color/white</item>
     </style>
 
-    <style name="Theme.Mapzen.NoActionBar" parent="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen">
+    <style name="Theme.Mapzen.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="ActionBar.Solid.Mapzen" parent="@android:style/Widget.Holo.Light.ActionBar.Solid">
+    <style name="ActionBar.Solid.Mapzen" parent="Widget.AppCompat.Light.ActionBar.Solid">
         <item name="android:titleTextStyle">@style/MapzenTitleText</item>
         <item name="android:background">@color/transparent_white</item>
         <item name="android:icon">@drawable/ic_open_icon</item>
@@ -30,7 +33,7 @@
         <item name="android:titleTextStyle">@style/SearchResultsTitleText</item>
     </style>
 
-    <style name="MapzenTitleText" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+    <style name="MapzenTitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@color/red</item>
         <item name="android:textSize">@dimen/medium</item>
         <item name="android:fontFamily">sans-serif-light-condensed</item>
@@ -42,19 +45,19 @@
         <item name="android:fontFamily">sans-serif-condensed</item>
     </style>
 
-    <style name="MapzenSearchText" parent="@android:style/TextAppearance.Holo.Widget.EditText">
+    <style name="MapzenSearchText" parent="Widget.AppCompat.EditText">
         <item name="android:textColor">@color/red</item>
         <item name="android:textSize">@dimen/medium</item>
         <item name="android:fontFamily">sans-serif-condensed</item>
     </style>
 
-    <style name="MapzenItemTextAppearance" parent="@android:style/TextAppearance.Widget.DropDownItem">
+    <style name="MapzenItemTextAppearance" parent="TextAppearance.AppCompat.Widget.DropDownItem">
         <item name="android:textColor">@color/red</item>
         <item name="android:textSize">@dimen/medium</item>
         <item name="android:fontFamily">sans-serif-condensed</item>
     </style>
 
-    <style name="MapzenOverflow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+    <style name="MapzenOverflow" parent="Widget.AppCompat.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_menu_overflow</item>
     </style>
 
@@ -75,7 +78,6 @@
         <item name="android:textColor">@color/red</item>
         <item name="android:clickable">true</item>
         <item name="android:paddingBottom">@dimen/button_above_below_padding</item>
-
     </style>
 
 </resources>
