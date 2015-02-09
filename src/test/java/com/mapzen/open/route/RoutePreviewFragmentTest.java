@@ -447,9 +447,9 @@ public class RoutePreviewFragmentTest {
     }
 
     @Test
-    public void onAttach_shouldHideActionBar() throws Exception {
+    public void onViewCreated_shouldHideActionBar() throws Exception {
         activity.getSupportActionBar().show();
-        fragment.onAttach(activity);
+        fragment.onViewCreated(fragment.getView(), null);
         assertThat(activity.getSupportActionBar().isShowing()).isFalse();
     }
 
