@@ -123,7 +123,6 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.act = (BaseActivity) activity;
-        this.act.getSupportActionBar().hide();
     }
 
     @Override
@@ -144,6 +143,13 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
         ButterKnife.inject(this, view);
         setOriginAndDestination();
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        if (act.getSupportActionBar() != null) {
+            act.getSupportActionBar().hide();
+        }
     }
 
     private void setOriginAndDestination() {
