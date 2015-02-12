@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.Mapzen" parent="Theme.AppCompat.Light">
-        <item name="colorPrimary">@color/transparent_white</item>
+        <item name="colorPrimary">@android:color/white</item>
         <item name="colorPrimaryDark">@color/dark_red</item>
         <item name="colorAccent">@color/blue</item>
         <item name="android:actionBarStyle">@style/ActionBar.Solid.Mapzen</item>
