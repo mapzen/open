@@ -264,11 +264,13 @@ public class BaseActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.options_menu, menu);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchMenuItem = menu.findItem(R.id.search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
         MenuItemCompat.setOnActionExpandListener(searchMenuItem,
                 new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 hideOptionsMenu();
+                searchView.setIconified(false);
                 return true;
             }
 
@@ -285,7 +287,6 @@ public class BaseActivity extends ActionBarActivity {
             }
         });
 
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         initSavedSearchAutoComplete(searchView);
         setupAdapter(searchView);

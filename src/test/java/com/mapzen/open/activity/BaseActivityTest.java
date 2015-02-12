@@ -265,6 +265,12 @@ public class BaseActivityTest {
     }
 
     @Test
+    public void onMenuItemActionExpand_shouldSetIconifiedFalse() throws Exception {
+        menu.findItem(R.id.search).expandActionView();
+        assertThat((SearchView) menu.findItem(R.id.search).getActionView()).isNotIconified();
+    }
+
+    @Test
     public void onMenuItemActionCollapse_shouldPopPagerResultsFragment() throws Exception {
         activity.executeSearchOnMap("query");
         menu.findItem(R.id.search).collapseActionView();
