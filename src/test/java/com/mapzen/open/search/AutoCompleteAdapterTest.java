@@ -138,13 +138,6 @@ public class AutoCompleteAdapterTest {
     }
 
     @Test
-    public void onQueryTextChange_shouldAttachAdapterIfNull() throws Exception {
-        baseActivity.executeSearchOnMap("query");
-        adapter.onQueryTextChange("new query");
-        assertThat(baseActivity.getSearchView().getSuggestionsAdapter()).isNotNull();
-    }
-
-    @Test
     public void onQueryTextChange_shouldShowSavedSearches() throws Exception {
         savedSearch.store("saved query 1");
         adapter.onQueryTextChange("");
@@ -280,6 +273,13 @@ public class AutoCompleteAdapterTest {
     }
 
     @Test
+    public void onQueryTextSubmit_shouldHideAutoCompleteListView() throws Exception {
+        baseActivity.getAutoCompleteListView().setVisibility(View.VISIBLE);
+        adapter.onQueryTextSubmit("query");
+        assertThat(baseActivity.getAutoCompleteListView()).isGone();
+    }
+
+    @Test
     public void onClick_shouldSetSelection() throws Exception {
         SearchView searchView = adapter.getSearchView();
         EditText editText = (EditText) searchView.findViewById(application.getResources()
@@ -288,5 +288,12 @@ public class AutoCompleteAdapterTest {
         view.setText("query");
         view.performClick();
         assertThat(editText).hasSelectionStart(0);
+    }
+
+    @Test
+    public void onClick_shouldHideAutoCompleteListView() throws Exception {
+        baseActivity.getAutoCompleteListView().setVisibility(View.VISIBLE);
+        view.performClick();
+        assertThat(baseActivity.getAutoCompleteListView()).isGone();
     }
 }

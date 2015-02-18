@@ -248,7 +248,7 @@ public class PagerResultsFragmentTest {
         ImageView closeButton = (ImageView) act.getSearchView().findViewById(act.getResources()
                 .getIdentifier("android:id/search_close_btn", null, null));
         closeButton.performClick();
-        assertThat(act.getSearchView().getSuggestionsAdapter()).hasCount(3);
+        assertThat(act.getAutoCompleteListView().getAdapter()).hasCount(3);
     }
 
     @Test
