@@ -53,8 +53,10 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ImageSpan;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
@@ -71,6 +73,7 @@ public class BaseActivity extends ActionBarActivity {
     private MapzenApplication app;
     private MapFragment mapFragment;
     private MapzenGPSPromptDialogFragment gpsPromptDialogFragment;
+    private ListView autoCompleteListView;
     @Inject MixpanelAPI mixpanelAPI;
     @Inject MapController mapController;
     @Inject SavedSearch savedSearch;
@@ -271,12 +274,15 @@ public class BaseActivity extends ActionBarActivity {
             public boolean onMenuItemActionExpand(MenuItem item) {
                 hideOptionsMenu();
                 searchView.setIconified(false);
+                getAutoCompleteListView().setVisibility(View.VISIBLE);
+                getAutoCompleteListView().setAdapter(autoCompleteAdapter);
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 resetSearchView();
+                getAutoCompleteListView().setVisibility(View.GONE);
                 final PagerResultsFragment pagerResultsFragment = getPagerResultsFragment();
                 if (pagerResultsFragment != null && pagerResultsFragment.isAdded()) {
                     getSupportFragmentManager().beginTransaction().remove(pagerResultsFragment)
@@ -291,6 +297,14 @@ public class BaseActivity extends ActionBarActivity {
         initSavedSearchAutoComplete(searchView);
         setupAdapter(searchView);
         searchView.setOnQueryTextListener(autoCompleteAdapter);
+        getQueryAutoCompleteTextView(searchView).setOnTouchListener(new View.OnTouchListener() {
+            @Override public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    getAutoCompleteListView().setVisibility(View.VISIBLE);
+                }
+                return false;
+            }
+        });
 
         if (!app.getCurrentSearchTerm().isEmpty()) {
             searchMenuItem.expandActionView();
@@ -466,7 +480,7 @@ public class BaseActivity extends ActionBarActivity {
             autoCompleteAdapter.setMapFragment(mapFragment);
         }
 
-        searchView.setSuggestionsAdapter(autoCompleteAdapter);
+        getAutoCompleteListView().setAdapter(autoCompleteAdapter);
     }
 
     private void initMapController() {
@@ -560,5 +574,13 @@ public class BaseActivity extends ActionBarActivity {
                 .add(R.id.routes_preview_container, routePreviewFragment, RoutePreviewFragment.TAG)
                 .commitAllowingStateLoss();
         promptForGPSIfNotEnabled();
+    }
+
+    public ListView getAutoCompleteListView() {
+        if (autoCompleteListView == null) {
+            autoCompleteListView = (ListView) findViewById(R.id.auto_complete);
+        }
+
+        return autoCompleteListView;
     }
 }

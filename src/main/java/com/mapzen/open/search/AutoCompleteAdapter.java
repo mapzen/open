@@ -1,11 +1,11 @@
 package com.mapzen.open.search;
 
-import com.mapzen.open.MapzenApplication;
-import com.mapzen.open.R;
-import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.android.Pelias;
 import com.mapzen.android.gson.Feature;
 import com.mapzen.android.gson.Result;
+import com.mapzen.open.MapzenApplication;
+import com.mapzen.open.R;
+import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.entity.SimpleFeature;
 import com.mapzen.open.fragment.MapFragment;
 import com.mapzen.open.util.Highlighter;
@@ -121,6 +121,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                     searchView.setQuery(tv.getText().toString(), true);
                 }
 
+                act.getAutoCompleteListView().setVisibility(View.GONE);
                 act.getQueryAutoCompleteTextView(searchView).setSelection(0);
             }
         });
@@ -180,6 +181,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
             return false;
         }
 
+        act.getAutoCompleteListView().setVisibility(View.GONE);
         act.getQueryAutoCompleteTextView(searchView).setSelection(0);
         return act.executeSearchOnMap(query);
     }
@@ -187,25 +189,18 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     @Override
     public boolean onQueryTextChange(String newText) {
         act.setupAdapter(searchView);
-
-        Logger.d("onQueryTextChange: text" + newText);
         if (newText.length() < AUTOCOMPLETE_THRESHOLD) {
             loadSavedSearches();
-            Logger.d("search: newText shorter than 3 "
-                    + "was:" + String.valueOf(newText.length()));
             return true;
         }
 
-        Logger.d("search: term newText: " + newText);
         if (!newText.isEmpty()) {
-            Logger.d("search: autocomplete starts");
-            Double lat = getMapController().getMap().getMapPosition().getLatitude();
-            Double lon = getMapController().getMap().getMapPosition().getLongitude();
+            final Double lat = getMapController().getMap().getMapPosition().getLatitude();
+            final Double lon = getMapController().getMap().getMapPosition().getLongitude();
             trackSuggest(newText);
-            pelias.suggest(newText, String.valueOf(lat),
-                    String.valueOf(lon), getPeliasCallback());
-            Logger.d("search: autocomplete request enqueued");
+            pelias.suggest(newText, String.valueOf(lat), String.valueOf(lon), getPeliasCallback());
         }
+
         return true;
     }
 

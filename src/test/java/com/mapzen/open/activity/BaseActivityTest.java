@@ -50,8 +50,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.SearchView;
 
 import java.util.ArrayList;
@@ -271,11 +274,41 @@ public class BaseActivityTest {
     }
 
     @Test
+    public void onMenuItemActionExpand_shouldShowAutoCompleteListView() throws Exception {
+        menu.findItem(R.id.search).expandActionView();
+        assertThat(activity.getAutoCompleteListView()).isVisible();
+    }
+
+    @Test
+    public void onMenuItemActionExpand_shouldSetAutoCompleteAdapter() throws Exception {
+        menu.findItem(R.id.search).expandActionView();
+        assertThat(((ListView) activity.getAutoCompleteListView()).getAdapter()).isNotNull();
+    }
+
+    @Test
+    public void onMenuItemActionCollapse_shouldHideAutoCompleteListView() throws Exception {
+        activity.getAutoCompleteListView().setVisibility(View.VISIBLE);
+        menu.findItem(R.id.search).collapseActionView();
+        assertThat(activity.getAutoCompleteListView()).isGone();
+    }
+
+    @Test
     public void onMenuItemActionCollapse_shouldPopPagerResultsFragment() throws Exception {
         activity.executeSearchOnMap("query");
         menu.findItem(R.id.search).collapseActionView();
         assertThat(activity.getSupportFragmentManager())
                 .doesNotHaveFragmentWithTag(PagerResultsFragment.TAG);
+    }
+
+    @Test
+    public void onTouch_shouldShowAutoCompleteListView() throws Exception {
+        MotionEvent motionEvent = Mockito.mock(MotionEvent.class);
+        Mockito.when(motionEvent.getAction()).thenReturn(MotionEvent.ACTION_UP);
+
+        activity.getAutoCompleteListView().setVisibility(View.GONE);
+        activity.getQueryAutoCompleteTextView(activity.getSearchView())
+                .dispatchTouchEvent(motionEvent);
+        assertThat(activity.getAutoCompleteListView()).isVisible();
     }
 
     @Test
@@ -388,12 +421,6 @@ public class BaseActivityTest {
     }
 
     @Test
-    public void shouldHaveSuggestionsAdapter() throws Exception {
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        assertThat(searchView.getSuggestionsAdapter()).isNotNull();
-    }
-
-    @Test
     public void shouldDisplaySavedSearchTermsOnFocus() throws Exception {
         savedSearch.clear();
         savedSearch.store("saved query 1");
@@ -404,7 +431,7 @@ public class BaseActivityTest {
                 (AutoCompleteTextView) searchView.findViewById(searchView.getContext()
                         .getResources().getIdentifier("android:id/search_src_text", null, null));
         autoCompleteTextView.getOnFocusChangeListener().onFocusChange(searchView, true);
-        assertThat(searchView.getSuggestionsAdapter().getCursor()).hasCount(3);
+        assertThat(((ListView) activity.getAutoCompleteListView()).getAdapter()).hasCount(3);
     }
 
     @Test
