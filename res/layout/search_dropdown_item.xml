@@ -7,4 +7,4 @@
     android:textAppearance="@style/MapzenItemTextAppearance"
     android:gravity="center_vertical"
     android:padding="@dimen/default_padding_list_item"
-    android:drawableLeft="@drawable/ic_search_results_search" />
+    android:drawableLeft="@drawable/ic_search_results_pin" />
