@@ -109,6 +109,10 @@ public class TestAppModule {
         this.context = context;
     }
 
+    @Provides @Singleton MapzenApplication provideApplication() {
+        return (MapzenApplication) context.getApplicationContext();
+    }
+
     @Provides @Singleton Router provideRouter() {
         Router router = Mockito.spy(getRouter());
         doNothing().when(router).fetch();

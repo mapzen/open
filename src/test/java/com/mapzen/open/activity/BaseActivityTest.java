@@ -70,7 +70,6 @@ import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.shadowOf;
 import static org.robolectric.shadows.ShadowToast.getTextOfLatestToast;
 import static org.robolectric.util.FragmentTestUtil.startFragment;
@@ -85,6 +84,7 @@ public class BaseActivityTest {
     @Inject SavedSearch savedSearch;
     @Inject SQLiteDatabase db;
     @Inject Bus bus;
+    @Inject MapzenApplication app;
 
     @Before
     public void setUp() throws Exception {
@@ -462,9 +462,9 @@ public class BaseActivityTest {
         activity.onCreateOptionsMenu(menu);
         activity.setAccessToken(token);
         MenuItem menuItem = menu.findItem(R.id.logout);
-        assertThat(((MapzenApplication) application).getAccessToken()).isNotNull();
+        assertThat(app.getAccessToken()).isNotNull();
         activity.onOptionsItemSelected(menuItem);
-        assertThat(((MapzenApplication) application).getAccessToken()).isNull();
+        assertThat(app.getAccessToken()).isNull();
     }
 
     @Test
@@ -550,7 +550,6 @@ public class BaseActivityTest {
 
     @Test
     public void locateButtonAction_shouldActivateMoveMapToLocation() throws Exception {
-        MapzenApplication app = (MapzenApplication) application;
         app.deactivateMoveMapToLocation();
         activity.locateButtonAction(activity.findViewById(R.id.locate_button));
         assertThat(app.shouldMoveMapToLocation()).isTrue();
@@ -577,12 +576,12 @@ public class BaseActivityTest {
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setQuery("query", false);
         activity.onDestroy();
-        assertThat(((MapzenApplication) application).getCurrentSearchTerm()).isEqualTo("query");
+        assertThat(app.getCurrentSearchTerm()).isEqualTo("query");
     }
 
     @Test
     public void onCreateOptionsMenu_shouldRestoreCurrentSearchTerm() throws Exception {
-        ((MapzenApplication) application).setCurrentSearchTerm("query");
+        app.setCurrentSearchTerm("query");
         activity.onCreateOptionsMenu(menu);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         assertThat(activity.searchMenuItem.isActionViewExpanded()).isTrue();

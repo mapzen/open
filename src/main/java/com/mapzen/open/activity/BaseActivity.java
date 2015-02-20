@@ -70,7 +70,7 @@ public class BaseActivity extends ActionBarActivity {
     @Inject LostApiClient locationClient;
     private Menu activityMenu;
     private AutoCompleteAdapter autoCompleteAdapter;
-    private MapzenApplication app;
+    @Inject MapzenApplication app;
     private MapFragment mapFragment;
     private MapzenGPSPromptDialogFragment gpsPromptDialogFragment;
     private ListView autoCompleteListView;
@@ -88,8 +88,7 @@ public class BaseActivity extends ActionBarActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        app = (MapzenApplication) getApplication();
-        app.inject(this);
+        ((MapzenApplication) getApplication()).inject(this);
         Mint.initAndStartSession(this, "ebfa8fd7");
         Mint.addExtraData("OEM", Build.MANUFACTURER);
         setContentView(R.layout.base);
@@ -134,7 +133,7 @@ public class BaseActivity extends ActionBarActivity {
         super.onResume();
         locationClient.connect();
         MapzenLocation.onLocationServicesConnected(MapController.getMapController(),
-                LocationServices.FusedLocationApi, (MapzenApplication) getApplication());
+                LocationServices.FusedLocationApi, app);
     }
 
     @Override
