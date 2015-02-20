@@ -264,6 +264,13 @@
             <version>21.0.3</version>
             <type>aar</type>
         </dependency>
+
+        <dependency>
+            <groupId>com.davidstemmer</groupId>
+            <artifactId>screenplay</artifactId>
+            <version>0.5.2-SNAPSHOT</version>
+            <type>aar</type>
+        </dependency>
         
     </dependencies>
 

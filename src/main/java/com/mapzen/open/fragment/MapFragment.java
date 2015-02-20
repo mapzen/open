@@ -311,7 +311,7 @@ public class MapFragment extends BaseFragment {
         return onPoiClickListener;
     }
 
-    private static class PoiItemizedLayer extends ItemizedLayer<MarkerItem> {
+    public static class PoiItemizedLayer extends ItemizedLayer<MarkerItem> {
         private ArrayList<MarkerItem> poiMarkers = new ArrayList<MarkerItem>();
 
         public PoiItemizedLayer(Map map, List<MarkerItem> list, MarkerSymbol defaultMarker,

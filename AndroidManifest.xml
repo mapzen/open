@@ -48,10 +48,6 @@
             android:name=".activity.InitialActivity"
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <data android:scheme="geo" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -76,6 +72,13 @@
             android:name=".search.ListResultsActivity"
             android:label="@string/results_title"
             android:theme="@style/Theme.Mapzen.SearchResults" />
+
+        <activity android:name=".core.NewActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <service
             android:name=".core.DataUploadService"

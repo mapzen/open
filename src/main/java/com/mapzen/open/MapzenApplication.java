@@ -38,7 +38,7 @@ public class MapzenApplication extends Application {
     }
 
     public static final String PELIAS_BLOB = "text";
-    private final String[] columns = {
+    public static final String[] COLUMNS = {
             _ID, PELIAS_BLOB
     };
     public static final String LOG_TAG = "Mapzen: ";
@@ -63,7 +63,7 @@ public class MapzenApplication extends Application {
     }
 
     public String[] getColumns() {
-        return columns;
+        return COLUMNS;
     }
 
     public String getCurrentSearchTerm() {
