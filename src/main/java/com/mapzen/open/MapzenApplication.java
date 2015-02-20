@@ -42,7 +42,7 @@ public class MapzenApplication extends Application {
             _ID, PELIAS_BLOB
     };
     public static final String LOG_TAG = "Mapzen: ";
-    private String currentSearchTerm = "";
+    private String currentSearchTerm = null;
     private OAuthService osmOauthService;
     @Inject SimpleCrypt simpleCrypt;
 

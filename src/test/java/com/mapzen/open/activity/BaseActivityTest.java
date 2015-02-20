@@ -192,16 +192,6 @@ public class BaseActivityTest {
     }
 
     @Test
-    public void geoIntent_shouldSetCurrentSearchTerm() throws Exception {
-        Intent intent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("geo:0,0?q=Empire State Building"));
-        activity.setIntent(intent);
-        activity.onCreateOptionsMenu(new TestMenu());
-        String currentSearchTerm = ((MapzenApplication) application).getCurrentSearchTerm();
-        assertThat(currentSearchTerm).isEqualTo("Empire State Building");
-    }
-
-    @Test
     public void geoIntent_shouldSetQuery() throws Exception {
         Intent intent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse("geo:0,0?q=Empire State Building"));
@@ -210,17 +200,6 @@ public class BaseActivityTest {
         activity.onCreateOptionsMenu(menu);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         assertThat(searchView.getQuery().toString()).isEqualTo("Empire State Building");
-    }
-
-    @Test
-    public void mapsIntent_shouldSetCurrentSearchTerm() throws Exception {
-        Intent intent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("http://maps.google.com/maps?z=16&"
-                        + "q=Empire State Building@40.74828,-73.985565"));
-        activity.setIntent(intent);
-        activity.onCreateOptionsMenu(new TestMenu());
-        String currentSearchTerm = ((MapzenApplication) application).getCurrentSearchTerm();
-        assertThat(currentSearchTerm).isEqualTo("Empire State Building");
     }
 
     @Test
@@ -590,6 +569,24 @@ public class BaseActivityTest {
         manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
         activity.onRoutePreviewEvent(new RoutePreviewEvent(getTestSimpleFeature()));
         assertThat(activity.getSupportFragmentManager()).hasFragmentWithTag("gps_dialog");
+    }
+
+    @Test
+    public void onDestroy_shouldSaveCurrentSearchTerm() throws Exception {
+        activity.searchMenuItem.expandActionView();
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setQuery("query", false);
+        activity.onDestroy();
+        assertThat(((MapzenApplication) application).getCurrentSearchTerm()).isEqualTo("query");
+    }
+
+    @Test
+    public void onCreateOptionsMenu_shouldRestoreCurrentSearchTerm() throws Exception {
+        ((MapzenApplication) application).setCurrentSearchTerm("query");
+        activity.onCreateOptionsMenu(menu);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        assertThat(activity.searchMenuItem.isActionViewExpanded()).isTrue();
+        assertThat(searchView.getQuery().toString()).isEqualTo("query");
     }
 
     private Route getRouteMock() throws JSONException {

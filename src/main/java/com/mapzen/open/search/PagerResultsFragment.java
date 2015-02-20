@@ -112,20 +112,8 @@ public class PagerResultsFragment extends BaseFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         if (act != null) {
-            initOnFocusChangeListener();
             initSearchCloseButton();
         }
-    }
-
-    private void initOnFocusChangeListener() {
-        act.getSearchView().setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    act.getSearchView().setQuery(app.getCurrentSearchTerm(), false);
-                }
-            }
-        });
     }
 
     private void initSearchCloseButton() {
@@ -144,7 +132,6 @@ public class PagerResultsFragment extends BaseFragment {
 
                 textView.requestFocus();
                 searchView.setQuery("", false);
-                app.setCurrentSearchTerm("");
             }
         });
     }
@@ -277,7 +264,6 @@ public class PagerResultsFragment extends BaseFragment {
         }
 
         act.showLoadingIndicator();
-        app.setCurrentSearchTerm(query);
         searchTermForCurrentResults = query;
         savedSearch.store(query);
         trackSearch(query);
