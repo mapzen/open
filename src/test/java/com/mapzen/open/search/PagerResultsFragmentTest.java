@@ -207,28 +207,6 @@ public class PagerResultsFragmentTest {
     }
 
     @Test
-    public void onFocusChange_shouldShowMostRecentQuery() throws Exception {
-        app.setCurrentSearchTerm("current query");
-        fragment.onAttach(act);
-        SearchView searchView = act.getSearchView();
-        AutoCompleteTextView autoCompleteTextView = act.getQueryAutoCompleteTextView(searchView);
-        autoCompleteTextView.getOnFocusChangeListener().onFocusChange(autoCompleteTextView, true);
-        assertThat(act.getSearchView().getQuery().toString()).isEqualTo("current query");
-    }
-
-    @Test
-    public void onClickCloseButton_shouldClearQuery() throws Exception {
-        app.setCurrentSearchTerm("current query");
-        SearchView searchView = act.getSearchView();
-        searchView.setQuery("current query", false);
-        ImageView closeButton = (ImageView) act.getSearchView().findViewById(act.getResources()
-                .getIdentifier("android:id/search_close_btn", null, null));
-        closeButton.performClick();
-        assertThat(searchView.getQuery().toString()).isEmpty();
-        assertThat(app.getCurrentSearchTerm()).isEmpty();
-    }
-
-    @Test
     public void onClickCloseButton_shouldFocusQueryTextView() throws Exception {
         SearchView searchView = act.getSearchView();
         AutoCompleteTextView autoCompleteTextView = act.getQueryAutoCompleteTextView(searchView);

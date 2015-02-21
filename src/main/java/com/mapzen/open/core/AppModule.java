@@ -64,6 +64,10 @@ public class AppModule {
         this.context = context;
     }
 
+    @Provides @Singleton MapzenApplication provideApplication() {
+        return (MapzenApplication) context.getApplicationContext();
+    }
+
     @Provides @Singleton Router provideRouter() {
         return Router.getRouter().setEndpoint(context.getString(R.string.osrm_endpoint));
     }

@@ -70,7 +70,6 @@ import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.shadowOf;
 import static org.robolectric.shadows.ShadowToast.getTextOfLatestToast;
 import static org.robolectric.util.FragmentTestUtil.startFragment;
@@ -85,6 +84,7 @@ public class BaseActivityTest {
     @Inject SavedSearch savedSearch;
     @Inject SQLiteDatabase db;
     @Inject Bus bus;
+    @Inject MapzenApplication app;
 
     @Before
     public void setUp() throws Exception {
@@ -192,16 +192,6 @@ public class BaseActivityTest {
     }
 
     @Test
-    public void geoIntent_shouldSetCurrentSearchTerm() throws Exception {
-        Intent intent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("geo:0,0?q=Empire State Building"));
-        activity.setIntent(intent);
-        activity.onCreateOptionsMenu(new TestMenu());
-        String currentSearchTerm = ((MapzenApplication) application).getCurrentSearchTerm();
-        assertThat(currentSearchTerm).isEqualTo("Empire State Building");
-    }
-
-    @Test
     public void geoIntent_shouldSetQuery() throws Exception {
         Intent intent = new Intent(Intent.ACTION_VIEW,
                 Uri.parse("geo:0,0?q=Empire State Building"));
@@ -210,17 +200,6 @@ public class BaseActivityTest {
         activity.onCreateOptionsMenu(menu);
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         assertThat(searchView.getQuery().toString()).isEqualTo("Empire State Building");
-    }
-
-    @Test
-    public void mapsIntent_shouldSetCurrentSearchTerm() throws Exception {
-        Intent intent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("http://maps.google.com/maps?z=16&"
-                        + "q=Empire State Building@40.74828,-73.985565"));
-        activity.setIntent(intent);
-        activity.onCreateOptionsMenu(new TestMenu());
-        String currentSearchTerm = ((MapzenApplication) application).getCurrentSearchTerm();
-        assertThat(currentSearchTerm).isEqualTo("Empire State Building");
     }
 
     @Test
@@ -483,9 +462,9 @@ public class BaseActivityTest {
         activity.onCreateOptionsMenu(menu);
         activity.setAccessToken(token);
         MenuItem menuItem = menu.findItem(R.id.logout);
-        assertThat(((MapzenApplication) application).getAccessToken()).isNotNull();
+        assertThat(app.getAccessToken()).isNotNull();
         activity.onOptionsItemSelected(menuItem);
-        assertThat(((MapzenApplication) application).getAccessToken()).isNull();
+        assertThat(app.getAccessToken()).isNull();
     }
 
     @Test
@@ -571,7 +550,6 @@ public class BaseActivityTest {
 
     @Test
     public void locateButtonAction_shouldActivateMoveMapToLocation() throws Exception {
-        MapzenApplication app = (MapzenApplication) application;
         app.deactivateMoveMapToLocation();
         activity.locateButtonAction(activity.findViewById(R.id.locate_button));
         assertThat(app.shouldMoveMapToLocation()).isTrue();
@@ -590,6 +568,24 @@ public class BaseActivityTest {
         manager.setProviderEnabled(LocationManager.GPS_PROVIDER, false);
         activity.onRoutePreviewEvent(new RoutePreviewEvent(getTestSimpleFeature()));
         assertThat(activity.getSupportFragmentManager()).hasFragmentWithTag("gps_dialog");
+    }
+
+    @Test
+    public void onDestroy_shouldSaveCurrentSearchTerm() throws Exception {
+        activity.searchMenuItem.expandActionView();
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setQuery("query", false);
+        activity.onDestroy();
+        assertThat(app.getCurrentSearchTerm()).isEqualTo("query");
+    }
+
+    @Test
+    public void onCreateOptionsMenu_shouldRestoreCurrentSearchTerm() throws Exception {
+        app.setCurrentSearchTerm("query");
+        activity.onCreateOptionsMenu(menu);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        assertThat(activity.searchMenuItem.isActionViewExpanded()).isTrue();
+        assertThat(searchView.getQuery().toString()).isEqualTo("query");
     }
 
     private Route getRouteMock() throws JSONException {

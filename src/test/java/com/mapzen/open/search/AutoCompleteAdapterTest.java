@@ -254,13 +254,6 @@ public class AutoCompleteAdapterTest {
     }
 
     @Test
-    public void onClick_shouldSaveCurrentAutoCompleteQuery() throws Exception {
-        view.performClick();
-        assertThat(((MapzenApplication) application).getCurrentSearchTerm())
-                .isEqualTo(simpleFeature.getHint());
-    }
-
-    @Test
     public void onQueryTextSubmit_shouldSetSelection() throws Exception {
         SearchView searchView = adapter.getSearchView();
         EditText editText = (EditText) searchView.findViewById(application.getResources()

@@ -70,7 +70,7 @@ public class BaseActivity extends ActionBarActivity {
     @Inject LostApiClient locationClient;
     private Menu activityMenu;
     private AutoCompleteAdapter autoCompleteAdapter;
-    private MapzenApplication app;
+    @Inject MapzenApplication app;
     private MapFragment mapFragment;
     private MapzenGPSPromptDialogFragment gpsPromptDialogFragment;
     private ListView autoCompleteListView;
@@ -88,8 +88,7 @@ public class BaseActivity extends ActionBarActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        app = (MapzenApplication) getApplication();
-        app.inject(this);
+        ((MapzenApplication) getApplication()).inject(this);
         Mint.initAndStartSession(this, "ebfa8fd7");
         Mint.addExtraData("OEM", Build.MANUFACTURER);
         setContentView(R.layout.base);
@@ -134,7 +133,7 @@ public class BaseActivity extends ActionBarActivity {
         super.onResume();
         locationClient.connect();
         MapzenLocation.onLocationServicesConnected(MapController.getMapController(),
-                LocationServices.FusedLocationApi, (MapzenApplication) getApplication());
+                LocationServices.FusedLocationApi, app);
     }
 
     @Override
@@ -143,12 +142,11 @@ public class BaseActivity extends ActionBarActivity {
         clearNotifications();
         mixpanelAPI.flush();
         bus.unregister(this);
+        saveCurrentSearchTerm();
     }
 
     private void clearNotifications() {
-        NotificationManager notificationManager = (NotificationManager) getSystemService(
-                NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
+        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancelAll();
     }
 
     public boolean isInDebugMode() {
@@ -306,12 +304,7 @@ public class BaseActivity extends ActionBarActivity {
             }
         });
 
-        if (!app.getCurrentSearchTerm().isEmpty()) {
-            searchMenuItem.expandActionView();
-            Logger.d("search: " + app.getCurrentSearchTerm());
-            searchView.setQuery(app.getCurrentSearchTerm(), false);
-            searchView.clearFocus();
-        }
+        restoreCurrentSearchTerm();
 
         Uri data = getIntent().getData();
         if (data != null) {
@@ -346,7 +339,6 @@ public class BaseActivity extends ActionBarActivity {
         searchView.setQuery("", false);
         searchView.clearFocus();
         searchView.setIconified(true);
-        app.setCurrentSearchTerm("");
         autoCompleteAdapter.resetCursor();
         autoCompleteAdapter.loadSavedSearches();
     }
@@ -430,7 +422,6 @@ public class BaseActivity extends ActionBarActivity {
         if (data.toString().contains("q=")) {
             searchMenuItem.expandActionView();
             String queryString = Uri.decode(data.toString().split("q=")[1]);
-            app.setCurrentSearchTerm(queryString);
             searchView.setQuery(queryString, true);
         }
     }
@@ -439,7 +430,6 @@ public class BaseActivity extends ActionBarActivity {
         if (data.toString().contains("q=")) {
             searchMenuItem.expandActionView();
             String queryString = Uri.decode(data.toString().split("q=")[1].split("@")[0]);
-            app.setCurrentSearchTerm(queryString);
             searchView.setQuery(queryString, true);
         }
     }
@@ -582,5 +572,22 @@ public class BaseActivity extends ActionBarActivity {
         }
 
         return autoCompleteListView;
+    }
+
+    private void restoreCurrentSearchTerm() {
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        if (app.getCurrentSearchTerm() != null) {
+            searchMenuItem.expandActionView();
+            searchView.setQuery(app.getCurrentSearchTerm(), false);
+        }
+    }
+
+    private void saveCurrentSearchTerm() {
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        if (searchMenuItem.isActionViewExpanded()) {
+            app.setCurrentSearchTerm(searchView.getQuery().toString());
+        } else {
+            app.setCurrentSearchTerm(null);
+        }
     }
 }
