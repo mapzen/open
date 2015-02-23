@@ -48,14 +48,9 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.AutoCompleteTextView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.SearchView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -247,47 +242,11 @@ public class BaseActivityTest {
     }
 
     @Test
-    public void onMenuItemActionExpand_shouldSetIconifiedFalse() throws Exception {
-        menu.findItem(R.id.search).expandActionView();
-        assertThat((SearchView) menu.findItem(R.id.search).getActionView()).isNotIconified();
-    }
-
-    @Test
-    public void onMenuItemActionExpand_shouldShowAutoCompleteListView() throws Exception {
-        menu.findItem(R.id.search).expandActionView();
-        assertThat(activity.getAutoCompleteListView()).isVisible();
-    }
-
-    @Test
-    public void onMenuItemActionExpand_shouldSetAutoCompleteAdapter() throws Exception {
-        menu.findItem(R.id.search).expandActionView();
-        assertThat(((ListView) activity.getAutoCompleteListView()).getAdapter()).isNotNull();
-    }
-
-    @Test
-    public void onMenuItemActionCollapse_shouldHideAutoCompleteListView() throws Exception {
-        activity.getAutoCompleteListView().setVisibility(View.VISIBLE);
-        menu.findItem(R.id.search).collapseActionView();
-        assertThat(activity.getAutoCompleteListView()).isGone();
-    }
-
-    @Test
     public void onMenuItemActionCollapse_shouldPopPagerResultsFragment() throws Exception {
         activity.executeSearchOnMap("query");
         menu.findItem(R.id.search).collapseActionView();
         assertThat(activity.getSupportFragmentManager())
                 .doesNotHaveFragmentWithTag(PagerResultsFragment.TAG);
-    }
-
-    @Test
-    public void onTouch_shouldShowAutoCompleteListView() throws Exception {
-        MotionEvent motionEvent = Mockito.mock(MotionEvent.class);
-        Mockito.when(motionEvent.getAction()).thenReturn(MotionEvent.ACTION_UP);
-
-        activity.getAutoCompleteListView().setVisibility(View.GONE);
-        activity.getQueryAutoCompleteTextView(activity.getSearchView())
-                .dispatchTouchEvent(motionEvent);
-        assertThat(activity.getAutoCompleteListView()).isVisible();
     }
 
     @Test
@@ -400,20 +359,6 @@ public class BaseActivityTest {
     }
 
     @Test
-    public void shouldDisplaySavedSearchTermsOnFocus() throws Exception {
-        savedSearch.clear();
-        savedSearch.store("saved query 1");
-        savedSearch.store("saved query 2");
-        savedSearch.store("saved query 3");
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        final AutoCompleteTextView autoCompleteTextView =
-                (AutoCompleteTextView) searchView.findViewById(searchView.getContext()
-                        .getResources().getIdentifier("android:id/search_src_text", null, null));
-        autoCompleteTextView.getOnFocusChangeListener().onFocusChange(searchView, true);
-        assertThat(((ListView) activity.getAutoCompleteListView()).getAdapter()).hasCount(3);
-    }
-
-    @Test
     public void executeSearchOnMap_shouldRemoveSuggestionsAdapter() throws Exception {
         activity.executeSearchOnMap("query");
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
@@ -421,11 +366,10 @@ public class BaseActivityTest {
     }
 
     @Test
-    public void openingSearchView_shouldHideOverflow() throws Exception {
+    public void onMenuItemActionExpand_shouldHideOverflowMenu() throws Exception {
         TestMenuWithGroup menu = new TestMenuWithGroup();
         activity.onCreateOptionsMenu(menu);
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        searchView.onActionViewExpanded();
+        menu.findItem(R.id.search).expandActionView();
         assertThat(menu.group).isEqualTo(R.id.overflow_menu);
         assertThat(menu.visible).isFalse();
     }
@@ -473,16 +417,6 @@ public class BaseActivityTest {
         bus.register(viewUpdateSubscriber);
         activity.updateView();
         assertThat(viewUpdateSubscriber.getEvent()).isNotNull();
-    }
-
-    @Test
-    public void getSearchQueryTextView_shouldReturnAutoCompleteTextView() throws Exception {
-        SearchView searchView = activity.getSearchView();
-        AutoCompleteTextView textView = activity.getQueryAutoCompleteTextView(searchView);
-        LinearLayout linearLayout1 = (LinearLayout) activity.getSearchView().getChildAt(0);
-        LinearLayout linearLayout2 = (LinearLayout) linearLayout1.getChildAt(2);
-        LinearLayout linearLayout3 = (LinearLayout) linearLayout2.getChildAt(1);
-        assertThat(linearLayout3.indexOfChild(textView)).isGreaterThanOrEqualTo(0);
     }
 
     @Test

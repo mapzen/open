@@ -29,9 +29,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.widget.AutoCompleteTextView;
-import android.widget.ImageView;
-import android.widget.SearchView;
+import android.support.v7.widget.SearchView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -182,9 +180,6 @@ public class PagerResultsFragmentTest {
     @Test
     public void viewAll_shouldParcelSearchTermForCurrentResults() throws Exception {
         fragment.executeSearchOnMap(new SearchView(app), "Some fantastic term");
-        ImageView closeButton = (ImageView) act.getSearchView().findViewById(act.getResources()
-                .getIdentifier("android:id/search_close_btn", null, null));
-        closeButton.performClick();
         fragment.viewAll.performClick();
         assertThat(getShadowApplication().getNextStartedActivity()
                 .getStringExtra(ListResultsActivity.EXTRA_SEARCH_TERM))
@@ -204,29 +199,6 @@ public class PagerResultsFragmentTest {
         fragment.add(new SimpleFeature());
         fragment.displayResults(1, 0);
         assertThat(fragment.multiResultHeader).isGone();
-    }
-
-    @Test
-    public void onClickCloseButton_shouldFocusQueryTextView() throws Exception {
-        SearchView searchView = act.getSearchView();
-        AutoCompleteTextView autoCompleteTextView = act.getQueryAutoCompleteTextView(searchView);
-        ImageView closeButton = (ImageView) act.getSearchView().findViewById(act.getResources()
-                .getIdentifier("android:id/search_close_btn", null, null));
-
-        closeButton.performClick();
-        assertThat(autoCompleteTextView).hasFocus();
-    }
-
-    @Test
-    public void onClickCloseButton_shouldLoadSavedSearches() throws Exception {
-        savedSearch.clear();
-        savedSearch.store("saved query 1");
-        savedSearch.store("saved query 2");
-        savedSearch.store("saved query 3");
-        ImageView closeButton = (ImageView) act.getSearchView().findViewById(act.getResources()
-                .getIdentifier("android:id/search_close_btn", null, null));
-        closeButton.performClick();
-        assertThat(act.getAutoCompleteListView().getAdapter()).hasCount(3);
     }
 
     @Test
