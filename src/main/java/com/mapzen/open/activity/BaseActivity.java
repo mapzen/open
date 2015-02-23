@@ -272,6 +272,7 @@ public class BaseActivity extends ActionBarActivity {
             public boolean onMenuItemActionExpand(MenuItem item) {
                 hideOptionsMenu();
                 searchView.setIconified(false);
+                autoCompleteAdapter.loadSavedSearches();
                 getAutoCompleteListView().setVisibility(View.VISIBLE);
                 getAutoCompleteListView().setAdapter(autoCompleteAdapter);
                 return true;
@@ -352,16 +353,6 @@ public class BaseActivity extends ActionBarActivity {
         final AutoCompleteTextView autoCompleteTextView = getQueryAutoCompleteTextView(searchView);
         autoCompleteTextView.setThreshold(0);
         autoCompleteTextView.setTextAppearance(this, R.style.MapzenSearchText);
-        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    searchMenuItem.expandActionView();
-                    autoCompleteAdapter.loadSavedSearches();
-                    searchView.setQuery("", false);
-                }
-            }
-        });
 
         // Set custom search hint icon.
         final SpannableStringBuilder ssb =

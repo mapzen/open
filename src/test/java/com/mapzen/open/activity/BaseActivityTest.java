@@ -400,20 +400,6 @@ public class BaseActivityTest {
     }
 
     @Test
-    public void shouldDisplaySavedSearchTermsOnFocus() throws Exception {
-        savedSearch.clear();
-        savedSearch.store("saved query 1");
-        savedSearch.store("saved query 2");
-        savedSearch.store("saved query 3");
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        final AutoCompleteTextView autoCompleteTextView =
-                (AutoCompleteTextView) searchView.findViewById(searchView.getContext()
-                        .getResources().getIdentifier("android:id/search_src_text", null, null));
-        autoCompleteTextView.getOnFocusChangeListener().onFocusChange(searchView, true);
-        assertThat(((ListView) activity.getAutoCompleteListView()).getAdapter()).hasCount(3);
-    }
-
-    @Test
     public void executeSearchOnMap_shouldRemoveSuggestionsAdapter() throws Exception {
         activity.executeSearchOnMap("query");
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
@@ -421,11 +407,10 @@ public class BaseActivityTest {
     }
 
     @Test
-    public void openingSearchView_shouldHideOverflow() throws Exception {
+    public void onMenuItemActionExpand_shouldHideOverflowMenu() throws Exception {
         TestMenuWithGroup menu = new TestMenuWithGroup();
         activity.onCreateOptionsMenu(menu);
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        searchView.onActionViewExpanded();
+        menu.findItem(R.id.search).expandActionView();
         assertThat(menu.group).isEqualTo(R.id.overflow_menu);
         assertThat(menu.visible).isFalse();
     }

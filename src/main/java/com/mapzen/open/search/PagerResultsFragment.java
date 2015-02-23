@@ -113,6 +113,7 @@ public class PagerResultsFragment extends BaseFragment {
         super.onAttach(activity);
         if (act != null) {
             initSearchCloseButton();
+            act.getAutoCompleteListView().setVisibility(View.GONE);
         }
     }
 
@@ -132,6 +133,7 @@ public class PagerResultsFragment extends BaseFragment {
 
                 textView.requestFocus();
                 searchView.setQuery("", false);
+                act.getAutoCompleteListView().setVisibility(View.VISIBLE);
             }
         });
     }
