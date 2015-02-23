@@ -147,6 +147,10 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         if (cursor.getColumnName(1).equals(SEARCH_TERM)) {
             tv.setText(cursor.getString(1));
             tv.setTag(R.integer.pelias_doc_id, cursor.getInt(0));
+            final Parcel payload = savedSearch.get(cursor.getInt(0)).getPayload();
+            final int icon = payload == null ? R.drawable.ic_search_results_search
+                    : R.drawable.ic_search_results_pin;
+            tv.setCompoundDrawablesWithIntrinsicBounds(icon, 0, 0, 0);
         } else {
             final int blobIndex = cursor.getColumnIndex(PELIAS_BLOB);
             byte[] bytes = cursor.getBlob(blobIndex);
