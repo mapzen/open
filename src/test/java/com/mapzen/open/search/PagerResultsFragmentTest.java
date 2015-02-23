@@ -29,7 +29,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Toast;
@@ -207,14 +206,11 @@ public class PagerResultsFragmentTest {
     }
 
     @Test
-    public void onClickCloseButton_shouldFocusQueryTextView() throws Exception {
-        SearchView searchView = act.getSearchView();
-        AutoCompleteTextView autoCompleteTextView = act.getQueryAutoCompleteTextView(searchView);
+    public void onClickCloseButton_shouldExpandSearchActionView() throws Exception {
         ImageView closeButton = (ImageView) act.getSearchView().findViewById(act.getResources()
                 .getIdentifier("android:id/search_close_btn", null, null));
-
         closeButton.performClick();
-        assertThat(autoCompleteTextView).hasFocus();
+        assertThat(act.getSearchMenu()).isActionViewExpanded();
     }
 
     @Test

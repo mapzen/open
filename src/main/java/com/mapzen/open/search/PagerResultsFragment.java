@@ -28,7 +28,6 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SearchView;
@@ -121,7 +120,6 @@ public class PagerResultsFragment extends BaseFragment {
         final SearchView searchView = act.getSearchView();
         final AutoCompleteAdapter adapter = (AutoCompleteAdapter) searchView
                 .getSuggestionsAdapter();
-        final AutoCompleteTextView textView = act.getQueryAutoCompleteTextView(searchView);
         final ImageView closeButton = (ImageView) act.getSearchView().findViewById(getResources()
                 .getIdentifier("android:id/search_close_btn", null, null));
         closeButton.setOnClickListener(new View.OnClickListener() {
@@ -131,7 +129,7 @@ public class PagerResultsFragment extends BaseFragment {
                     adapter.loadSavedSearches();
                 }
 
-                textView.requestFocus();
+                act.getSearchMenu().expandActionView();
                 searchView.setQuery("", false);
                 act.getAutoCompleteListView().setVisibility(View.VISIBLE);
             }
