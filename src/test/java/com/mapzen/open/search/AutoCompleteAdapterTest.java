@@ -28,6 +28,7 @@ import org.robolectric.util.ActivityController;
 
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.FragmentManager;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
@@ -58,6 +59,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.buildActivity;
+import static org.robolectric.Robolectric.shadowOf;
 
 @RunWith(MapzenTestRunner.class)
 public class AutoCompleteAdapterTest {
@@ -69,6 +71,7 @@ public class AutoCompleteAdapterTest {
     @Inject Pelias pelias;
     @Inject MixpanelAPI mixpanelAPI;
     @Inject SavedSearch savedSearch;
+    @Inject MapzenApplication app;
 
     @Captor
     @SuppressWarnings("unused")
@@ -288,5 +291,38 @@ public class AutoCompleteAdapterTest {
         baseActivity.getAutoCompleteListView().setVisibility(View.VISIBLE);
         view.performClick();
         assertThat(baseActivity.getAutoCompleteListView()).isGone();
+    }
+
+    @Test
+    public void bindView_shouldDisplaySearchIconNextToSearchTerms() throws Exception {
+        savedSearch.store("search term");
+        adapter.loadSavedSearches();
+        Cursor cursor = adapter.getCursor();
+        cursor.moveToFirst();
+        TextView textView = new TextView(app);
+        adapter.bindView(textView, app, cursor);
+
+        Drawable expected = app.getResources().getDrawable(R.drawable.ic_search_results_search);
+        Drawable actual = textView.getCompoundDrawables()[0];
+        assertDrawable(expected, actual);
+    }
+
+    @Test
+    public void bindView_shouldDisplayPinIconNextToAutoCompleteResults() throws Exception {
+        savedSearch.store("search term", simpleFeature.toParcel());
+        adapter.loadSavedSearches();
+        Cursor cursor = adapter.getCursor();
+        cursor.moveToFirst();
+        TextView textView = new TextView(app);
+        adapter.bindView(textView, app, cursor);
+
+        Drawable expected = app.getResources().getDrawable(R.drawable.ic_search_results_pin);
+        Drawable actual = textView.getCompoundDrawables()[0];
+        assertDrawable(expected, actual);
+    }
+
+    private void assertDrawable(Drawable expected, Drawable actual) {
+        assertThat(shadowOf(actual).getCreatedFromResId())
+                .isEqualTo(shadowOf(expected).getCreatedFromResId());
     }
 }
