@@ -51,8 +51,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -241,32 +239,6 @@ public class BaseActivityTest {
     @Test
     public void onResume_shouldGetWritableLocationDatabase() throws Exception {
         assertThat(db).isOpen();
-    }
-
-    @Test
-    public void onMenuItemActionExpand_shouldSetIconifiedFalse() throws Exception {
-        menu.findItem(R.id.search).expandActionView();
-        assertThat(((SearchView) menu.findItem(R.id.search).getActionView())
-                .isIconified()).isFalse();
-    }
-
-    @Test
-    public void onMenuItemActionExpand_shouldShowAutoCompleteListView() throws Exception {
-        menu.findItem(R.id.search).expandActionView();
-        assertThat(activity.getAutoCompleteListView()).isVisible();
-    }
-
-    @Test
-    public void onMenuItemActionExpand_shouldSetAutoCompleteAdapter() throws Exception {
-        menu.findItem(R.id.search).expandActionView();
-        assertThat(((ListView) activity.getAutoCompleteListView()).getAdapter()).isNotNull();
-    }
-
-    @Test
-    public void onMenuItemActionCollapse_shouldHideAutoCompleteListView() throws Exception {
-        activity.getAutoCompleteListView().setVisibility(View.VISIBLE);
-        menu.findItem(R.id.search).collapseActionView();
-        assertThat(activity.getAutoCompleteListView()).isGone();
     }
 
     @Test

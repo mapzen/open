@@ -16,6 +16,7 @@ import com.mapzen.open.route.RoutePreviewFragment;
 import com.mapzen.open.search.AutoCompleteAdapter;
 import com.mapzen.open.search.OnPoiClickListener;
 import com.mapzen.open.search.PagerResultsFragment;
+import com.mapzen.open.search.PeliasSearchView;
 import com.mapzen.open.search.SavedSearch;
 import com.mapzen.open.util.Logger;
 import com.mapzen.open.util.MapzenGPSPromptDialogFragment;
@@ -50,7 +51,6 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -257,35 +257,29 @@ public class BaseActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.options_menu, menu);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchMenuItem = menu.findItem(R.id.search);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        final PeliasSearchView searchView =
+                (PeliasSearchView) MenuItemCompat.getActionView(searchMenuItem);
+        searchView.setAutoCompleteListView(getAutoCompleteListView());
+        setupAdapter(searchView);
+
         MenuItemCompat.setOnActionExpandListener(searchMenuItem,
                 new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 hideOptionsMenu();
-                searchView.setIconified(false);
-                autoCompleteAdapter.loadSavedSearches();
-                getAutoCompleteListView().setVisibility(View.VISIBLE);
-                getAutoCompleteListView().setAdapter(autoCompleteAdapter);
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 resetSearchView();
-                getAutoCompleteListView().setVisibility(View.GONE);
-                final PagerResultsFragment pagerResultsFragment = getPagerResultsFragment();
-                if (pagerResultsFragment != null && pagerResultsFragment.isAdded()) {
-                    getSupportFragmentManager().beginTransaction().remove(pagerResultsFragment)
-                            .commit();
-                }
                 showOptionsMenu();
+                removePagerResultsFragment();
                 return true;
             }
         });
 
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        setupAdapter(searchView);
         searchView.setOnQueryTextListener(autoCompleteAdapter);
         restoreCurrentSearchTerm();
 
@@ -299,6 +293,14 @@ public class BaseActivity extends ActionBarActivity {
             }
         }
         return true;
+    }
+
+    private void removePagerResultsFragment() {
+        final PagerResultsFragment pagerResultsFragment = getPagerResultsFragment();
+        if (pagerResultsFragment != null && pagerResultsFragment.isAdded()) {
+            getSupportFragmentManager().beginTransaction().remove(pagerResultsFragment)
+                    .commit();
+        }
     }
 
     @Override
@@ -324,11 +326,6 @@ public class BaseActivity extends ActionBarActivity {
         searchView.setIconified(true);
         autoCompleteAdapter.resetCursor();
         autoCompleteAdapter.loadSavedSearches();
-    }
-
-    public AutoCompleteTextView getQueryAutoCompleteTextView(SearchView searchView) {
-        return (AutoCompleteTextView) searchView.findViewById(searchView.getContext()
-                .getResources().getIdentifier("android:id/search_src_text", null, null));
     }
 
     @Override
