@@ -25,12 +25,11 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -111,29 +110,8 @@ public class PagerResultsFragment extends BaseFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         if (act != null) {
-            initSearchCloseButton();
             act.getAutoCompleteListView().setVisibility(View.GONE);
         }
-    }
-
-    private void initSearchCloseButton() {
-        final SearchView searchView = act.getSearchView();
-        final AutoCompleteAdapter adapter = (AutoCompleteAdapter) searchView
-                .getSuggestionsAdapter();
-        final ImageView closeButton = (ImageView) act.getSearchView().findViewById(getResources()
-                .getIdentifier("android:id/search_close_btn", null, null));
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (adapter != null) {
-                    adapter.loadSavedSearches();
-                }
-
-                act.getSearchMenu().expandActionView();
-                searchView.setQuery("", false);
-                act.getAutoCompleteListView().setVisibility(View.VISIBLE);
-            }
-        });
     }
 
     @Override

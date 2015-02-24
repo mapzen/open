@@ -48,14 +48,11 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SearchView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -249,7 +246,8 @@ public class BaseActivityTest {
     @Test
     public void onMenuItemActionExpand_shouldSetIconifiedFalse() throws Exception {
         menu.findItem(R.id.search).expandActionView();
-        assertThat((SearchView) menu.findItem(R.id.search).getActionView()).isNotIconified();
+        assertThat(((SearchView) menu.findItem(R.id.search).getActionView())
+                .isIconified()).isFalse();
     }
 
     @Test
@@ -277,17 +275,6 @@ public class BaseActivityTest {
         menu.findItem(R.id.search).collapseActionView();
         assertThat(activity.getSupportFragmentManager())
                 .doesNotHaveFragmentWithTag(PagerResultsFragment.TAG);
-    }
-
-    @Test
-    public void onTouch_shouldShowAutoCompleteListView() throws Exception {
-        MotionEvent motionEvent = Mockito.mock(MotionEvent.class);
-        Mockito.when(motionEvent.getAction()).thenReturn(MotionEvent.ACTION_UP);
-
-        activity.getAutoCompleteListView().setVisibility(View.GONE);
-        activity.getQueryAutoCompleteTextView(activity.getSearchView())
-                .dispatchTouchEvent(motionEvent);
-        assertThat(activity.getAutoCompleteListView()).isVisible();
     }
 
     @Test
@@ -458,16 +445,6 @@ public class BaseActivityTest {
         bus.register(viewUpdateSubscriber);
         activity.updateView();
         assertThat(viewUpdateSubscriber.getEvent()).isNotNull();
-    }
-
-    @Test
-    public void getSearchQueryTextView_shouldReturnAutoCompleteTextView() throws Exception {
-        SearchView searchView = activity.getSearchView();
-        AutoCompleteTextView textView = activity.getQueryAutoCompleteTextView(searchView);
-        LinearLayout linearLayout1 = (LinearLayout) activity.getSearchView().getChildAt(0);
-        LinearLayout linearLayout2 = (LinearLayout) linearLayout1.getChildAt(2);
-        LinearLayout linearLayout3 = (LinearLayout) linearLayout2.getChildAt(1);
-        assertThat(linearLayout3.indexOfChild(textView)).isGreaterThanOrEqualTo(0);
     }
 
     @Test
