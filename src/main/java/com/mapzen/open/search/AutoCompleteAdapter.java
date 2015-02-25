@@ -190,6 +190,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     public boolean onQueryTextChange(String newText) {
         act.setupAdapter(searchView);
         if (newText.length() < AUTOCOMPLETE_THRESHOLD) {
+            act.getAutoCompleteListView().showHeader();
             loadSavedSearches();
             return true;
         }
@@ -198,6 +199,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
             final Double lat = getMapController().getMap().getMapPosition().getLatitude();
             final Double lon = getMapController().getMap().getMapPosition().getLongitude();
             trackSuggest(newText);
+            act.getAutoCompleteListView().hideHeader();
             pelias.suggest(newText, String.valueOf(lat), String.valueOf(lon), getPeliasCallback());
         }
 

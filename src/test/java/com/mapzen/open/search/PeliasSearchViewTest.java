@@ -5,7 +5,6 @@ import com.mapzen.open.support.MapzenTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.Config;
 
 import android.app.Activity;
 import android.widget.AutoCompleteTextView;
@@ -18,7 +17,6 @@ import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.robolectric.Robolectric.buildActivity;
 import static org.robolectric.Robolectric.shadowOf;
 
-@Config(emulateSdk = 18)
 @RunWith(MapzenTestRunner.class)
 public class PeliasSearchViewTest {
     private static final Activity ACTIVITY = buildActivity(Activity.class).create().get();

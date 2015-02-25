@@ -58,10 +58,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <ListView
+    <com.mapzen.open.search.AutoCompleteListView
         android:id="@+id/auto_complete"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:divider="@drawable/list_divider"
+        android:dividerHeight="1px"
         android:background="@android:color/white"
         android:visibility="gone" />
 

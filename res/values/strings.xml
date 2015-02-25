@@ -5,6 +5,8 @@
     <string name="search_title">Search</string>
     <!-- the results from doing a search -->
     <string name="results_title">Search Results</string>
+    <!-- title for screen showing recent search terms -->
+    <string name="recent_searches">Recent Searches</string>
 
     <string name="route_description">Turn Icon</string>
     <!-- this button brings the user back to the directions if they have left that view -->

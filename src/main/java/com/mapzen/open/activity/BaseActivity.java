@@ -14,6 +14,7 @@ import com.mapzen.open.fragment.MapFragment;
 import com.mapzen.open.route.RouteFragment;
 import com.mapzen.open.route.RoutePreviewFragment;
 import com.mapzen.open.search.AutoCompleteAdapter;
+import com.mapzen.open.search.AutoCompleteListView;
 import com.mapzen.open.search.OnPoiClickListener;
 import com.mapzen.open.search.PagerResultsFragment;
 import com.mapzen.open.search.PeliasSearchView;
@@ -51,7 +52,6 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -67,7 +67,7 @@ public class BaseActivity extends ActionBarActivity {
     @Inject MapzenApplication app;
     private MapFragment mapFragment;
     private MapzenGPSPromptDialogFragment gpsPromptDialogFragment;
-    private ListView autoCompleteListView;
+    private AutoCompleteListView autoCompleteListView;
     @Inject MixpanelAPI mixpanelAPI;
     @Inject MapController mapController;
     @Inject SavedSearch savedSearch;
@@ -516,9 +516,9 @@ public class BaseActivity extends ActionBarActivity {
         promptForGPSIfNotEnabled();
     }
 
-    public ListView getAutoCompleteListView() {
+    public AutoCompleteListView getAutoCompleteListView() {
         if (autoCompleteListView == null) {
-            autoCompleteListView = (ListView) findViewById(R.id.auto_complete);
+            autoCompleteListView = (AutoCompleteListView) findViewById(R.id.auto_complete);
         }
 
         return autoCompleteListView;
