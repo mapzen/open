@@ -9,19 +9,22 @@
         app:showAsAction="collapseActionView|ifRoom"
         app:actionViewClass="com.mapzen.open.search.PeliasSearchView" />
 
-    <item
-        android:id="@+id/about"
-        android:title="@string/about_link" />
-
     <group android:id="@+id/overflow_menu">
 
         <item
             android:id="@+id/settings"
-            android:title="@string/settings" />
+            android:title="@string/settings"
+            android:showAsAction="never" />
 
         <item
             android:id="@+id/upload_traces"
-            android:title="@string/upload_traces" />
+            android:title="@string/upload_traces"
+            android:showAsAction="never" />
+
+        <item
+            android:id="@+id/about"
+            android:title="@string/about_link"
+            android:showAsAction="never" />
 
         <item
             android:id="@+id/logout"
