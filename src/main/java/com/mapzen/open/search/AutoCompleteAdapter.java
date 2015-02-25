@@ -20,6 +20,7 @@ import android.database.MatrixCursor;
 import android.graphics.Typeface;
 import android.os.Parcel;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -27,7 +28,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CursorAdapter;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -120,7 +120,6 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
                 }
 
                 act.getAutoCompleteListView().setVisibility(View.GONE);
-                act.getQueryAutoCompleteTextView(searchView).setSelection(0);
             }
         });
 
@@ -184,7 +183,6 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         }
 
         act.getAutoCompleteListView().setVisibility(View.GONE);
-        act.getQueryAutoCompleteTextView(searchView).setSelection(0);
         return act.executeSearchOnMap(query);
     }
 

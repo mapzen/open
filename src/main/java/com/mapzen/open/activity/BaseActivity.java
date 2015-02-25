@@ -39,7 +39,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
@@ -48,16 +47,11 @@ import android.preference.PreferenceFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.style.ImageSpan;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -97,8 +91,6 @@ public class BaseActivity extends ActionBarActivity {
         initMapController();
         initAlarm();
         initSavedSearches();
-        PeliasSearchView.setSearchIcon(R.drawable.ic_search);
-        PeliasSearchView.setCloseIcon(R.drawable.ic_cancel);
         bus.register(this);
     }
 
@@ -265,45 +257,30 @@ public class BaseActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.options_menu, menu);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchMenuItem = menu.findItem(R.id.search);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        final PeliasSearchView searchView =
+                (PeliasSearchView) MenuItemCompat.getActionView(searchMenuItem);
+        searchView.setAutoCompleteListView(getAutoCompleteListView());
+        setupAdapter(searchView);
+
         MenuItemCompat.setOnActionExpandListener(searchMenuItem,
                 new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 hideOptionsMenu();
-                searchView.setIconified(false);
-                getAutoCompleteListView().setVisibility(View.VISIBLE);
-                getAutoCompleteListView().setAdapter(autoCompleteAdapter);
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 resetSearchView();
-                getAutoCompleteListView().setVisibility(View.GONE);
-                final PagerResultsFragment pagerResultsFragment = getPagerResultsFragment();
-                if (pagerResultsFragment != null && pagerResultsFragment.isAdded()) {
-                    getSupportFragmentManager().beginTransaction().remove(pagerResultsFragment)
-                            .commit();
-                }
                 showOptionsMenu();
+                removePagerResultsFragment();
                 return true;
             }
         });
 
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        initSavedSearchAutoComplete(searchView);
-        setupAdapter(searchView);
         searchView.setOnQueryTextListener(autoCompleteAdapter);
-        getQueryAutoCompleteTextView(searchView).setOnTouchListener(new View.OnTouchListener() {
-            @Override public boolean onTouch(View view, MotionEvent motionEvent) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                    getAutoCompleteListView().setVisibility(View.VISIBLE);
-                }
-                return false;
-            }
-        });
-
         restoreCurrentSearchTerm();
 
         Uri data = getIntent().getData();
@@ -316,6 +293,14 @@ public class BaseActivity extends ActionBarActivity {
             }
         }
         return true;
+    }
+
+    private void removePagerResultsFragment() {
+        final PagerResultsFragment pagerResultsFragment = getPagerResultsFragment();
+        if (pagerResultsFragment != null && pagerResultsFragment.isAdded()) {
+            getSupportFragmentManager().beginTransaction().remove(pagerResultsFragment)
+                    .commit();
+        }
     }
 
     @Override
@@ -341,41 +326,6 @@ public class BaseActivity extends ActionBarActivity {
         searchView.setIconified(true);
         autoCompleteAdapter.resetCursor();
         autoCompleteAdapter.loadSavedSearches();
-    }
-
-    /**
-     * Sets auto-complete threshold to 0. Enables drop-down even when text view is empty. Triggers
-     * {@link AutoCompleteAdapter} when search view gets focus. Uses resource black magic to get a
-     * reference to the {@link AutoCompleteTextView} inside the {@link SearchView}.
-     */
-    private void initSavedSearchAutoComplete(final SearchView searchView) {
-        final AutoCompleteTextView autoCompleteTextView = getQueryAutoCompleteTextView(searchView);
-        autoCompleteTextView.setThreshold(0);
-        autoCompleteTextView.setTextAppearance(this, R.style.MapzenSearchText);
-        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    searchMenuItem.expandActionView();
-                    autoCompleteAdapter.loadSavedSearches();
-                    searchView.setQuery("", false);
-                }
-            }
-        });
-
-        // Set custom search hint icon.
-        final SpannableStringBuilder ssb =
-                new SpannableStringBuilder(getString(R.string.search_hint_icon_spacer));
-        final Drawable searchIcon = getResources().getDrawable(R.drawable.ic_search);
-        int textSize = (int) (autoCompleteTextView.getTextSize() * 1.25);
-        searchIcon.setBounds(0, 0, textSize, textSize);
-        ssb.setSpan(new ImageSpan(searchIcon), 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        autoCompleteTextView.setHint(ssb);
-    }
-
-    public AutoCompleteTextView getQueryAutoCompleteTextView(SearchView searchView) {
-        return (AutoCompleteTextView) searchView.findViewById(searchView.getContext()
-                .getResources().getIdentifier("android:id/search_src_text", null, null));
     }
 
     @Override
