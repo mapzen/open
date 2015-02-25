@@ -12,25 +12,34 @@ public class AutoCompleteListView extends ListView {
 
     public AutoCompleteListView(Context context) {
         super(context);
+        headerView = inflate(getContext(), R.layout.recent_search_list_header, null);
+        addHeaderView(headerView);
+        setHeaderDividersEnabled(false);
     }
 
     public AutoCompleteListView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        headerView = inflate(getContext(), R.layout.recent_search_list_header, null);
+        addHeaderView(headerView);
+        setHeaderDividersEnabled(false);
     }
 
     public AutoCompleteListView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        headerView = inflate(getContext(), R.layout.recent_search_list_header, null);
+        addHeaderView(headerView);
+        setHeaderDividersEnabled(false);
     }
 
     public void showHeader() {
-        if (getHeaderViewsCount() == 0) {
-            headerView = inflate(getContext(), R.layout.recent_search_list_header, null);
-            addHeaderView(headerView);
-            setHeaderDividersEnabled(false);
-        }
+        headerView.findViewById(R.id.recent_search_header).setVisibility(VISIBLE);
     }
 
     public void hideHeader() {
-        removeHeaderView(headerView);
+        headerView.findViewById(R.id.recent_search_header).setVisibility(GONE);
+    }
+
+    public boolean isHeaderVisible() {
+        return headerView.findViewById(R.id.recent_search_header).getVisibility() == VISIBLE;
     }
 }

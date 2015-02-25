@@ -1,5 +1,6 @@
 package com.mapzen.open.search;
 
+import com.mapzen.open.R;
 import com.mapzen.open.support.MapzenTestRunner;
 
 import org.junit.Before;
@@ -9,6 +10,7 @@ import org.junit.runner.RunWith;
 import android.app.Activity;
 
 import static org.fest.assertions.api.ANDROID.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.buildActivity;
 
 @RunWith(MapzenTestRunner.class)
@@ -28,22 +30,30 @@ public class AutoCompleteListViewTest {
     }
 
     @Test
-    public void showHeader_shouldAddHeaderView() throws Exception {
-        autoCompleteListView.showHeader();
+    public void shouldHaveHeaderView() throws Exception {
         assertThat(autoCompleteListView).hasHeaderViewsCount(1);
     }
 
     @Test
-    public void showHeader_shouldNotAddMultipleHeaderViews() throws Exception {
+    public void showHeader_shouldAddHeaderView() throws Exception {
+        autoCompleteListView.hideHeader();
         autoCompleteListView.showHeader();
-        autoCompleteListView.showHeader();
-        assertThat(autoCompleteListView).hasHeaderViewsCount(1);
+        assertThat(autoCompleteListView.findViewById(R.id.recent_search_header)).isVisible();
     }
 
     @Test
     public void hideHeader_shouldRemoveHeaderView() throws Exception {
         autoCompleteListView.showHeader();
         autoCompleteListView.hideHeader();
-        assertThat(autoCompleteListView).hasHeaderViewsCount(0);
+        assertThat(autoCompleteListView.findViewById(R.id.recent_search_header)).isGone();
+    }
+
+    @Test
+    public void isHeaderVisible_shouldReportHeaderVisibility() throws Exception {
+        autoCompleteListView.showHeader();
+        assertThat(autoCompleteListView.isHeaderVisible()).isTrue();
+
+        autoCompleteListView.hideHeader();
+        assertThat(autoCompleteListView.isHeaderVisible()).isFalse();
     }
 }

@@ -296,6 +296,20 @@ public class AutoCompleteAdapterTest {
         assertDrawable(expected, actual);
     }
 
+    @Test
+    public void success_shouldHideAutoCompleteListHeader() throws Exception {
+        baseActivity.getAutoCompleteListView().showHeader();
+        adapter.success(new Result(), null);
+        assertThat(baseActivity.getAutoCompleteListView().isHeaderVisible()).isFalse();
+    }
+
+    @Test
+    public void onQueryTextChange_shouldShowAutoCompleteListHeader() throws Exception {
+        baseActivity.getAutoCompleteListView().hideHeader();
+        adapter.onQueryTextChange("");
+        assertThat(baseActivity.getAutoCompleteListView().isHeaderVisible()).isTrue();
+    }
+
     private void assertDrawable(Drawable expected, Drawable actual) {
         assertThat(shadowOf(actual).getCreatedFromResId())
                 .isEqualTo(shadowOf(expected).getCreatedFromResId());
