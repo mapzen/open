@@ -36,6 +36,7 @@ import javax.inject.Inject;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 import static com.mapzen.open.MapController.getMapController;
 import static com.mapzen.open.MapzenApplication.PELIAS_BLOB;
@@ -46,7 +47,8 @@ import static com.mapzen.open.util.MixpanelHelper.Event.PELIAS_SUGGEST;
 import static com.mapzen.open.util.MixpanelHelper.Payload.PELIAS_TERM;
 import static com.mapzen.open.util.MixpanelHelper.Payload.fromHashMap;
 
-public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQueryTextListener {
+public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQueryTextListener,
+        Callback<Result> {
     public static final int AUTOCOMPLETE_THRESHOLD = 3;
     private SearchView searchView;
     private MapFragment mapFragment;
@@ -190,6 +192,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     public boolean onQueryTextChange(String newText) {
         act.setupAdapter(searchView);
         if (newText.length() < AUTOCOMPLETE_THRESHOLD) {
+            act.getAutoCompleteListView().showHeader();
             loadSavedSearches();
             return true;
         }
@@ -198,7 +201,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
             final Double lat = getMapController().getMap().getMapPosition().getLatitude();
             final Double lon = getMapController().getMap().getMapPosition().getLongitude();
             trackSuggest(newText);
-            pelias.suggest(newText, String.valueOf(lat), String.valueOf(lon), getPeliasCallback());
+            pelias.suggest(newText, String.valueOf(lat), String.valueOf(lon), this);
         }
 
         return true;
@@ -210,34 +213,30 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         mixpanelApi.track(PELIAS_SUGGEST, fromHashMap(payload));
     }
 
-    private Callback<Result> getPeliasCallback() {
-        final MatrixCursor cursor = new MatrixCursor(app.getColumns());
-        return new Callback<Result>() {
-            @Override
-            public void success(Result result, retrofit.client.Response response) {
-                int i = 0;
-                for (Feature feature : result.getFeatures()) {
-                    SimpleFeature simpleFeature = SimpleFeature.fromFeature(feature);
-                    byte[] data = ParcelableUtil.marshall(simpleFeature);
-                    cursor.addRow(new Object[]{i, data});
-                    i++;
-                }
-                Logger.d("search: swapping cursor");
-                swapCursor(cursor);
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                Logger.e("request: error: " + error.toString());
-            }
-        };
-    }
-
     public void resetCursor() {
         swapCursor(new MatrixCursor(app.getColumns()));
     }
 
     public void loadSavedSearches() {
         changeCursor(savedSearch.getCursor());
+    }
+
+    @Override
+    public void success(Result result, Response response) {
+        final MatrixCursor cursor = new MatrixCursor(app.getColumns());
+        int i = 0;
+        for (Feature feature : result.getFeatures()) {
+            SimpleFeature simpleFeature = SimpleFeature.fromFeature(feature);
+            byte[] data = ParcelableUtil.marshall(simpleFeature);
+            cursor.addRow(new Object[]{i, data});
+            i++;
+        }
+        act.getAutoCompleteListView().hideHeader();
+        swapCursor(cursor);
+    }
+
+    @Override
+    public void failure(RetrofitError error) {
+        Logger.e("request: error: " + error.toString());
     }
 }
