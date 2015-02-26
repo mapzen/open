@@ -190,6 +190,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
 
     @Override
     public boolean onQueryTextChange(String newText) {
+        act.hideActionViewAll();
         act.setupAdapter(searchView);
         if (newText.length() < AUTOCOMPLETE_THRESHOLD) {
             act.getAutoCompleteListView().showHeader();

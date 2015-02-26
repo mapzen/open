@@ -8,7 +8,6 @@ import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.adapters.SearchViewAdapter;
 import com.mapzen.open.entity.SimpleFeature;
 import com.mapzen.open.fragment.ItemFragment;
-import com.mapzen.open.support.DummyActivity;
 import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.support.TestHelper;
 import com.mapzen.open.util.ParcelableUtil;
@@ -24,7 +23,7 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.oscim.core.MapPosition;
 import org.robolectric.tester.android.database.TestCursor;
-import org.robolectric.util.ActivityController;
+import org.robolectric.tester.android.view.TestMenu;
 
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -56,7 +55,6 @@ import static org.mockito.Matchers.refEq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Robolectric.application;
-import static org.robolectric.Robolectric.buildActivity;
 import static org.robolectric.Robolectric.shadowOf;
 
 @RunWith(MapzenTestRunner.class)
@@ -66,6 +64,7 @@ public class AutoCompleteAdapterTest {
     private TextView view;
     private FragmentManager fragmentManager;
     private SimpleFeature simpleFeature;
+    private TestMenu menu;
     @Inject Pelias pelias;
     @Inject MixpanelAPI mixpanelAPI;
     @Inject SavedSearch savedSearch;
@@ -80,10 +79,9 @@ public class AutoCompleteAdapterTest {
         ((MapzenApplication) application).inject(this);
         MockitoAnnotations.initMocks(this);
         savedSearch.clear();
-        ActivityController<DummyActivity> controller = buildActivity(DummyActivity.class);
-        controller.create().start().resume();
-        fragmentManager = controller.get().getSupportFragmentManager();
-        baseActivity = TestHelper.initBaseActivity();
+        menu = new TestMenu();
+        baseActivity = TestHelper.initBaseActivityWithMenu(menu);
+        fragmentManager = baseActivity.getSupportFragmentManager();
         adapter = new AutoCompleteAdapter(baseActivity.getSupportActionBar().getThemedContext(),
                 baseActivity, ((MapzenApplication) application).getColumns(), fragmentManager);
         adapter.setSearchView(baseActivity.getSearchView());
@@ -308,6 +306,13 @@ public class AutoCompleteAdapterTest {
         baseActivity.getAutoCompleteListView().hideHeader();
         adapter.onQueryTextChange("");
         assertThat(baseActivity.getAutoCompleteListView().isHeaderVisible()).isTrue();
+    }
+
+    @Test
+    public void onQueryTextChange_shouldHideActionViewAll() throws Exception {
+        baseActivity.showActionViewAll();
+        adapter.onQueryTextChange("");
+        assertThat(menu.findItem(R.id.action_view_all)).isNotVisible();
     }
 
     private void assertDrawable(Drawable expected, Drawable actual) {

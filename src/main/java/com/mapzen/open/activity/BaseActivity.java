@@ -188,6 +188,12 @@ public class BaseActivity extends ActionBarActivity {
                 intent.setData(Uri.parse("https://mapzen.com/open/about"));
                 startActivity(intent);
                 return true;
+            case R.id.action_view_all:
+                final PagerResultsFragment pagerResultsFragment = getPagerResultsFragment();
+                if (pagerResultsFragment != null) {
+                    pagerResultsFragment.viewAll();
+                }
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -317,6 +323,14 @@ public class BaseActivity extends ActionBarActivity {
 
     public void showOptionsMenu() {
         activityMenu.setGroupVisible(R.id.overflow_menu, true);
+    }
+
+    public void hideActionViewAll() {
+        activityMenu.findItem(R.id.action_view_all).setVisible(false);
+    }
+
+    public void showActionViewAll() {
+        activityMenu.findItem(R.id.action_view_all).setVisible(true);
     }
 
     private void resetSearchView() {

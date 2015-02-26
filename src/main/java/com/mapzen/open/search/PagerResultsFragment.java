@@ -29,7 +29,6 @@ import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +41,6 @@ import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 
@@ -62,14 +60,8 @@ public class PagerResultsFragment extends BaseFragment {
     @Inject MixpanelAPI mixpanelApi;
     @Inject SavedSearch savedSearch;
 
-    @InjectView(R.id.multi_result_header)
-    View multiResultHeader;
-
     @InjectView(R.id.pagination)
     TextView indicator;
-
-    @InjectView(R.id.view_all)
-    Button viewAll;
 
     @InjectView(R.id.results)
     ViewPager pager;
@@ -121,7 +113,7 @@ public class PagerResultsFragment extends BaseFragment {
         ButterKnife.reset(this);
     }
 
-    @OnClick(R.id.view_all) @SuppressWarnings("unused") public void onClickViewAll() {
+    public void viewAll() {
         final Intent intent = new Intent(getActivity(), ListResultsActivity.class);
         intent.putExtra(ListResultsActivity.EXTRA_FEATURE_LIST, simpleFeatures);
         intent.putExtra(ListResultsActivity.EXTRA_SEARCH_TERM, searchTermForCurrentResults);
@@ -299,9 +291,11 @@ public class PagerResultsFragment extends BaseFragment {
 
     private void setMultiResultHeaderVisibility(int length) {
         if (length == 1) {
-            multiResultHeader.setVisibility(View.GONE);
+            indicator.setVisibility(View.GONE);
+            ((BaseActivity) getActivity()).hideActionViewAll();
         } else {
-            multiResultHeader.setVisibility(View.VISIBLE);
+            indicator.setVisibility(View.VISIBLE);
+            ((BaseActivity) getActivity()).showActionViewAll();
         }
     }
 

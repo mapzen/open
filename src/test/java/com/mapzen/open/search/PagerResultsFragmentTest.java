@@ -8,8 +8,10 @@ import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.entity.SimpleFeature;
 import com.mapzen.open.support.MapzenTestRunner;
+import com.mapzen.open.support.TestHelper;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.squareup.otto.Bus;
 
 import org.json.JSONObject;
 import org.junit.Before;
@@ -23,7 +25,6 @@ import org.robolectric.shadows.ShadowLog;
 import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
-import org.robolectric.util.FragmentTestUtil;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -72,6 +73,7 @@ public class PagerResultsFragmentTest {
     @Inject Pelias pelias;
     @Inject MixpanelAPI mixpanelAPI;
     @Inject SavedSearch savedSearch;
+    @Inject Bus bus;
 
     @Before
     public void setUp() throws Exception {
@@ -82,7 +84,7 @@ public class PagerResultsFragmentTest {
         act = initBaseActivityWithMenu(menu);
         initMapFragment(act);
         fragment = PagerResultsFragment.newInstance(act);
-        FragmentTestUtil.startFragment(fragment);
+        TestHelper.startFragment(fragment, act);
     }
 
     @Test
@@ -106,13 +108,7 @@ public class PagerResultsFragmentTest {
         fragment.add(getTestSimpleFeature());
         fragment.add(getTestSimpleFeature());
         fragment.displayResults(3, 0);
-        assertThat(fragment.indicator).hasText("Viewing 1 of 3 results");
-    }
-
-    @Test
-    public void shouldInjectViewAllButton() throws Exception {
-        assertThat(fragment.viewAll).isNotNull();
-        assertThat(fragment.viewAll).hasText(act.getString(R.string.view_all));
+        assertThat(fragment.indicator).hasText("1 of 3 results");
     }
 
     @Test
@@ -165,14 +161,14 @@ public class PagerResultsFragmentTest {
 
     @Test
     public void viewAll_shouldStartListResultsActivity() throws Exception {
-        fragment.viewAll.performClick();
+        fragment.viewAll();
         assertThat(getShadowApplication().getNextStartedActivity())
                 .hasComponent(application.getPackageName(), ListResultsActivity.class);
     }
 
     @Test
     public void viewAll_shouldParcelFeatureList() throws Exception {
-        fragment.viewAll.performClick();
+        fragment.viewAll();
         assertThat(getShadowApplication().getNextStartedActivity())
                 .hasExtra(ListResultsActivity.EXTRA_FEATURE_LIST);
     }
@@ -180,7 +176,7 @@ public class PagerResultsFragmentTest {
     @Test
     public void viewAll_shouldParcelSearchTermForCurrentResults() throws Exception {
         fragment.executeSearchOnMap(new SearchView(app), "Some fantastic term");
-        fragment.viewAll.performClick();
+        fragment.viewAll();
         assertThat(getShadowApplication().getNextStartedActivity()
                 .getStringExtra(ListResultsActivity.EXTRA_SEARCH_TERM))
                 .isEqualTo("Some fantastic term");
@@ -191,14 +187,31 @@ public class PagerResultsFragmentTest {
         fragment.add(new SimpleFeature());
         fragment.add(new SimpleFeature());
         fragment.displayResults(2, 0);
-        assertThat(fragment.multiResultHeader).isVisible();
+        assertThat(fragment.indicator).isVisible();
     }
 
     @Test
     public void displayResults_shouldHideMultiResultHeaderForSingleResult() throws Exception {
         fragment.add(new SimpleFeature());
         fragment.displayResults(1, 0);
-        assertThat(fragment.multiResultHeader).isGone();
+        assertThat(fragment.indicator).isGone();
+    }
+
+    @Test
+    public void displayResults_shouldShowViewAllActionForMultipleResults() throws Exception {
+        menu.findItem(R.id.action_view_all).setVisible(false);
+        fragment.add(new SimpleFeature());
+        fragment.add(new SimpleFeature());
+        fragment.displayResults(2, 0);
+        assertThat(menu.findItem(R.id.action_view_all)).isVisible();
+    }
+
+    @Test
+    public void displayResults_shouldHideViewAllActionForSingleResult() throws Exception {
+        menu.findItem(R.id.action_view_all).setVisible(true);
+        fragment.add(new SimpleFeature());
+        fragment.displayResults(1, 0);
+        assertThat(menu.findItem(R.id.action_view_all)).isNotVisible();
     }
 
     @Test

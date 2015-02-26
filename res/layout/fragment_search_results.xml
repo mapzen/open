@@ -8,42 +8,16 @@
     android:layout_gravity="bottom"
     android:visibility="gone">
 
-    <RelativeLayout
-        android:id="@+id/multi_result_header"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/pagination"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:background="@color/transparent_white"
         android:paddingLeft="@dimen/default_padding_horizontal"
-        android:paddingRight="@dimen/default_padding_horizontal">
-
-        <TextView
-            android:id="@+id/pagination"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:textSize="@dimen/small"
-            android:textColor="@color/dark_gray" />
-
-        <Button
-            android:id="@+id/view_all"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="@string/view_all"
-            android:fontFamily="sans-serif-condensed"
-            android:textSize="@dimen/small"
-            android:textColor="@color/red"
-            android:layout_marginRight="@dimen/default_padding"
-            android:layout_marginTop="@dimen/default_padding"
-            android:background="@android:color/transparent" />
-
-        <include layout="@layout/divider"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/location_divider_padding"
-            android:layout_marginRight="@dimen/location_divider_padding"
-            android:layout_below="@id/view_all" />
-    </RelativeLayout>
+        android:paddingRight="@dimen/default_padding_horizontal"
+        android:textSize="@dimen/small"
+        android:textColor="@color/dark_gray" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/results"
