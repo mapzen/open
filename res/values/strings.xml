@@ -12,7 +12,7 @@
     <!-- this button brings the user back to the directions if they have left that view -->
     <string name="route_resume_button">Resume</string>
     <!-- see all search results -->
-    <string name="view_all">VIEW ALL</string>
+    <string name="view_all">View All</string>
     <!-- the message that appears when there are no directions to a point -->
     <string name="no_route_found">No Route Found</string>
     <!-- where teh user currently is located -->

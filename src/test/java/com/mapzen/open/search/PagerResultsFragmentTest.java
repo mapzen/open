@@ -8,8 +8,10 @@ import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.entity.SimpleFeature;
 import com.mapzen.open.support.MapzenTestRunner;
+import com.mapzen.open.support.TestHelper;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
+import com.squareup.otto.Bus;
 
 import org.json.JSONObject;
 import org.junit.Before;
@@ -23,7 +25,6 @@ import org.robolectric.shadows.ShadowLog;
 import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.tester.android.view.TestMenu;
-import org.robolectric.util.FragmentTestUtil;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -72,6 +73,7 @@ public class PagerResultsFragmentTest {
     @Inject Pelias pelias;
     @Inject MixpanelAPI mixpanelAPI;
     @Inject SavedSearch savedSearch;
+    @Inject Bus bus;
 
     @Before
     public void setUp() throws Exception {
@@ -82,7 +84,7 @@ public class PagerResultsFragmentTest {
         act = initBaseActivityWithMenu(menu);
         initMapFragment(act);
         fragment = PagerResultsFragment.newInstance(act);
-        FragmentTestUtil.startFragment(fragment);
+        TestHelper.startFragment(fragment, act);
     }
 
     @Test
@@ -199,6 +201,23 @@ public class PagerResultsFragmentTest {
         fragment.add(new SimpleFeature());
         fragment.displayResults(1, 0);
         assertThat(fragment.multiResultHeader).isGone();
+    }
+
+    @Test
+    public void displayResults_shouldShowViewAllActionForMultipleResults() throws Exception {
+        menu.findItem(R.id.action_view_all).setVisible(false);
+        fragment.add(new SimpleFeature());
+        fragment.add(new SimpleFeature());
+        fragment.displayResults(2, 0);
+        assertThat(menu.findItem(R.id.action_view_all)).isVisible();
+    }
+
+    @Test
+    public void displayResults_shouldHideViewAllActionForSingleResult() throws Exception {
+        menu.findItem(R.id.action_view_all).setVisible(true);
+        fragment.add(new SimpleFeature());
+        fragment.displayResults(1, 0);
+        assertThat(menu.findItem(R.id.action_view_all)).isNotVisible();
     }
 
     @Test

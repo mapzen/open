@@ -300,8 +300,10 @@ public class PagerResultsFragment extends BaseFragment {
     private void setMultiResultHeaderVisibility(int length) {
         if (length == 1) {
             multiResultHeader.setVisibility(View.GONE);
+            ((BaseActivity) getActivity()).hideActionViewAll();
         } else {
             multiResultHeader.setVisibility(View.VISIBLE);
+            ((BaseActivity) getActivity()).showActionViewAll();
         }
     }
 

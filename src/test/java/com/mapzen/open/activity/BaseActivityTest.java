@@ -11,6 +11,7 @@ import com.mapzen.open.entity.SimpleFeature;
 import com.mapzen.open.event.RoutePreviewEvent;
 import com.mapzen.open.route.RouteFragment;
 import com.mapzen.open.route.RoutePreviewFragment;
+import com.mapzen.open.search.ListResultsActivity;
 import com.mapzen.open.search.PagerResultsFragment;
 import com.mapzen.open.search.SavedSearch;
 import com.mapzen.open.support.MapzenTestRunner;
@@ -36,6 +37,7 @@ import org.robolectric.shadows.ShadowAlarmManager;
 import org.robolectric.shadows.ShadowIntent;
 import org.robolectric.shadows.ShadowLocationManager;
 import org.robolectric.tester.android.view.TestMenu;
+import org.robolectric.tester.android.view.TestMenuItem;
 import org.scribe.model.Token;
 
 import android.app.AlarmManager;
@@ -65,9 +67,10 @@ import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.robolectric.Robolectric.application;
+import static org.robolectric.Robolectric.getShadowApplication;
 import static org.robolectric.Robolectric.shadowOf;
 import static org.robolectric.shadows.ShadowToast.getTextOfLatestToast;
-import static org.robolectric.util.FragmentTestUtil.startFragment;
 
 @RunWith(MapzenTestRunner.class)
 public class BaseActivityTest {
@@ -343,7 +346,6 @@ public class BaseActivityTest {
     @Test
     public void onPoiClick_shouldPagerResultsFragmentCurrentItem() throws Exception {
         PagerResultsFragment pagerResultsFragment = PagerResultsFragment.newInstance(activity);
-        startFragment(pagerResultsFragment);
         activity.getSupportFragmentManager().beginTransaction()
                 .add(R.id.pager_results_container, pagerResultsFragment,
                         PagerResultsFragment.TAG)
@@ -520,6 +522,18 @@ public class BaseActivityTest {
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         assertThat(activity.searchMenuItem.isActionViewExpanded()).isTrue();
         assertThat(searchView.getQuery().toString()).isEqualTo("query");
+    }
+
+    @Test
+    public void onOptionsItemSelected_shouldStartListResultsActivity() throws Exception {
+        final PagerResultsFragment pagerResultsFragment =
+                PagerResultsFragment.newInstance(activity);
+        activity.getSupportFragmentManager().beginTransaction()
+                .replace(R.id.pager_results_container, pagerResultsFragment,
+                        PagerResultsFragment.TAG).commit();
+        activity.onOptionsItemSelected(new TestMenuItem(R.id.action_view_all));
+        assertThat(getShadowApplication().getNextStartedActivity())
+                .hasComponent(application.getPackageName(), ListResultsActivity.class);
     }
 
     private Route getRouteMock() throws JSONException {
