@@ -191,7 +191,7 @@ public class BaseActivity extends ActionBarActivity {
             case R.id.action_view_all:
                 final PagerResultsFragment pagerResultsFragment = getPagerResultsFragment();
                 if (pagerResultsFragment != null) {
-                    pagerResultsFragment.onClickViewAll();
+                    pagerResultsFragment.viewAll();
                 }
                 return true;
             default:

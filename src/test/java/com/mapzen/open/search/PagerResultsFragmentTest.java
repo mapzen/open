@@ -112,12 +112,6 @@ public class PagerResultsFragmentTest {
     }
 
     @Test
-    public void shouldInjectViewAllButton() throws Exception {
-        assertThat(fragment.viewAll).isNotNull();
-        assertThat(fragment.viewAll).hasText(act.getString(R.string.view_all));
-    }
-
-    @Test
     public void executeSearchOnMap_shouldTrackInMixpanel() throws Exception {
         String term = "Empire State Building";
         fragment.executeSearchOnMap(new SearchView(app), term);
@@ -167,14 +161,14 @@ public class PagerResultsFragmentTest {
 
     @Test
     public void viewAll_shouldStartListResultsActivity() throws Exception {
-        fragment.viewAll.performClick();
+        fragment.viewAll();
         assertThat(getShadowApplication().getNextStartedActivity())
                 .hasComponent(application.getPackageName(), ListResultsActivity.class);
     }
 
     @Test
     public void viewAll_shouldParcelFeatureList() throws Exception {
-        fragment.viewAll.performClick();
+        fragment.viewAll();
         assertThat(getShadowApplication().getNextStartedActivity())
                 .hasExtra(ListResultsActivity.EXTRA_FEATURE_LIST);
     }
@@ -182,7 +176,7 @@ public class PagerResultsFragmentTest {
     @Test
     public void viewAll_shouldParcelSearchTermForCurrentResults() throws Exception {
         fragment.executeSearchOnMap(new SearchView(app), "Some fantastic term");
-        fragment.viewAll.performClick();
+        fragment.viewAll();
         assertThat(getShadowApplication().getNextStartedActivity()
                 .getStringExtra(ListResultsActivity.EXTRA_SEARCH_TERM))
                 .isEqualTo("Some fantastic term");
