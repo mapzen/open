@@ -108,7 +108,7 @@ public class PagerResultsFragmentTest {
         fragment.add(getTestSimpleFeature());
         fragment.add(getTestSimpleFeature());
         fragment.displayResults(3, 0);
-        assertThat(fragment.indicator).hasText("Viewing 1 of 3 results");
+        assertThat(fragment.indicator).hasText("1 of 3 results");
     }
 
     @Test
@@ -187,14 +187,14 @@ public class PagerResultsFragmentTest {
         fragment.add(new SimpleFeature());
         fragment.add(new SimpleFeature());
         fragment.displayResults(2, 0);
-        assertThat(fragment.multiResultHeader).isVisible();
+        assertThat(fragment.indicator).isVisible();
     }
 
     @Test
     public void displayResults_shouldHideMultiResultHeaderForSingleResult() throws Exception {
         fragment.add(new SimpleFeature());
         fragment.displayResults(1, 0);
-        assertThat(fragment.multiResultHeader).isGone();
+        assertThat(fragment.indicator).isGone();
     }
 
     @Test

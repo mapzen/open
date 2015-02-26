@@ -60,9 +60,6 @@ public class PagerResultsFragment extends BaseFragment {
     @Inject MixpanelAPI mixpanelApi;
     @Inject SavedSearch savedSearch;
 
-    @InjectView(R.id.multi_result_header)
-    View multiResultHeader;
-
     @InjectView(R.id.pagination)
     TextView indicator;
 
@@ -294,10 +291,10 @@ public class PagerResultsFragment extends BaseFragment {
 
     private void setMultiResultHeaderVisibility(int length) {
         if (length == 1) {
-            multiResultHeader.setVisibility(View.GONE);
+            indicator.setVisibility(View.GONE);
             ((BaseActivity) getActivity()).hideActionViewAll();
         } else {
-            multiResultHeader.setVisibility(View.VISIBLE);
+            indicator.setVisibility(View.VISIBLE);
             ((BaseActivity) getActivity()).showActionViewAll();
         }
     }

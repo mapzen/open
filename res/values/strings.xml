@@ -57,7 +57,7 @@
     <!-- message displayed when the user reaches their destination -->
     <string name="you_have_arrived_at">You have arrived at</string>
     <!-- when a user is viewing search results this tells them where they are in the list of results -->
-    <string name="paginate_template">Viewing %1$d of %2$d results</string>
+    <string name="paginate_template">%1$d of %2$d results</string>
     <!-- what the app is about -->
     <string name="about_link">About</string>
 
