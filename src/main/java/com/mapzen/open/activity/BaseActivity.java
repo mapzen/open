@@ -318,19 +318,27 @@ public class BaseActivity extends ActionBarActivity {
     }
 
     public void hideOptionsMenu() {
-        activityMenu.setGroupVisible(R.id.overflow_menu, false);
+        if (activityMenu != null) {
+            activityMenu.setGroupVisible(R.id.overflow_menu, false);
+        }
     }
 
     public void showOptionsMenu() {
-        activityMenu.setGroupVisible(R.id.overflow_menu, true);
+        if (activityMenu != null) {
+            activityMenu.setGroupVisible(R.id.overflow_menu, true);
+        }
     }
 
     public void hideActionViewAll() {
-        activityMenu.findItem(R.id.action_view_all).setVisible(false);
+        if (activityMenu != null) {
+            activityMenu.findItem(R.id.action_view_all).setVisible(false);
+        }
     }
 
     public void showActionViewAll() {
-        activityMenu.findItem(R.id.action_view_all).setVisible(true);
+        if (activityMenu != null) {
+            activityMenu.findItem(R.id.action_view_all).setVisible(true);
+        }
     }
 
     private void resetSearchView() {
