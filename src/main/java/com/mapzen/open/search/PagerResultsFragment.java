@@ -4,6 +4,7 @@ import com.mapzen.android.Pelias;
 import com.mapzen.android.gson.Feature;
 import com.mapzen.android.gson.Result;
 import com.mapzen.open.MapController;
+import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.adapters.SearchViewAdapter;
@@ -59,6 +60,7 @@ public class PagerResultsFragment extends BaseFragment {
     @Inject Pelias pelias;
     @Inject MixpanelAPI mixpanelApi;
     @Inject SavedSearch savedSearch;
+    @Inject MapzenApplication app;
 
     @InjectView(R.id.pagination)
     TextView indicator;
@@ -101,9 +103,7 @@ public class PagerResultsFragment extends BaseFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (act != null) {
-            act.getAutoCompleteListView().setVisibility(View.GONE);
-        }
+        act = (BaseActivity) activity;
     }
 
     @Override

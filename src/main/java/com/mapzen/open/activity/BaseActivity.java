@@ -44,6 +44,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
@@ -52,6 +53,7 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -78,6 +80,15 @@ public class BaseActivity extends ActionBarActivity {
     MenuItem searchMenuItem;
 
     private boolean exitNavigationIntentReceived;
+
+    private Runnable hideImeRunnable = new Runnable() {
+        public void run() {
+            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(getSearchView().getWindowToken(), 0);
+            }
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -135,6 +146,7 @@ public class BaseActivity extends ActionBarActivity {
         mixpanelAPI.flush();
         bus.unregister(this);
         saveCurrentSearchTerm();
+        app.setAutoCompleteVisibility(getAutoCompleteListView().getVisibility());
     }
 
     private void clearNotifications() {
@@ -265,7 +277,6 @@ public class BaseActivity extends ActionBarActivity {
         searchMenuItem = menu.findItem(R.id.search);
         final PeliasSearchView searchView =
                 (PeliasSearchView) MenuItemCompat.getActionView(searchMenuItem);
-        searchView.setAutoCompleteListView(getAutoCompleteListView());
         setupAdapter(searchView);
 
         MenuItemCompat.setOnActionExpandListener(searchMenuItem,
@@ -288,6 +299,11 @@ public class BaseActivity extends ActionBarActivity {
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setOnQueryTextListener(autoCompleteAdapter);
         restoreCurrentSearchTerm();
+        searchView.setAutoCompleteListView(getAutoCompleteListView());
+        getAutoCompleteListView().setVisibility(app.getAutoCompleteVisibility());
+        if (getAutoCompleteListView().getVisibility() == View.GONE) {
+            new Handler().postDelayed(hideImeRunnable, 100);
+        }
 
         Uri data = getIntent().getData();
         if (data != null) {
@@ -422,9 +438,9 @@ public class BaseActivity extends ActionBarActivity {
         return getMapView().map();
     }
 
-    public SearchView getSearchView() {
+    public PeliasSearchView getSearchView() {
         if (searchMenuItem != null) {
-            return (SearchView) searchMenuItem.getActionView();
+            return (PeliasSearchView) searchMenuItem.getActionView();
         }
 
         return null;

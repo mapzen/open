@@ -12,6 +12,7 @@ import org.scribe.oauth.OAuthService;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.view.View;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,6 +46,8 @@ public class MapzenApplication extends Application {
     private String currentSearchTerm = null;
     private OAuthService osmOauthService;
     @Inject SimpleCrypt simpleCrypt;
+
+    private int autoCompleteVisibility = View.GONE;
 
     @Override
     public void onCreate() {
@@ -120,5 +123,13 @@ public class MapzenApplication extends Application {
         editor.putString("token", simpleCrypt.encode(accessToken.getToken()));
         editor.putString("secret", simpleCrypt.encode(accessToken.getSecret()));
         editor.commit();
+    }
+
+    public int getAutoCompleteVisibility() {
+        return autoCompleteVisibility;
+    }
+
+    public void setAutoCompleteVisibility(int autoCompleteVisibility) {
+        this.autoCompleteVisibility = autoCompleteVisibility;
     }
 }
