@@ -7,6 +7,7 @@ import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.activity.InitialActivity;
 import com.mapzen.open.adapters.PlaceArrayAdapter;
+import com.mapzen.open.adapters.SearchViewAdapter;
 import com.mapzen.open.fragment.MapFragment;
 import com.mapzen.open.login.LoginActivity;
 import com.mapzen.open.route.DrawPathTask;
@@ -50,7 +51,8 @@ import dagger.Provides;
                 PagerResultsFragment.class,
                 MapzenApplication.class,
                 DebugDataSubmitter.class,
-                Logger.class
+                Logger.class,
+                SearchViewAdapter.class
         },
         complete = false,
         library = true

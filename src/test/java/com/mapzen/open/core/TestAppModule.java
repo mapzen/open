@@ -12,6 +12,8 @@ import com.mapzen.open.activity.InitialActivity;
 import com.mapzen.open.activity.InitialActivityTest;
 import com.mapzen.open.adapters.PlaceArrayAdapter;
 import com.mapzen.open.adapters.PlaceArrayAdapterTest;
+import com.mapzen.open.adapters.SearchViewAdapter;
+import com.mapzen.open.adapters.SearchViewAdapterTest;
 import com.mapzen.open.fragment.MapFragment;
 import com.mapzen.open.fragment.MapFragmentTest;
 import com.mapzen.open.login.LoginActivity;
@@ -92,7 +94,9 @@ import static org.mockito.Mockito.when;
                 DebugDataSubmitter.class,
                 DebugDataSubmitterTest.class,
                 Logger.class,
-                LoggerTest.class
+                LoggerTest.class,
+                SearchViewAdapter.class,
+                SearchViewAdapterTest.class
         },
         complete = false
 )
