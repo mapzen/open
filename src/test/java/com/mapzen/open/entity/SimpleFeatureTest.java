@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import android.os.Parcel;
-import android.widget.TextView;
 
 import static com.mapzen.open.entity.SimpleFeature.ADMIN1;
 import static com.mapzen.open.entity.SimpleFeature.ADMIN1_ABBR;
@@ -19,7 +18,6 @@ import static com.mapzen.open.entity.SimpleFeature.NEIGHBORHOOD;
 import static com.mapzen.open.entity.SimpleFeature.TEXT;
 import static com.mapzen.open.support.TestHelper.getTestSimpleFeature;
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.robolectric.Robolectric.application;
 
 @RunWith(MapzenTestRunner.class)
 public class SimpleFeatureTest {
@@ -71,40 +69,22 @@ public class SimpleFeatureTest {
     }
 
     @Test
-    public void ViewHolder_setFromFeature_shouldSetTitle() throws Exception {
-        TextView title = new TextView(application.getBaseContext());
-        TextView address = new TextView(application.getBaseContext());
-        SimpleFeature.ViewHolder holder =  new SimpleFeature.ViewHolder();
-        holder.setTitle(title);
-        holder.setAddress(address);
-        holder.setFromFeature(simpleFeature);
-        assertThat(title.getText().toString()).isEqualTo(simpleFeature.getProperty(TEXT));
+    public void getTitle_shouldReturnText() throws Exception {
+        assertThat(simpleFeature.getTitle()).isEqualTo(simpleFeature.getProperty(TEXT));
     }
 
     @Test
-    public void ViewHolder_setFromFeature_shouldSetAddress() throws Exception {
-        TextView title = new TextView(application.getBaseContext());
-        TextView address = new TextView(application.getBaseContext());
-        SimpleFeature.ViewHolder holder =  new SimpleFeature.ViewHolder();
-        holder.setTitle(title);
-        holder.setAddress(address);
-        holder.setFromFeature(simpleFeature);
-        assertThat(address.getText().toString()).contains(expectedAdmin1Abbr);
-        assertThat(address.getText().toString()).contains(expectedLocality);
+    public void getAddress_shouldReturnAdmin1AndLocality() throws Exception {
+        assertThat(simpleFeature.getAddress()).contains(expectedAdmin1Abbr);
+        assertThat(simpleFeature.getAddress()).contains(expectedLocality);
     }
 
     @Test
-    public void ViewHolder_setFromFeature_shouldFallbacktoAdmin0() throws Exception {
-        TextView title = new TextView(application.getBaseContext());
-        TextView address = new TextView(application.getBaseContext());
-        SimpleFeature.ViewHolder holder =  new SimpleFeature.ViewHolder();
-        holder.setTitle(title);
-        holder.setAddress(address);
+    public void getAddress_shouldFallbackToAdmin0() throws Exception {
         simpleFeature.setProperty(ADMIN1_ABBR, null);
-        holder.setFromFeature(simpleFeature);
-        assertThat(address.getText().toString()).doesNotContain("null");
-        assertThat(address.getText().toString()).contains(simpleFeature.getCity());
-        assertThat(address.getText().toString()).contains(simpleFeature.getAdmin());
+        assertThat(simpleFeature.getAddress()).doesNotContain("null");
+        assertThat(simpleFeature.getAddress()).contains(simpleFeature.getCity());
+        assertThat(simpleFeature.getAddress()).contains(simpleFeature.getAdmin());
     }
 
     @Test

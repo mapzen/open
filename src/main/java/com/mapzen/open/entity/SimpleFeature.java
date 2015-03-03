@@ -7,10 +7,8 @@ import org.oscim.layers.marker.MarkerItem;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.widget.TextView;
 
 import java.util.HashMap;
-import java.util.Locale;
 
 public class SimpleFeature implements Parcelable {
     public static final String TEXT = "text";
@@ -200,24 +198,11 @@ public class SimpleFeature implements Parcelable {
         return getProperty(TEXT) + ", " + getCity() + ", " + getAdmin();
     }
 
-    public static class ViewHolder {
-        private TextView title;
-        private TextView address;
+    public String getTitle() {
+        return getProperty(TEXT);
+    }
 
-        public void setTitle(TextView title) {
-            this.title = title;
-        }
-
-        public void setAddress(TextView address) {
-            this.address = address;
-        }
-
-        public void setFromFeature(SimpleFeature simpleFeature) {
-            if (simpleFeature != null) {
-                title.setText(simpleFeature.getProperty(TEXT));
-                address.setText(String.format(Locale.getDefault(), "%s, %s",
-                        simpleFeature.getCity(), simpleFeature.getAdmin()));
-            }
-        }
+    public String getAddress() {
+        return String.format("%s, %s", getCity(), getAdmin());
     }
 }
