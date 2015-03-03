@@ -4,12 +4,12 @@ import com.mapzen.android.Pelias;
 import com.mapzen.android.gson.Feature;
 import com.mapzen.android.gson.Result;
 import com.mapzen.open.MapController;
+import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.adapters.SearchViewAdapter;
 import com.mapzen.open.entity.SimpleFeature;
 import com.mapzen.open.fragment.BaseFragment;
-import com.mapzen.open.fragment.ItemFragment;
 import com.mapzen.open.util.Logger;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
@@ -53,12 +53,12 @@ import static com.mapzen.open.util.MixpanelHelper.Payload.fromHashMap;
 
 public class PagerResultsFragment extends BaseFragment {
     public static final String TAG = PagerResultsFragment.class.getSimpleName();
-    private List<ItemFragment> currentCollection = new ArrayList<ItemFragment>();
     private ArrayList<SimpleFeature> simpleFeatures = new ArrayList<SimpleFeature>();
     @Inject MapController mapController;
     @Inject Pelias pelias;
     @Inject MixpanelAPI mixpanelApi;
     @Inject SavedSearch savedSearch;
+    @Inject MapzenApplication app;
 
     @InjectView(R.id.pagination)
     TextView indicator;
@@ -101,9 +101,7 @@ public class PagerResultsFragment extends BaseFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (act != null) {
-            act.getAutoCompleteListView().setVisibility(View.GONE);
-        }
+        act = (BaseActivity) activity;
     }
 
     @Override
@@ -150,11 +148,8 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     private void centerOnPlace(int i, double zoom) {
-        ItemFragment srf = currentCollection.get(i);
-        SimpleFeature simpleFeature = srf.getSimpleFeature();
-        Logger.d("simpleFeature: " + simpleFeature.toString());
-        String indicatorText = getString(R.string.paginate_template, i + 1,
-                currentCollection.size());
+        final SimpleFeature simpleFeature = simpleFeatures.get(i);
+        String indicatorText = getString(R.string.paginate_template, i + 1, simpleFeatures.size());
         indicator.setText(indicatorText);
         mapFragment.repopulatePoiLayer();
         mapFragment.centerOn(simpleFeature, zoom);
@@ -176,24 +171,17 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     public void clearAll() {
-        Logger.d(String.format(Locale.US, "clearing all items: %d", currentCollection.size()));
         ItemizedLayer<MarkerItem> poiLayer = mapFragment.getPoiLayer();
         poiLayer.removeAllItems();
         if (pager != null) {
             pager.setCurrentItem(0);
         }
-        currentCollection.clear();
         simpleFeatures.clear();
     }
 
     public void add(SimpleFeature simpleFeature) {
         Logger.d(simpleFeature.toString());
         addMarker(simpleFeature);
-        ItemFragment itemFragment = new ItemFragment();
-        itemFragment.setSimpleFeature(simpleFeature);
-        itemFragment.setMapFragment(mapFragment);
-        itemFragment.setAct(act);
-        currentCollection.add(itemFragment);
         simpleFeatures.add(simpleFeature);
     }
 
@@ -278,8 +266,7 @@ public class PagerResultsFragment extends BaseFragment {
     }
 
     public void displayResults(int length, int currentPos) {
-        SearchViewAdapter adapter = new SearchViewAdapter(getChildFragmentManager(),
-                currentCollection);
+        SearchViewAdapter adapter = new SearchViewAdapter(getActivity(), simpleFeatures);
         pager.setAdapter(adapter);
         String indicatorText = getString(R.string.paginate_template, 1, length);
         indicator.setText(indicatorText);

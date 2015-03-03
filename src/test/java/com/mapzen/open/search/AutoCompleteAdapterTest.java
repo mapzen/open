@@ -5,9 +5,7 @@ import com.mapzen.android.gson.Result;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
-import com.mapzen.open.adapters.SearchViewAdapter;
 import com.mapzen.open.entity.SimpleFeature;
-import com.mapzen.open.fragment.ItemFragment;
 import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.support.TestHelper;
 import com.mapzen.open.util.ParcelableUtil;
@@ -130,10 +128,7 @@ public class AutoCompleteAdapterTest {
         view.performClick();
         PagerResultsFragment pagerResultsFragment = (PagerResultsFragment)
                 fragmentManager.findFragmentByTag(PagerResultsFragment.TAG);
-        SearchViewAdapter searchViewAdapter = (SearchViewAdapter)
-                pagerResultsFragment.pager.getAdapter();
-        ItemFragment itemFragment = (ItemFragment) searchViewAdapter.getItem(0);
-        assertThat(itemFragment.getSimpleFeature()).isSameAs(simpleFeature);
+        assertThat(pagerResultsFragment.pager.getAdapter().getCount()).isEqualTo(1);
     }
 
     @Test

@@ -7,7 +7,6 @@ import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.activity.InitialActivity;
 import com.mapzen.open.adapters.PlaceArrayAdapter;
-import com.mapzen.open.fragment.ItemFragment;
 import com.mapzen.open.fragment.MapFragment;
 import com.mapzen.open.login.LoginActivity;
 import com.mapzen.open.route.DrawPathTask;
@@ -38,7 +37,6 @@ import dagger.Provides;
                 InitialActivity.class,
                 BaseActivity.class,
                 LoginActivity.class,
-                ItemFragment.class,
                 RouteFragment.class,
                 RoutePreviewFragment.class,
                 DataUploadService.class,

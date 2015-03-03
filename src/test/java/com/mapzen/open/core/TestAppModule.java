@@ -12,8 +12,6 @@ import com.mapzen.open.activity.InitialActivity;
 import com.mapzen.open.activity.InitialActivityTest;
 import com.mapzen.open.adapters.PlaceArrayAdapter;
 import com.mapzen.open.adapters.PlaceArrayAdapterTest;
-import com.mapzen.open.fragment.ItemFragment;
-import com.mapzen.open.fragment.ItemFragmentTest;
 import com.mapzen.open.fragment.MapFragment;
 import com.mapzen.open.fragment.MapFragmentTest;
 import com.mapzen.open.login.LoginActivity;
@@ -69,8 +67,6 @@ import static org.mockito.Mockito.when;
                 LoginActivityTest.class,
                 RouteFragment.class,
                 RouteFragmentTest.class,
-                ItemFragment.class,
-                ItemFragmentTest.class,
                 MapFragment.class,
                 MapFragmentTest.class,
                 RoutePreviewFragment.class,
