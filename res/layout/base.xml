@@ -65,6 +65,7 @@
         android:divider="@drawable/list_divider"
         android:dividerHeight="1px"
         android:background="@android:color/white"
+        android:paddingTop="?attr/actionBarSize"
         android:visibility="gone" />
 
 </RelativeLayout>
