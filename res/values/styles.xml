@@ -4,17 +4,23 @@
         <item name="colorPrimary">@android:color/white</item>
         <item name="colorPrimaryDark">@color/dark_red</item>
         <item name="colorAccent">@color/blue</item>
-        <item name="android:actionBarStyle">@style/ActionBar.Solid.Mapzen</item>
-        <item name="android:windowActionBarOverlay">true</item>
+        <item name="actionBarStyle">@style/ActionBar.Solid.Mapzen</item>
+        <item name="windowActionBarOverlay">true</item>
         <item name="android:itemTextAppearance">@style/MapzenItemTextAppearance</item>
-        <item name="android:actionOverflowButtonStyle">@style/MapzenOverflow</item>
-        <item name="android:homeAsUpIndicator">@drawable/ic_back_arrow</item>
+        <item name="actionOverflowButtonStyle">@style/MapzenOverflow</item>
+        <item name="homeAsUpIndicator">@drawable/ic_back_arrow</item>
         <item name="android:textCursorDrawable">@drawable/cursor</item>
+        <item name="searchViewStyle">@style/Mapzen.Widget.AppCompat.SearchView</item>
+    </style>
+    
+    <style name="Mapzen.Widget.AppCompat.SearchView" parent="Widget.AppCompat.SearchView">
+        <item name="searchIcon">@drawable/ic_search_hint</item>
+        <item name="closeIcon">@drawable/ic_cancel</item>
     </style>
 
     <style name="Theme.Mapzen.SearchResults" parent="Theme.Mapzen">
-        <item name="android:actionBarStyle">@style/ActionBar.Solid.Mapzen.SearchResults</item>
-        <item name="android:windowActionBarOverlay">false</item>
+        <item name="actionBarStyle">@style/ActionBar.Solid.Mapzen.SearchResults</item>
+        <item name="windowActionBarOverlay">false</item>
         <item name="android:windowBackground">@android:color/white</item>
         <item name="android:colorBackground">@android:color/white</item>
     </style>
@@ -23,21 +29,21 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="ActionBar.Solid.Mapzen" parent="Widget.AppCompat.Light.ActionBar.Solid">
-        <item name="android:titleTextStyle">@style/MapzenTitleText</item>
-        <item name="android:background">@color/transparent_white</item>
-        <item name="android:icon">@drawable/ic_open_icon</item>
+    <style name="ActionBar.Solid.Mapzen" parent="Widget.AppCompat.ActionBar">
+        <item name="titleTextStyle">@style/MapzenTitleText</item>
+        <item name="background">@color/transparent_white</item>
+        <item name="icon">@drawable/ic_open_icon_action_bar</item>
+        <item name="displayOptions">useLogo|showHome|showTitle</item>
     </style>
 
     <style name="ActionBar.Solid.Mapzen.SearchResults" parent="ActionBar.Solid.Mapzen">
-        <item name="android:titleTextStyle">@style/SearchResultsTitleText</item>
+        <item name="titleTextStyle">@style/SearchResultsTitleText</item>
+        <item name="displayOptions">showTitle</item>
     </style>
 
     <style name="MapzenTitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@color/red</item>
-        <item name="android:textSize">@dimen/medium</item>
         <item name="android:fontFamily">sans-serif-light-condensed</item>
-        <item name="android:paddingLeft">@dimen/routing_footer_left_padding</item>
     </style>
 
     <style name="SearchResultsTitleText" parent="MapzenTitleText">
