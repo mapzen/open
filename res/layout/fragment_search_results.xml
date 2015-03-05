@@ -3,21 +3,9 @@
     android:id="@+id/results_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="@dimen/divider_height"
     android:orientation="vertical"
     android:layout_gravity="bottom"
     android:visibility="gone">
-
-    <TextView
-        android:id="@+id/pagination"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:background="@color/transparent_white"
-        android:paddingLeft="@dimen/default_padding_horizontal"
-        android:paddingRight="@dimen/default_padding_horizontal"
-        android:textSize="@dimen/small"
-        android:textColor="@color/dark_gray" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/results"

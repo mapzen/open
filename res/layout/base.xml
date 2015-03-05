@@ -20,8 +20,8 @@
         android:src="@drawable/ic_locate_button"
         android:layout_width="44dp"
         android:layout_height="44dp"
-        android:layout_marginBottom="25dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginRight="8dp"
         android:layout_above="@id/pager_results_container"
         android:layout_alignParentRight="true"
         android:onClick="locateButtonAction"
@@ -31,12 +31,27 @@
         android:id="@+id/attribution"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/osm_attribution"
         android:textSize="@dimen/tiny"
         android:layout_above="@id/pager_results_container"
         android:layout_alignParentRight="true" />
+
+    <TextView
+        android:id="@+id/pagination"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:background="@color/transparent_white"
+        android:paddingLeft="@dimen/default_padding_horizontal"
+        android:paddingRight="@dimen/default_padding_horizontal"
+        android:paddingBottom="4dp"
+        android:paddingTop="4dp"
+        android:layout_above="@id/pager_results_container"
+        android:textSize="@dimen/small"
+        android:textColor="@color/dark_gray"
+        android:visibility="gone" />
 
     <FrameLayout
         android:id="@+id/routes_preview_container"

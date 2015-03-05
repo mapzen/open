@@ -60,7 +60,6 @@ public class PagerResultsFragment extends BaseFragment {
     @Inject SavedSearch savedSearch;
     @Inject MapzenApplication app;
 
-    @InjectView(R.id.pagination)
     TextView indicator;
 
     @InjectView(R.id.results)
@@ -84,6 +83,8 @@ public class PagerResultsFragment extends BaseFragment {
                 container, false);
         ButterKnife.inject(this, view);
         initOnPageChangeListener();
+        indicator = (TextView) act.findViewById(R.id.pagination);
+        indicator.setVisibility(View.VISIBLE);
         return view;
     }
 
@@ -102,6 +103,11 @@ public class PagerResultsFragment extends BaseFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         act = (BaseActivity) activity;
+    }
+
+    @Override public void onDetach() {
+        super.onDetach();
+        indicator.setVisibility(View.GONE);
     }
 
     @Override
