@@ -22,7 +22,7 @@
     <dimen name="turn_icon_height">40dp</dimen>
     <dimen name="turn_icon_margin">12dp</dimen>
     <dimen name="instruction_horizontal_padding">10dp</dimen>
-    <dimen name="route_preview_top_padding">15dp</dimen>
+    <dimen name="route_preview_top_padding">16dp</dimen>
     <dimen name="route_preview_border_margin">30dp</dimen>
     <dimen name="location_divider_padding">1dp</dimen>
     <dimen name="parallax_offset">110dp</dimen>

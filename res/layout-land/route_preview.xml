@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/top_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/route_preview_top_padding"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:background="@color/transparent_white">
+
+        <ImageButton
+            android:id="@+id/route_reverse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/reverse"
+            android:src="@drawable/ic_switch" />
+
+        <LinearLayout
+            android:id="@+id/start_location_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/route_reverse"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/from_text"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@color/dark_gray"
+                android:textSize="@dimen/small"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginRight="4dp"
+                android:text="@string/from_text"
+                android:fontFamily="sans-serif-condensed" />
+
+            <ImageView
+                android:id="@+id/starting_location_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="4dp"
+                android:src="@drawable/ic_locate" />
+
+            <TextView
+                android:id="@+id/starting_point"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@color/brown"
+                android:textSize="@dimen/medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-condensed" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/destination_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/route_reverse"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/to_text"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@color/dark_gray"
+                android:textSize="@dimen/small"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginRight="4dp"
+                android:text="@string/to_text"
+                android:fontFamily="sans-serif-condensed" />
+
+            <ImageView
+                android:id="@+id/destination_location_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="4dp"
+                android:src="@drawable/ic_locate"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/destination"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@color/brown"
+                android:textSize="@dimen/medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-condensed" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/routing_options"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/top_row"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:background="@color/transparent_white"
+        android:divider="@color/dark_gray">
+
+        <include
+            layout="@layout/divider"
+            android:id="@+id/location_divider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp" />
+
+        <RadioGroup
+            android:id="@+id/routing_mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/by_car"
+                android:button="@drawable/radio_button_car"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/by_bike"
+                android:button="@drawable/radio_button_bike" />
+
+            <RadioButton
+                android:id="@+id/by_foot"
+                android:button="@drawable/radio_button_walk" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/routing_circle"
+        android:src="@drawable/ic_start_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/transparent"
+        android:tag="@string/start"
+        android:paddingBottom="@dimen/circle_bottom_padding" />
+</RelativeLayout>
