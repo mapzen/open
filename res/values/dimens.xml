@@ -18,7 +18,7 @@
     <dimen name="button_font_size">18sp</dimen>
     <dimen name="result_pager_height">75dp</dimen>
     <dimen name="instruction_height">84dp</dimen>
-    <dimen name="arrow_padding">15dp</dimen>
+    <dimen name="arrow_padding">8dp</dimen>
     <dimen name="turn_icon_height">40dp</dimen>
     <dimen name="turn_icon_margin">12dp</dimen>
     <dimen name="instruction_horizontal_padding">10dp</dimen>
