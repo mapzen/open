@@ -10,10 +10,11 @@
         <ImageButton
             android:id="@+id/left_arrow"
             android:src="@drawable/ic_left_arrow"
-            android:layout_gravity="center_vertical"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
             android:paddingLeft="@dimen/arrow_padding"
+            android:paddingTop="18dp"
             android:background="@android:color/transparent" />
 
         <ImageView
@@ -60,18 +61,21 @@
     <RelativeLayout
         android:id="@+id/instruction_container"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:layout_weight="1">
 
         <ImageButton
             android:id="@+id/right_arrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
+            android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:src="@drawable/ic_right_arrow"
             android:paddingLeft="@dimen/arrow_padding"
             android:paddingRight="@dimen/arrow_padding"
+            android:paddingTop="10dp"
             android:background="@android:color/transparent" />
 
         <TextView
@@ -82,7 +86,8 @@
             android:layout_centerHorizontal="true"
             android:layout_toLeftOf="@id/right_arrow"
             android:gravity="center"
-            android:maxLines="2"
+            android:maxLines="1"
+            android:singleLine="true"
             android:fontFamily="sans-serif-condensed"
             android:textColor="@color/brown"
             android:textSize="@dimen/medium_2" />
@@ -95,7 +100,8 @@
             android:layout_centerHorizontal="true"
             android:layout_toLeftOf="@id/right_arrow"
             android:gravity="center"
-            android:maxLines="2"
+            android:maxLines="1"
+            android:singleLine="true"
             android:fontFamily="sans-serif-condensed"
             android:textColor="@color/brown"
             android:textSize="@dimen/medium_2"
@@ -110,16 +116,6 @@
             android:gravity="center"
             android:orientation="vertical"
             android:visibility="gone">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:fontFamily="sans-serif-condensed"
-                android:maxLines="1"
-                android:text="@string/you_have_arrived_at"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/medium" />
 
             <TextView
                 android:id="@+id/destination_banner"
