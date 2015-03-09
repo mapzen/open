@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- destination of the trip -->
+    <string name="routing_to_text">to\u0020</string>
+</resources>

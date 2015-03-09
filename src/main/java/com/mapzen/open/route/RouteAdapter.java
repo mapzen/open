@@ -1,8 +1,9 @@
 package com.mapzen.open.route;
 
 import com.mapzen.open.R;
-import com.mapzen.osrm.Instruction;
 import com.mapzen.open.util.DisplayHelper;
+import com.mapzen.open.widget.InstructionView;
+import com.mapzen.osrm.Instruction;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -45,8 +46,7 @@ public class RouteAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         currentInstruction = instructions.get(position);
-        final View view = View.inflate(context, R.layout.instruction, null);
-        setBackgroundColor(position, view);
+        final InstructionView view = new InstructionView(context);
         setFullInstruction(view);
         setFullInstructionAfterAction(view);
         setTurnIcon(view);
@@ -57,27 +57,10 @@ public class RouteAdapter extends PagerAdapter {
         setTag(position, view);
         container.addView(view);
         if (position == instructions.size() - 1) {
-            showDestinationView(view);
+            view.setDestination(destinationName);
         }
 
         return view;
-    }
-
-    private void showDestinationView(View view) {
-        view.findViewById(R.id.full_instruction).setVisibility(View.GONE);
-        view.findViewById(R.id.full_instruction_after_action).setVisibility(View.GONE);
-        view.findViewById(R.id.you_have_arrived).setVisibility(View.VISIBLE);
-        view.findViewById(R.id.turn_container).setVisibility(View.GONE);
-        view.findViewById(R.id.destination_icon).setVisibility(View.VISIBLE);
-        ((TextView) view.findViewById(R.id.destination_banner)).setText(destinationName);
-    }
-
-    private void setBackgroundColor(int position, View view) {
-        if (position == instructions.size() - 1) {
-            view.setBackgroundColor(context.getResources().getColor(R.color.destination_color));
-        } else {
-            view.setBackgroundColor(context.getResources().getColor(R.color.transparent_gray));
-        }
     }
 
     private void showLeftAndRightArrows(int position, View view) {

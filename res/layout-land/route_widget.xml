@@ -30,6 +30,7 @@
             android:layout_alignRight="@id/routes"
             android:padding="@dimen/resume_padding"
             android:background="@android:color/transparent"
+            android:contentDescription="@string/route_resume_button"
             android:visibility="gone" />
 
         <com.mapzen.open.widget.DebugView
@@ -43,10 +44,9 @@
 
     <RelativeLayout
         android:id="@+id/footer_wrapper"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_gravity="top"
+        android:background="@color/transparent_white"
         android:orientation="horizontal">
 
         <View
@@ -58,19 +58,17 @@
         <LinearLayout
             android:id="@+id/footer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="top"
+            android:layout_height="wrap_content"
             android:paddingLeft="@dimen/routing_footer_left_padding"
             android:paddingTop="@dimen/default_padding"
             android:background="@color/transparent_white"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
             <com.mapzen.open.widget.DistanceView
                 android:id="@+id/destination_distance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                android:layout_weight="0"
+                android:layout_marginRight="4dp"
                 android:fontFamily="sans-serif-condensed"
                 android:textStyle="bold"
                 android:textColor="@color/brown"
@@ -80,8 +78,6 @@
                 android:id="@+id/destination_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                android:layout_weight="1"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:singleLine="true"
