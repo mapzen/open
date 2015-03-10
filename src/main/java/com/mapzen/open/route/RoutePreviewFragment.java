@@ -170,7 +170,6 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
         }
     }
 
-    @SuppressWarnings("unused")
     @OnClick(R.id.route_reverse) public void reverse() {
         reverse = !reverse;
         toTextView.setVisibility(View.GONE);
@@ -178,17 +177,6 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
         animateDestinationReverse();
         setOriginAndDestination();
         createRouteToDestination();
-        setStartButtonImage();
-    }
-
-    private void setStartButtonImage() {
-        if (reverse) {
-            routingCircle.setImageResource(R.drawable.ic_preview_button);
-            routingCircle.setTag(getString(R.string.view));
-        } else {
-            routingCircle.setImageResource(R.drawable.ic_start_button);
-            routingCircle.setTag(getString(R.string.start));
-        }
     }
 
     private void animateDestinationReverse() {
@@ -201,28 +189,30 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
         destinationLayout.startAnimation(moveUp);
     }
 
-    @SuppressWarnings("unused")
     @OnCheckedChanged(R.id.by_car) public void byCar(boolean active) {
         if (active) {
             transportationMode = DRIVING;
             createRouteToDestination();
             mixpanelAPI.track(MixpanelHelper.Event.ROUTING_PREVIEW_CAR, null);
+            routingCircle.setImageResource(R.drawable.ic_car_start);
         }
     }
-    @SuppressWarnings("unused")
+
     @OnCheckedChanged(R.id.by_bike) public void byBike(boolean active) {
         if (active) {
             transportationMode = BIKING;
             createRouteToDestination();
             mixpanelAPI.track(ROUTING_PREVIEW_BIKE, null);
+            routingCircle.setImageResource(R.drawable.ic_bike_start);
         }
     }
-    @SuppressWarnings("unused")
+
     @OnCheckedChanged(R.id.by_foot) public void byFoot(boolean active) {
         if (active) {
             transportationMode = WALKING;
             createRouteToDestination();
             mixpanelAPI.track(ROUTING_PREVIEW_FOOT, null);
+            routingCircle.setImageResource(R.drawable.ic_walk_start);
         }
     }
 

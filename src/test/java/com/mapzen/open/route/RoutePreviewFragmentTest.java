@@ -374,19 +374,8 @@ public class RoutePreviewFragmentTest {
         fragment.createRouteToDestination();
         Route testRoute = new Route(getFixture("around_the_block"));
         fragment.success(testRoute);
-        ImageButton startBtn = (ImageButton) fragment.getView().findViewById(R.id.routing_circle);
-        startBtn.performClick();
+        fragment.routingCircle.performClick();
         assertThat(mapController.getMap().layers().contains(fragment.markers)).isFalse();
-    }
-
-    @Test
-    public void reverse_shouldSetCircleButtonToView() throws Exception {
-        fragment.createRouteToDestination();
-        Route testRoute = new Route(getFixture("around_the_block"));
-        fragment.success(testRoute);
-        fragment.reverse();
-        ImageButton startBtn = (ImageButton) fragment.getView().findViewById(R.id.routing_circle);
-        assertThat(startBtn.getTag()).isEqualTo(activity.getString(R.string.view));
     }
 
     @Test
@@ -396,8 +385,7 @@ public class RoutePreviewFragmentTest {
         fragment.success(testRoute);
         fragment.reverse();
         fragment.reverse();
-        ImageButton startBtn = (ImageButton) fragment.getView().findViewById(R.id.routing_circle);
-        assertThat(startBtn.getTag()).isEqualTo(activity.getString(R.string.start));
+        assertThat(fragment.routingCircle.getTag()).isEqualTo(activity.getString(R.string.start));
     }
 
     @Test
@@ -458,5 +446,29 @@ public class RoutePreviewFragmentTest {
         BaseActivity newActivity = initBaseActivity();
         fragment.onAttach(newActivity);
         assertThat(fragment.getBaseActivity()).isEqualTo(newActivity);
+    }
+
+    @Test
+    public void byCar_shouldSetImageResource() throws Exception {
+        fragment.routingCircle.setImageResource(R.drawable.ic_start);
+        fragment.byCar(true);
+        assertThat(Robolectric.shadowOf(fragment.routingCircle.getDrawable())
+                .getCreatedFromResId()).isEqualTo(R.drawable.ic_car_start);
+    }
+
+    @Test
+    public void byBike_shouldSetImageResource() throws Exception {
+        fragment.routingCircle.setImageResource(R.drawable.ic_start);
+        fragment.byBike(true);
+        assertThat(Robolectric.shadowOf(fragment.routingCircle.getDrawable())
+                .getCreatedFromResId()).isEqualTo(R.drawable.ic_bike_start);
+    }
+
+    @Test
+    public void byFoot_shouldSetImageResource() throws Exception {
+        fragment.routingCircle.setImageResource(R.drawable.ic_start);
+        fragment.byFoot(true);
+        assertThat(Robolectric.shadowOf(fragment.routingCircle.getDrawable())
+                .getCreatedFromResId()).isEqualTo(R.drawable.ic_walk_start);
     }
 }
