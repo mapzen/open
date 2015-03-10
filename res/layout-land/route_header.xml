@@ -9,23 +9,29 @@
     android:paddingRight="16dp"
     android:background="@color/transparent_white">
 
-    <ImageButton
-        android:id="@+id/route_reverse"
+    <LinearLayout
+        android:id="@+id/route_reverse_wrapper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginRight="8dp"
-        android:layout_marginLeft="8dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/reverse"
-        android:src="@drawable/ic_switch" />
+        android:layout_centerHorizontal="true">
+
+        <ImageButton
+            android:id="@+id/route_reverse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/reverse"
+            android:src="@drawable/ic_switch" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/start_location_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@id/route_reverse"
+        android:layout_toLeftOf="@id/route_reverse_wrapper"
         android:orientation="horizontal">
 
         <TextView
@@ -62,7 +68,7 @@
         android:id="@+id/destination_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/route_reverse"
+        android:layout_toRightOf="@id/route_reverse_wrapper"
         android:orientation="horizontal">
 
         <TextView

@@ -134,7 +134,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private DebugView debugView;
     private SlidingUpPanelLayout slideLayout;
     private MapOnTouchListener mapOnTouchListener;
-    private DirectionListFragment directionListFragment = null;
+    private DirectionListFragment directionListFragment;
     private RouteFragment fragment;
 
     public static RouteFragment newInstance(BaseActivity act, SimpleFeature simpleFeature) {

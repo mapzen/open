@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -31,10 +32,13 @@ public class DirectionListFragment extends ListFragment {
     private SimpleFeature destination;
     private boolean reverse;
 
-    @InjectView(R.id.starting_point_list) TextView startingPointTextView;
-    @InjectView(R.id.destination_list) TextView destinationTextView;
-    @InjectView(R.id.starting_location_icon_list) ImageView startLocationIcon;
-    @InjectView(R.id.destination_location_icon_list) ImageView destinationLocationIcon;
+    @InjectView(R.id.starting_point) TextView startingPointTextView;
+    @InjectView(R.id.destination) TextView destinationTextView;
+    @InjectView(R.id.starting_location_icon) ImageView startLocationIcon;
+    @InjectView(R.id.destination_location_icon) ImageView destinationLocationIcon;
+    @InjectView(R.id.route_reverse) ImageButton routeReverse;
+    @InjectView(android.R.id.list) ListView listView;
+
     public static DirectionListFragment newInstance(List<Instruction> instructions,
             DirectionListener listener,  SimpleFeature destination, boolean reverse) {
         final DirectionListFragment fragment = new DirectionListFragment();
@@ -51,7 +55,7 @@ public class DirectionListFragment extends ListFragment {
             Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_direction_list, container, false);
         ButterKnife.inject(this, view);
-        final ListView listView = (ListView) view.findViewById(android.R.id.list);
+        routeReverse.setVisibility(View.GONE);
         listView.setAdapter(new DirectionListAdapter(getActivity(), instructions, reverse));
         setOriginAndDestination();
         return view;
