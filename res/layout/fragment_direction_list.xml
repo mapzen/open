@@ -8,104 +8,10 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
     
-    <LinearLayout
-        android:id="@+id/top_row"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:paddingLeft="@dimen/route_preview_top_padding"
-        android:paddingTop="@dimen/route_preview_top_padding"
-        android:background="@color/transparent_white">
-
-        <LinearLayout
-            android:id="@+id/places"
-            android:layout_weight="3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/default_margin"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:id="@+id/start_location_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/from_text"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:textColor="@color/dark_gray"
-                    android:textSize="@dimen/small"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:text="@string/from_text"
-                    android:fontFamily="sans-serif-condensed" />
-                <ImageView
-                    android:id="@+id/starting_location_icon_list"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_locate" />
-
-                <TextView
-                    android:id="@+id/starting_point_list"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:textColor="@color/brown"
-                    android:textSize="@dimen/medium"
-                    android:padding="@dimen/default_padding"
-                    android:layout_width="match_parent"
-                    android:layout_marginBottom="1dp"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-condensed" />
-            </LinearLayout>
-
-            <View
-                android:id="@+id/border"
-                android:layout_width="wrap_content"
-                android:layout_marginRight="@dimen/route_preview_border_margin"
-                android:layout_height="1dp"
-                android:background="@color/transparent_gray" />
-
-            <LinearLayout
-                android:id="@+id/destination_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/to_text"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:textColor="@color/dark_gray"
-                    android:textSize="@dimen/small"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:text="@string/to_text"
-                    android:fontFamily="sans-serif-condensed" />
-
-                <ImageView
-                    android:id="@+id/destination_location_icon_list"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_locate"
-                    android:visibility="gone" />
-                <TextView
-                    android:id="@+id/destination_list"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:textColor="@color/brown"
-                    android:textSize="@dimen/medium"
-                    android:padding="@dimen/default_padding"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-condensed" />
-            </LinearLayout>
-        </LinearLayout>
-    </LinearLayout>
+    <include layout="@layout/route_header" />
 
     <include layout="@layout/divider"
         android:id="@+id/location_divider"
-        android:layout_below="@id/top_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/location_divider_padding"

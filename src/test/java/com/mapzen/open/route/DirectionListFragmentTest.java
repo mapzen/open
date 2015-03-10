@@ -38,8 +38,8 @@ public class DirectionListFragmentTest {
     private Resources res;
     private ArrayList<Instruction> instructions;
     private SimpleFeature simpleFeature;
-    @InjectView(R.id.starting_point_list) TextView startingPointTextView;
-    @InjectView(R.id.destination_list) TextView destinationTextView;
+    @InjectView(R.id.starting_point) TextView startingPointTextView;
+    @InjectView(R.id.destination) TextView destinationTextView;
 
     @Before
     public void setUp() throws Exception {
@@ -53,7 +53,7 @@ public class DirectionListFragmentTest {
         fragment = DirectionListFragment.newInstance(instructions, listener, simpleFeature, false);
         startFragment(fragment);
         ButterKnife.inject(this, fragment.getView());
-        listView = (ListView) fragment.getView().findViewById(android.R.id.list);
+        listView = fragment.listView;
         res = application.getResources();
     }
 
@@ -63,8 +63,18 @@ public class DirectionListFragmentTest {
     }
 
     @Test
+    public void shouldRetainInstance() throws Exception {
+        assertThat(fragment.getRetainInstance()).isTrue();
+    }
+
+    @Test
     public void shouldHaveListView() throws Exception {
         assertThat(listView).isNotNull();
+    }
+
+    @Test
+    public void shouldHideReverseButton() throws Exception {
+        assertThat(fragment.routeReverse).isGone();
     }
 
     @Test

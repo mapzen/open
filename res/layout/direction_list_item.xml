@@ -11,25 +11,29 @@
         android:id="@+id/icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
+        android:layout_gravity="center_vertical"
         android:contentDescription="@string/route_description" />
 
     <TextView
         android:id="@+id/simple_instruction"
         android:layout_marginLeft="8dp"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight=".70"
         android:layout_gravity="left"
         android:padding="@dimen/default_padding_list_item"
-        android:fontFamily="sans-serif-condensed-bold"
-        android:textColor="@color/blue"
+        android:fontFamily="sans-serif-condensed"
+        android:textColor="@color/dark_gray"
         android:textSize="@dimen/medium" />
 
     <com.mapzen.open.widget.DistanceView
         android:id="@+id/distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:textColor="@color/light_gray" />
+        android:layout_gravity="right|center_vertical"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-condensed-bold"
+        android:textColor="@color/dark_gray"
+        android:textSize="@dimen/medium" />
 
 </LinearLayout>
