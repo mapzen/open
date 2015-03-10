@@ -63,6 +63,11 @@ public class DirectionListFragmentTest {
     }
 
     @Test
+    public void shouldRetainInstance() throws Exception {
+        assertThat(fragment.getRetainInstance()).isTrue();
+    }
+
+    @Test
     public void shouldHaveListView() throws Exception {
         assertThat(listView).isNotNull();
     }

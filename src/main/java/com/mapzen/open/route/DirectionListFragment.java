@@ -1,5 +1,11 @@
 package com.mapzen.open.route;
 
+import com.mapzen.open.R;
+import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.open.util.DisplayHelper;
+import com.mapzen.open.widget.DistanceView;
+import com.mapzen.osrm.Instruction;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -10,15 +16,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import com.mapzen.open.R;
-import com.mapzen.open.entity.SimpleFeature;
-import com.mapzen.osrm.Instruction;
-import com.mapzen.open.util.DisplayHelper;
-import com.mapzen.open.widget.DistanceView;
 
 import java.util.List;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 import static com.mapzen.open.entity.SimpleFeature.TEXT;
 
@@ -40,6 +42,7 @@ public class DirectionListFragment extends ListFragment {
         fragment.listener = listener;
         fragment.destination = destination;
         fragment.reverse = reverse;
+        fragment.setRetainInstance(true);
         return fragment;
     }
 
