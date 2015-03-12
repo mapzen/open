@@ -32,7 +32,7 @@
         android:singleLine="true"
         android:textColor="@color/blue"
         android:fontFamily="sans-serif-condensed"
-        android:textSize="@dimen/big" />
+        android:textSize="@dimen/medium_2" />
 
     <TextView
         android:id="@+id/address"
