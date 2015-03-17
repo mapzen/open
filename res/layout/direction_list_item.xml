@@ -12,6 +12,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_gravity="center_vertical"
+        android:drawablePadding="8dp"
         android:contentDescription="@string/route_description" />
 
     <TextView

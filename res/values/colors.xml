@@ -4,9 +4,9 @@
     <color name="lets_go_dark">@color/dark_brown</color>
     <color name="destination_color">@color/red</color>
     <color name="destination_text_color">@android:color/white</color>
-    <color name="teal_background">#6da1a5</color>
+    <color name="teal_background">#6ea0a4</color>
     <color name="yellow_background">#fbfbe9</color>
-    <color name="button_red">#d46a5f</color>
+    <color name="button_red">#d4645c</color>
     <color name="button_red_pressed">#ba4845</color>
     <color name="sign_up_text">#3b3b3b</color>
 
@@ -22,7 +22,7 @@
     <color name="brown">#563630</color>
     <color name="dark_brown">#44231e</color>
     <color name="white">#FFFFFF</color>
-    <color name="transparent_white">#D9FFFFFF</color>
+    <color name="transparent_white">#E6FFFFFF</color>
     <color name="transparent_gray">#CCCECECE</color>
     <color name="transparent_light_gray">#99CECECE</color>
     <color name="transparent_blue">#E66ea0a4</color>
