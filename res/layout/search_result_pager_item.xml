@@ -14,7 +14,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:drawablePadding="6dp"
-        android:drawableTop="@drawable/ic_car_start"
+        android:drawableTop="@drawable/ic_start"
         android:textColor="@color/lets_go"
         android:fontFamily="sans-serif-condensed"
         android:textSize="@dimen/small"
