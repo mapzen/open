@@ -471,4 +471,18 @@ public class RoutePreviewFragmentTest {
         assertThat(Robolectric.shadowOf(fragment.routingCircle.getDrawable())
                 .getCreatedFromResId()).isEqualTo(R.drawable.ic_start_walk);
     }
+
+    @Test
+    public void onResume_shouldHideLocationMarker() throws Exception {
+        fragment.onResume();
+        assertThat(fragment.getMapFragment().getMap().layers().
+                contains(fragment.getMapFragment().getLocationMarkerLayer())).isFalse();
+    }
+
+    @Test
+    public void onDestroy_shouldHideLocationMarker() throws Exception {
+        fragment.onDestroy();
+        assertThat(fragment.getMapFragment().getMap().layers().
+                contains(fragment.getMapFragment().getLocationMarkerLayer())).isTrue();
+    }
 }
