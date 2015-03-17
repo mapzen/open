@@ -41,10 +41,12 @@
                 android:layout_width="wrap_content"
                 android:text="@string/from_text"
                 android:fontFamily="sans-serif-condensed" />
+
             <ImageView
                 android:id="@+id/starting_location_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:src="@drawable/ic_locate" />
 
             <TextView
