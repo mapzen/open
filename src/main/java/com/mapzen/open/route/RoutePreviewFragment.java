@@ -194,7 +194,7 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
             transportationMode = DRIVING;
             createRouteToDestination();
             mixpanelAPI.track(MixpanelHelper.Event.ROUTING_PREVIEW_CAR, null);
-            routingCircle.setImageResource(R.drawable.ic_car_start);
+            routingCircle.setImageResource(R.drawable.ic_start_car);
         }
     }
 
@@ -203,7 +203,7 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
             transportationMode = BIKING;
             createRouteToDestination();
             mixpanelAPI.track(ROUTING_PREVIEW_BIKE, null);
-            routingCircle.setImageResource(R.drawable.ic_bike_start);
+            routingCircle.setImageResource(R.drawable.ic_start_bike);
         }
     }
 
@@ -212,7 +212,7 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
             transportationMode = WALKING;
             createRouteToDestination();
             mixpanelAPI.track(ROUTING_PREVIEW_FOOT, null);
-            routingCircle.setImageResource(R.drawable.ic_walk_start);
+            routingCircle.setImageResource(R.drawable.ic_start_walk);
         }
     }
 
