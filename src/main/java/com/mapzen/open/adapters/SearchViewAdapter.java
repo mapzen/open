@@ -11,6 +11,7 @@ import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public class SearchViewAdapter extends PagerAdapter {
         final View view = View.inflate(context, R.layout.search_result_pager_item, null);
         final TextView title = (TextView) view.findViewById(R.id.title);
         final TextView address = (TextView) view.findViewById(R.id.address);
-        final TextView start = (TextView) view.findViewById(R.id.start);
+        final ImageButton start = (ImageButton) view.findViewById(R.id.start);
         final SimpleFeature feature = features.get(position);
         title.setText(feature.getTitle());
         address.setText(feature.getAddress());
