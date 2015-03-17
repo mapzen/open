@@ -107,6 +107,7 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
     public void onDestroy() {
         super.onDestroy();
         bus.unregister(this);
+        mapFragment.showLocationMarker();
     }
 
     @Override
@@ -117,6 +118,8 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
         if (act.getSupportFragmentManager().findFragmentByTag(RouteFragment.TAG) == null) {
             createRouteToDestination();
         }
+
+        mapFragment.hideLocationMarker();
     }
 
     @Override
