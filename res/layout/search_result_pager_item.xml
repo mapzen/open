@@ -7,19 +7,15 @@
     android:paddingRight="@dimen/default_padding_horizontal"
     android:background="@color/transparent_white">
 
-    <TextView
+    <ImageButton
         android:id="@+id/start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:drawablePadding="6dp"
-        android:drawableTop="@drawable/ic_start"
-        android:textColor="@color/lets_go"
-        android:fontFamily="sans-serif-condensed"
-        android:textSize="@dimen/small"
-        android:gravity="center_horizontal"
-        android:text="@string/start" />
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/start"
+        android:src="@drawable/ic_start" />
 
     <TextView
         android:id="@+id/title"
@@ -38,16 +34,14 @@
         android:id="@+id/address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/start"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/title"
         android:layout_toLeftOf="@id/start"
         android:ellipsize="end"
         android:maxLines="1"
+        android:paddingBottom="8dp"
         android:singleLine="true"
         android:textSize="@dimen/small"
-        android:textColor="@color/brown"
-        android:gravity="bottom"
-        android:layout_alignParentBottom="true" />
+        android:textColor="@color/brown" />
 
 </RelativeLayout>

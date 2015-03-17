@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import android.app.Activity;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public class SearchViewAdapterTest {
     @Test
     public void shouldPostRoutePreviewEvent() throws Exception {
         View view = (View) adapter.instantiateItem(new FrameLayout(ACTIVITY), 0);
-        TextView start = (TextView) view.findViewById(R.id.start);
+        ImageButton start = (ImageButton) view.findViewById(R.id.start);
         RoutePreviewSubscriber subscriber = new RoutePreviewSubscriber();
         bus.register(subscriber);
         start.performClick();
