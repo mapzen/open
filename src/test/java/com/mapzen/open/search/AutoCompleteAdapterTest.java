@@ -270,7 +270,7 @@ public class AutoCompleteAdapterTest {
         TextView textView = new TextView(app);
         adapter.bindView(textView, app, cursor);
 
-        Drawable expected = app.getResources().getDrawable(R.drawable.ic_search_results_search);
+        Drawable expected = app.getResources().getDrawable(R.drawable.ic_recent);
         Drawable actual = textView.getCompoundDrawables()[0];
         assertDrawable(expected, actual);
     }
@@ -284,7 +284,7 @@ public class AutoCompleteAdapterTest {
         TextView textView = new TextView(app);
         adapter.bindView(textView, app, cursor);
 
-        Drawable expected = app.getResources().getDrawable(R.drawable.ic_search_results_pin);
+        Drawable expected = app.getResources().getDrawable(R.drawable.ic_pin_outline);
         Drawable actual = textView.getCompoundDrawables()[0];
         assertDrawable(expected, actual);
     }
