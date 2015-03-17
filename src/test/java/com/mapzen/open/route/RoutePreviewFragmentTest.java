@@ -453,7 +453,7 @@ public class RoutePreviewFragmentTest {
         fragment.routingCircle.setImageResource(R.drawable.ic_start);
         fragment.byCar(true);
         assertThat(Robolectric.shadowOf(fragment.routingCircle.getDrawable())
-                .getCreatedFromResId()).isEqualTo(R.drawable.ic_car_start);
+                .getCreatedFromResId()).isEqualTo(R.drawable.ic_start_car);
     }
 
     @Test
@@ -461,7 +461,7 @@ public class RoutePreviewFragmentTest {
         fragment.routingCircle.setImageResource(R.drawable.ic_start);
         fragment.byBike(true);
         assertThat(Robolectric.shadowOf(fragment.routingCircle.getDrawable())
-                .getCreatedFromResId()).isEqualTo(R.drawable.ic_bike_start);
+                .getCreatedFromResId()).isEqualTo(R.drawable.ic_start_bike);
     }
 
     @Test
@@ -469,6 +469,6 @@ public class RoutePreviewFragmentTest {
         fragment.routingCircle.setImageResource(R.drawable.ic_start);
         fragment.byFoot(true);
         assertThat(Robolectric.shadowOf(fragment.routingCircle.getDrawable())
-                .getCreatedFromResId()).isEqualTo(R.drawable.ic_walk_start);
+                .getCreatedFromResId()).isEqualTo(R.drawable.ic_start_walk);
     }
 }

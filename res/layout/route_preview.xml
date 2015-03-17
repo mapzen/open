@@ -52,7 +52,7 @@
 
     <ImageButton
         android:id="@+id/routing_circle"
-        android:src="@drawable/ic_car_start"
+        android:src="@drawable/ic_start_car"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
