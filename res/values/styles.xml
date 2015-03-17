@@ -14,7 +14,7 @@
     </style>
     
     <style name="Mapzen.Widget.AppCompat.SearchView" parent="Widget.AppCompat.SearchView">
-        <item name="searchIcon">@drawable/ic_search_hint</item>
+        <item name="searchIcon">@drawable/ic_search</item>
         <item name="closeIcon">@drawable/ic_cancel</item>
     </style>
 
