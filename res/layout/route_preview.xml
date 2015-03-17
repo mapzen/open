@@ -18,7 +18,7 @@
         android:background="@color/transparent_white"
         android:divider="@color/dark_gray">
 
-        <include layout="@layout/divider"
+        <include layout="@layout/list_header_divider"
             android:id="@+id/location_divider"
             android:layout_below="@id/top_row"
             android:layout_width="match_parent"
