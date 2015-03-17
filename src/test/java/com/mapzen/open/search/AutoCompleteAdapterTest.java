@@ -276,20 +276,6 @@ public class AutoCompleteAdapterTest {
     }
 
     @Test
-    public void bindView_shouldDisplayPinIconNextToAutoCompleteResults() throws Exception {
-        savedSearch.store("search term", simpleFeature.toParcel());
-        adapter.loadSavedSearches();
-        Cursor cursor = adapter.getCursor();
-        cursor.moveToFirst();
-        TextView textView = new TextView(app);
-        adapter.bindView(textView, app, cursor);
-
-        Drawable expected = app.getResources().getDrawable(R.drawable.ic_pin_outline);
-        Drawable actual = textView.getCompoundDrawables()[0];
-        assertDrawable(expected, actual);
-    }
-
-    @Test
     public void bindView_shouldSetPinIconForAutoCompleteResults() throws Exception {
         MatrixCursor cursor = (MatrixCursor) adapter.getCursor();
         cursor.moveToFirst();

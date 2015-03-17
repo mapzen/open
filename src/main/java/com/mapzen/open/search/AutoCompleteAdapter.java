@@ -159,10 +159,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     private void bindViewRecent(Cursor cursor, TextView tv) {
         tv.setText(cursor.getString(1));
         tv.setTag(R.integer.pelias_doc_id, cursor.getInt(0));
-        final Parcel payload = savedSearch.get(cursor.getInt(0)).getPayload();
-        final int icon = payload == null ? R.drawable.ic_recent
-                : R.drawable.ic_pin_outline;
-        tv.setCompoundDrawablesWithIntrinsicBounds(icon, 0, 0, 0);
+        tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_recent, 0, 0, 0);
     }
 
     private void bindViewAutoComplete(Cursor cursor, TextView tv) {
