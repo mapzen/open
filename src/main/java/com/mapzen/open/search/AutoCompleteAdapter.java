@@ -145,23 +145,36 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
     @Override
     public void bindView(View view, Context c, Cursor cursor) {
         final TextView tv = (TextView) view;
-        if (cursor.getColumnName(1).equals(SEARCH_TERM)) {
-            tv.setText(cursor.getString(1));
-            tv.setTag(R.integer.pelias_doc_id, cursor.getInt(0));
-            final Parcel payload = savedSearch.get(cursor.getInt(0)).getPayload();
-            final int icon = payload == null ? R.drawable.ic_recent
-                    : R.drawable.ic_pin_outline;
-            tv.setCompoundDrawablesWithIntrinsicBounds(icon, 0, 0, 0);
+        if (isRecentSearchView(cursor)) {
+            bindViewRecent(cursor, tv);
         } else {
-            final int blobIndex = cursor.getColumnIndex(PELIAS_BLOB);
-            byte[] bytes = cursor.getBlob(blobIndex);
-            SimpleFeature simpleFeature = ParcelableUtil.unmarshall(bytes, CREATOR);
-            tv.setTextColor(app.getResources().getColor(R.color.light_gray));
-
-            final Highlighter highlighter = initAutoCompleteHighlighter(simpleFeature);
-            tv.setTag(simpleFeature);
-            tv.setText(highlighter.highlight());
+            bindViewAutoComplete(cursor, tv);
         }
+    }
+
+    private boolean isRecentSearchView(Cursor cursor) {
+        return cursor.getColumnName(1).equals(SEARCH_TERM);
+    }
+
+    private void bindViewRecent(Cursor cursor, TextView tv) {
+        tv.setText(cursor.getString(1));
+        tv.setTag(R.integer.pelias_doc_id, cursor.getInt(0));
+        final Parcel payload = savedSearch.get(cursor.getInt(0)).getPayload();
+        final int icon = payload == null ? R.drawable.ic_recent
+                : R.drawable.ic_pin_outline;
+        tv.setCompoundDrawablesWithIntrinsicBounds(icon, 0, 0, 0);
+    }
+
+    private void bindViewAutoComplete(Cursor cursor, TextView tv) {
+        final int blobIndex = cursor.getColumnIndex(PELIAS_BLOB);
+        byte[] bytes = cursor.getBlob(blobIndex);
+        SimpleFeature simpleFeature = ParcelableUtil.unmarshall(bytes, CREATOR);
+        tv.setTextColor(app.getResources().getColor(R.color.light_gray));
+
+        final Highlighter highlighter = initAutoCompleteHighlighter(simpleFeature);
+        tv.setTag(simpleFeature);
+        tv.setText(highlighter.highlight());
+        tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_pin_outline, 0, 0, 0);
     }
 
     private Highlighter initAutoCompleteHighlighter(SimpleFeature simpleFeature) {

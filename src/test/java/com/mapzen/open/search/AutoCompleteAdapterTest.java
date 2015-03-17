@@ -290,6 +290,22 @@ public class AutoCompleteAdapterTest {
     }
 
     @Test
+    public void bindView_shouldSetPinIconForAutoCompleteResults() throws Exception {
+        MatrixCursor cursor = (MatrixCursor) adapter.getCursor();
+        cursor.moveToFirst();
+        SimpleFeature simpleFeature = new SimpleFeature();
+        simpleFeature.setProperty(TEXT, "New York, NY");
+        byte[] data = ParcelableUtil.marshall(simpleFeature);
+        cursor.addRow(new Object[]{0, data});
+        TextView textView = new TextView(application);
+        adapter.bindView(textView, application, cursor);
+
+        Drawable expected = app.getResources().getDrawable(R.drawable.ic_pin_outline);
+        Drawable actual = textView.getCompoundDrawables()[0];
+        assertDrawable(expected, actual);
+    }
+
+    @Test
     public void success_shouldHideAutoCompleteListHeader() throws Exception {
         baseActivity.getAutoCompleteListView().showHeader();
         adapter.success(new Result(), null);
