@@ -136,6 +136,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private MapOnTouchListener mapOnTouchListener;
     private DirectionListFragment directionListFragment;
     private RouteFragment fragment;
+    private boolean shouldRestoreDirectionList = false;
 
     public static RouteFragment newInstance(BaseActivity act, SimpleFeature simpleFeature) {
         final RouteFragment fragment = new RouteFragment();
@@ -195,6 +196,15 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        hideDirectionListFragment();
+        if (getSlideLayout().getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED) {
+            shouldRestoreDirectionList = true;
+        }
     }
 
     private void setMapOnTouchListener() {
@@ -786,6 +796,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         getSlideLayout().setTouchEnabled(false);
         addSlideLayoutTouchListener();
         getSlideLayout().setPanelSlideListener(getPanelSlideListener());
+        if (shouldRestoreDirectionList) {
+            showDirectionListFragmentInExpanded();
+            shouldRestoreDirectionList = false;
+        }
     }
 
     public SlidingUpPanelLayout.PanelSlideListener getPanelSlideListener() {
@@ -851,7 +865,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                     .beginTransaction()
                     .disallowAddToBackStack()
                     .remove(directionListFragment)
-                    .commit();
+                    .commitAllowingStateLoss();
         }
         directionListFragment = null;
     }
