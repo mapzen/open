@@ -1428,6 +1428,16 @@ public class RouteFragmentTest {
         assertThat(fragment.getGPXDescription()).isEqualTo("Route without instructions");
     }
 
+    @Test
+    public void onDetach_shouldRemoveDirectionListFragment() throws Exception {
+        TestHelper.startFragment(fragment, act);
+        fragment.getPanelSlideListener().onPanelSlide(fragment.getSlideLayout(),
+                RouteFragment.SLIDING_PANEL_OFFSET_MARGIN + 1);
+        fragment.onDetach();
+        assertThat(fragment.getChildFragmentManager())
+                .doesNotHaveFragmentWithTag(DirectionListFragment.TAG);
+    }
+
     private void loadAceHotelMockRoute() {
         fragment.success(new Route(MOCK_ACE_HOTEL));
         FragmentTestUtil.startFragment(fragment);
