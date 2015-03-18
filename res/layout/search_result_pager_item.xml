@@ -26,9 +26,10 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:singleLine="true"
+        android:paddingTop="4dp"
         android:textColor="@color/blue"
         android:fontFamily="sans-serif-condensed"
-        android:textSize="@dimen/medium_2" />
+        android:textSize="@dimen/big_2" />
 
     <TextView
         android:id="@+id/address"
