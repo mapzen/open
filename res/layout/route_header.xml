@@ -47,6 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:layout_marginLeft="4dp"
                 android:src="@drawable/ic_locate" />
 
             <TextView
@@ -90,8 +91,11 @@
                 android:id="@+id/destination_location_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="4dp"
                 android:src="@drawable/ic_locate"
                 android:visibility="gone" />
+
             <TextView
                 android:id="@+id/destination"
                 android:maxLines="1"
