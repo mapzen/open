@@ -60,7 +60,7 @@
     <style name="MapzenItemTextAppearance" parent="TextAppearance.AppCompat.Widget.DropDownItem">
         <item name="android:textColor">@color/red</item>
         <item name="android:textSize">@dimen/medium</item>
-        <item name="android:fontFamily">sans-serif-light-condensed</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
     </style>
 
     <style name="MapzenOverflow" parent="Widget.AppCompat.ActionButton.Overflow">
