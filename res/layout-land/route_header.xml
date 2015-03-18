@@ -23,7 +23,7 @@
             android:layout_marginLeft="8dp"
             android:background="@android:color/transparent"
             android:contentDescription="@string/reverse"
-            android:src="@drawable/ic_switch" />
+            android:src="@drawable/ic_switch_h" />
     </LinearLayout>
 
     <LinearLayout
