@@ -86,6 +86,7 @@ public class BaseActivity extends ActionBarActivity {
             InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.hideSoftInputFromWindow(getSearchView().getWindowToken(), 0);
+                searchMenuItem.getActionView().clearFocus();
             }
         }
     };
