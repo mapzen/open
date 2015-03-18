@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="Overdraw"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,6 +17,8 @@
 
     <ListView
         android:id="@android:id/list"
+        android:paddingLeft="@dimen/location_divider_padding"
+        android:paddingRight="@dimen/location_divider_padding"
         android:layout_height="match_parent"
         android:layout_width="match_parent" />
 
