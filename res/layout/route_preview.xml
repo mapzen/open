@@ -23,8 +23,9 @@
             android:layout_below="@id/top_row"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/location_divider_padding"
-            android:layout_marginLeft="@dimen/location_divider_padding"/>
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp" />
+
         <RadioGroup
             android:id="@+id/routing_mode"
             android:layout_width="wrap_content"

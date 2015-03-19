@@ -17,13 +17,12 @@
 
     <TextView
         android:id="@+id/simple_instruction"
-        android:layout_marginLeft="8dp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight=".70"
         android:layout_gravity="left"
         android:padding="@dimen/default_padding_list_item"
-        android:fontFamily="sans-serif-condensed"
+        android:fontFamily="sans-serif-light-condensed"
         android:textColor="@color/dark_gray"
         android:textSize="@dimen/medium" />
 

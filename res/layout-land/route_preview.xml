@@ -21,8 +21,9 @@
             android:id="@+id/location_divider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp" />
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_paddingTop="8dp" />
 
         <RadioGroup
             android:id="@+id/routing_mode"
