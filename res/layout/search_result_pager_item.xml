@@ -41,9 +41,9 @@
         android:layout_toLeftOf="@id/start"
         android:ellipsize="end"
         android:maxLines="1"
-        android:paddingBottom="12dp"
+        android:paddingBottom="10dp"
         android:singleLine="true"
-        android:textSize="@dimen/small_2"
+        android:textSize="@dimen/small"
         android:textColor="@color/brown" />
 
 </RelativeLayout>
