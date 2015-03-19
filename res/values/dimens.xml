@@ -30,7 +30,7 @@
     <dimen name="drag_area_height">20dp</dimen>
     <dimen name="debug_view_height">148dp</dimen>
     <dimen name="routing_footer_left_padding">10dp</dimen>
-    <dimen name="circle_bottom_padding">15dp</dimen>
+    <dimen name="circle_bottom_padding">12dp</dimen>
     <dimen name="default_padding_list_item">12dp</dimen>
     <dimen name="login_title_margin_vertical">12dp</dimen>
     <dimen name="login_body_margin_vertical">12dp</dimen>
