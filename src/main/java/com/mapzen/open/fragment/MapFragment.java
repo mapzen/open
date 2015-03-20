@@ -160,8 +160,12 @@ public class MapFragment extends BaseFragment {
     }
 
     public void showLocationMarker() {
-        if (!getMap().layers().contains(getLocationMarkerLayer())) {
-            getMap().layers().add(getLocationMarkerLayer());
+        if (getMap() != null) {
+            if (getMap().layers() != null) {
+                if (!getMap().layers().contains(getLocationMarkerLayer())) {
+                    getMap().layers().add(getLocationMarkerLayer());
+                }
+            }
         }
     }
 

@@ -320,6 +320,18 @@ public class MapFragmentTest {
         mapFragment.onActivityCreated(null);
     }
 
+    @Test
+    public void showLocationMarker_shouldNotCrashIfMapIsNull() throws Exception {
+        mapFragment.setAct(new BaseActivityWithNullMap());
+        mapFragment.showLocationMarker();
+    }
+
+    @Test
+    public void showLocationMarker_shouldNotCrashIfLayersIsNull() throws Exception {
+        mapFragment.setAct(new BaseActivityWithNullLayers());
+        mapFragment.showLocationMarker();
+    }
+
     private void setTileSourceConfiguration(String source) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         SharedPreferences.Editor prefEditor = prefs.edit();
@@ -336,6 +348,22 @@ public class MapFragmentTest {
         @Override
         public Map getMap() {
             return new TestMap();
+        }
+    }
+
+    public class BaseActivityWithNullMap extends BaseActivity {
+        @Override
+        public Map getMap() {
+            return null;
+        }
+    }
+
+    public class BaseActivityWithNullLayers extends BaseActivity {
+        @Override
+        public Map getMap() {
+            TestMap map = Mockito.mock(TestMap.class);
+            Mockito.when(map.layers()).thenReturn(null);
+            return map;
         }
     }
 }
