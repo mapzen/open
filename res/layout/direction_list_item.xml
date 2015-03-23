@@ -4,7 +4,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
     android:orientation="horizontal">
 
     <ImageView
@@ -22,7 +23,7 @@
         android:layout_weight=".70"
         android:layout_gravity="left"
         android:padding="@dimen/default_padding_list_item"
-        android:fontFamily="sans-serif-light-condensed"
+        android:fontFamily="sans-serif-condensed"
         android:textColor="@color/dark_gray"
         android:textSize="@dimen/medium" />
 
