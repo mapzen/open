@@ -193,7 +193,7 @@
         <dependency>
             <groupId>com.mapzen.android</groupId>
             <artifactId>lost</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
         </dependency>
 
         <dependency>
