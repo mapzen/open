@@ -181,6 +181,18 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void shouldShowRouteAttribution() throws Exception {
+        TestHelper.startFragment(fragment, act);
+        assertThat(fragment.getView().findViewById(R.id.route_attribution)).isVisible();
+    }
+
+    @Test
+    public void shouldHideBaseAttribution() throws Exception {
+        TestHelper.startFragment(fragment, act);
+        assertThat(act.findViewById(R.id.attribution)).isNotVisible();
+    }
+
+    @Test
     public void locateButtonShouldNotBeVisible() throws Exception {
         TestHelper.startFragment(fragment, act);
         assertThat(act.findViewById(R.id.locate_button)).isNotVisible();
