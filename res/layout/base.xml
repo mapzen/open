@@ -31,12 +31,12 @@
         android:id="@+id/attribution"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/osm_attribution"
-        android:textSize="@dimen/tiny"
         android:layout_above="@id/pager_results_container"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"
+        android:paddingRight="@dimen/attribution_padding_right"
+        android:paddingBottom="@dimen/attribution_padding_bottom"
+        android:text="@string/osm_attribution"
+        android:textSize="@dimen/tiny" />
 
     <TextView
         android:id="@+id/pagination"

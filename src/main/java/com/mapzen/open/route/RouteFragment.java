@@ -195,6 +195,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             LocationServices.FusedLocationApi.setMockMode(false);
         }
 
+        act.findViewById(R.id.attribution).setVisibility(View.GONE);
+
         return rootView;
     }
 

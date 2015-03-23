@@ -37,6 +37,8 @@
     <dimen name="login_padding_horizontal">24dp</dimen>
     <dimen name="login_padding_vertical">48dp</dimen>
     <dimen name="login_button_bottom_margin">16dp</dimen>
+    <dimen name="attribution_padding_right">8dp</dimen>
+    <dimen name="attribution_padding_bottom">8dp</dimen>
 
     <!-- fonts -->
     <dimen name="big">32sp</dimen>

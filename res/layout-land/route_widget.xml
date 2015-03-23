@@ -33,6 +33,17 @@
             android:contentDescription="@string/route_resume_button"
             android:visibility="gone" />
 
+        <TextView
+            android:id="@+id/route_attribution"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:paddingRight="@dimen/attribution_padding_right"
+            android:paddingBottom="@dimen/attribution_padding_bottom"
+            android:text="@string/osm_attribution"
+            android:textSize="@dimen/tiny" />
+
         <com.mapzen.open.widget.DebugView
                 android:id="@+id/debugging"
                 android:layout_width="match_parent"
