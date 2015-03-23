@@ -39,6 +39,10 @@
     <dimen name="login_button_bottom_margin">16dp</dimen>
     <dimen name="attribution_padding_right">8dp</dimen>
     <dimen name="attribution_padding_bottom">8dp</dimen>
+    <dimen name="locate_button_width">44dp</dimen>
+    <dimen name="locate_button_height">44dp</dimen>
+    <dimen name="locate_button_margin_right">8dp</dimen>
+    <dimen name="locate_button_margin_bottom">24dp</dimen>
 
     <!-- fonts -->
     <dimen name="big">32sp</dimen>

@@ -23,13 +23,14 @@
 
         <ImageButton
             android:id="@+id/resume_button"
-            android:src="@drawable/ic_resume_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:src="@drawable/ic_locate_button"
+            android:layout_width="@dimen/locate_button_width"
+            android:layout_height="@dimen/locate_button_height"
             android:layout_alignParentBottom="true"
-            android:layout_alignRight="@id/routes"
-            android:padding="@dimen/resume_padding"
-            android:background="@android:color/transparent"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/locate_button_margin_right"
+            android:layout_marginBottom="@dimen/locate_button_margin_bottom"
+            android:background="@color/transparent_white"
             android:visibility="gone" />
 
         <TextView
