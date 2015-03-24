@@ -70,7 +70,7 @@
     <style name="LoginBody" parent="@android:style/Widget.TextView">
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textColor">@color/red</item>
-        <item name="android:textSize">@dimen/login_body_font_size</item>
+        <item name="android:textSize">@dimen/medium_2</item>
         <item name="android:gravity">center</item>
     </style>
 
