@@ -90,7 +90,7 @@
         android:background="@android:color/white"
         android:gravity="center"
         android:paddingTop="?attr/actionBarSize"
-        android:text="No recent searches"
+        android:text="@string/auto_complete_empty"
         android:visibility="gone" />
 
 </RelativeLayout>
