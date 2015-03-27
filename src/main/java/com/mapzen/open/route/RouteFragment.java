@@ -619,6 +619,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public float getAverageSpeed() {
+        if (db == null) {
+            return 0;
+        }
+
         Cursor cursor = db.
                 rawQuery("SELECT AVG(" + COLUMN_SPEED + ") as avg_speed "
                         + "from (select " + COLUMN_SPEED + " from "
@@ -642,6 +646,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void insertIntoDb(String table, String nullHack,
             ArrayList<ContentValues> contentValueCollection) {
+        if (db == null) {
+            return;
+        }
+
         try {
             db.beginTransaction();
             for (ContentValues values : contentValueCollection) {
@@ -655,6 +663,10 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     private void insertIntoDb(String table, String nullHack, ContentValues contentValues) {
+        if (db == null) {
+            return;
+        }
+
         try {
             long result = db.insert(table, nullHack, contentValues);
             if (result < 0) {
@@ -673,7 +685,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         resume.setVisibility(View.VISIBLE);
         voiceNavigationController.mute();
     }
-
 
     public void resumeAutoPaging() {
         pager.setCurrentItem(pagerPositionWhenPaused);
@@ -740,17 +751,21 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
     private void resetPagerItemStyling(int page) {
         if (page > 0) {
-           page--;
-           adapter.setTurnIcon(pager.findViewWithTag("Instruction_" + page),
-                   DisplayHelper.getRouteDrawable(pager.getContext(),
-                           instructions.get(page).getTurnInstruction(),
-                           DisplayHelper.IconStyle.GRAY));
+            page--;
+            adapter.setTurnIcon(pager.findViewWithTag("Instruction_" + page),
+                    DisplayHelper.getRouteDrawable(pager.getContext(),
+                            instructions.get(page).getTurnInstruction(),
+                            DisplayHelper.IconStyle.GRAY));
 
-           adapter.setBackgroundColorInactive(pager.findViewWithTag("Instruction_" + page));
+            adapter.setBackgroundColorInactive(pager.findViewWithTag("Instruction_" + page));
         }
     }
 
     private void markReadyForUpload() {
+        if (db == null) {
+            return;
+        }
+
         ContentValues cv = new ContentValues();
         cv.put(DatabaseHelper.COLUMN_READY_FOR_UPLOAD, 1);
         try {
@@ -915,11 +930,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private void showLocateButton() {
         act.findViewById(R.id.locate_button).setVisibility(View.VISIBLE);
     }
+
     private void hideLocateButton() {
         act.findViewById(R.id.locate_button).setVisibility(View.GONE);
     }
 
-    public class MapOnTouchListener implements View.OnTouchListener  {
+    public class MapOnTouchListener implements View.OnTouchListener {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             boolean oneFinger = event.getPointerCount() < 2;

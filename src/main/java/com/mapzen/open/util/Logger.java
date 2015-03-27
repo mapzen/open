@@ -40,6 +40,11 @@ public final class Logger {
     public static void logToDatabase(BaseActivity activity, SQLiteDatabase db,
             String tag, String msg) {
         Log.v(TAG, tag + ": " + msg);
+
+        if (db == null) {
+            return;
+        }
+
         if (activity.isInDebugMode()) {
             ContentValues values = new ContentValues();
             values.put(COLUMN_TAG, tag);
