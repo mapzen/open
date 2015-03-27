@@ -12,20 +12,20 @@ public class AutoCompleteListView extends ListView {
 
     public AutoCompleteListView(Context context) {
         super(context);
-        headerView = inflate(getContext(), R.layout.recent_search_list_header, null);
-        addHeaderView(headerView);
-        setHeaderDividersEnabled(false);
+        init();
     }
 
     public AutoCompleteListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        headerView = inflate(getContext(), R.layout.recent_search_list_header, null);
-        addHeaderView(headerView);
-        setHeaderDividersEnabled(false);
+        init();
     }
 
     public AutoCompleteListView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init() {
         headerView = inflate(getContext(), R.layout.recent_search_list_header, null);
         addHeaderView(headerView);
         setHeaderDividersEnabled(false);

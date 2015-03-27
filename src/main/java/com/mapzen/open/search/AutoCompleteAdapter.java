@@ -203,8 +203,12 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
         act.hideActionViewAll();
         act.setupAdapter(searchView);
         if (newText.length() < AUTOCOMPLETE_THRESHOLD) {
-            act.getAutoCompleteListView().showHeader();
             loadSavedSearches();
+            if (savedSearch.getCursor().getCount() == 0) {
+                act.getAutoCompleteListView().hideHeader();
+            } else {
+                act.getAutoCompleteListView().showHeader();
+            }
             return true;
         }
 
