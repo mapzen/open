@@ -7,7 +7,7 @@ import org.oscim.map.Map;
 import org.oscim.map.TestMap;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
-import org.robolectric.shadows.ShadowView;
+import org.robolectric.shadows.ShadowRelativeLayout;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -17,7 +17,7 @@ import android.util.AttributeSet;
  */
 @SuppressWarnings("unused")
 @Implements(MapView.class)
-public class ShadowMapView extends ShadowView {
+public class ShadowMapView extends ShadowRelativeLayout {
     public void __constructor__(Context context, AttributeSet attributeSet) {
         AndroidGraphics.init();
         AndroidAssets.init(context);
