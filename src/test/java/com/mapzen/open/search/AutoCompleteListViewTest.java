@@ -8,6 +8,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import android.app.Activity;
+import android.view.View;
+import android.widget.ArrayAdapter;
 
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -55,5 +57,83 @@ public class AutoCompleteListViewTest {
 
         autoCompleteListView.hideHeader();
         assertThat(autoCompleteListView.isHeaderVisible()).isFalse();
+    }
+
+    @Test
+    public void setAdapter_shouldHideEmptyViewWhenItemIsAddedToAdapter() throws Exception {
+        ArrayAdapter adapter = new ArrayAdapter(ACTIVITY, 0);
+        View empty = new View(ACTIVITY);
+        autoCompleteListView.setEmptyView(empty);
+        autoCompleteListView.setAdapter(adapter);
+        autoCompleteListView.setVisibility(View.VISIBLE);
+        adapter.add(new Object());
+        assertThat(empty).isGone();
+    }
+
+    @Test
+    public void setAdapter_shouldShowEmptyViewWhenItemIsRemovedFromAdapter() throws Exception {
+        ArrayAdapter adapter = new ArrayAdapter(ACTIVITY, 0);
+        adapter.add(new Object());
+        View empty = new View(ACTIVITY);
+        autoCompleteListView.setEmptyView(empty);
+        autoCompleteListView.setAdapter(adapter);
+        autoCompleteListView.setVisibility(View.VISIBLE);
+        adapter.clear();
+        assertThat(empty).isVisible();
+    }
+
+    @Test
+    public void setAdapter_shouldHideEmptyViewWhenItemIsRemovedIfListViewHidden() throws Exception {
+        ArrayAdapter adapter = new ArrayAdapter(ACTIVITY, 0);
+        adapter.add(new Object());
+        View empty = new View(ACTIVITY);
+        autoCompleteListView.setEmptyView(empty);
+        autoCompleteListView.setAdapter(adapter);
+        autoCompleteListView.setVisibility(View.GONE);
+        adapter.clear();
+        assertThat(empty).isGone();
+    }
+
+    @Test
+    public void setVisibility_GONE_shouldHideEmptyView() throws Exception {
+        View empty = new View(ACTIVITY);
+        empty.setVisibility(View.VISIBLE);
+        autoCompleteListView.setEmptyView(empty);
+        autoCompleteListView.setVisibility(View.GONE);
+        assertThat(empty).isGone();
+    }
+
+    @Test
+    public void setVisibility_INVISIBLE_shouldHideEmptyView() throws Exception {
+        View empty = new View(ACTIVITY);
+        empty.setVisibility(View.VISIBLE);
+        autoCompleteListView.setEmptyView(empty);
+        autoCompleteListView.setVisibility(View.INVISIBLE);
+        assertThat(empty).isGone();
+    }
+
+    @Test
+    public void setVisibility_VISIBLE_shouldShowEmptyViewIfAdapterIsEmpty() throws Exception {
+        ArrayAdapter adapter = new ArrayAdapter(ACTIVITY, 0);
+        autoCompleteListView.setAdapter(adapter);
+
+        View empty = new View(ACTIVITY);
+        empty.setVisibility(View.GONE);
+        autoCompleteListView.setEmptyView(empty);
+        autoCompleteListView.setVisibility(View.VISIBLE);
+        assertThat(empty).isVisible();
+    }
+
+    @Test
+    public void setVisibility_VISIBILE_shouldHideEmptyViewIfAdapterIsNotEmpty() throws Exception {
+        ArrayAdapter adapter = new ArrayAdapter(ACTIVITY, 0);
+        adapter.add(new Object());
+        autoCompleteListView.setAdapter(adapter);
+
+        View empty = new View(ACTIVITY);
+        empty.setVisibility(View.VISIBLE);
+        autoCompleteListView.setEmptyView(empty);
+        autoCompleteListView.setVisibility(View.VISIBLE);
+        assertThat(empty).isGone();
     }
 }

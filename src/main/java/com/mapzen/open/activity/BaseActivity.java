@@ -558,6 +558,7 @@ public class BaseActivity extends ActionBarActivity {
     public AutoCompleteListView getAutoCompleteListView() {
         if (autoCompleteListView == null) {
             autoCompleteListView = (AutoCompleteListView) findViewById(R.id.auto_complete);
+            autoCompleteListView.setEmptyView(findViewById(android.R.id.empty));
         }
 
         return autoCompleteListView;
