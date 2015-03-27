@@ -574,10 +574,12 @@ public class BaseActivity extends ActionBarActivity {
 
     private void saveCurrentSearchTerm() {
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
-        if (searchMenuItem.isActionViewExpanded()) {
-            app.setCurrentSearchTerm(searchView.getQuery().toString());
-        } else {
-            app.setCurrentSearchTerm(null);
+        if (searchView != null) {
+            if (searchMenuItem.isActionViewExpanded()) {
+                app.setCurrentSearchTerm(searchView.getQuery().toString());
+            } else {
+                app.setCurrentSearchTerm(null);
+            }
         }
     }
 }

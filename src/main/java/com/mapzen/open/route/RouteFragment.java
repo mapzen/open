@@ -285,8 +285,12 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         markReadyForUpload();
         mapController.clearLines();
         act.updateView();
-        mapFragment.showLocationMarker();
-        mapFragment.getMap().layers().remove(routeLocationIndicator);
+
+        if (mapFragment != null) {
+            mapFragment.showLocationMarker();
+            mapFragment.getMap().layers().remove(routeLocationIndicator);
+        }
+
         bus.unregister(this);
         showLocateButton();
         if (LocationServices.FusedLocationApi != null) {
@@ -518,7 +522,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public boolean setRoute(final Route route) {
-        if (route.foundRoute()) {
+        if (route != null && route.foundRoute()) {
             this.route = route;
             this.instructions = route.getRouteInstructions();
             storeRouteInDatabase(route.getRawRoute());
