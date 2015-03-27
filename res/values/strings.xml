@@ -60,6 +60,8 @@
     <string name="paginate_template">%1$d of %2$d results</string>
     <!-- what the app is about -->
     <string name="about_link">About</string>
+    <!-- message shown to user when recent search list is empty (first launch) -->
+    <string name="auto_complete_empty">No recent searches</string>
 
     <!--Login-->
     <!-- these are pages in the login flow -->

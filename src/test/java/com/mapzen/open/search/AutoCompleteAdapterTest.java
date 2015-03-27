@@ -300,9 +300,18 @@ public class AutoCompleteAdapterTest {
 
     @Test
     public void onQueryTextChange_shouldShowAutoCompleteListHeader() throws Exception {
+        savedSearch.store("search term");
         baseActivity.getAutoCompleteListView().hideHeader();
         adapter.onQueryTextChange("");
         assertThat(baseActivity.getAutoCompleteListView().isHeaderVisible()).isTrue();
+    }
+
+    @Test
+    public void onQueryTextChange_shouldHideListHeaderIfNoRecents() throws Exception {
+        savedSearch.clear();
+        baseActivity.getAutoCompleteListView().showHeader();
+        adapter.onQueryTextChange("");
+        assertThat(baseActivity.getAutoCompleteListView().isHeaderVisible()).isFalse();
     }
 
     @Test
