@@ -199,7 +199,7 @@
         <dependency>
             <groupId>com.splunk.mint</groupId>
             <artifactId>mint</artifactId>
-            <version>4.0.5</version>
+            <version>4.1</version>
         </dependency>
 
         <dependency>
