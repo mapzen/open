@@ -516,6 +516,12 @@ public class BaseActivityTest {
     }
 
     @Test
+    public void onDestroy_shouldNotCrashIfSearchMenuItemIsNull() throws Exception {
+        activity.searchMenuItem = null;
+        activity.onDestroy();
+    }
+
+    @Test
     public void onCreateOptionsMenu_shouldRestoreCurrentSearchTerm() throws Exception {
         app.setCurrentSearchTerm("query");
         activity.onCreateOptionsMenu(menu);

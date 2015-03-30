@@ -583,6 +583,10 @@ public class BaseActivity extends ActionBarActivity {
     }
 
     private void saveCurrentSearchTerm() {
+        if (searchMenuItem == null) {
+            return;
+        }
+
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
         if (searchView != null) {
             if (searchMenuItem.isActionViewExpanded()) {
