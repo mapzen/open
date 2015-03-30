@@ -76,7 +76,9 @@ public final class MapzenLocation {
                 application.sendBroadcast(findMe);
             }
 
-            bus.post(new LocationUpdateEvent(location));
+            if (bus != null) {
+                bus.post(new LocationUpdateEvent(location));
+            }
         }
     }
 

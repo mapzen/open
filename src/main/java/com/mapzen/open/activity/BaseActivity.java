@@ -28,6 +28,7 @@ import com.splunk.mint.Mint;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
 
+import org.oscim.android.AndroidMap;
 import org.oscim.android.MapView;
 import org.oscim.layers.marker.MarkerItem;
 import org.oscim.map.Map;
@@ -126,6 +127,9 @@ public class BaseActivity extends ActionBarActivity {
     @Override
     public void onPause() {
         super.onPause();
+        if (getMap() != null) {
+            ((AndroidMap) getMap()).pause(true);
+        }
         if (getSupportFragmentManager().findFragmentByTag(RouteFragment.TAG) == null) {
             locationClient.disconnect();
         }
@@ -135,6 +139,9 @@ public class BaseActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (getMap() != null) {
+            ((AndroidMap) getMap()).pause(false);
+        }
         locationClient.connect();
         MapzenLocation.onLocationServicesConnected(MapController.getMapController(),
                 LocationServices.FusedLocationApi, app);
@@ -143,6 +150,9 @@ public class BaseActivity extends ActionBarActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (getMap() != null) {
+            getMap().destroy();
+        }
         clearNotifications();
         mixpanelAPI.flush();
         bus.unregister(this);
@@ -574,10 +584,12 @@ public class BaseActivity extends ActionBarActivity {
 
     private void saveCurrentSearchTerm() {
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
-        if (searchMenuItem.isActionViewExpanded()) {
-            app.setCurrentSearchTerm(searchView.getQuery().toString());
-        } else {
-            app.setCurrentSearchTerm(null);
+        if (searchView != null) {
+            if (searchMenuItem.isActionViewExpanded()) {
+                app.setCurrentSearchTerm(searchView.getQuery().toString());
+            } else {
+                app.setCurrentSearchTerm(null);
+            }
         }
     }
 }
