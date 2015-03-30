@@ -178,7 +178,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         });
         initDebugView(rootView);
         initSlideLayout(rootView);
-        hideLocateButton();
         setMapOnTouchListener();
 
         res = act.getResources();
@@ -195,7 +194,11 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             LocationServices.FusedLocationApi.setMockMode(false);
         }
 
-        act.findViewById(R.id.attribution).setVisibility(View.GONE);
+        rootView.postDelayed(new Runnable() {
+            @Override public void run() {
+                hideLocateButtonAndAttribution();
+            }
+        }, 100);
 
         return rootView;
     }
@@ -931,8 +934,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.findViewById(R.id.locate_button).setVisibility(View.VISIBLE);
     }
 
-    private void hideLocateButton() {
+    private void hideLocateButtonAndAttribution() {
         act.findViewById(R.id.locate_button).setVisibility(View.GONE);
+        act.findViewById(R.id.attribution).setVisibility(View.GONE);
     }
 
     public class MapOnTouchListener implements View.OnTouchListener {
