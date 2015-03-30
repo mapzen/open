@@ -273,6 +273,10 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
             return;
         }
 
+        if (getActivity() == null) {
+            return;
+        }
+
         mapController.getMap().layers().remove(path);
         mapController.getMap().layers().remove(markers);
         path = new PathLayer(MapController.getMapController().getMap(), Color.DKGRAY, 8);
