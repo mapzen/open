@@ -194,12 +194,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             LocationServices.FusedLocationApi.setMockMode(false);
         }
 
-        rootView.postDelayed(new Runnable() {
-            @Override public void run() {
-                hideLocateButtonAndAttribution();
-            }
-        }, 100);
-
+        hideLocateButtonAndAttribution(rootView);
         return rootView;
     }
 
@@ -397,7 +392,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         createRouteTo(location);
         voiceNavigationController.recalculating();
         displayRecalculatePagerView();
-        footerWrapper.setVisibility(View.INVISIBLE);
     }
 
     private void displayRecalculatePagerView() {
@@ -532,14 +526,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             mapController.setMapPerspectiveForInstruction(instructions.get(0));
             routeEngine.setRoute(route);
             routeEngine.setListener(this);
-            act.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (footerWrapper != null) {
-                        footerWrapper.setVisibility(View.VISIBLE);
-                    }
-                }
-            });
         } else {
             return false;
         }
@@ -713,6 +699,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void success(final Route route) {
         if (setRoute(route)) {
             act.hideLoadingIndicator();
+            hideLocateButtonAndAttribution(getView());
             isRouting = false;
             if (!isAdded()) {
                 act.getSupportFragmentManager().beginTransaction()
@@ -934,9 +921,15 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.findViewById(R.id.locate_button).setVisibility(View.VISIBLE);
     }
 
-    private void hideLocateButtonAndAttribution() {
-        act.findViewById(R.id.locate_button).setVisibility(View.GONE);
-        act.findViewById(R.id.attribution).setVisibility(View.GONE);
+    private void hideLocateButtonAndAttribution(View view) {
+        if (act != null && view != null) {
+            view.postDelayed(new Runnable() {
+                @Override public void run() {
+                    act.findViewById(R.id.locate_button).setVisibility(View.GONE);
+                    act.findViewById(R.id.attribution).setVisibility(View.GONE);
+                }
+            }, 100);
+        }
     }
 
     public class MapOnTouchListener implements View.OnTouchListener {

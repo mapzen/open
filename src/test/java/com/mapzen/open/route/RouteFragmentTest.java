@@ -408,6 +408,15 @@ public class RouteFragmentTest {
     }
 
     @Test
+    public void success_shouldHideLocationMarker() throws Exception {
+        TestHelper.startFragment(fragment, act);
+        fragment.getActivity().findViewById(R.id.locate_button).setVisibility(View.VISIBLE);
+        fragment.success(new Route(MOCK_ROUTE_JSON));
+        Robolectric.runUiThreadTasksIncludingDelayedTasks();
+        assertThat(fragment.getActivity().findViewById(R.id.locate_button)).isGone();
+    }
+
+    @Test
     public void onDestroy_shouldShowLocationMarker() throws Exception {
         TestHelper.startFragment(fragment, act);
         fragment.onDestroy();
@@ -1040,13 +1049,6 @@ public class RouteFragmentTest {
         assertThat(view.findViewById(R.id.left_arrow)).isNotVisible();
         assertThat(view.findViewById(R.id.turn_container)).isNotVisible();
         assertThat(view.findViewById(R.id.right_arrow)).isNotVisible();
-    }
-
-    @Test
-    public void onRecalculate_shouldHideRouteFooter() throws Exception {
-        loadAceHotelMockRoute();
-        fragment.onRecalculate(getTestLocation(111.0, 111.0));
-        assertThat(fragment.footerWrapper).isNotVisible();
     }
 
     @Test
