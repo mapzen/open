@@ -478,7 +478,9 @@ public class BaseActivity extends ActionBarActivity {
 
     public void hideActionBar() {
         collapseSearchView();
-        getSupportActionBar().hide();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
     }
 
     public void collapseSearchView() {

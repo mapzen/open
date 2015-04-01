@@ -286,7 +286,9 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
 
         if (mapFragment != null) {
             mapFragment.showLocationMarker();
-            mapFragment.getMap().layers().remove(routeLocationIndicator);
+            if (mapFragment.getMap() != null && mapFragment.getMap().layers() != null) {
+                mapFragment.getMap().layers().remove(routeLocationIndicator);
+            }
         }
 
         bus.unregister(this);
