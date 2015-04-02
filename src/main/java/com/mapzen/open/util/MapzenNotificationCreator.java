@@ -75,5 +75,6 @@ public class MapzenNotificationCreator {
         builder.setContentText(content);
         builder.setSmallIcon(R.drawable.ic_lets_go);
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
+        builder.setOngoing(true);
     }
 }
