@@ -42,6 +42,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -198,7 +200,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
             }
         }
 
-        hideLocateButtonAndAttribution(rootView);
+        hideLocateButtonAndAttribution();
         return rootView;
     }
 
@@ -705,7 +707,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public void success(final Route route) {
         if (setRoute(route)) {
             act.hideLoadingIndicator();
-            hideLocateButtonAndAttribution(getView());
+            hideLocateButtonAndAttribution();
             isRouting = false;
             if (!isAdded()) {
                 act.getSupportFragmentManager().beginTransaction()
@@ -927,15 +929,15 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         act.findViewById(R.id.locate_button).setVisibility(View.VISIBLE);
     }
 
-    private void hideLocateButtonAndAttribution(View view) {
-        if (act != null && view != null) {
-            view.postDelayed(new Runnable() {
-                @Override public void run() {
+    private void hideLocateButtonAndAttribution() {
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override public void run() {
+                if (act != null) {
                     act.findViewById(R.id.locate_button).setVisibility(View.GONE);
                     act.findViewById(R.id.attribution).setVisibility(View.GONE);
                 }
-            }, 100);
-        }
+            }
+        }, 100);
     }
 
     public class MapOnTouchListener implements View.OnTouchListener {
