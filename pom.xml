@@ -463,7 +463,7 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                        <groupId>com.simpligility.maven.plugins</groupId>
                         <artifactId>android-maven-plugin</artifactId>
                         <configuration>
                             <manifestVersionName>${project.version}</manifestVersionName>
@@ -512,7 +512,7 @@
                 <finalName>${artifactId}-${version}-unsigned</finalName>
                 <plugins>
                     <plugin>
-                        <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                        <groupId>com.simpligility.maven.plugins</groupId>
                         <artifactId>android-maven-plugin</artifactId>
                         <configuration>
                             <manifestVersionName>${project.version}</manifestVersionName>
