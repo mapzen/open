@@ -21,6 +21,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 import org.oscim.core.MapPosition;
+import org.robolectric.Robolectric;
 import org.robolectric.shadows.ShadowLog;
 import org.robolectric.shadows.ShadowNetworkInfo;
 import org.robolectric.shadows.ShadowToast;
@@ -203,6 +204,7 @@ public class PagerResultsFragmentTest {
         fragment.add(new SimpleFeature());
         fragment.add(new SimpleFeature());
         fragment.displayResults(2, 0);
+        Robolectric.runUiThreadTasksIncludingDelayedTasks();
         assertThat(menu.findItem(R.id.action_view_all)).isVisible();
     }
 
