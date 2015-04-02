@@ -277,6 +277,17 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         initMapPosition();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mapFragment != null) {
+            mapFragment.showLocationMarker();
+            if (mapFragment.getMap() != null && mapFragment.getMap().layers() != null) {
+                mapFragment.getMap().layers().remove(routeLocationIndicator);
+            }
+        }
+    }
+
     private void initMapPosition() {
         manageMap(route.getStartCoordinates(), route.getStartCoordinates());
         getMapController().getMap().viewport().setTilt(DEFAULT_ROUTING_TILT);
@@ -289,13 +300,6 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         markReadyForUpload();
         mapController.clearLines();
         act.updateView();
-
-        if (mapFragment != null) {
-            mapFragment.showLocationMarker();
-            if (mapFragment.getMap() != null && mapFragment.getMap().layers() != null) {
-                mapFragment.getMap().layers().remove(routeLocationIndicator);
-            }
-        }
 
         bus.unregister(this);
         showLocateButton();
