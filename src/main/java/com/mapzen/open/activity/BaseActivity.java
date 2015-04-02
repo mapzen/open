@@ -46,6 +46,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
@@ -363,9 +364,13 @@ public class BaseActivity extends ActionBarActivity {
     }
 
     public void showActionViewAll() {
-        if (activityMenu != null) {
-            activityMenu.findItem(R.id.action_view_all).setVisible(true);
-        }
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override public void run() {
+                if (activityMenu != null) {
+                    activityMenu.findItem(R.id.action_view_all).setVisible(true);
+                }
+            }
+        }, 100);
     }
 
     private void resetSearchView() {
