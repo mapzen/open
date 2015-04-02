@@ -143,7 +143,11 @@ public class BaseActivity extends ActionBarActivity {
         if (getMap() != null) {
             ((AndroidMap) getMap()).pause(false);
         }
-        locationClient.connect();
+
+        if (!locationClient.isConnected()) {
+            locationClient.connect();
+        }
+
         MapzenLocation.onLocationServicesConnected(MapController.getMapController(),
                 LocationServices.FusedLocationApi, app);
     }
@@ -151,6 +155,8 @@ public class BaseActivity extends ActionBarActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        locationClient.disconnect();
+
         if (getMap() != null) {
             getMap().destroy();
         }

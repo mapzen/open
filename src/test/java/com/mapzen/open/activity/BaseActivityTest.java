@@ -240,6 +240,20 @@ public class BaseActivityTest {
     }
 
     @Test
+    public void onResume_shouldCheckIfConnectedBeforeConnectingAgain() throws Exception {
+        ShadowLocationManager shadowLocationManager = shadowOf(getLocationManager());
+        List<android.location.LocationListener>
+                listeners = shadowLocationManager.getRequestLocationUpdateListeners();
+        for (android.location.LocationListener listener : listeners) {
+            shadowLocationManager.removeUpdates(listener);
+        }
+
+        activity.locationClient.connect();
+        activity.onResume();
+        assertThat(shadowLocationManager.getRequestLocationUpdateListeners()).hasSize(2);
+    }
+
+    @Test
     public void onResume_shouldGetWritableLocationDatabase() throws Exception {
         assertThat(db).isOpen();
     }
@@ -519,6 +533,12 @@ public class BaseActivityTest {
     public void onDestroy_shouldNotCrashIfSearchMenuItemIsNull() throws Exception {
         activity.searchMenuItem = null;
         activity.onDestroy();
+    }
+
+    @Test
+    public void onDestroy_shouldDisconnectLocationClient() throws Exception {
+        activity.onDestroy();
+        assertThat(shadowOf(getLocationManager()).getRequestLocationUpdateListeners()).isEmpty();
     }
 
     @Test
