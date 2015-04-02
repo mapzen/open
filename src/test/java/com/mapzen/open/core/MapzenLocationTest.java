@@ -51,6 +51,7 @@ public class MapzenLocationTest {
     public void setup() {
         application = (MapzenApplication) Robolectric.application;
         application.inject(this);
+        LocationServices.FusedLocationApi = null;
         mapController.setActivity(TestHelper.initBaseActivity());
         listener = new MapzenLocation.Listener(application);
     }
