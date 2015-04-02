@@ -417,9 +417,9 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onDestroy_shouldShowLocationMarker() throws Exception {
+    public void onPause_shouldShowLocationMarker() throws Exception {
         TestHelper.startFragment(fragment, act);
-        fragment.onDestroy();
+        fragment.onPause();
         assertThat(fragment.getMapFragment().getMap().layers().
                 contains(fragment.getMapFragment().getLocationMarkerLayer())).isTrue();
     }
@@ -442,9 +442,9 @@ public class RouteFragmentTest {
     }
 
     @Test
-    public void onDestroy_shouldHideRouteLocationIndicator() throws Exception {
+    public void onPause_shouldHideRouteLocationIndicator() throws Exception {
         TestHelper.startFragment(fragment, act);
-        fragment.onDestroy();
+        fragment.onPause();
         assertThat(fragment.getMapFragment().getMap().layers().
                 contains(fragment.getRouteLocationIndicator())).isFalse();
     }
