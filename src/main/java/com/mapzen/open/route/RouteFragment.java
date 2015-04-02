@@ -183,15 +183,17 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         res = act.getResources();
         prefs = getDefaultSharedPreferences(act);
 
-        if (prefs.getBoolean(getString(R.string.settings_mock_gpx_key), false)) {
-            final String key = getString(R.string.settings_mock_gpx_filename_key);
-            final String defaultFile = getString(R.string.settings_mock_gpx_filename_default_value);
-            final String filename = prefs.getString(key, defaultFile);
-            final File file = new File(Environment.getExternalStorageDirectory(), filename);
-            LocationServices.FusedLocationApi.setMockMode(true);
-            LocationServices.FusedLocationApi.setMockTrace(file);
-        } else {
-            LocationServices.FusedLocationApi.setMockMode(false);
+        if (LocationServices.FusedLocationApi != null) {
+            if (prefs.getBoolean(getString(R.string.settings_mock_gpx_key), false)) {
+                final String key = getString(R.string.settings_mock_gpx_filename_key);
+                final String defaultFile = getString(R.string.settings_mock_gpx_filename_default_value);
+                final String filename = prefs.getString(key, defaultFile);
+                final File file = new File(Environment.getExternalStorageDirectory(), filename);
+                LocationServices.FusedLocationApi.setMockMode(true);
+                LocationServices.FusedLocationApi.setMockTrace(file);
+            } else {
+                LocationServices.FusedLocationApi.setMockMode(false);
+            }
         }
 
         hideLocateButtonAndAttribution(rootView);
