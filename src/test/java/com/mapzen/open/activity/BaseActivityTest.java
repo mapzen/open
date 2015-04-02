@@ -522,6 +522,12 @@ public class BaseActivityTest {
     }
 
     @Test
+    public void onDestroy_shouldDisconnectLocationClient() throws Exception {
+        activity.onDestroy();
+        assertThat(shadowOf(getLocationManager()).getRequestLocationUpdateListeners()).isEmpty();
+    }
+
+    @Test
     public void onCreateOptionsMenu_shouldRestoreCurrentSearchTerm() throws Exception {
         app.setCurrentSearchTerm("query");
         activity.onCreateOptionsMenu(menu);

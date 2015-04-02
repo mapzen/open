@@ -151,6 +151,8 @@ public class BaseActivity extends ActionBarActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        locationClient.disconnect();
+
         if (getMap() != null) {
             getMap().destroy();
         }
