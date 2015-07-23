@@ -273,7 +273,11 @@ public class MapFragment extends BaseFragment {
                 // TODO find ways to accomplish this without two flags ;(
                 mapController.resetMapForUser();
                 initialRelocateHappened = true;
-                getMap().setMapPosition(getUserLocationPosition());
+
+                final Map map = getMap();
+                if (map != null) {
+                    map.setMapPosition(getUserLocationPosition());
+                }
             }
 
             updateMap();

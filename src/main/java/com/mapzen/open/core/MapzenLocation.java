@@ -84,6 +84,13 @@ public final class MapzenLocation {
 
     public static void onLocationServicesConnected(MapController mapController,
             FusedLocationProviderApi api, MapzenApplication app) {
+
+        final Location mockLocation = new Location("mock");
+        mockLocation.setLatitude(40.7443);
+        mockLocation.setLongitude(-73.9903);
+        api.setMockMode(true);
+        api.setMockLocation(mockLocation);
+
         mapController.setZoomLevel(MapController.DEFAULT_ZOOM_LEVEL);
         final Location location = api.getLastLocation();
         Logger.d("Last known location: " + location);

@@ -28,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -239,7 +240,7 @@ public class BaseActivityTest {
         assertThat(locationClient.isConnected()).isTrue();
     }
 
-    @Test
+    @Test @Ignore("Not applicable to demo version")
     public void onResume_shouldCheckIfConnectedBeforeConnectingAgain() throws Exception {
         ShadowLocationManager shadowLocationManager = shadowOf(getLocationManager());
         List<android.location.LocationListener>

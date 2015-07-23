@@ -14,6 +14,7 @@ import com.mapzen.open.support.TestHelper.LocationUpdateSubscriber;
 import com.squareup.otto.Bus;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -126,7 +127,7 @@ public class MapzenLocationTest {
         assertThat(argument.getValue().getInterval()).isEqualTo(2000);
     }
 
-    @Test
+    @Test @Ignore("Not applicable to demo version")
     public void onLocationServicesConnected_shouldUpdateMapController() throws Exception {
         Location expected = initLastLocation();
         onLocationServicesConnected(mapController, LocationServices.FusedLocationApi, application);
@@ -152,7 +153,7 @@ public class MapzenLocationTest {
         assertThat(argument.getValue().getPriority()).isEqualTo(PRIORITY_HIGH_ACCURACY);
     }
 
-    @Test
+    @Test @Ignore("Not applicable to demo version")
     public void shouldNotifyUserIfLastLocationNotAvailable() throws Exception {
         LocationManager locationManager = (LocationManager)
                 application.getSystemService(Context.LOCATION_SERVICE);
