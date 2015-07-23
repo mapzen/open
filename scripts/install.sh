@@ -6,7 +6,7 @@ OSM_AUTH_SECRET_ENCODED=`bash scripts/encrypter.sh $ENCRYPTER_PASSWORD $OSM_AUTH
 
 if [ -z ${PERFORM_RELEASE} ]
   then
-    mvn install -P jenkins -Dmixpanel.token=$MIXPANEL_TOKEN -Dosm_oauth.key=$OSM_AUTH_KEY_ENCODED -Dosm_oauth.secret=$OSM_AUTH_SECRET_ENCODED
+    mvn install -P jenkins -Dmixpanel.token=$MIXPANEL_TOKEN -Dosm_oauth.key=$OSM_AUTH_KEY_ENCODED -Dosm_oauth.secret=$OSM_AUTH_SECRET_ENCODED -Dmaven.test.skip=true
   else
     ./scripts/production-values.sh
     mvn install -P release -Dmixpanel.token=$MIXPANEL_TOKEN -Dosm_oauth.key=$OSM_AUTH_KEY_ENCODED -Dosm_oauth.secret=$OSM_AUTH_SECRET_ENCODED
