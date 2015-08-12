@@ -30,5 +30,5 @@ deployment:
   master:
     branch: master
     commands:
-      - s3cmd put target/*.apk s3://android.mapzen.com/open/latest.apk
+      - s3cmd put target/*.apk s3://android.mapzen.com/open-latest.apk
       - s3cmd put target/*.apk s3://android.mapzen.com/snapshots/master-$CIRCLE_BUILD_NUM.apk
