@@ -34,7 +34,7 @@
     <string name="settings_location_update_interval_key">settings_location_update_interval</string>
     <string name="settings_location_update_interval_title">Location update interval</string>
     <string name="settings_location_update_interval_summary">ms between location updates (restart required)</string>
-    <string name="osrm_endpoint">https://osrm.mapzen.com</string>
+    <string name="osrm_endpoint">https://valhalla.mapzen.com</string>
 
     <!--Zoom Settings-->
 
