@@ -5,7 +5,7 @@
 # Usage:
 #   install-support-jar_app.sh
 
-version="21.0.3"
+version="22.2.1"
 artifact="support_r$version"
 file="$artifact.zip"
 
