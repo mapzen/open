@@ -3,7 +3,8 @@ package com.mapzen.open.fragment;
 import com.mapzen.open.MapController;
 import com.mapzen.open.R;
 import com.mapzen.open.core.StyleDownLoader;
-import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.open.util.SimpleFeatureHelper;
+import com.mapzen.pelias.SimpleFeature;
 import com.mapzen.open.event.LocationUpdateEvent;
 import com.mapzen.open.search.OnPoiClickListener;
 import com.mapzen.open.util.IntentReceiver;
@@ -119,12 +120,14 @@ public class MapFragment extends BaseFragment {
             focused.setMarker(highlightMarker);
             poiMarkersLayer.setFocus(focused);
         }
-        GeoPoint geoPoint = simpleFeature.getGeoPoint();
+        GeoPoint geoPoint = SimpleFeatureHelper.getGeoPoint(simpleFeature);
         getMap().animator().animateTo(DURATION, geoPoint, zoom, false);
     }
 
     public void addPoi(SimpleFeature simpleFeature) {
-        MarkerItem markerItem = simpleFeature.getMarker();
+        GeoPoint geoPoint = new GeoPoint(simpleFeature.getLat(), simpleFeature.getLon());
+        MarkerItem markerItem = new MarkerItem(this, simpleFeature.getProperty(SimpleFeature.TEXT),
+                "Current Location", geoPoint);
         poiMarkersLayer.addItem(markerItem);
     }
 

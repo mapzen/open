@@ -1,13 +1,13 @@
 package com.mapzen.open.activity;
 
-import com.mapzen.android.gson.Feature;
+import com.mapzen.pelias.gson.Feature;
 import com.mapzen.android.lost.api.LostApiClient;
 import com.mapzen.open.MapController;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.TestMapzenApplication;
 import com.mapzen.open.core.SettingsFragment;
-import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.pelias.SimpleFeature;
 import com.mapzen.open.event.RoutePreviewEvent;
 import com.mapzen.open.route.RouteFragment;
 import com.mapzen.open.route.RoutePreviewFragment;

@@ -1,6 +1,6 @@
 package com.mapzen.open.core;
 
-import com.mapzen.android.Pelias;
+import com.mapzen.pelias.Pelias;
 import com.mapzen.open.MapController;
 import com.mapzen.open.MapControllerTest;
 import com.mapzen.open.MapzenApplication;

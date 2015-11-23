@@ -1,6 +1,6 @@
 package com.mapzen.open.core;
 
-import com.mapzen.android.Pelias;
+import com.mapzen.pelias.Pelias;
 import com.mapzen.open.MapController;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
@@ -89,7 +89,9 @@ public class AppModule {
     }
 
     @Provides @Singleton Pelias providePelias() {
-        return Pelias.getPelias();
+        Pelias pelias = Pelias.getPelias();
+        pelias.setApiKey("search-bdHMVR0");
+        return pelias;
     }
 
     @Provides @Singleton StyleDownLoader provideStyleDownloader() {

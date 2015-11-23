@@ -5,7 +5,7 @@ import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.TestMapzenApplication;
 import com.mapzen.open.activity.BaseActivity;
-import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.pelias.SimpleFeature;
 import com.mapzen.open.event.ViewUpdateEvent;
 import com.mapzen.open.fragment.MapFragment;
 import com.mapzen.open.support.MapzenTestRunner;
@@ -38,7 +38,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import static com.mapzen.open.MapController.locationToGeoPoint;
-import static com.mapzen.open.entity.SimpleFeature.TEXT;
+import static com.mapzen.pelias.SimpleFeature.TEXT;
 import static com.mapzen.open.route.RoutePreviewFragment.REDUCE_TOLERANCE;
 import static com.mapzen.open.support.TestHelper.getFixture;
 import static com.mapzen.open.support.TestHelper.getTestLocation;

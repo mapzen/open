@@ -1,14 +1,14 @@
 package com.mapzen.open.search;
 
-import com.mapzen.android.Pelias;
-import com.mapzen.android.gson.Feature;
-import com.mapzen.android.gson.Result;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
-import com.mapzen.open.entity.SimpleFeature;
 import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.support.TestHelper;
+import com.mapzen.pelias.Pelias;
+import com.mapzen.pelias.SimpleFeature;
+import com.mapzen.pelias.gson.Feature;
+import com.mapzen.pelias.gson.Result;
 
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.squareup.otto.Bus;
@@ -53,8 +53,8 @@ import static com.mapzen.open.util.MixpanelHelper.Payload.PELIAS_TERM;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyDouble;
 import static org.mockito.Matchers.refEq;
-import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.verify;
 import static org.robolectric.Robolectric.application;
@@ -124,7 +124,7 @@ public class PagerResultsFragmentTest {
     @Test
     public void executeSearchOnMap_shouldDismissProgressDialogOnError() throws Exception {
         fragment.executeSearchOnMap(new SearchView(app), "Empire State Building");
-        verify(pelias).search(eq("Empire State Building"), anyString(), anyString(),
+        verify(pelias).search(eq("Empire State Building"), anyDouble(), anyDouble(),
                 peliasCallback.capture());
         peliasCallback.getValue().failure(RetrofitError.unexpectedError("", null));
         assertThat(act.getMapFragment().getView().findViewById(R.id.map)).isVisible();
@@ -134,7 +134,7 @@ public class PagerResultsFragmentTest {
     @Test
     public void executeSearchOnMap_shouldToastAnError() {
         fragment.executeSearchOnMap(new SearchView(app), "Empire State Building");
-        verify(pelias).search(eq("Empire State Building"), anyString(), anyString(),
+        verify(pelias).search(eq("Empire State Building"), anyDouble(), anyDouble(),
                 peliasCallback.capture());
 
         peliasCallback.getValue().failure(RetrofitError.unexpectedError("", null));
@@ -156,8 +156,8 @@ public class PagerResultsFragmentTest {
         position.setPosition(expectedLat, expectedLon);
         getMapController().getMap().setMapPosition(position);
         fragment.executeSearchOnMap(new SearchView(app), "Some fantastic term");
-        verify(pelias).search(eq("Some fantastic term"), eq(String.valueOf(position.getLatitude())),
-                eq(String.valueOf(position.getLongitude())), any(Callback.class));
+        verify(pelias).search(eq("Some fantastic term"), eq(position.getLatitude()),
+                eq(position.getLongitude()), any(Callback.class));
     }
 
     @Test

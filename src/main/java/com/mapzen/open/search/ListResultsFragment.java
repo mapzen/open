@@ -2,7 +2,7 @@ package com.mapzen.open.search;
 
 import com.mapzen.open.R;
 import com.mapzen.open.adapters.PlaceArrayAdapter;
-import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.pelias.SimpleFeature;
 
 import android.app.Activity;
 import android.content.Intent;

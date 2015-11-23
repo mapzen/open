@@ -8,7 +8,7 @@
     
     <include layout="@layout/route_header" />
 
-    <include layout="@layout/list_header_divider"
+    <include layout="@layout/app_list_header_divider"
         android:id="@+id/location_divider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

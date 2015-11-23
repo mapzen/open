@@ -34,6 +34,11 @@
             </snapshots>
         </repository>
 
+        <repository>
+            <id>android-support</id>
+            <url>file://${env.ANDROID_HOME}/extras/android/m2repository</url>
+        </repository>
+
     </repositories>
 
     <properties>
@@ -116,7 +121,8 @@
         <dependency>
             <groupId>com.mapzen.android</groupId>
             <artifactId>pelias-android-sdk</artifactId>
-            <version>0.3.1</version>
+            <version>0.6-SNAPSHOT</version>
+            <type>aar</type>
         </dependency>
 
         <dependency>

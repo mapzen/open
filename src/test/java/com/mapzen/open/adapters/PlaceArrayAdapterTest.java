@@ -1,7 +1,7 @@
 package com.mapzen.open.adapters;
 
 import com.mapzen.open.TestMapzenApplication;
-import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.pelias.SimpleFeature;
 import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.support.TestHelper;
 

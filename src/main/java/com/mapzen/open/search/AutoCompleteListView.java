@@ -29,7 +29,7 @@ public class AutoCompleteListView extends ListView {
     }
 
     private void init() {
-        headerView = inflate(getContext(), R.layout.recent_search_list_header, null);
+        headerView = inflate(getContext(), R.layout.app_recent_search_list_header, null);
         addHeaderView(headerView);
         setHeaderDividersEnabled(false);
     }

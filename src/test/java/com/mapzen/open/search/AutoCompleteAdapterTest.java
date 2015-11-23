@@ -1,11 +1,11 @@
 package com.mapzen.open.search;
 
-import com.mapzen.android.Pelias;
-import com.mapzen.android.gson.Result;
+import com.mapzen.pelias.Pelias;
+import com.mapzen.pelias.gson.Result;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
-import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.pelias.SimpleFeature;
 import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.support.TestHelper;
 import com.mapzen.open.util.ParcelableUtil;
@@ -38,7 +38,7 @@ import javax.inject.Inject;
 import retrofit.Callback;
 
 import static com.mapzen.open.MapController.getMapController;
-import static com.mapzen.open.entity.SimpleFeature.TEXT;
+import static com.mapzen.pelias.SimpleFeature.TEXT;
 import static com.mapzen.open.support.TestHelper.assertSpan;
 import static com.mapzen.open.support.TestHelper.getTestSimpleFeature;
 import static com.mapzen.open.support.TestHelper.initMapFragment;
@@ -163,8 +163,8 @@ public class AutoCompleteAdapterTest {
         position.setPosition(expectedLat, expectedLon);
         getMapController().getMap().setMapPosition(position);
         adapter.onQueryTextChange("new query");
-        verify(pelias).suggest(eq("new query"), eq(String.valueOf(position.getLatitude())),
-                eq(String.valueOf(position.getLongitude())), any(Callback.class));
+        verify(pelias).suggest(eq("new query"), eq(position.getLatitude()),
+                eq(position.getLongitude()), any(Callback.class));
     }
 
     @Test
