@@ -8,7 +8,8 @@ import com.mapzen.open.MapController;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.TestMapzenApplication;
-import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.open.util.SimpleFeatureHelper;
+import com.mapzen.pelias.SimpleFeature;
 import com.mapzen.open.fragment.MapFragment;
 import com.mapzen.open.shadows.ShadowMint;
 import com.mapzen.open.support.MapzenTestRunner;
@@ -78,7 +79,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import static com.mapzen.open.entity.SimpleFeature.TEXT;
+import static com.mapzen.pelias.SimpleFeature.TEXT;
 import static com.mapzen.open.support.TestHelper.MOCK_ACE_HOTEL;
 import static com.mapzen.open.support.TestHelper.MOCK_AROUND_THE_BLOCK;
 import static com.mapzen.open.support.TestHelper.MOCK_NY_TO_VT;
@@ -135,7 +136,7 @@ public class RouteFragmentTest {
         ((TestMapzenApplication) Robolectric.application).inject(this);
         initTestFragment();
         app = Robolectric.getShadowApplication();
-        GeoPoint start = fragment.getSimpleFeature().getGeoPoint();
+        GeoPoint start = SimpleFeatureHelper.getGeoPoint(fragment.getSimpleFeature());
         startLocation = getTestLocation(start.getLatitude(), start.getLongitude());
     }
 
@@ -189,6 +190,7 @@ public class RouteFragmentTest {
     @Test
     public void shouldHideBaseAttribution() throws Exception {
         TestHelper.startFragment(fragment, act);
+        Robolectric.runUiThreadTasksIncludingDelayedTasks();
         assertThat(act.findViewById(R.id.attribution)).isNotVisible();
     }
 
@@ -541,7 +543,8 @@ public class RouteFragmentTest {
     public void setFeature_shouldGenerateDestinationPoint() throws Exception {
         SimpleFeature simpleFeature = new SimpleFeature();
         fragment.setSimpleFeature(simpleFeature);
-        assertThat(fragment.getDestinationPoint()).isEqualTo(simpleFeature.getGeoPoint());
+        assertThat(fragment.getDestinationPoint())
+                .isEqualTo(SimpleFeatureHelper.getGeoPoint(simpleFeature));
     }
 
     @Test

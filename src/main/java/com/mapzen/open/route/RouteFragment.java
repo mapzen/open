@@ -6,7 +6,8 @@ import com.mapzen.helpers.ZoomController;
 import com.mapzen.open.MapController;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
-import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.open.util.SimpleFeatureHelper;
+import com.mapzen.pelias.SimpleFeature;
 import com.mapzen.open.event.LocationUpdateEvent;
 import com.mapzen.open.fragment.BaseFragment;
 import com.mapzen.open.util.DatabaseHelper;
@@ -71,7 +72,7 @@ import static com.mapzen.open.MapController.geoPointToPair;
 import static com.mapzen.open.MapController.getMapController;
 import static com.mapzen.open.MapController.locationToPair;
 import static com.mapzen.open.core.MapzenLocation.Util.getDistancePointFromBearing;
-import static com.mapzen.open.entity.SimpleFeature.TEXT;
+import static com.mapzen.pelias.SimpleFeature.TEXT;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_GROUP_ID;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_LAT;
 import static com.mapzen.open.util.DatabaseHelper.COLUMN_LNG;
@@ -221,8 +222,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     private void initNotificationCreator() {
         notificationCreator = new MapzenNotificationCreator(act);
         if (instructions != null) {
-            notificationCreator.createNewNotification(simpleFeature.getMarker().title,
-                    instructions.get(0).getFullInstruction(getActivity()));
+            notificationCreator.createNewNotification(SimpleFeatureHelper.getMarker(simpleFeature)
+                    .title, instructions.get(0).getFullInstruction(getActivity()));
         }
     }
 
@@ -328,7 +329,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                 // To allow routing to see which direction you are travelling
                 .setLocation(locationToPair(getDistancePointFromBearing(location, 15,
                         (int) Math.floor(location.getBearing()))))
-                .setLocation(geoPointToPair(simpleFeature.getGeoPoint()))
+                .setLocation(geoPointToPair(SimpleFeatureHelper.getGeoPoint(simpleFeature)))
                 .setCallback(this)
                 .fetch();
     }
@@ -355,7 +356,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     }
 
     public GeoPoint getDestinationPoint() {
-        return simpleFeature.getGeoPoint();
+        return SimpleFeatureHelper.getGeoPoint(simpleFeature);
     }
 
     private void manageMap(Location originalLocation, Location location) {
@@ -605,7 +606,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
         } else {
             setCurrentPagerItemStyling(i);
         }
-        notificationCreator.createNewNotification(simpleFeature.getMarker().title,
+        notificationCreator.createNewNotification(
+                SimpleFeatureHelper.getMarker(simpleFeature).title,
                 instructions.get(i).getFullInstruction(getActivity()));
     }
 
@@ -725,7 +727,8 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
                         final RouteAdapter adapter = new RouteAdapter(act, instructions, fragment);
                         adapter.setDestinationName(simpleFeature.getProperty(TEXT));
                         pager.setAdapter(adapter);
-                        notificationCreator.createNewNotification(simpleFeature.getMarker().title,
+                        notificationCreator.createNewNotification(
+                                SimpleFeatureHelper.getMarker(simpleFeature).title,
                                 instructions.get(0).getFullInstruction(getActivity()));
                         setCurrentPagerItemStyling(0);
                     }
@@ -787,7 +790,7 @@ public class RouteFragment extends BaseFragment implements DirectionListFragment
     public String getGPXDescription() {
         if (instructions != null && instructions.size() >= 1) {
             Instruction firstInstruction = instructions.get(0);
-            String destination = simpleFeature.getFullLocationString();
+            String destination = SimpleFeatureHelper.getFullLocationString(simpleFeature);
             return new StringBuilder().append("Route between: ")
                     .append(formatInstructionForDescription(firstInstruction))
                     .append(" -> ")

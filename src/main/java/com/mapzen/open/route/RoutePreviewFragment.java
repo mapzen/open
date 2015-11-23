@@ -3,7 +3,8 @@ package com.mapzen.open.route;
 import com.mapzen.open.MapController;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
-import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.open.util.SimpleFeatureHelper;
+import com.mapzen.pelias.SimpleFeature;
 import com.mapzen.open.event.ViewUpdateEvent;
 import com.mapzen.open.fragment.BaseFragment;
 import com.mapzen.open.util.Logger;
@@ -51,7 +52,7 @@ import butterknife.OnClick;
 import static com.mapzen.open.MapController.geoPointToPair;
 import static com.mapzen.open.MapController.locationToGeoPoint;
 import static com.mapzen.open.MapController.locationToPair;
-import static com.mapzen.open.entity.SimpleFeature.TEXT;
+import static com.mapzen.pelias.SimpleFeature.TEXT;
 import static com.mapzen.open.util.DouglasPeuckerReducer.reduceWithTolerance;
 import static com.mapzen.open.util.MixpanelHelper.Event.ROUTING_PREVIEW_BIKE;
 import static com.mapzen.open.util.MixpanelHelper.Event.ROUTING_PREVIEW_FOOT;
@@ -249,12 +250,12 @@ public class RoutePreviewFragment extends BaseFragment implements Router.Callbac
 
     private double[] getDestinationPoint() {
         return reverse ? locationToPair(mapController.getLocation()) :
-                geoPointToPair(destination.getGeoPoint());
+                geoPointToPair(SimpleFeatureHelper.getGeoPoint(destination));
     }
 
     private double[] getOriginPoint() {
         return !reverse ? locationToPair(mapController.getLocation()) :
-                geoPointToPair(destination.getGeoPoint());
+                geoPointToPair(SimpleFeatureHelper.getGeoPoint(destination));
     }
 
     public void setDestination(SimpleFeature destination) {

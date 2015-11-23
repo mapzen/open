@@ -1,6 +1,6 @@
 package com.mapzen.open.search;
 
-import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.pelias.SimpleFeature;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;

@@ -1,12 +1,12 @@
 package com.mapzen.open.search;
 
-import com.mapzen.android.Pelias;
-import com.mapzen.android.gson.Feature;
-import com.mapzen.android.gson.Result;
+import com.mapzen.pelias.Pelias;
+import com.mapzen.pelias.gson.Feature;
+import com.mapzen.pelias.gson.Result;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
-import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.pelias.SimpleFeature;
 import com.mapzen.open.fragment.MapFragment;
 import com.mapzen.open.util.Highlighter;
 import com.mapzen.open.util.Logger;
@@ -40,8 +40,8 @@ import retrofit.client.Response;
 
 import static com.mapzen.open.MapController.getMapController;
 import static com.mapzen.open.MapzenApplication.PELIAS_BLOB;
-import static com.mapzen.open.entity.SimpleFeature.CREATOR;
-import static com.mapzen.open.entity.SimpleFeature.TEXT;
+import static com.mapzen.pelias.SimpleFeature.CREATOR;
+import static com.mapzen.pelias.SimpleFeature.TEXT;
 import static com.mapzen.open.search.SavedSearch.SEARCH_TERM;
 import static com.mapzen.open.util.MixpanelHelper.Event.PELIAS_SUGGEST;
 import static com.mapzen.open.util.MixpanelHelper.Payload.PELIAS_TERM;
@@ -216,7 +216,7 @@ public class AutoCompleteAdapter extends CursorAdapter implements SearchView.OnQ
             final Double lat = getMapController().getMap().getMapPosition().getLatitude();
             final Double lon = getMapController().getMap().getMapPosition().getLongitude();
             trackSuggest(newText);
-            pelias.suggest(newText, String.valueOf(lat), String.valueOf(lon), this);
+            pelias.suggest(newText, lat, lon, this);
         }
 
         return true;

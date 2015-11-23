@@ -1,7 +1,7 @@
 package com.mapzen.open.route;
 
 import com.mapzen.open.R;
-import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.pelias.SimpleFeature;
 import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.widget.DistanceView;
 import com.mapzen.osrm.Instruction;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-import static com.mapzen.open.entity.SimpleFeature.TEXT;
+import static com.mapzen.pelias.SimpleFeature.TEXT;
 import static org.fest.assertions.api.ANDROID.assertThat;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;

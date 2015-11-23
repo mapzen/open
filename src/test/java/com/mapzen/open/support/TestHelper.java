@@ -1,12 +1,12 @@
 package com.mapzen.open.support;
 
-import com.mapzen.android.gson.Feature;
-import com.mapzen.android.gson.Geometry;
-import com.mapzen.android.gson.Properties;
+import com.mapzen.pelias.gson.Feature;
+import com.mapzen.pelias.gson.Geometry;
+import com.mapzen.pelias.gson.Properties;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.activity.InitialActivity;
-import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.pelias.SimpleFeature;
 import com.mapzen.open.event.LocationUpdateEvent;
 import com.mapzen.open.event.RoutePreviewEvent;
 import com.mapzen.open.event.ViewUpdateEvent;
@@ -42,12 +42,12 @@ import java.util.UUID;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static android.location.LocationManager.GPS_PROVIDER;
-import static com.mapzen.open.entity.SimpleFeature.ADMIN1;
-import static com.mapzen.open.entity.SimpleFeature.ADMIN1_ABBR;
-import static com.mapzen.open.entity.SimpleFeature.ID;
-import static com.mapzen.open.entity.SimpleFeature.LOCAL_ADMIN;
-import static com.mapzen.open.entity.SimpleFeature.TEXT;
-import static com.mapzen.open.entity.SimpleFeature.TYPE;
+import static com.mapzen.pelias.SimpleFeature.ADMIN1;
+import static com.mapzen.pelias.SimpleFeature.ADMIN1_ABBR;
+import static com.mapzen.pelias.SimpleFeature.ID;
+import static com.mapzen.pelias.SimpleFeature.LOCAL_ADMIN;
+import static com.mapzen.pelias.SimpleFeature.TEXT;
+import static com.mapzen.pelias.SimpleFeature.TYPE;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.robolectric.Robolectric.application;
 import static org.robolectric.Robolectric.buildActivity;
@@ -190,9 +190,9 @@ public final class TestHelper {
     public static Feature getTestFeature() {
         Feature feature = new Feature();
         Properties properties = new Properties();
-        properties.setText("test");
-        properties.setAdmin0("test");
-        properties.setAlpha3("test");
+        properties.setLabel("test");
+        properties.setCountry("test");
+        properties.setCountry_a("test");
         feature.setProperties(properties);
         Geometry geometry = new Geometry();
         List<Double> coordinates = new ArrayList<Double>();

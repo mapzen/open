@@ -1,6 +1,6 @@
 package com.mapzen.open.search;
 
-import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.pelias.SimpleFeature;
 import com.mapzen.open.support.MapzenTestRunner;
 import com.mapzen.open.support.TestHelper;
 
@@ -13,7 +13,7 @@ import android.os.Parcel;
 
 import java.util.Iterator;
 
-import static com.mapzen.open.entity.SimpleFeature.TEXT;
+import static com.mapzen.pelias.SimpleFeature.TEXT;
 import static com.mapzen.open.search.SavedSearch.DEFAULT_SIZE;
 import static com.mapzen.open.search.SavedSearch.MAX_ENTRIES;
 import static org.fest.assertions.api.ANDROID.assertThat;

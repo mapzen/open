@@ -2,7 +2,7 @@ package com.mapzen.open.adapters;
 
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
-import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.pelias.SimpleFeature;
 
 import android.content.Context;
 import android.graphics.Typeface;

@@ -1,7 +1,7 @@
 package com.mapzen.open.search;
 
 import com.mapzen.open.R;
-import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.pelias.SimpleFeature;
 import com.mapzen.open.support.MapzenTestRunner;
 
 import org.junit.Before;

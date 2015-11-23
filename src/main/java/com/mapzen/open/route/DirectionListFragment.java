@@ -1,7 +1,7 @@
 package com.mapzen.open.route;
 
 import com.mapzen.open.R;
-import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.pelias.SimpleFeature;
 import com.mapzen.open.util.DisplayHelper;
 import com.mapzen.open.widget.DistanceView;
 import com.mapzen.osrm.Instruction;
@@ -23,7 +23,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-import static com.mapzen.open.entity.SimpleFeature.TEXT;
+import static com.mapzen.pelias.SimpleFeature.TEXT;
 
 public class DirectionListFragment extends ListFragment {
     public static final String TAG = DirectionListFragment.class.getSimpleName();

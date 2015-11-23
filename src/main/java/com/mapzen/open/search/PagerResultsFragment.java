@@ -1,14 +1,14 @@
 package com.mapzen.open.search;
 
-import com.mapzen.android.Pelias;
-import com.mapzen.android.gson.Feature;
-import com.mapzen.android.gson.Result;
+import com.mapzen.pelias.Pelias;
+import com.mapzen.pelias.gson.Feature;
+import com.mapzen.pelias.gson.Result;
 import com.mapzen.open.MapController;
 import com.mapzen.open.MapzenApplication;
 import com.mapzen.open.R;
 import com.mapzen.open.activity.BaseActivity;
 import com.mapzen.open.adapters.SearchViewAdapter;
-import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.pelias.SimpleFeature;
 import com.mapzen.open.fragment.BaseFragment;
 import com.mapzen.open.util.Logger;
 
@@ -233,8 +233,7 @@ public class PagerResultsFragment extends BaseFragment {
         trackSearch(query);
         Double lat = getMapController().getMap().getMapPosition().getLatitude();
         Double lon = getMapController().getMap().getMapPosition().getLongitude();
-        pelias.search(query, String.valueOf(lat),
-                String.valueOf(lon), getSearchCallback(view));
+        pelias.search(query, lat, lon, getSearchCallback(view));
         return true;
     }
 

@@ -1,6 +1,6 @@
 package com.mapzen.open.event;
 
-import com.mapzen.open.entity.SimpleFeature;
+import com.mapzen.pelias.SimpleFeature;
 
 public class RoutePreviewEvent {
     private SimpleFeature simpleFeature;
