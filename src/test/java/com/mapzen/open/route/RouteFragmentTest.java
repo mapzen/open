@@ -190,6 +190,7 @@ public class RouteFragmentTest {
     @Test
     public void shouldHideBaseAttribution() throws Exception {
         TestHelper.startFragment(fragment, act);
+        Robolectric.runUiThreadTasksIncludingDelayedTasks();
         assertThat(act.findViewById(R.id.attribution)).isNotVisible();
     }
 
