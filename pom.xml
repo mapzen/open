@@ -52,9 +52,9 @@
     </properties>
 
     <scm>
-        <url>http://github.com/mapzen/android</url>
-        <connection>scm:git:git://github.com/mapzen/android.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/mapzen/android.git</developerConnection>
+        <url>http://github.com/mapzen/open</url>
+        <connection>scm:git:git://github.com/mapzen/open.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/mapzen/open.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
