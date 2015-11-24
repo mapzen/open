@@ -5,7 +5,7 @@
 
     <groupId>com.mapzen.android</groupId>
     <artifactId>open</artifactId>
-    <version>1.3.0</version>
+    <version>1.3.1-SNAPSHOT</version>
     <packaging>apk</packaging>
 
     <name>Open</name>
@@ -55,7 +55,7 @@
         <url>http://github.com/mapzen/open</url>
         <connection>scm:git:git://github.com/mapzen/open.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/mapzen/open.git</developerConnection>
-        <tag>open-1.3.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <dependencies>
