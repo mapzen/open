@@ -1,7 +1,6 @@
 #Open is no longer in active development, please see [Eraser Map](https://github.com/mapzen/eraser-map) for our latest efforts.
 
 # Mapzen
-[![Circle CI Build Status](https://circleci.com/gh/mapzen/open.png?circle-token=cfd8a71bc5d58302f87abaec91a89a0ffd871d1e)][1]
 
 This project is a simple mobile mapping application built using the Mapzen SDKs and other open source projects. 
 
