@@ -65,7 +65,7 @@ public class AppModule {
     }
 
     @Provides @Singleton MapzenApplication provideApplication() {
-        return (MapzenApplication) context.getApplicationContext();
+        return (MapzenApplication) context.getApplicationContextSuperman();
     }
 
     @Provides @Singleton Router provideRouter() {
